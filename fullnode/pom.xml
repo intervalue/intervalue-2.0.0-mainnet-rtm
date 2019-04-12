@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>one.inve</groupId>
+    <artifactId>fullnode</artifactId>
+    <version>2.0.0</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jdk.version>1.8</jdk.version>
+        <ice.version>3.7.1</ice.version>
+        <junit.version>4.11</junit.version>
+        <fastjson.version>1.2.7</fastjson.version>
+        <springcore.version>5.0.7.RELEASE</springcore.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-beanutils.version>1.8.3</commons-beanutils.version>
+        <commons-codec.version>1.10</commons-codec.version>
+        <commons-lang3.version>3.3.2</commons-lang3.version>
+        <commons-io.version>2.5</commons-io.version>
+        <log4j.version>1.2.17</log4j.version>
+        <sqlite.version>3.20.1</sqlite.version>
+        <poi.version>3.10-FINAL</poi.version>
+        <keccakj.version>1.1.0</keccakj.version>
+        <netty.version>4.1.30.Final</netty.version>
+        <httpclient.version>4.5.6</httpclient.version>
+        <httpcore.version>4.4.10</httpcore.version>
+        <inve-cluster.version>0.0.1-SNAPSHOT</inve-cluster.version>
+        <inve-transport.version>0.0.1-SNAPSHOT</inve-transport.version>
+        <inve-mnemonic.version>1.1.0</inve-mnemonic.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.aelstad</groupId>
+            <artifactId>keccakj</artifactId>
+            <version>${keccakj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${httpcore.version}</version>
+        </dependency>
+        <!--  -->
+        <dependency>
+            <groupId>com.zeroc</groupId>
+            <artifactId>ice</artifactId>
+            <version>${ice.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>${sqlite.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${springcore.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commons-collections.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${commons-beanutils.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+
+        <!-- 日志文件管理包 -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.inve</groupId>
+            <artifactId>inve-cluster</artifactId>
+            <version>${inve-cluster.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>one.inve</groupId>
+            <artifactId>inve-transport</artifactId>
+            <version>${inve-transport.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.inve</groupId>
+            <artifactId>mnemonic</artifactId>
+            <version>${inve-mnemonic.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>one.inve.node.Main</mainClass>
+                            <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
+                            <useUniqueVersions>false</useUniqueVersions>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assembly</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--<plugin>&lt;!&ndash;用混淆插件混淆代码&ndash;&gt;-->
+                <!--<groupId>com.github.wvengen</groupId>-->
+                <!--<artifactId>proguard-maven-plugin</artifactId>-->
+                <!--<version>2.0.11</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--&lt;!&ndash; 混淆时刻，这里是打包的时候混淆&ndash;&gt;-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--&lt;!&ndash; 使用插件的什么功能，当然是混淆&ndash;&gt;-->
+                            <!--<goal>proguard</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+
+                <!--<configuration>-->
+                    <!--&lt;!&ndash; 是否将生成的PG文件安装部署&ndash;&gt;-->
+                    <!--<attach>true</attach>-->
+                    <!--&lt;!&ndash; 是否混淆&ndash;&gt;-->
+                    <!--<obfuscate>true</obfuscate>-->
+                    <!--&lt;!&ndash; 指定生成文件分类 &ndash;&gt;-->
+                    <!--<attachArtifactClassifier>pg</attachArtifactClassifier>-->
+                    <!--<options>-->
+                        <!--&lt;!&ndash; JDK目标版本&ndash;&gt;-->
+                        <!--<option>-target 1.8</option>-->
+                        <!--&lt;!&ndash; 不告警&ndash;&gt;-->
+                        <!--<option>-dontwarn</option>-->
+                        <!--&lt;!&ndash; 不做收缩（删除注释、未被引用代码）&ndash;&gt;-->
+                        <!--<option>-dontshrink</option>-->
+                        <!--&lt;!&ndash; 不做优化（变更代码实现逻辑）&ndash;&gt;-->
+                        <!--<option>-dontoptimize</option>-->
+                        <!--&lt;!&ndash; 不路过非公用类文件及成员&ndash;&gt;-->
+                        <!--<option>-dontskipnonpubliclibraryclasses</option>-->
+                        <!--<option>-dontskipnonpubliclibraryclassmembers</option>-->
+                        <!--&lt;!&ndash; 优化时允许访问并修改有修饰符的类和类的成员 &ndash;&gt;-->
+                        <!--<option>-allowaccessmodification</option>-->
+                        <!--&lt;!&ndash; 确定统一的混淆类的成员名称来增加混淆&ndash;&gt;-->
+                        <!--<option>-useuniqueclassmembernames</option>-->
+                        <!--&lt;!&ndash; 不混淆所有特殊的类&ndash;&gt;-->
+                        <!--<option>-keepattributes-->
+                            <!--Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod-->
+                        <!--</option>-->
+                        <!--&lt;!&ndash; 不混淆所有的set/get方法，毕竟项目中使用的部分第三方框架（例如Shiro）会用到大量的set/get映射&ndash;&gt;-->
+                        <!--<option>-keepclassmembers public class * {void set*(***);*** get*();}</option>-->
+
+                        <!--&lt;!&ndash; 不混淆job包下的所有类名，且类中的方法也不混淆&ndash;&gt;-->
+                        <!--<option>-keep class com.** {*;}</option>-->
+                        <!--<option>-keep class org.** {*;}</option>-->
+                        <!--<option>-keep class one.inve.node.FullNodeNode</option>-->
+                        <!--<option>-keep class one.inve.bean.** {*;}</option>-->
+                        <!--<option>-keep class one.inve.cluster.** {*;}</option>-->
+                        <!--<option>-keep class one.inve.transport.** {*;}</option>-->
+                        <!--<option>-keep class google.protobuf.** {*;}</option>-->
+                        <!--<option>-keep class io.** {*;}</option>-->
+                        <!--<option>-keep class javax.annotation.** {*;}</option>-->
+                        <!--<option>-keep class junit.** {*;}</option>-->
+                        <!--<option>-keep class rx.** {*;}</option>-->
+                        <!--<option>-keep class okio.** {*;}</option>-->
+                        <!--<option>-keep class net.** {*;}</option>-->
+                        <!--<option>-keep class lib.x86_64.** {*;}</option>-->
+                        <!--<option>-keep class sun.** {*;}</option>-->
+
+                    <!--</options>-->
+                    <!--<outjar>${project.build.finalName}-pg.jar</outjar>-->
+                    <!--&lt;!&ndash; 添加依赖，这里你可以按你的需要修改，这里测试只需要一个JRE的Runtime包就行了 &ndash;&gt;-->
+                    <!--<libs>-->
+                        <!--<lib>${java.home}/lib/rt.jar</lib>-->
+                    <!--</libs>-->
+                    <!--&lt;!&ndash; 加载文件的过滤器，就是你的工程目录了&ndash;&gt;-->
+                    <!--&lt;!&ndash; 对什么东西进行加载，这里仅有classes成功，毕竟你也不可能对配置文件及JSP混淆吧&ndash;&gt;-->
+                    <!--<injar>fullnode-1.0.0.jar</injar>-->
+                    <!--&lt;!&ndash; 输出目录&ndash;&gt;-->
+                    <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+        </plugins>
+    </build>
+</project>
