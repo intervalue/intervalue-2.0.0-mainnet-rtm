@@ -44,20 +44,17 @@ public class SnailRockPutter extends RocksJavaUtil {
 
 	@Override
 	public void set(String key) {
-		// TODO Auto-generated method stub
-		super.set(key);
+		put(key.getBytes(), key.getBytes());
 	}
 
 	@Override
 	public void put(String key, String value) {
-		// TODO Auto-generated method stub
-		super.put(key, value);
+		put(key.getBytes(), value.getBytes());
 	}
 
 	@Override
 	public void put(String key, byte[] value) {
-		// TODO Auto-generated method stub
-		super.put(key, value);
+		put(key.getBytes(), value);
 	}
 
 	protected void put(final byte[] k, final byte[] v) {
