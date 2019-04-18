@@ -48,7 +48,11 @@ public abstract class SnailRockPutter extends RocksJavaUtil {
 		if (noDuplicateElementsContainer.isEmpty())
 			timeOfStartingRound = Instant.now();
 
-		noDuplicateElementsContainer.add(putEntry);
+		// replace outdated RockPutEntry
+		if (!noDuplicateElementsContainer.add(putEntry)) {
+			noDuplicateElementsContainer.remove(putEntry);
+			noDuplicateElementsContainer.add(putEntry);
+		}
 
 		// combine time,capacity together to do calculation
 		if ((normalize(_capacity, 0, noDuplicateElementsContainer.size())

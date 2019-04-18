@@ -54,4 +54,9 @@ public class RockPutEntry {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "RockPutEntry [key=" + Arrays.toString(key) + ", value=" + Arrays.toString(value) + "]";
+	}
+
 }
