@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * @date: 2019年4月16日 下午5:52:17
  * @version: V1.0
  */
-public class SnailRockPutter extends RocksJavaUtil {
+public abstract class SnailRockPutter extends RocksJavaUtil {
 	private static final Logger logger = LoggerFactory.getLogger(SnailRockPutter.class);
 
 	private final long _intervalInMilli;
@@ -40,21 +40,6 @@ public class SnailRockPutter extends RocksJavaUtil {
 
 		this._capacity = capacity;
 		this._intervalInMilli = intervalInMilli;
-	}
-
-	@Override
-	public void set(String key) {
-		put(key.getBytes(), key.getBytes());
-	}
-
-	@Override
-	public void put(String key, String value) {
-		put(key.getBytes(), value.getBytes());
-	}
-
-	@Override
-	public void put(String key, byte[] value) {
-		put(key.getBytes(), value);
 	}
 
 	protected void put(final byte[] k, final byte[] v) {
