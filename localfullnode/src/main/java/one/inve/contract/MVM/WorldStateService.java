@@ -1,10 +1,12 @@
 package one.inve.contract.MVM;
 
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongycastle.util.encoders.Hex;
 
 import one.inve.bean.message.ContractMessage;
 import one.inve.contract.ContractTransactionData;
@@ -244,15 +246,49 @@ public class WorldStateService {
 	 * @return
 	 */
 	public static void setBalance(String dbId, String address, BigInteger value) {
-		Repository track = getTrack(dbId);
+		// Repository track = getTrack(dbId);
 
-		// 讀取餘額
-		BigInteger balance = track.getBalance(address.getBytes());
-		// 餘額清零
-		track.addBalance(address.getBytes(), balance.negate());
-		// 直接設置餘額
-		track.addBalance(address.getBytes(), value);
-		// force it to commit root
-		((INVERepositoryRoot) track).commit(dbId);
+		// // 讀取餘額
+		// BigInteger balance = track.getBalance(address.getBytes());
+		// // 餘額清零
+		// track.addBalance(address.getBytes(), balance.negate());
+		// // 直接設置餘額
+		// track.addBalance(address.getBytes(), value);
+		// // force it to commit root
+		// ((INVERepositoryRoot) track).commit(dbId);
 	}
+
+	/**
+     * 執行無手續費查詢世界狀態
+     * @param dbId 指定的节点 ID
+     * @param address 合約地址
+     * @param callData 要执行的合约函数以及参数
+     * @return 查詢結果
+     */
+    public static byte[] executeViewTransaction(String dbId, String address, String callData) {
+        Transaction tx = new Transaction(
+            ByteBuffer.allocate(4).putInt(0).array(),   // nonce
+            ByteBuffer.allocate(4).putInt(10).array(),   // gas price
+            ByteBuffer.allocate(4).putInt(2000000).array(),   // gas limit
+            address.getBytes(),                         // to address
+            ByteBuffer.allocate(4).putInt(0).array(),   // value
+            Hex.decode(callData)
+        );
+
+        tx.setSender("TGAX77OVU3AGOYGKUF5IFGZVRQJ23ZFB".getBytes());
+
+        Repository track = getTrack(dbId);
+        INVETransactionExecutor executor = new INVETransactionExecutor(
+            tx, track,
+            new BlockStoreDummy(),
+            new INVEProgramInvokeFactoryImpl(),
+            SystemProperties.getDefault().getGenesis()
+        ).setLocalCall(true);
+
+        executor.init();
+        executor.execute();
+        executor.go();
+
+        return executor.getResult().getHReturn();
+    }
 }
