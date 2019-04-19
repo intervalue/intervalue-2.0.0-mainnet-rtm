@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import one.inve.beans.dao.*;
+import one.inve.contract.MVM.WorldStateService;
 import one.inve.contract.ethplugin.core.Repository;
 import one.inve.contract.inve.INVERepositoryRoot;
 import one.inve.contract.inve.INVETransactionReceipt;
@@ -438,6 +439,50 @@ public class HttpApiService {
             return ResponseUtils.normalResponse(jo.toJSONString());
         } catch (Exception e) {
             logger.error("getReceipt handle error: {}", e);
+            return ResponseUtils.handleExceptionResponse();
+        }
+    }
+
+    /**
+     * 查询合约属性值（无手续费）
+     * @param data
+     * @return
+     */
+    @RequestMapper(value = "/v1/sendViewMessage", method = MethodEnum.POST)
+    public String sendViewMessage(DataMap<String, Object> data) {
+        if (null == data || data.isEmpty() ) {
+            logger.error("parameter is empty.");
+            return ResponseUtils.paramIllegalResponse();
+        } else {
+            logger.error("getReceipt value is: {}", JSON.toJSONString(data));
+        }
+
+        //读取查询参数(函数选择器+调用值)
+        String calldata = data.getString("calldata");
+        if (StringUtils.isEmpty(calldata)) {
+            logger.error("parameter is empty.");
+            return ResponseUtils.paramIllegalResponse();
+        }
+        //读取目标合约地址
+        String address = data.getString("address");
+        if (StringUtils.isEmpty(calldata)) {
+            logger.error("parameter is empty.");
+            return ResponseUtils.paramIllegalResponse();
+        }
+
+        try {
+            byte[] result = WorldStateService.executeViewTransaction(
+                    node.nodeParameters.dbId,
+                    address,
+                    calldata
+            );
+
+            JSONObject jo = new JSONObject();
+            jo.put("result", Hex.toHexString(result));
+
+            return ResponseUtils.normalResponse(jo.toJSONString());
+        } catch (Exception e) {
+            logger.error("sendViewMessage handle error: {}", e);
             return ResponseUtils.handleExceptionResponse();
         }
     }
