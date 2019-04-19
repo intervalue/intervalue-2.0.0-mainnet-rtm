@@ -156,7 +156,26 @@ public class QueryTableSplit {
 				byte[] transationByte = new RocksJavaUtil(dbId).get(hash);
 				if (transationByte != null) {
 					String a = new String(transationByte);
-					list.add(JSONArray.parseObject(transationByte, Message.class));
+
+					// @formatter:off
+					// Francis.Deng 4/19/2019 because of historical data corruption,the function
+					// should not exit if an error is thrown out
+					// <p/>
+					// bad
+					// case:32K8iDd2mz801UL6M2R0Uwo336ETalo4Yzprn9KLblBZcbEzILne8Nkppbn8cmbtpUyc/8rLHbTsSa9SqNzP8w1g==
+					// good
+					// case:{"eHash":"gw8Uw7alq8+CYUwR/pe/QC30rCwU0Lh9mpoNvCaEVDW03WhQ0W7iP/zgL//Ulr1p","hash":"32FAJFaIZqIFn2LnQl+NeUvsh5HDvvx/exTpmXLb+t+HQEkvnGdNFigVJ7P9AqA7q7uCdpQDk1DV5ExhkxkrAETg==","id":"888","isStable":true,"isValid":true,"lastIdx":true,"message":"{\"fromAddress\":\"EVPBGL2SN4Z44AIRZEIKBWUGQG5BXWQQ\",\"toAddress\":\"DRN63KZRYJI62C6EFN227E5B5AZ2PE5L\",\"amount\":\"226000000000000000000\",\"timestamp\":1552535892532,\"remark\":\"\",\"vers\":\"2.0\",\"pubkey\":\"AqMYjLmyxRkQ6Ff1VTcKXDuaZ2XlsG947Y3MoidbCDjU\",\"type\":1,\"fee\":\"500000\",\"nrgPrice\":\"1000000000\",\"signature\":\"32FAJFaIZqIFn2LnQl+NeUvsh5HDvvx/exTpmXLb+t+HQEkvnGdNFigVJ7P9AqA7q7uCdpQDk1DV5ExhkxkrAETg==\"}","updateTime":1552535811906}
+					// @formatter:on
+					try {
+						list.add(JSONArray.parseObject(transationByte, Message.class));
+					} catch (Exception e) {
+						logger.error(
+								"WWIBETBCSBET rocksdb contains wrong message json ({}) by hash({}) due to historical data corruption",
+								a, hash);
+						// list.add(new Message());
+					}
+					// list.add(JSONArray.parseObject(transationByte, Message.class));
+
 				} else {
 					logger.error("this hash rocksDB not exist");
 					return null;
@@ -326,7 +345,7 @@ public class QueryTableSplit {
 				if (transationByte != null) {
 					// @formatter:off
 
-					// Franics.Deng 4/10/2019
+					// Francis.Deng 4/10/2019
 					// To work well in crappy environment,the bad cases should been
 					// supported(WWIBETBCSBET).
 					//
