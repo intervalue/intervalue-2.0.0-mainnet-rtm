@@ -488,7 +488,7 @@ public class GossipEventThread extends Thread {
                         .build();
                 Map<String, String> resultMap = myFlow.addEvent(eb);
 
-                logger.info("Map<String, String> resultMap = myFlow.addEvent(eb)={},eg,'selfMissing','otherMissing','hashErr','signatureErr'",resultMap);
+                logger.info("{}=Map<String, String> resultMap = myFlow.addEvent(eb),eg,'selfMissing','otherMissing','hashErr','signatureErr'",resultMap);
 
                 String data = Config.GOSSIP_SIGNATURE_DATA;
                 String pubkey = node.publicKey == null ? "" : HnKeyUtils.getString4PublicKey(node.publicKey);
