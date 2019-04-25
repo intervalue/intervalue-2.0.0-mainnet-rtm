@@ -169,8 +169,12 @@ public class EventFlow {
         //eb.hash = selfHash;
         // 验证签名
         PublicKey publicKey = this.pubKeys[eb.getShardId()][(int) eb.getCreatorId()];
+
+
         //调用线程池验证签名合法性，完成以后设置签名合法标志并继续调用addEventForCons
         if ( !Cryptos.verifySignature(selfHash, eb.getSignature(), publicKey) ) {
+            logger.warn("Warning: the system suffered from split attack due to unmatched event's signature");
+
             String localSelfPaHash = null==selfParentHash ? null : DSA.encryptBASE64(selfParentHash);
             String localOtherPaHash = null==otherParentHash ? null : DSA.encryptBASE64(otherParentHash);
             String ebSelfPaHash = null==eb.getParentHash() ? null : DSA.encryptBASE64(eb.getParentHash());
