@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 
 /**
  * local full node to local full node
- * @author Clare
  * @date   2018/6/5.
  */
 public class Local2localImpl implements Local2local {
@@ -294,6 +293,11 @@ public class Local2localImpl implements Local2local {
     private ArrayList<EventBody> getUnknownEvents(int shardId, long[] otherCounts, String connInfo) {
         EventStore myStore = node.getEventStore();
 		long[] currMyCounts = myStore.getLastSeqsByShardId(shardId);
+
+		//verbose output to compare two seqs.
+		logger.info("requester's height is {}",Arrays.toString(otherCounts));
+		logger.info("my height is          {}",Arrays.toString(currMyCounts));
+
 		ArrayList<EventBody> diffEvents = new ArrayList<>();
 		EventBody eventBody = null;
 
