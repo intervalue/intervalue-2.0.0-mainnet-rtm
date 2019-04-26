@@ -15,6 +15,24 @@ import one.inve.core.EventBody;
  * @Description: In order to avoid data loss,we intentionally append some data
  *               to file which acts as a backups,which is based on log4j
  *               technology.
+ *               
+ *               
+				@formatter:off
+				
+				## data backups setting
+				log4j.logger.Backups=INFO,Backups
+				log4j.additivity.Backups = false
+				
+				log4j.appender.Backups = org.apache.log4j.DailyRollingFileAppender
+				log4j.appender.Backups.File = backups/replay.log
+				log4j.appender.Backups.Append = true
+				log4j.appender.Backups.Threshold = INFO
+				log4j.appender.Backups.layout = org.apache.log4j.PatternLayout
+				log4j.appender.Backups.layout.ConversionPattern = %m%n
+				
+				@formatter:on
+
+
  * @author: Francis.Deng
  * @date: Apr 26, 2019 1:05:28 AM
  * @version: V1.0
