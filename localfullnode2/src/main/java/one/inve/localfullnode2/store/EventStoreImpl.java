@@ -14,31 +14,31 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import one.inve.node.GeneralNode;
-import one.inve.rocksDB.RocksJavaUtil;
+import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
 public class EventStoreImpl implements EventStore {
 	private static final Logger logger = LoggerFactory.getLogger(EventStoreImpl.class);
 
-	private GeneralNode node;
-	private int shardCount;
-	private int n;
-	private int selfId;
+	private EventStoreDependent dep;
+//	private int shardCount;
+//	private int n;
+//	private int selfId;
 	private ConcurrentHashMap<EventKeyPair, EventBody> existEvents;
 	private LinkedBlockingQueue<EventKeyPair> existEventKeys;
 	private final ConcurrentHashMap<Integer, AtomicLongArray> lastSeq = new ConcurrentHashMap<>();
 
-	public EventStoreImpl(GeneralNode node) {
-		this.node = node;
+	public EventStoreImpl(EventStoreDependent dep) {
+		this.dep = dep;
 		this.existEvents = new ConcurrentHashMap<>();
 		this.existEventKeys = new LinkedBlockingQueue<>();
-		this.shardCount = node.getShardCount();
-		this.n = node.getnValue();
-		this.selfId = (int) node.getCreatorId();
-		for (int i = 0; i < this.shardCount; i++) {
-			AtomicLongArray lastSeqs = new AtomicLongArray(this.n);
-			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters.dbId);
-			for (int j = 0; j < this.n; j++) {
+//		this.shardCount = node.getShardCount();
+//		this.n = node.getnValue();
+//		this.selfId = (int) node.getCreatorId();
+		for (int i = 0; i < dep.getShardCount(); i++) {
+			AtomicLongArray lastSeqs = new AtomicLongArray(dep.getnValue());
+			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
+			for (int j = 0; j < dep.getnValue(); j++) {
 				String key = i + "_" + j;
 				byte[] value = rocksJavaUtil.get(key);
 				if (null != value && value.length > 0) {
@@ -51,27 +51,27 @@ public class EventStoreImpl implements EventStore {
 		}
 	}
 
-	public EventStoreImpl(int shardCount, int n, int selfId) {
-		this.existEvents = new ConcurrentHashMap<>();
-		this.existEventKeys = new LinkedBlockingQueue<>();
-		this.shardCount = shardCount;
-		this.n = n;
-		this.selfId = selfId;
-		for (int i = 0; i < this.shardCount; i++) {
-			AtomicLongArray lastSeqs = new AtomicLongArray(this.n);
-			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters.dbId);
-			for (int j = 0; j < this.n; j++) {
-				String key = i + "_" + j;
-				byte[] value = rocksJavaUtil.get(key);
-				if (null != value && value.length > 0) {
-					lastSeqs.set(j, -1);
-				} else {
-					lastSeqs.set(j, -1);
-				}
-			}
-			this.lastSeq.put(i, lastSeqs);
-		}
-	}
+//	public EventStoreImpl(int shardCount, int n, int selfId) {
+//		this.existEvents = new ConcurrentHashMap<>();
+//		this.existEventKeys = new LinkedBlockingQueue<>();
+//		this.shardCount = shardCount;
+//		this.n = n;
+//		this.selfId = selfId;
+//		for (int i = 0; i < this.shardCount; i++) {
+//			AtomicLongArray lastSeqs = new AtomicLongArray(this.n);
+//			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters.dbId);
+//			for (int j = 0; j < this.n; j++) {
+//				String key = i + "_" + j;
+//				byte[] value = rocksJavaUtil.get(key);
+//				if (null != value && value.length > 0) {
+//					lastSeqs.set(j, -1);
+//				} else {
+//					lastSeqs.set(j, -1);
+//				}
+//			}
+//			this.lastSeq.put(i, lastSeqs);
+//		}
+//	}
 
 	@Override
 	public void initCache() {
@@ -89,7 +89,7 @@ public class EventStoreImpl implements EventStore {
 			if (logger.isDebugEnabled()) {
 				logger.debug("not in memory, query from database...");
 			}
-			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters.dbId);
+			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
 			EventKeyPair pair = new EventKeyPair(shardId, creatorId, creatorSeq);
 			byte[] evt = rocksJavaUtil.get(pair.toString());
 			if (null != evt && evt.length > 0) {
@@ -103,7 +103,7 @@ public class EventStoreImpl implements EventStore {
 	public EventBody getEventInMem(int shardId, long creatorId, long creatorSeq) {
 		EventKeyPair pair = new EventKeyPair(shardId, creatorId, creatorSeq);
 		EventBody eb = existEvents.get(pair);
-		RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters.dbId);
+		RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
 		if (eb == null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("not in memory, query from database...");
@@ -191,7 +191,7 @@ public class EventStoreImpl implements EventStore {
 
 	@Override
 	public Iterator<EventBody> genOrderedIterator(int shardId, int n) {
-		return new EventIterator<>(shardId, selfId, n, node.nodeParameters.dbId);
+		return new EventIterator<>(shardId, dep.getCreatorId(), n, dep.getDbId());
 	}
 
 	@Override
@@ -219,7 +219,7 @@ public class EventStoreImpl implements EventStore {
 						JSONObject.toJSONString(eb));
 			}
 
-			node.getEventSaveQueue().put(eb);
+			dep.getEventSaveQueue().put(eb);
 		} catch (Exception e) {
 			logger.error("save new event error: {}", e);
 		}
