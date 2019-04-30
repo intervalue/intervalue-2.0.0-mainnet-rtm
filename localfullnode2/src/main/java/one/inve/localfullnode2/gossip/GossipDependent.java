@@ -14,7 +14,7 @@ import one.inve.localfullnode2.store.IEventFlow;
  * 
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
- * @Description: a description of gossip module
+ * @Description: a dependence description of gossip module
  * @author: Francis.Deng
  * @date: March 29, 2018 8:58:13 PM
  * @version: V1.0
