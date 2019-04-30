@@ -207,5 +207,5 @@ public class Config {
 	/**
 	 *
 	 */
-	static boolean logStack = true;
+	public static boolean logStack = true;
 }
