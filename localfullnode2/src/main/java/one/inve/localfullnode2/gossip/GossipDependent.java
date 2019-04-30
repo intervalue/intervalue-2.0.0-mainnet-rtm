@@ -55,9 +55,10 @@ public interface GossipDependent {
 	// Config.GOSSIP_IN_SHARD or Config.GOSSIP_GLOBAL_SHARD
 	int getGossipType();
 
-	// the destination to which the result is sent
+	// the message source via http request
 	ConcurrentLinkedQueue<byte[]> getMessageQueue();
 
+	// the destination to which the result is sent
 	IEventFlow getEventFlow();
 
 	List<String> getBlackList4PubKey();
