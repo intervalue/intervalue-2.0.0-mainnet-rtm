@@ -18,13 +18,14 @@ import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * 字符串处理工具类
- * @author Clare
+ * 
  * @date
  */
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 	public static final byte[] BOM = { -17, -69, -65 };
 
-	public static final char[] HexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+	public static final char[] HexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
+			'f' };
 
 	public static Pattern PHtml = Pattern.compile("<[^>]+>", 32);
 
@@ -338,9 +339,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		return str;
 	}
 
-
-
-
 	public static String escape(String src) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < src.length(); i++) {
@@ -360,7 +358,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		}
 		return sb.toString();
 	}
-
 
 	public static String leftPad(String srcString, char c, int length) {
 		if (srcString == null) {
@@ -415,14 +412,14 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		return src;
 	}
 
-
 	/**
 	 * 生成随机字符串
+	 * 
 	 * @return 字符串
 	 */
 	public static String generateRandomString() {
-		char[] chr = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+		char[] chr = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+				'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 		int length = 20;
 		Random random = new Random();
 		StringBuffer buffer = new StringBuffer();
@@ -431,7 +428,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		}
 		return buffer.toString();
 	}
-
 
 	public static String rightPad(String srcString, char c, int length) {
 		if (srcString == null) {
@@ -493,10 +489,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		return new String(c);
 	}
 
-
-
-
-
 	public static String getHtmlTitle(String html) {
 		Matcher m = PTitle.matcher(html);
 		if (m.find()) {
@@ -504,9 +496,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		}
 		return null;
 	}
-
-
-
 
 	public static String capitalize(String str) {
 		if ((str == null) || (str.length() == 0)) {
@@ -664,10 +653,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		return ext;
 	}
 
-
-
-
-
 	/**
 	 * 过滤不可见字符
 	 */
@@ -680,8 +665,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		for (int i = 0; i < input.length(); i++) {
 			current = input.charAt(i);
 			boolean isValidXmlChar = (current == 0x9) || (current == 0xA) || (current == 0xD)
-					|| ((current >= 0x20) && (current <= 0xD7FF))
-					|| ((current >= 0xE000) && (current <= 0xFFFD))
+					|| ((current >= 0x20) && (current <= 0xD7FF)) || ((current >= 0xE000) && (current <= 0xFFFD))
 					|| ((current >= 0x10000) && (current <= 0x10FFFF));
 			if (isValidXmlChar) {
 				out.append(current);
@@ -708,9 +692,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		ncs = ArrayUtils.subarray(ncs, 0, j);
 		return new String(ncs);
 	}
-
-
-
 
 	public static String quickHtmlEncode(String html) {
 		boolean flag = false;
@@ -818,7 +799,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
 		return new String(buf, 0, j);
 	}
-
 
 	/**
 	 * lpad
@@ -996,8 +976,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		return charidx;
 	}
 
-
-
 	/**
 	 * get values
 	 *
@@ -1123,13 +1101,16 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 	 */
 	public static boolean isChinese(char c) {
 		Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
-		if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+		if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+				|| ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+				|| ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+				|| ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+				|| ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+				|| ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
 			return true;
 		}
 		return false;
 	}
-
-
 
 	/**
 	 * 检查指定的字符串列表是否不为空。
