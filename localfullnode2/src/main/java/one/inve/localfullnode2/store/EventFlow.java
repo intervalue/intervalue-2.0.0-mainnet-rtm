@@ -21,7 +21,7 @@ import one.inve.localfullnode2.utilities.HnKeyUtils;
 import one.inve.localfullnode2.utilities.Utilities;
 import one.inve.utils.DSA;
 
-public class EventFlow {
+public class EventFlow implements IEventFlow {
 	private static final Logger logger = LoggerFactory.getLogger(EventFlow.class);
 
 	private final EventStore eventStore;
