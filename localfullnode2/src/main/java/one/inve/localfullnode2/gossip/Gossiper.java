@@ -23,7 +23,7 @@ import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable
 import one.inve.localfullnode2.gossip.vo.AppointEvent;
 import one.inve.localfullnode2.gossip.vo.GossipObj;
 import one.inve.localfullnode2.store.EventBody;
-import one.inve.localfullnode2.store.EventFlow;
+import one.inve.localfullnode2.store.IEventFlow;
 import one.inve.localfullnode2.utilities.Cryptos;
 import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.localfullnode2.vo.Event;
@@ -403,7 +403,7 @@ public class Gossiper {
 		try {
 			Instant first = Instant.now();
 			// 将从邻居接收的未知共识事件记入自己hg
-			EventFlow myFlow = dep.getEventFlow();
+			IEventFlow myFlow = dep.getEventFlow();
 			for (Event evt : events) {
 				if (evt.selfSeq == 0 || evt.selfSeq == dep.getLastSeqs()[shardId][(int) evt.selfId] + 1) {
 					// node.maxSeqs[shardId][(int) evt.selfId] = evt.selfSeq;

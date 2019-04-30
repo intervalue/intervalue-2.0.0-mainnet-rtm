@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import one.inve.cluster.Member;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
-import one.inve.localfullnode2.store.EventFlow;
+import one.inve.localfullnode2.store.IEventFlow;
 
 /**
  * 
@@ -58,7 +58,7 @@ public interface GossipDependent {
 	// the destination to which the result is sent
 	ConcurrentLinkedQueue<byte[]> getMessageQueue();
 
-	EventFlow getEventFlow();
+	IEventFlow getEventFlow();
 
 	List<String> getBlackList4PubKey();
 
