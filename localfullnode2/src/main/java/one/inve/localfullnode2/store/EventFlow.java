@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.swing.text.Utilities;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +17,8 @@ import com.alibaba.fastjson.JSONObject;
 
 import one.inve.localfullnode2.utilities.Cryptos;
 import one.inve.localfullnode2.utilities.Hash;
-import one.inve.util.HnKeyUtils;
+import one.inve.localfullnode2.utilities.HnKeyUtils;
+import one.inve.localfullnode2.utilities.Utilities;
 import one.inve.utils.DSA;
 
 public class EventFlow {
