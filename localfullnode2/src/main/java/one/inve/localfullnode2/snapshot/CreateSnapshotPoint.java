@@ -18,14 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CreateSnapshotPoint {
     private static final Logger logger = LoggerFactory.getLogger(CreateSnapshotPoint.class);
 
-    private SnapshotDependent dep;
-    private EventBody event;
-    String msgHashTreeRoot = null;
-    BigInteger vers;
+    private CreateSnapshotPointDependent dep;
+    private String msgHashTreeRoot;
+    private BigInteger vers;
 
-    public void createSnapshotPoint(SnapshotDependent dep,EventBody event) throws InterruptedException {
+    public void createSnapshotPoint(CreateSnapshotPointDependent dep, EventBody event) throws InterruptedException {
         this.dep = dep;
-        this.event = event;
         this.msgHashTreeRoot = dep.getMsgHashTreeRoot();
         this.vers = dep.getCurrSnapshotVersion();
 
