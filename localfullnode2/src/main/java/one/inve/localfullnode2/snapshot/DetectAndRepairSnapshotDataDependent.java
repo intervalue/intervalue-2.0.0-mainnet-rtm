@@ -21,11 +21,7 @@ public interface DetectAndRepairSnapshotDataDependent {
 
     HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
 
-    SnapshotMessage querySnapshotMessageByHash(String dbId, String hash);
-
     void deleteEventsBeforeSnapshotPointEvent(String dbId, EventBody eb, int nValue);
-
-    SnapshotMessage queryLatestSnapshotMessage(String dbId);
 
     void setSnapshotMessage(SnapshotMessage snapshotMessage);
 }

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import one.inve.bean.message.Contribution;
 import one.inve.bean.message.SnapshotPoint;
 import one.inve.bean.node.LocalFullNode;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -41,5 +41,7 @@ public interface CreateSnapshotPointDependent {
     LinkedBlockingQueue<JSONObject> getConsMessageVerifyQueue();
 
     void setContributions(HashSet<Contribution> contributions);
+
+    EventBody getEventBody();
 
 }
