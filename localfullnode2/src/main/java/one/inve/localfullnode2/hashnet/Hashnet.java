@@ -124,7 +124,7 @@ public class Hashnet {
 	 * 
 	 * @param event event
 	 */
-	private void consRecordEvent(Event event) {
+	protected void consRecordEvent(Event event) {
 		int numMembers = this.numNodes;
 		// 初始化给定event快速算法变量
 		this.consSetFastVars(event, numMembers);
@@ -638,6 +638,7 @@ public class Hashnet {
 	// 这些参数也是进行序列化必须的参数
 	// 同时要增加一个本地生成的generation信息，以便从磁盘加载以后
 	// 网络重建
+	@Deprecated
 	public synchronized boolean addEvent(EventBody eb) {
 //        logger.info("this.selfid: "+this.selfId
 //                            +", creator: "+eb.creatorId+", "+eb.creatorSeq+ ", generation: "+ eb.generation+"; "
@@ -668,5 +669,9 @@ public class Hashnet {
 		// 将Event在net中进行记录，这是共识算法执行的入口
 		this.consRecordEvent(evt);
 		return true;
+	}
+
+	public ConcurrentHashMap<EventKeyPair, Event> eventsByKeypair() {
+		return eventsByKeypair();
 	}
 }
