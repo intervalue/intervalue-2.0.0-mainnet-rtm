@@ -24,7 +24,7 @@ public class RepairCurrSnapshotPointInfo {
     private int shardCount;
     private String dbId;
 
-    private void repairCurrSnapshotPointInfo() throws InterruptedException {
+    public void repairCurrSnapshotPointInfo() throws InterruptedException {
         this.shardCount = dep.getShardCount();
         this.dbId = dep.getDbId();
 
