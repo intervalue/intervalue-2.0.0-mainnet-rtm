@@ -29,6 +29,8 @@ import one.inve.utils.SignUtil;
  * 
  * @Description: If there is snapshot version gap which is behind (n/3)+1 at
  *               least 2,the class is ready to run.
+ *               <p/>
+ *               {@link GossipEventThread::gossip2Local}
  * @author: Francis.Deng
  * @date: Nov 6, 2018 1:47:05 AM
  * @version: V1.0
