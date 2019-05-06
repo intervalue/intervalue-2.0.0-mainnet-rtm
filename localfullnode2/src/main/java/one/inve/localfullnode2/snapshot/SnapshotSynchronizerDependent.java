@@ -2,12 +2,11 @@ package one.inve.localfullnode2.snapshot;
 
 import java.math.BigInteger;
 import java.security.PublicKey;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.SnapshotMessage;
-import one.inve.localfullnode2.snapshot.vo.GossipObj;
 
 /**
  * 
@@ -32,14 +31,14 @@ public interface SnapshotSynchronizerDependent {
 
 	SnapshotSyncConsumable getSnapshotSync();
 
-	GossipObj getGossipObj();
-
 	PublicKey getPublicKey();
 
-	LinkedBlockingQueue<JSONObject> getConsMessageVerifyQueue();
+	BlockingQueue<JSONObject> getConsMessageVerifyQueue();
 
 	// refresh the node info
 	void refresh(SnapshotMessage syncedSnapshotMessage);
+
+//	GossipObj getGossipObj();	
 
 //	HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
 //
