@@ -3,7 +3,7 @@ package one.inve.localfullnode2.gossip;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Queue;
 
 import one.inve.cluster.Member;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
@@ -27,7 +27,7 @@ public interface GossipDependent {
 	 */
 	// List<Member> getMembers();
 
-	int getRandomOtherShardId();
+	// int getRandomOtherShardId();
 
 	// getGossipType()
 	List<Member> getMembers(int gossipType);
@@ -56,7 +56,7 @@ public interface GossipDependent {
 	int getGossipType();
 
 	// the message source via http request
-	ConcurrentLinkedQueue<byte[]> getMessageQueue();
+	Queue<byte[]> getMessageQueue();
 
 	// the destination to which the result is sent
 	IEventFlow getEventFlow();
