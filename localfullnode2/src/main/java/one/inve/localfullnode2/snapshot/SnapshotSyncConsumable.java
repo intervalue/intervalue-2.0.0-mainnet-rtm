@@ -3,7 +3,7 @@ package one.inve.localfullnode2.snapshot;
 import java.util.concurrent.CompletableFuture;
 
 import one.inve.cluster.Member;
-import one.inve.localfullnode2.gossip.vo.GossipObj;
+import one.inve.localfullnode2.snapshot.vo.SnapObj;
 
 /**
  * 
@@ -16,6 +16,6 @@ import one.inve.localfullnode2.gossip.vo.GossipObj;
  */
 public interface SnapshotSyncConsumable {
 	// snapshot synchronizing
-	CompletableFuture<GossipObj> gossipMySnapVersion4SnapAsync(Member neighbor, String pubkey, String sig, String hash,
+	CompletableFuture<SnapObj> gossipMySnapVersion4SnapAsync(Member neighbor, String pubkey, String sig, String hash,
 			String transCount);
 }
