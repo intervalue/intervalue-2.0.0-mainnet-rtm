@@ -24,7 +24,7 @@ import com.alibaba.fastjson.JSONArray;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.utilities.PathUtils;
 
-public class RocksJavaUtil {
+public class RocksJavaUtil implements INosql {
 	private static final Logger logger = LoggerFactory.getLogger(RocksJavaUtil.class);
 	private static String dbPath = PathUtils.getDataFileDir();
 	protected RocksDB rocksDB;// allow subclasses to have access to encapsulated object by Francis.Deng

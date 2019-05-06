@@ -58,7 +58,7 @@ public class Utilities {
 		}
 	}
 
-	static int arrayCompare(byte[] sig1, byte[] sig2, byte[] whitening) {
+	public static int arrayCompare(byte[] sig1, byte[] sig2, byte[] whitening) {
 		if (sig1 == null && sig2 != null) {
 			return -1;
 		} else if (sig1 != null && sig2 == null) {

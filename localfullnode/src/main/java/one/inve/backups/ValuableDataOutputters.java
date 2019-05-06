@@ -20,8 +20,8 @@ import one.inve.core.EventBody;
 				@formatter:off
 				
 				## data backups setting
-				log4j.logger.Backups=INFO,Backups
-				log4j.additivity.Backups = false
+				log4j.logger.one.inve.backups.ValuableDataOutputters=INFO,Backups
+				log4j.additivity.one.inve.backups.ValuableDataOutputters = false
 				
 				log4j.appender.Backups = org.apache.log4j.DailyRollingFileAppender
 				log4j.appender.Backups.File = backups/replay.log
@@ -29,6 +29,7 @@ import one.inve.core.EventBody;
 				log4j.appender.Backups.Threshold = INFO
 				log4j.appender.Backups.layout = org.apache.log4j.PatternLayout
 				log4j.appender.Backups.layout.ConversionPattern = %m%n
+
 				
 				@formatter:on
 
@@ -38,7 +39,7 @@ import one.inve.core.EventBody;
  * @version: V1.0
  */
 public class ValuableDataOutputters {
-	private static final Logger logger = LoggerFactory.getLogger("Backups");
+	private static final Logger logger = LoggerFactory.getLogger("Backups-datalost");
 
 	private static class ValuableDataOutputtersIns {
 		private static final ValuableDataOutputters me = new ValuableDataOutputters();

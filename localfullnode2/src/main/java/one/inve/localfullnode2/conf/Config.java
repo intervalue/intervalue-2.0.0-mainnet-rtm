@@ -200,7 +200,7 @@ public class Config {
 	/**
 	 * coin round发生间隔
 	 */
-	static int coinFreq = 12;
+	public static int coinFreq = 12;
 	/**
 	 * 使用RSA
 	 */

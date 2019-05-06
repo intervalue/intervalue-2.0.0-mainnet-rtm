@@ -9,11 +9,11 @@ public interface IEventFlow {
 
 	EventBody[] getAllQueuedEvents(int shardId);
 
-	EventBody newEvent(int shardId, long creatorId, long otherId, byte[][] trans);
+	EventBody newEvent(int shardId, long creatorId, long otherId, byte[][] trans);// Gossiper
 
-	void addEvent2Store(EventBody eb);
+	void addEvent2Store(EventBody eb);// Gossiper
 
-	Map<String, String> addEvent(EventBody eb);
+	Map<String, String> addEvent(EventBody eb);// Gossiper
 
 	boolean checkSplitEvent(EventBody eb1, byte[] otherHash1, EventBody eb2, byte[] otherHash2, byte[] parentHash);
 
