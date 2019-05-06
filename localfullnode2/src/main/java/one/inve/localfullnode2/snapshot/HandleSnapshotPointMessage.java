@@ -9,14 +9,14 @@ import one.inve.utils.DSA;
 
 import java.math.BigInteger;
 
-public class HandleConsensusEmptyMessage {
+public class HandleSnapshotPointMessage {
 
-    private HandleConsensusEmptyMessageDependent dep;
+    private HandleSnapshotPointMessageDependent dep;
     private BigInteger vers;
     private JSONObject msgObject;
 
 
-    public void handleConsensusEmptyMessage(HandleConsensusEmptyMessageDependent dep) throws Exception{
+    public void handleConsensusEmptyMessage(HandleSnapshotPointMessageDependent dep) throws Exception{
         this.dep = dep;
         this.vers = dep.getCurrSnapshotVersion();
         this.msgObject = dep.getMsgObject();
@@ -66,12 +66,16 @@ public class HandleConsensusEmptyMessage {
                     dep.getMnemonic(), dep.getAddress(),
                     vers, getPreHash(), snapshotPoint);
 
+            System.out.println(JSON.toJSONString(snapshotMessage));
+
             // 加入消息队列
             String msg = snapshotMessage.getMessage();
 //            logger.info("node-({}, {}): new version-{}, snapshotMsg: {}",
 //                    node.getShardId(), node.getCreatorId(), vers, msg);
 
             dep.getMessageQueue().add(JSON.parseObject(msg).getString("message").getBytes());
+
+            System.out.println(JSON.toJSONString(JSON.parseObject(msg).getString("message")));
         } else {
 //            logger.warn("node-({}, {}): new version-{}, no permission!!",
 //                    node.getShardId(), node.getCreatorId(), vers);
@@ -96,5 +100,14 @@ public class HandleConsensusEmptyMessage {
             preHash = preSnapshotMessage.getHash();
         }
         return preHash;
+    }
+
+    public static void main(String[] args) {
+        HandleSnapshotPointMessageDependent dep = new HandleSnapshotPointMessageDependentImpl();
+        try {
+            new HandleSnapshotPointMessage().handleConsensusEmptyMessage(dep);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

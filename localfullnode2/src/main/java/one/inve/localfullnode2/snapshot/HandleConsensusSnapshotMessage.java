@@ -33,6 +33,7 @@ public class HandleConsensusSnapshotMessage {
         if (valid) {
             int validState = 0;
             try {
+                validState = 1;
 //                validState = TxVerifyUtils.verifyMessageWithoutSign(
 //                        JSONObject.parseObject(message),
 //                        msgObject.getInteger("eShardId"),
@@ -74,6 +75,7 @@ public class HandleConsensusSnapshotMessage {
 
             // 清除当前快照之前第 Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION) 个快照的快照点之前的所有Event
 //          DbUtils.clearHistoryEventsBySnapshot(snapMsg.getSnapVersion(), snapMsg.getPreHash(), node);
+            // TODO
             dep.clearHistoryEventsBySnapshot(snapMsg.getSnapVersion(), snapMsg.getPreHash());
 
             // 补充更新本地快照消息的部分参数(snapHash, signature, pubkey, timestamp),
@@ -176,5 +178,14 @@ public class HandleConsensusSnapshotMessage {
         o.put("snapVersion", snapVersion.toString());
         o.put("updateTime", Instant.now().toEpochMilli());
         dep.getSystemAutoTxSaveQueue().put(o);
+    }
+
+    public static void main(String[] args) {
+        HandleConsensusSnapshotMessageDependent dep = new HandleConsensusSnapshotMessageDependentImpl();
+        try {
+            new HandleConsensusSnapshotMessage().handleConsensusSnapshotMessage(dep);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

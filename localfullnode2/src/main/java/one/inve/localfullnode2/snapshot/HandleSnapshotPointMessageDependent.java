@@ -7,11 +7,11 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public interface HandleConsensusEmptyMessageDependent {
-
-    HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
+public interface HandleSnapshotPointMessageDependent {
 
     BigInteger getCurrSnapshotVersion();
+
+    HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
 
     JSONObject getMsgObject();
 
@@ -19,6 +19,7 @@ public interface HandleConsensusEmptyMessageDependent {
 
     SnapshotMessage getSnapshotMessage();
 
+    //与上一个快照点之间的交易手续费总额
     BigInteger getTotalFeeBetween2Snapshots();
 
     String getPubKey();

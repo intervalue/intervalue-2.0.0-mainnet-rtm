@@ -1,5 +1,6 @@
 package one.inve.localfullnode2.snapshot;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import one.inve.bean.message.Contribution;
 import one.inve.bean.message.SnapshotPoint;
@@ -11,11 +12,9 @@ import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.utils.DSA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -29,7 +28,6 @@ public class CreateSnapshotPoint {
 
     public void createSnapshotPoint(CreateSnapshotPointDependent dep) throws InterruptedException {
         this.dep = dep;
-        this.msgHashTreeRoot = dep.getMsgHashTreeRoot();
         this.vers = dep.getCurrSnapshotVersion();
         this.event = dep.getEventBody();
 
@@ -68,8 +66,8 @@ public class CreateSnapshotPoint {
                     .contributions((null != statistics && statistics.size() <= 0) ? null : statistics)
                     .build());
             dep.getTreeRootMap().put(vers, msgHashTreeRoot);
-            logger.info("\n=========== dep-({}, {}):  vers: {}, msgHashTreeRoot: {}",
-                    dep.getShardId(), dep.getCreatorId(), vers, msgHashTreeRoot);
+//            logger.info("\n=========== dep-({}, {}):  vers: {}, msgHashTreeRoot: {}",
+//                    dep.getShardId(), dep.getCreatorId(), vers, msgHashTreeRoot);
 
             // 重置消息hash根
             dep.setContributions(new HashSet<>());
@@ -83,6 +81,19 @@ public class CreateSnapshotPoint {
             o.put("eHash", eHash);
             o.put("lastIdx", true);
             dep.getConsMessageVerifyQueue().put(o);
+
+            System.out.println(JSON.toJSONString(dep.getTreeRootMap()));
+            System.out.println(JSON.toJSONString(dep.getSnapshotPointMap()));
+            System.out.println(o);
+        }
+    }
+
+    public static void main(String[] args){
+        CreateSnapshotPointDependent dep = new CreateSnapshotPointDependentImpl();
+        try {
+            new CreateSnapshotPoint().createSnapshotPoint(dep);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
