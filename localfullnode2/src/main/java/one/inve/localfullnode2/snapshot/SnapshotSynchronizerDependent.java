@@ -13,7 +13,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.SnapshotMessage;
+import one.inve.bean.node.LocalFullNode;
+import one.inve.localfullnode2.message.service.ITransactionDbService;
 import one.inve.localfullnode2.snapshot.vo.SnapObj;
+import one.inve.localfullnode2.store.SnapshotDbService;
 import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.utils.SignUtil;
 
@@ -116,5 +119,18 @@ public interface SnapshotSynchronizerDependent {
 //	Map<String, HashSet<String>> getSnapVersionMap();
 
 //	Member getNeighbor();
+
+	//
+	// The following is to serve snapshot request.
+	//
+	long getCreatorId();
+
+	String getDBId();
+
+	List<LocalFullNode> getLocalFullNodes();
+
+	SnapshotDbService getSnapshotDBService();// only {@code querySnapshotMessageFormatStringByHash} is indispensable.
+
+	ITransactionDbService getTransactionDbService();
 
 }
