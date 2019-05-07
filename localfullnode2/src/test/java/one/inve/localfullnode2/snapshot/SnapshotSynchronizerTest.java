@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -73,9 +72,6 @@ public class SnapshotSynchronizerTest {
 		GossipObj gossipObj = new GossipObj("317", null, "317".getBytes());
 
 		SnapshotSynchronizer synchronizer = new SnapshotSynchronizer();
-		synchronizer.synchronize(dep, m1, gossipObj);
-		synchronizer.synchronize(dep, m2, gossipObj);
-		synchronizer.synchronize(dep, m2, gossipObj);
 
 		Assert.assertFalse(synchronizer.synchronize(dep, m1, gossipObj));
 		Assert.assertFalse(synchronizer.synchronize(dep, m2, gossipObj));
@@ -94,12 +90,12 @@ public class SnapshotSynchronizerTest {
 				String hash, String transCount) {
 
 			return CompletableFuture.supplyAsync(() -> {
-				try {
-					TimeUnit.SECONDS.sleep(2000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				try {
+//					TimeUnit.SECONDS.sleep(2000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 
 				return dep.getExpectedSnapObj();
 			});
@@ -181,7 +177,7 @@ public class SnapshotSynchronizerTest {
 		@Override
 		public boolean execute(SnapObj snapObj) {
 			System.out.println(snapObj);
-			return false;
+			return true;
 		}
 
 		protected PublicKey[][] getPublicKeys() {
