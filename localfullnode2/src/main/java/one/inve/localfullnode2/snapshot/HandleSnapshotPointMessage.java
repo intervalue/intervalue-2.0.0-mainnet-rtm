@@ -75,7 +75,7 @@ public class HandleSnapshotPointMessage {
 
             dep.getMessageQueue().add(JSON.parseObject(msg).getString("message").getBytes());
 
-            System.out.println(JSON.toJSONString(JSON.parseObject(msg).getString("message")));
+            System.out.println(JSON.parseObject(msg).getString("message"));
         } else {
 //            logger.warn("node-({}, {}): new version-{}, no permission!!",
 //                    node.getShardId(), node.getCreatorId(), vers);

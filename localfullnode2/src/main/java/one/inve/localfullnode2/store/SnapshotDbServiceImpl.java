@@ -23,25 +23,26 @@ public class SnapshotDbServiceImpl implements SnapshotDbService {
     public SnapshotMessage queryLatestSnapshotMessage(String dbId) {
         String snapshotMessageStr = "{\"preHash\":\"32YuK4odYOmKj3tHKAhWw81a/A+0abndzn2020/1PrudslVQ1HP0" +
                 "/szqBLN80RXtvTl4ZC6DwYDmNeo0hG22qQlQ==\",\"snapVersion\":318," +
-                "\"signature\":\"32O0YpHVThJzSvP2U1vHREJCiFYrPArzdceFRHGISkdi4o" +
-                "+ca97WhWZtY7b1quOyND4UB8btuwRdrl28brYOIvZA==\",\"vers\":\"2.0\"," +
+                "\"signature\":\"33ALXfpA019Woj/fuuX02QK/irq7nfymjVuDAM+XP1" +
+                "+mbmZSCeekoBeCol2DxtEKD3SvaMRC8nXerfTaSuc9db3qE=\",\"vers\":\"2.0\"," +
                 "\"fromAddress\":\"NUOX47THDUFUT7Z6XPNN75YJYRJK2LVC\",\"type\":3," +
-                "\"hash\":\"32O0YpHVThJzSvP2U1vHREJCiFYrPArzdceFRHGISkdi4o+ca97WhWZtY7b1quOyND4UB8btuwRdrl28brYOIvZA" +
-                "==\",\"pubkey\":\"AzZ6psaaBIcYeCEQZRlagF3sSDpYwjeqf1LdA/aTNCL/\"," +
+                "\"hash\":\"33ALXfpA019Woj/fuuX02QK/irq7nfymjVuDAM+XP1+mbmZSCeekoBeCol2DxtEKD3SvaMRC8nXerfTaSuc9db3qE" +
+                "=\",\"pubkey\":\"AzZ6psaaBIcYeCEQZRlagF3sSDpYwjeqf1LdA/aTNCL/\"," +
                 "\"snapshotPoint\":{\"contributions\":{\"TBFHMMQINYWJNDT74GJLNPF5JNROEWDG\":1734," +
                 "\"JC3ULYLYIZXHY25EMBWWDMPSVCHPVX7T\":1743,\"KNR6NYNGWAEPAX7VYOI2KKXBTD5ABQDT\":1723," +
                 "\"Q3K5BITCGSOYNB7LSNDPX6XM52HA7CEK\":1733,\"5LNNLSEQIIGAB5FP7YMBM2N5Q6ZQ4NBA\":1732," +
                 "\"ZXDFYOU7EKSJZBV2ZM4J7MR466Q2KPAI\":1738,\"NUOX47THDUFUT7Z6XPNN75YJYRJK2LVC\":1729," +
                 "\"73SRW2DPLN7YFTSIVVGHRCMDRO7G6HZQ\":1732,\"WQE2GM2BSEBH6MREP2Q4MDG7LDDL2NRY\":1737," +
-                "\"UVTNWYRJUDBPV3GRL2DY7HKYLC6JNJDL\":1739},\"eventBody\":{\"consEventCount\":144900000," +
-                "\"consTimestamp\":\"2019-05-04T16:37:20.286Z\",\"creatorId\":6,\"creatorSeq\":14575190," +
-                "\"generation\":24096409,\"hash\":\"YClht0S1KF+y5vKAwgKyCcnqztGBf3tlrWvwRBCm31OUHTv7BR5/p8P1iRcMFsbO" +
-                "\",\"isFamous\":false,\"otherId\":4,\"otherSeq\":13384060,\"shardId\":0," +
+                "\"UVTNWYRJUDBPV3GRL2DY7HKYLC6JNJDL\":1739},\"rewardRatio\":0.5,\"msgMaxId\":2627,\"totalFee\":0," +
+                "\"msgHashTreeRoot\":\"YClht0S1KF+y5vKAwgKyCcnqztGBf3tlrWvwRBCm31OUHTv7BR5/p8P1iRcMFsbO\"," +
+                "\"eventBody\":{\"generation\":24096409,\"isFamous\":false,\"otherId\":4,\"creatorSeq\":14575190," +
                 "\"signature\":\"EXoOxkG2IRPOWIp6Bx9GcR++w/lrxby6qhHjBP0YWljFdLCwUfLi" +
                 "+gKjtdyUJcaiXCKVRJ2AhshFjfpDJoNKzMbFtyFkXj8JMXo+6yMqzkR0uAsDXtvZ9xQPfP4NjP15tEgaglnHWRK91" +
-                "+aE6WQAWE1RD7zDCu/7+k1Lcej2emc=\",\"timeCreated\":\"2019-05-04T16:36:52.241Z\",\"transCount\":2627}," +
-                "\"msgHashTreeRoot\":\"YClht0S1KF+y5vKAwgKyCcnqztGBf3tlrWvwRBCm31OUHTv7BR5/p8P1iRcMFsbO\"," +
-                "\"msgMaxId\":2627,\"rewardRatio\":0.5,\"totalFee\":0},\"timestamp\":1556988080596}";
+                "+aE6WQAWE1RD7zDCu/7+k1Lcej2emc=\",\"transCount\":2627,\"creatorId\":6,\"shardId\":0," +
+                "\"consEventCount\":144900000,\"consTimestamp\":\"2019-05-04T16:37:20.286Z\"," +
+                "\"timeCreated\":\"2019-05-04T16:36:52.241Z\"," +
+                "\"hash\":\"YClht0S1KF+y5vKAwgKyCcnqztGBf3tlrWvwRBCm31OUHTv7BR5/p8P1iRcMFsbO\"," +
+                "\"otherSeq\":13384060}},\"timestamp\":1557200315096}";
         SnapshotMessage snapshotMessage = JSON.parseObject(snapshotMessageStr,SnapshotMessage.class);
         return snapshotMessage;
 //        return null;
@@ -76,7 +77,30 @@ public class SnapshotDbServiceImpl implements SnapshotDbService {
      * @return 快照消息（以实体对象形式返回）
      */
     public SnapshotMessage querySnapshotMessageByHash(String dbId, String hash) {
-        return null;
+        String snapshotMessageStr = "{\"preHash\":\"32XpYVyRvRJ/Vb5Xjo7tTqplD/L" +
+                "+BUpgh62xqWZOP1YNFAMyx0boLkrtFDYu8g4rSbcb9+uHmg0XXFdAGpTF3WDA==\",\"snapVersion\":317," +
+                "\"signature\":\"32YuK4odYOmKj3tHKAhWw81a/A+0abndzn2020/1PrudslVQ1HP0" +
+                "/szqBLN80RXtvTl4ZC6DwYDmNeo0hG22qQlQ==\",\"vers\":\"2.0\"," +
+                "\"fromAddress\":\"NUOX47THDUFUT7Z6XPNN75YJYRJK2LVC\",\"type\":3," +
+                "\"hash\":\"32YuK4odYOmKj3tHKAhWw81a/A+0abndzn2020/1PrudslVQ1HP0/szqBLN80RXtvTl4ZC6DwYDmNeo0hG22qQlQ" +
+                "==\",\"pubkey\":\"AzZ6psaaBIcYeCEQZRlagF3sSDpYwjeqf1LdA/aTNCL/\"," +
+                "\"snapshotPoint\":{\"contributions\":{\"TBFHMMQINYWJNDT74GJLNPF5JNROEWDG\":4938," +
+                "\"JC3ULYLYIZXHY25EMBWWDMPSVCHPVX7T\":4967,\"KNR6NYNGWAEPAX7VYOI2KKXBTD5ABQDT\":4950," +
+                "\"Q3K5BITCGSOYNB7LSNDPX6XM52HA7CEK\":4976,\"5LNNLSEQIIGAB5FP7YMBM2N5Q6ZQ4NBA\":4971," +
+                "\"ZXDFYOU7EKSJZBV2ZM4J7MR466Q2KPAI\":4950,\"NUOX47THDUFUT7Z6XPNN75YJYRJK2LVC\":4975," +
+                "\"73SRW2DPLN7YFTSIVVGHRCMDRO7G6HZQ\":4953,\"WQE2GM2BSEBH6MREP2Q4MDG7LDDL2NRY\":4965," +
+                "\"UVTNWYRJUDBPV3GRL2DY7HKYLC6JNJDL\":4980},\"eventBody\":{\"consEventCount\":144600000," +
+                "\"consTimestamp\":\"2019-05-01T00:36:04.585Z\",\"creatorId\":6,\"creatorSeq\":14544726," +
+                "\"generation\":24028809,\"hash\":\"ONTyVaBdXWnxbt5UFtenLzliaXM1dMKkBwcCyISaSVd2ipBacOC3VyEymjMmexF" +
+                "/\",\"isFamous\":false,\"otherId\":7,\"otherSeq\":14487822,\"shardId\":0," +
+                "\"signature\":\"fvy3MvBrKKQcjjQw9bulkyo0Nnj054euRtNI3pwYUOEixJmZ4ar2rq5gwHF6oqakVIVhZorKV6AeUu" +
+                "+YUoRuyXbNoHI0a9AXkPpMd+NXAbW5986jyKEFe5vU0C8MTPX3lovNxnOWMRsNXShW6lLeNPWPAQAX9C5wLQlxHvuYEBM=\"," +
+                "\"timeCreated\":\"2019-05-01T00:35:44.737Z\",\"transCount\":2573}," +
+                "\"msgHashTreeRoot\":\"DC0kO/HMe8QDuhh7+MQBoXZ2oMeAw+zHHmMx6SR9YMT0VOgMhASAC3btEPTJGo3y\"," +
+                "\"msgMaxId\":2573,\"rewardRatio\":0.5,\"totalFee\":3000000000000000},\"timestamp\":1556671162065}";
+        SnapshotMessage snapshotMessage = JSON.parseObject(snapshotMessageStr,SnapshotMessage.class);
+        return snapshotMessage;
+//        return null;
     }
 
     /**

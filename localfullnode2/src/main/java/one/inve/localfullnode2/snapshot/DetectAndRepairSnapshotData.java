@@ -1,9 +1,11 @@
 package one.inve.localfullnode2.snapshot;
 
+import com.alibaba.fastjson.JSON;
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.snapshot.vo.EventKeyPair;
-import one.inve.localfullnode2.store.SnapshotStore;
+import one.inve.localfullnode2.store.SnapshotDbService;
+import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
 import one.inve.localfullnode2.utilities.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +16,10 @@ public class DetectAndRepairSnapshotData {
     private static final Logger logger = LoggerFactory.getLogger(DetectAndRepairSnapshotData.class);
 
     private DetectAndRepairSnapshotDataDependent dep;
-    private SnapshotStore store;
+    private SnapshotDbService store;
     private String dbId;
 
-    public void detectAndRepairSnapshotData(DetectAndRepairSnapshotDataDependent dep,SnapshotStore store) {
+    public void detectAndRepairSnapshotData(DetectAndRepairSnapshotDataDependent dep, SnapshotDbService store) {
         this.dep = dep;
         this.store = store;
         this.dbId = dep.getDbId();
@@ -52,6 +54,9 @@ public class DetectAndRepairSnapshotData {
                 dep.getTreeRootMap().put(snapshotMessage.getSnapVersion(),
                         snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
 
+                System.out.println(JSON.toJSONString(snapshotMessage));
+                System.out.println(JSON.toJSONString(dep.getSnapshotPointMap()));
+                System.out.println(JSON.toJSONString(dep.getTreeRootMap()));
 //                logger.warn("node-({},{}) snap vers: {}, treeRoot: {}", dep.getShardId(), dep.getCreatorId(),
 //                        snapshotMessage.getSnapVersion(), snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
             } else {
@@ -86,7 +91,7 @@ public class DetectAndRepairSnapshotData {
                         // 删除其快照点Event之前的所有Event
 //                        logger.warn("node-({}, {}): clear event before snap version {}...",
 //                                node.getShardId(), node.getCreatorId(), sm.getSnapVersion());
-                        dep.deleteEventsBeforeSnapshotPointEvent(
+                        store.deleteEventsBeforeSnapshotPointEvent(
                                 dbId, sm.getSnapshotPoint().getEventBody(), dep.getnValue());
                         // 清除之前版本的treeRootMap
                         dep.getTreeRootMap().remove(
@@ -98,6 +103,12 @@ public class DetectAndRepairSnapshotData {
  //               logger.debug("========= snapshot message version-{} delete events success.", vers);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        DetectAndRepairSnapshotDataDependent dep = new DetectAndRepairSnapshotDataDependentImpl();
+        SnapshotDbService store = new SnapshotDbServiceImpl();
+        new DetectAndRepairSnapshotData().detectAndRepairSnapshotData(dep,store);
     }
 
 }

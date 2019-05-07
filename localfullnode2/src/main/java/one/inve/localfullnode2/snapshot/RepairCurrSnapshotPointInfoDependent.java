@@ -32,8 +32,6 @@ public interface RepairCurrSnapshotPointInfoDependent {
 
     List<LocalFullNode> getLocalFullNodes();
 
-    String getMsgHashTreeRoot();
-
     HashMap<BigInteger, String> getTreeRootMap();
 
     BigInteger getConsMessageMaxId();

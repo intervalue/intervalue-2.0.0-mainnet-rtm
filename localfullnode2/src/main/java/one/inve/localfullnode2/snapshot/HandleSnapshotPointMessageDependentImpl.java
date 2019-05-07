@@ -52,7 +52,7 @@ public class HandleSnapshotPointMessageDependentImpl implements HandleSnapshotPo
 
     @Override
     public SnapshotMessage getSnapshotMessage() {
-        String snapshotMessageStr = "{\"message\":{\"preHash\":\"32XpYVyRvRJ/Vb5Xjo7tTqplD/L" +
+        String snapshotMessageStr = "{\"preHash\":\"32XpYVyRvRJ/Vb5Xjo7tTqplD/L" +
                 "+BUpgh62xqWZOP1YNFAMyx0boLkrtFDYu8g4rSbcb9+uHmg0XXFdAGpTF3WDA==\",\"snapVersion\":317," +
                 "\"signature\":\"32YuK4odYOmKj3tHKAhWw81a/A+0abndzn2020/1PrudslVQ1HP0" +
                 "/szqBLN80RXtvTl4ZC6DwYDmNeo0hG22qQlQ==\",\"vers\":\"2.0\"," +
@@ -72,7 +72,7 @@ public class HandleSnapshotPointMessageDependentImpl implements HandleSnapshotPo
                 "+YUoRuyXbNoHI0a9AXkPpMd+NXAbW5986jyKEFe5vU0C8MTPX3lovNxnOWMRsNXShW6lLeNPWPAQAX9C5wLQlxHvuYEBM=\"," +
                 "\"timeCreated\":\"2019-05-01T00:35:44.737Z\",\"transCount\":2573}," +
                 "\"msgHashTreeRoot\":\"DC0kO/HMe8QDuhh7+MQBoXZ2oMeAw+zHHmMx6SR9YMT0VOgMhASAC3btEPTJGo3y\"," +
-                "\"msgMaxId\":2573,\"rewardRatio\":0.5,\"totalFee\":3000000000000000},\"timestamp\":1556671162065}}";
+                "\"msgMaxId\":2573,\"rewardRatio\":0.5,\"totalFee\":3000000000000000},\"timestamp\":1556671162065}";
         SnapshotMessage snapshotMessage = JSON.parseObject(snapshotMessageStr,SnapshotMessage.class);
         return snapshotMessage;
     }

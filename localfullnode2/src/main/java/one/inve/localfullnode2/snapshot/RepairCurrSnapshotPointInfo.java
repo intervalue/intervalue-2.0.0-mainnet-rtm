@@ -7,6 +7,8 @@ import one.inve.bean.node.LocalFullNode;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.snapshot.vo.EventKeyPair;
+import one.inve.localfullnode2.store.rocks.INosql;
+import one.inve.localfullnode2.store.rocks.INosqlSnapshotImpl;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.utilities.Hash;
 import one.inve.localfullnode2.utilities.StringUtils;
@@ -24,7 +26,8 @@ public class RepairCurrSnapshotPointInfo {
     private int shardCount;
     private String dbId;
 
-    public void repairCurrSnapshotPointInfo() throws InterruptedException {
+    public void repairCurrSnapshotPointInfo(RepairCurrSnapshotPointInfoDependent dep) throws InterruptedException {
+        this.dep = dep;
         this.shardCount = dep.getShardCount();
         this.dbId = dep.getDbId();
 
@@ -56,7 +59,7 @@ public class RepairCurrSnapshotPointInfo {
 //            logger.info("node-({}, {}): ShardSortQueue-{} size = {}",
 //                    node.getShardId(), node.getCreatorId(), i, node.getShardSortQueue(i).size());
         }
-        while (true) {
+//        while (true) {
             for (int i = 0; i < shardCount; i++) {
                 if (null == events[i]) {
                     events[i] = dep.getShardSortQueue(i).poll();
@@ -134,7 +137,8 @@ public class RepairCurrSnapshotPointInfo {
                             dep.setTotalConsEventCount(consEventCount);
                             temp.setConsEventCount(dep.getTotalConsEventCount());
 
-                            RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
+//                            RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
+                            INosql rocksJavaUtil = new INosqlSnapshotImpl();
                             if(temp.getTrans()!=null) {
                                 transCount = transCount.add(BigInteger.valueOf(temp.getTrans().length));
                                 rocksJavaUtil.put(Config.EVT_TX_COUNT_KEY, transCount.toString());
@@ -201,11 +205,10 @@ public class RepairCurrSnapshotPointInfo {
                     }
                 }
             }
-        }
+//        }
     }
 
     private void createSnapshotPoint(EventBody event) throws InterruptedException {
-        this.msgHashTreeRoot = dep.getMsgHashTreeRoot();
         this.vers = dep.getCurrSnapshotVersion();
 
         if (dep.getTotalConsEventCount().mod(BigInteger.valueOf(Config.EVENT_NUM_PER_SNAPSHOT))
@@ -284,6 +287,15 @@ public class RepairCurrSnapshotPointInfo {
                     msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
                 }
             }
+        }
+    }
+
+    public static void main(String[] args) {
+        RepairCurrSnapshotPointInfoDependent dep = new RepairCurrSnapshotPointInfoDependentImpl();
+        try {
+            new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(dep);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
