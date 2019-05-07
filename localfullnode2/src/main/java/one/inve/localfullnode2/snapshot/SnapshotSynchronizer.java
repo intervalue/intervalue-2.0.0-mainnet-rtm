@@ -48,6 +48,7 @@ public class SnapshotSynchronizer {
 		this.dep = dep;
 	}
 
+	// TBD : put it into zeroc server impls
 	// @formatter:off
 	// call diagram -
 	// SnapshotSynchronizer::synchronizeHigher--...(via network)...--SnapshotSynchronizer::offerSnapshot
