@@ -18,7 +18,9 @@ import one.inve.bean.message.SnapshotMessage;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.cluster.Member;
 import one.inve.localfullnode2.gossip.vo.GossipObj;
+import one.inve.localfullnode2.message.service.ITransactionDbService;
 import one.inve.localfullnode2.snapshot.vo.SnapObj;
+import one.inve.localfullnode2.store.SnapshotDbService;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 import one.inve.transport.Address;
 
@@ -228,6 +230,16 @@ public class SnapshotSynchronizerTest {
 
 		@Override
 		public List<LocalFullNode> getLocalFullNodes() {
+			throw new UnsupportedOperationException("");
+		}
+
+		@Override
+		public SnapshotDbService getSnapshotDBService() {
+			throw new UnsupportedOperationException("");
+		}
+
+		@Override
+		public ITransactionDbService getTransactionDbService() {
 			throw new UnsupportedOperationException("");
 		}
 
