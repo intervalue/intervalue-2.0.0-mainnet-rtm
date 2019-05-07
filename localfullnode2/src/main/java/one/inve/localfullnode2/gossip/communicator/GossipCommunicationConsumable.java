@@ -17,6 +17,7 @@ import one.inve.localfullnode2.gossip.vo.GossipObj;
  * @version: V1.0
  */
 public interface GossipCommunicationConsumable {
+	// gossip communication among nodes
 	CompletableFuture<GossipObj> gossipMyMaxSeqList4ConsensusAsync(Member neighbor, String pubkey, String sig,
 			String snapVersion, String snapHash, long[] seqs);
 
