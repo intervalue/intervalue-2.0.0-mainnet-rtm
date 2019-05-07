@@ -4,7 +4,7 @@ package one.inve.localfullnode2.store;
 import one.inve.bean.message.SnapshotMessage;
 import java.util.Map;
 
-public interface SnapshotStore {
+public interface SnapshotDbService {
 
     /**
      * 查询最新快照消息

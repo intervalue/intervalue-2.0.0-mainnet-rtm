@@ -1,7 +1,6 @@
 package one.inve.localfullnode2.store;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import one.inve.bean.message.MessageType;
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.core.EventBody;
@@ -11,8 +10,7 @@ import one.inve.localfullnode2.store.mysql.QueryTableSplit;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.store.rocks.TransactionSplit;
 import one.inve.localfullnode2.utilities.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -24,8 +22,8 @@ import java.util.Map;
  * @author Clare
  * @date   2018/11/2 0002.
  */
-public class SnapshotStoreImpl2 implements SnapshotStore {
-//    private static final Logger logger = LoggerFactory.getLogger(SnapshotStoreImpl2.class);
+public class SnapshotDbServiceImpl2 implements SnapshotDbService {
+//    private static final Logger logger = LoggerFactory.getLogger(SnapshotDbServiceImpl2.class);
 
     /**
      * 查询最新快照消息
