@@ -3,6 +3,7 @@ package one.inve.localfullnode2.snapshot;
 import java.math.BigInteger;
 import java.security.PublicKey;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -14,6 +15,7 @@ import org.junit.Test;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.SnapshotMessage;
+import one.inve.bean.node.LocalFullNode;
 import one.inve.cluster.Member;
 import one.inve.localfullnode2.gossip.vo.GossipObj;
 import one.inve.localfullnode2.snapshot.vo.SnapObj;
@@ -71,11 +73,11 @@ public class SnapshotSynchronizerTest {
 
 		GossipObj gossipObj = new GossipObj("317", null, "317".getBytes());
 
-		SnapshotSynchronizer synchronizer = new SnapshotSynchronizer();
+		SnapshotSynchronizer synchronizer = new SnapshotSynchronizer(dep);
 
-		Assert.assertFalse(synchronizer.synchronize(dep, m1, gossipObj));
-		Assert.assertFalse(synchronizer.synchronize(dep, m2, gossipObj));
-		Assert.assertTrue(synchronizer.synchronize(dep, m3, gossipObj));
+		Assert.assertFalse(synchronizer.synchronizeHigher(m1, gossipObj));
+		Assert.assertFalse(synchronizer.synchronizeHigher(m2, gossipObj));
+		Assert.assertTrue(synchronizer.synchronizeHigher(m3, gossipObj));
 	}
 
 	protected static class SnapshotSyncCommunication implements SnapshotSyncConsumable {
@@ -212,6 +214,21 @@ public class SnapshotSynchronizerTest {
 			}
 
 			return publicKeys;
+		}
+
+		@Override
+		public long getCreatorId() {
+			throw new UnsupportedOperationException("");
+		}
+
+		@Override
+		public String getDBId() {
+			throw new UnsupportedOperationException("");
+		}
+
+		@Override
+		public List<LocalFullNode> getLocalFullNodes() {
+			throw new UnsupportedOperationException("");
 		}
 
 	}
