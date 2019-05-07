@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import one.inve.localfullnode2.gossip.vo.GossipObj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,6 @@ import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.cluster.Member;
-import one.inve.localfullnode2.snapshot.vo.GossipObj;
 import one.inve.localfullnode2.snapshot.vo.SnapObj;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 import one.inve.localfullnode2.utilities.StringUtils;

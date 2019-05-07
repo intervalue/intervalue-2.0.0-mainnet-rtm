@@ -3,11 +3,9 @@ package one.inve.localfullnode2.snapshot;
 import java.math.BigInteger;
 import java.security.PublicKey;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import com.alibaba.fastjson.JSONObject;
-
 import one.inve.bean.message.SnapshotMessage;
-import one.inve.localfullnode2.snapshot.vo.GossipObj;
+import one.inve.localfullnode2.gossip.vo.GossipObj;
 
 /**
  * 
