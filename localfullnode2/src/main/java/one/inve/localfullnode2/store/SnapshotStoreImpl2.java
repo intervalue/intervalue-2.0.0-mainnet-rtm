@@ -1,18 +1,18 @@
 package one.inve.localfullnode2.store;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import one.inve.bean.message.MessageType;
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.store.EventKeyPair;
-import one.inve.localfullnode2.store.SnapshotStore;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;
 import one.inve.localfullnode2.store.mysql.QueryTableSplit;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.store.rocks.TransactionSplit;
 import one.inve.localfullnode2.utilities.StringUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Clare
  * @date   2018/11/2 0002.
  */
-public class SnapshotStoreImpl implements SnapshotStore {
+public class SnapshotStoreImpl2 implements SnapshotStore {
 //    private static final Logger logger = LoggerFactory.getLogger(SnapshotStoreImpl2.class);
 
     /**
@@ -34,30 +34,26 @@ public class SnapshotStoreImpl implements SnapshotStore {
      * @return 最新快照消息
      */
     public SnapshotMessage queryLatestSnapshotMessage(String dbId) {
-        String snapshotMessageStr = "{\"preHash\":\"32YuK4odYOmKj3tHKAhWw81a/A+0abndzn2020/1PrudslVQ1HP0" +
-                "/szqBLN80RXtvTl4ZC6DwYDmNeo0hG22qQlQ==\",\"snapVersion\":318," +
-                "\"signature\":\"32O0YpHVThJzSvP2U1vHREJCiFYrPArzdceFRHGISkdi4o" +
-                "+ca97WhWZtY7b1quOyND4UB8btuwRdrl28brYOIvZA==\",\"vers\":\"2.0\"," +
-                "\"fromAddress\":\"NUOX47THDUFUT7Z6XPNN75YJYRJK2LVC\",\"type\":3," +
-                "\"hash\":\"32O0YpHVThJzSvP2U1vHREJCiFYrPArzdceFRHGISkdi4o+ca97WhWZtY7b1quOyND4UB8btuwRdrl28brYOIvZA" +
-                "==\",\"pubkey\":\"AzZ6psaaBIcYeCEQZRlagF3sSDpYwjeqf1LdA/aTNCL/\"," +
-                "\"snapshotPoint\":{\"contributions\":{\"TBFHMMQINYWJNDT74GJLNPF5JNROEWDG\":1734," +
-                "\"JC3ULYLYIZXHY25EMBWWDMPSVCHPVX7T\":1743,\"KNR6NYNGWAEPAX7VYOI2KKXBTD5ABQDT\":1723," +
-                "\"Q3K5BITCGSOYNB7LSNDPX6XM52HA7CEK\":1733,\"5LNNLSEQIIGAB5FP7YMBM2N5Q6ZQ4NBA\":1732," +
-                "\"ZXDFYOU7EKSJZBV2ZM4J7MR466Q2KPAI\":1738,\"NUOX47THDUFUT7Z6XPNN75YJYRJK2LVC\":1729," +
-                "\"73SRW2DPLN7YFTSIVVGHRCMDRO7G6HZQ\":1732,\"WQE2GM2BSEBH6MREP2Q4MDG7LDDL2NRY\":1737," +
-                "\"UVTNWYRJUDBPV3GRL2DY7HKYLC6JNJDL\":1739},\"eventBody\":{\"consEventCount\":144900000," +
-                "\"consTimestamp\":\"2019-05-04T16:37:20.286Z\",\"creatorId\":6,\"creatorSeq\":14575190," +
-                "\"generation\":24096409,\"hash\":\"YClht0S1KF+y5vKAwgKyCcnqztGBf3tlrWvwRBCm31OUHTv7BR5/p8P1iRcMFsbO" +
-                "\",\"isFamous\":false,\"otherId\":4,\"otherSeq\":13384060,\"shardId\":0," +
-                "\"signature\":\"EXoOxkG2IRPOWIp6Bx9GcR++w/lrxby6qhHjBP0YWljFdLCwUfLi" +
-                "+gKjtdyUJcaiXCKVRJ2AhshFjfpDJoNKzMbFtyFkXj8JMXo+6yMqzkR0uAsDXtvZ9xQPfP4NjP15tEgaglnHWRK91" +
-                "+aE6WQAWE1RD7zDCu/7+k1Lcej2emc=\",\"timeCreated\":\"2019-05-04T16:36:52.241Z\",\"transCount\":2627}," +
-                "\"msgHashTreeRoot\":\"YClht0S1KF+y5vKAwgKyCcnqztGBf3tlrWvwRBCm31OUHTv7BR5/p8P1iRcMFsbO\"," +
-                "\"msgMaxId\":2627,\"rewardRatio\":0.5,\"totalFee\":0},\"timestamp\":1556988080596}";
-        SnapshotMessage snapshotMessage = JSON.parseObject(snapshotMessageStr,SnapshotMessage.class);
-        return snapshotMessage;
-//        return null;
+//        logger.info("queryLatestSnapshotMessage...");
+        SnapshotMessage maxSnapshot = null;
+        try {
+            String snapHash = queryLatestSnapshotMessageHash(dbId);
+            if(StringUtils.isNotEmpty(snapHash)) {
+                String json = querySnapshotMessageFormatStringByHash(dbId, snapHash);
+                if(StringUtils.isNotEmpty(json)){
+                    String smapshotStr = JSON.parseObject(json).getString("message");
+                    maxSnapshot = JSON.parseObject(smapshotStr, SnapshotMessage.class);
+                } else {
+//                    logger.error("node-{}: snapshotMessage in mysql diff from in Rocksdb. " +
+//                                    "in mysql: {}, but in Rocksdb is null", dbId, snapHash);
+                    System.exit(-1);
+                }
+            }
+            return maxSnapshot;
+        } catch (Exception e) {
+//            logger.error(">>>>>> queryLatestSnapshotMessage() ERROR: {}", e);
+            return maxSnapshot;
+        }
     }
 
     /**
@@ -67,7 +63,39 @@ public class SnapshotStoreImpl implements SnapshotStore {
      * @return 最新快照消息的hash值
      */
     public String queryLatestSnapshotMessageHash(String dbId){
-        return null;
+        //查找最大的TransactionSplit
+        TransactionSplit split = QueryTableSplit.tableExist(dbId);
+        if (null == split) {
+//            logger.warn("messages_* tables not exist!!!");
+            return null;
+        }
+        int type = MessageType.SNAPSHOT.getIndex();
+        String initSql = "select hash from %s where type = '%d' order by id desc limit 1";
+        String sql = String.format(initSql, split.getTableName(), type);
+        MysqlHelper h = null;
+        try {
+            h = new MysqlHelper(dbId);
+            List<String> messageHashs =  h.executeQuery(sql, (rs, index) -> rs.getString("hash"));
+            BigInteger i = split.getTableIndex().subtract(BigInteger.ONE);
+            while(i.compareTo(BigInteger.ZERO)>=0 && (messageHashs==null||messageHashs.size()<=0) ){
+                sql = String.format(initSql, split.getTableNamePrefix()+ Config.SPLIT+i.toString(), type);
+                messageHashs =  h.executeQuery(sql, (rs, index) -> rs.getString("hash"));
+                i = i.subtract(BigInteger.ONE);
+            }
+            if(messageHashs!=null&&messageHashs.size()>0){
+                return messageHashs.get(0);
+            }else{
+//                logger.warn("local db {} latest snapshot message not exist!!!", dbId);
+                return null;
+            }
+        } catch (SQLException e) {
+//            logger.error("querySnapshotMessageHashByVersion(): {}", e);
+            return null;
+        } finally {
+            if(h!=null) {
+                h.destroyed();
+            }
+        }
     }
 
     /**
@@ -78,7 +106,21 @@ public class SnapshotStoreImpl implements SnapshotStore {
      * @return 快照消息（以字符串形式返回）
      */
     public String querySnapshotMessageFormatStringByHash(String dbId, String hash) {
-        return null;
+//        logger.info("querySnapshotMessageFormatStringByHash...hash: {}", hash);
+        String snapshotStr = null;
+        try {
+
+            RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
+            byte[] snapshotVersionByte = rocksJavaUtil.get(hash);
+            if(snapshotVersionByte!=null){
+                snapshotStr = new String(snapshotVersionByte);
+            }
+
+            return snapshotStr;
+        } catch (Exception e) {
+//            logger.error(">>>>>> querySnapshotMessageFormatStringByHash() ERROR: {}", e);
+            return null;
+        }
     }
 
     /**
@@ -89,7 +131,13 @@ public class SnapshotStoreImpl implements SnapshotStore {
      * @return 快照消息（以实体对象形式返回）
      */
     public SnapshotMessage querySnapshotMessageByHash(String dbId, String hash) {
-        return null;
+//        logger.info("querySnapshotMessageByHash...hash: {}", hash);
+        String json = querySnapshotMessageFormatStringByHash(dbId, hash);
+        if(StringUtils.isNotEmpty(json)){
+            return JSON.parseObject(JSON.parseObject(json).getString("message"), SnapshotMessage.class);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -100,7 +148,13 @@ public class SnapshotStoreImpl implements SnapshotStore {
      * @return 版本{version}快照消息，并以字符串形式返回
      */
     public String querySnapshotMessageFormatStringByVersion(String dbId, String version){
-        return null;
+//        logger.info("querySnapshotMessageFormatStringByVersion...version: {}", version);
+        String hash = querySnapshotMessageHashByVersion(dbId, version);
+        if (StringUtils.isNotEmpty(hash)) {
+            return querySnapshotMessageFormatStringByHash(dbId, hash);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -111,7 +165,13 @@ public class SnapshotStoreImpl implements SnapshotStore {
      * @return 版本{version}快照消息（以实体对象形式返回）
      */
     public SnapshotMessage querySnapshotMessageByVersion(String dbId, String version) {
-        return null;
+//        logger.info("querySnapshotMessageByVersion...version: {}", version);
+        String json = querySnapshotMessageFormatStringByVersion(dbId, version);
+        if(StringUtils.isNotEmpty(json)){
+            return JSON.parseObject(JSON.parseObject(json).getString("message"), SnapshotMessage.class);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -122,7 +182,39 @@ public class SnapshotStoreImpl implements SnapshotStore {
      * @return 版本{version}快照消息hash值
      */
     public String querySnapshotMessageHashByVersion(String dbId, String version){
-        return null;
+        //查找最大的TransactionSplit
+        TransactionSplit split = QueryTableSplit.tableExist(dbId);
+        if (null == split) {
+//            logger.error("messages_* tables not exist!!!");
+            return null;
+        }
+        int type = MessageType.SNAPSHOT.getIndex();
+        String initSql = "select hash from %s where type = '%d' and snapshot = '%s' order by id desc limit 1";
+        String sql = String.format(initSql, split.getTableName(), type, version);
+        MysqlHelper h = null;
+        try {
+            h = new MysqlHelper(dbId);
+            List<String> messageHashs =  h.executeQuery(sql, (rs, index) -> rs.getString("hash"));
+            BigInteger i = split.getTableIndex().subtract(BigInteger.ONE);
+            while(i.compareTo(BigInteger.ZERO)>=0 && (messageHashs==null||messageHashs.size()<=0) ){
+                sql = String.format(initSql, split.getTableNamePrefix()+Config.SPLIT+i.toString(), type, version);
+                messageHashs =  h.executeQuery(sql, (rs, index) -> rs.getString("hash"));
+                i = i.subtract(BigInteger.ONE);
+            }
+            if (messageHashs!=null && messageHashs.size()>0){
+                return messageHashs.get(0);
+            } else {
+//                logger.error("local db {} snapshot message {} not exist!!!", dbId, version);
+                return null;
+            }
+        } catch (SQLException e) {
+//            logger.error("querySnapshotMessageHashByVersion(): {}", e);
+            return null;
+        } finally {
+            if(h!=null) {
+                h.destroyed();
+            }
+        }
     }
 
     /**
@@ -133,7 +225,26 @@ public class SnapshotStoreImpl implements SnapshotStore {
      * @param nValue 分片总节点数
      */
     public void deleteEventsBeforeSnapshotPointEvent(String dbId, EventBody eb, int nValue) {
+//        logger.info("deleteEventsBeforeSnapshotPointEvent...{}", JSON.toJSONString(eb));
 
+        try {
+            if (eb != null) {
+                RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
+
+                Map<Long, EventKeyPair> map = new HashMap<>();
+                map = getPrevEventKeyPairsForEachNode(dbId, eb, map, nValue);
+
+//                logger.warn("delete event max map values: {} ", JSONArray.toJSONString(map.values()));
+                for (EventKeyPair keyPair : map.values()) {
+                    for (int seq = 0; seq <= keyPair.seq; seq++) {
+                        EventKeyPair keyPairOther = new EventKeyPair(keyPair.shardId, keyPair.creatorId, seq);
+                        rocksJavaUtil.delete(keyPairOther.toString());
+                    }
+                }
+            }
+        } catch (Exception e) {
+//            logger.error("deleteEventsBeforeSnapshotPointEvent save error: {}", e);
+        }
     }
 
 
@@ -150,7 +261,27 @@ public class SnapshotStoreImpl implements SnapshotStore {
                                                                           EventBody eb,
                                                                           Map<Long, EventKeyPair> map,
                                                                           int nValue) {
-        return null;
+        int sharId      = eb.getShardId();
+        Long creatId    = eb.getCreatorId();
+        Long creatSeq   = eb.getCreatorSeq();
+        Long otherSeq   = eb.getOtherSeq();
+        Long otherId    = eb.getOtherId();
+        EventKeyPair keyPair = new EventKeyPair(sharId, creatId, creatSeq);
+        if (creatId != null && map.get(creatId) == null) {
+            map.put(creatId, keyPair);
+        }
+        if (map.keySet().size() == nValue) {
+            return map;
+        }
+        EventKeyPair keyPairOther = new EventKeyPair(sharId, otherId, otherSeq);
+        RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
+        byte[] keyPairByte = rocksJavaUtil.get(keyPairOther.toString());
+        if (keyPairByte != null) {
+            String json = new String(keyPairByte);
+            eb = JSON.parseObject(json, EventBody.class);
+            getPrevEventKeyPairsForEachNode(dbId, eb, map, nValue);
+        }
+        return map;
     }
 
     public static void main(String[] args) {
