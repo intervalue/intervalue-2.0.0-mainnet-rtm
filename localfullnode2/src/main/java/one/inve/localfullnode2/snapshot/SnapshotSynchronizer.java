@@ -41,14 +41,18 @@ public class SnapshotSynchronizer {
 	private static final Logger logger = LoggerFactory.getLogger("snapshotsynchronizer");
 
 	private SnapshotSynchronizerDependent dep;
-	private volatile Map<String, HashSet<String>> snapVersionMap = new HashMap<>();// {$snapHash:{$member.pubkey...}...}
+	private volatile Map<String, HashSet<String>> snapVersionMap = new HashMap<>();// {$snapHash:{$member.pubkey,...},...}
 
 	public SnapshotSynchronizer(SnapshotSynchronizerDependent dep) {
 		super();
 		this.dep = dep;
 	}
 
-	public SnapObj offerSnapshot(String pubkey, String sig, String hash, String transCount) {
+	// @formatter:off
+	// call diagram -
+	// SnapshotSynchronizer::synchronizeHigher--...(via network)...--SnapshotSynchronizer::offerSnapshot
+	// @formatter:on
+	public SnapObj offerSnapshot(String pubkey, String sig, String hash, String requestConsMessageMaxId) {
 		Instant first = Instant.now();
 		if (!validate(pubkey)) {
 			return null;
@@ -60,12 +64,12 @@ public class SnapshotSynchronizer {
 		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
 		// 获取交易信息
 		List<JSONObject> trans = dep.getTransactionDbService().queryMissingTransactionsBeforeSnapshotPoint(
-				originalSnapshotStr, new BigInteger(transCount), dep.getDBId());
+				originalSnapshotStr, new BigInteger(requestConsMessageMaxId), dep.getDBId());
 
 		// 构建结果结构
 		SnapObj snapObj = new SnapObj(snapshotStr, (null == trans) ? null : JSONArray.toJSONString(trans));
 
-		long handleInterval = Duration.between(first, Instant.now()).toMillis();
+//		long handleInterval = Duration.between(first, Instant.now()).toMillis();
 //		if (handleInterval > Config.DEFAULT_GOSSIP_EVENT_INTERVAL) {
 //			logger.warn("----- gossipMySnapVersion4Snap() interval: {} ms", handleInterval);
 //		}
@@ -75,6 +79,7 @@ public class SnapshotSynchronizer {
 
 	// there is a constraint that {@code gossipObj} should been higher than current
 	// snapshot version.
+	// {@code false} means that snapshot sync process is not executed.
 	public boolean synchronizeHigher(Member gossipedMember, GossipObj gossipObj) {
 		BigInteger snapVers = new BigInteger(gossipObj.snapVersion);
 		if (snapVers.compareTo(dep.getCurrSnapshotVersion().add(BigInteger.ONE)) > 0) {
@@ -113,6 +118,9 @@ public class SnapshotSynchronizer {
 //						HnKeyUtils.getString4PublicKey(node.publicKey), "", new String(gossipObj.snapHash),
 //						node.getConsMessageMaxId().toString());
 
+				/**
+				 * Key calling:finally {@code SnapshotSynchronizer::offerSnapshot} is invoked.
+				 */
 				CompletableFuture<?> snapResult = dep.getSnapshotSync().gossipMySnapVersion4SnapAsync(gossipedMember,
 						HnKeyUtils.getString4PublicKey(dep.getPublicKey()), "", new String(gossipObj.snapHash),
 						dep.getConsMessageMaxId().toString());
