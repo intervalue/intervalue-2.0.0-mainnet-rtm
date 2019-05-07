@@ -9,6 +9,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public interface HandleConsensusSnapshotMessageDependent {
 
+    BigInteger getCurrSnapshotVersion();
+
     JSONObject getMsgObject();
 
     HashMap<BigInteger, String> getTreeRootMap();

@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import one.inve.bean.message.Contribution;
 import one.inve.bean.message.SnapshotPoint;
 import one.inve.bean.node.LocalFullNode;
-import one.inve.localfullnode2.store.EventBody;
-
+import one.inve.core.EventBody;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,9 +13,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public interface CreateSnapshotPointDependent {
 
-    BigInteger getTotalConsEventCount();
+    BigInteger getCurrSnapshotVersion();
 
-    int getShardCount();
+    HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
 
     long getCreatorId();
 
@@ -24,22 +23,22 @@ public interface CreateSnapshotPointDependent {
 
     int getnValue();
 
+    HashMap<BigInteger, String> getTreeRootMap();
+
+    int getShardCount();
+
+    BigInteger getTotalConsEventCount();
+
     HashSet<Contribution> getContributions();
 
     List<LocalFullNode> getLocalFullNodes();
-
-    String getMsgHashTreeRoot();
-
-    HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
-
-    BigInteger getCurrSnapshotVersion();
-
-    HashMap<BigInteger, String> getTreeRootMap();
 
     BigInteger getConsMessageMaxId();
 
     LinkedBlockingQueue<JSONObject> getConsMessageVerifyQueue();
 
     void setContributions(HashSet<Contribution> contributions);
+
+    EventBody getEventBody();
 
 }

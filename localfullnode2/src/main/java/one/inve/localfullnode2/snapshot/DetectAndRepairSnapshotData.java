@@ -3,6 +3,7 @@ package one.inve.localfullnode2.snapshot;
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.snapshot.vo.EventKeyPair;
+import one.inve.localfullnode2.store.SnapshotStore;
 import one.inve.localfullnode2.utilities.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +14,15 @@ public class DetectAndRepairSnapshotData {
     private static final Logger logger = LoggerFactory.getLogger(DetectAndRepairSnapshotData.class);
 
     private DetectAndRepairSnapshotDataDependent dep;
+    private SnapshotStore store;
     private String dbId;
 
-    public void detectAndRepairSnapshotData(DetectAndRepairSnapshotDataDependent dep) {
+    public void detectAndRepairSnapshotData(DetectAndRepairSnapshotDataDependent dep,SnapshotStore store) {
         this.dep = dep;
+        this.store = store;
         this.dbId = dep.getDbId();
 
-        SnapshotMessage snapshotMessage = dep.queryLatestSnapshotMessage(dbId);
+        SnapshotMessage snapshotMessage = store.queryLatestSnapshotMessage(dbId);
         if( snapshotMessage != null ) {
             dep.setSnapshotMessage(snapshotMessage);
             dep.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(), snapshotMessage.getSnapshotPoint());
@@ -42,7 +45,7 @@ public class DetectAndRepairSnapshotData {
 
         for(int i = 0; i< Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION; i++){
             if( snapshotMessage!=null && StringUtils.isNotEmpty(snapshotMessage.getPreHash()) ) {
-                snapshotMessage = dep.querySnapshotMessageByHash(
+                snapshotMessage = store.querySnapshotMessageByHash(
                         dbId, snapshotMessage.getPreHash() );
                 dep.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(),
                         snapshotMessage.getSnapshotPoint());
@@ -72,7 +75,7 @@ public class DetectAndRepairSnapshotData {
 //                            node.getShardId(), node.getCreatorId());
                     break;
                 } else {
-                    SnapshotMessage sm = dep.querySnapshotMessageByHash(dbId, preHash);
+                    SnapshotMessage sm = store.querySnapshotMessageByHash(dbId, preHash);
                     if (null == sm) {
 //                        logger.error("node-({}, {}): snapshot is null.", node.getShardId(), node.getCreatorId());
                         break;
