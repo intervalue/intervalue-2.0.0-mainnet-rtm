@@ -21,7 +21,7 @@ public class DepManagerTest {
 
 		producer.produceOneBit();// see nothing
 
-		DepManager.getInstance().attachShardId(consumer);
+		DepItemsManager.getInstance().attachShardId(consumer);
 
 		producer.produceTwoBits();// see all things
 	}
@@ -29,7 +29,7 @@ public class DepManagerTest {
 	public static class ShardIdProducer {
 
 		public void produceOneBit() {
-			ShardId shardId = DepManager.getInstance().attachShardId(null);
+			ShardId shardId = DepItemsManager.getInstance().attachShardId(null);
 			shardId.set(1);
 			shardId.set(2);
 			shardId.set(3);
@@ -38,7 +38,7 @@ public class DepManagerTest {
 		}
 
 		public void produceTwoBits() {
-			ShardId shardId = DepManager.getInstance().attachShardId(null);
+			ShardId shardId = DepItemsManager.getInstance().attachShardId(null);
 			shardId.set(11);
 			shardId.set(22);
 			shardId.set(33);
