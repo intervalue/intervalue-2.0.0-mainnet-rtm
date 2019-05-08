@@ -18,7 +18,7 @@ import one.inve.localfullnode2.dep.DepItemsManagerial;
  * @date: Jun 8, 2019 3:58:44 AM
  * @version: V1.0
  */
-public class LFN2Pointcut extends GeneralNode {
+public class Localfullnode2Pointcut extends GeneralNode {
 	private DepItemsManagerial depItemsManager = DepItemsManager.getInstance();
 
 	public void setDepItemsManager(DepItemsManagerial depItemsManager) {

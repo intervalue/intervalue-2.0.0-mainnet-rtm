@@ -45,10 +45,11 @@ import one.inve.util.StringUtils;
 
 /**
  * Francis.Deng replace parent{@link GeneralNode} with
- * {@link LFN2Pointcut},which helps localfullnode2 obtain some information.
+ * {@link Localfullnode2Pointcut},which helps localfullnode2 obtain some
+ * information.
  * 
  */
-public class Main extends LFN2Pointcut/* GeneralNode */ {
+public class Main extends Localfullnode2Pointcut/* GeneralNode */ {
 	// private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	private static Logger logger = null;
 
