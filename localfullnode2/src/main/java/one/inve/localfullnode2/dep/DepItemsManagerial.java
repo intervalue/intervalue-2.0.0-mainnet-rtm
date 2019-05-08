@@ -10,7 +10,7 @@ package one.inve.localfullnode2.dep;
  * @date: May 8, 2019 2:44:15 AM
  * @version: V1.0
  */
-interface DepItemsManagerial {
+public interface DepItemsManagerial {
 	ShardId attachShardId(DependentItemConcerned... dependentItemConcerneds);
 
 	ShardCount attachShardCount(DependentItemConcerned... dependentItemConcerneds);
