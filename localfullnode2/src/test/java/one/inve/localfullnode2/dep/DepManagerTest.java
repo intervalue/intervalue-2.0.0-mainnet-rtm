@@ -51,7 +51,7 @@ public class DepManagerTest {
 	public static class ShardIdConsumer implements DependentItemConcerned {
 
 		public void consume() {
-			ShardId shardId = DepManager.getInstance().attachShardId(null);
+			// ShardId shardId = DepManager.getInstance().attachShardId(null);
 
 		}
 
