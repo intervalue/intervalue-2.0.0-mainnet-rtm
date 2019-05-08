@@ -47,6 +47,9 @@ public class LFN2Pointcut extends GeneralNode {
 	public void setnValue(int nValue) {
 		depItemsManager.attachNValue(null).set(nValue);
 		super.setnValue(nValue);
+
+		// randomly choose the place
+		unwareOfWhenSetting();
 	}
 
 	@Override
