@@ -323,7 +323,7 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
-
+<!--
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -334,7 +334,7 @@
 					<archive>
 						<manifest>
 							<mainClass>one.inve.node.Main</mainClass>
-							<!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
+							打包时 MANIFEST.MF文件不记录的时间戳版本 
 							<useUniqueVersions>false</useUniqueVersions>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
@@ -351,7 +351,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
+-->
 			<!--<plugin>&lt;!&ndash;用混淆插件混淆代码&ndash;&gt; <groupId>com.github.wvengen</groupId> 
 				<artifactId>proguard-maven-plugin</artifactId> <version>2.0.14</version> 
 				<executions> <execution> &lt;!&ndash; 混淆时刻，这里是打包的时候混淆&ndash;&gt; <phase>package</phase> 
