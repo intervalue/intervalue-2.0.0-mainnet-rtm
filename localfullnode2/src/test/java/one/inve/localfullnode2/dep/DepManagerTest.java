@@ -13,7 +13,7 @@ import org.junit.Test;
  * @version: V1.0
  */
 public class DepManagerTest {
-	// demonstrate how to pass a shardId item between proc
+	// demonstrate how to pass a shardId item between producer and consumer
 	@Test
 	public void testShardId() {
 		ShardIdProducer producer = new ShardIdProducer();
