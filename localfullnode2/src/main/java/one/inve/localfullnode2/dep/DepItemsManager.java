@@ -11,7 +11,7 @@ package one.inve.localfullnode2.dep;
  * @date: May 8, 2019 1:10:10 AM
  * @version: V1.0
  */
-public final class DepItemsManager {
+public final class DepItemsManager implements DepItemsManagerial {
 	private ShardId shardId;
 	private ShardCount shardCount;
 	private NValue nValue;
