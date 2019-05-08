@@ -12,7 +12,7 @@ import org.junit.Test;
  * @date: May 8, 2019 1:52:30 AM
  * @version: V1.0
  */
-public class DepManagerTest {
+public class DepItemsManagerTest {
 	// demonstrate how to pass a shardId item between producer and consumer
 	@Test
 	public void testShardId() {
