@@ -17,14 +17,13 @@ public class DetectAndRepairSnapshotData {
 
     private DetectAndRepairSnapshotDataDependent dep;
     private SnapshotDbService store;
-    private String dbId;
 
     public void detectAndRepairSnapshotData(DetectAndRepairSnapshotDataDependent dep, SnapshotDbService store) {
         this.dep = dep;
         this.store = store;
-        this.dbId = dep.getDbId();
 
-        SnapshotMessage snapshotMessage = store.queryLatestSnapshotMessage(dbId);
+        logger.info(">>>>>START<<<<<detectAndRepairSnapshotData");
+        SnapshotMessage snapshotMessage = store.queryLatestSnapshotMessage(dep.getDbId());
         if( snapshotMessage != null ) {
             dep.setSnapshotMessage(snapshotMessage);
             dep.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(), snapshotMessage.getSnapshotPoint());
@@ -33,13 +32,10 @@ public class DetectAndRepairSnapshotData {
             EventKeyPair pair = new EventKeyPair(snapshotMessage.getSnapshotPoint().getEventBody().getShardId(),
                     snapshotMessage.getSnapshotPoint().getEventBody().getCreatorId(),
                     snapshotMessage.getSnapshotPoint().getEventBody().getCreatorSeq());
-//            logger.warn("node-({},{}) snap vers: {}, eb-{}, treeRoot: {}", dep.getShardId(), dep.getCreatorId(),
-//                    snapshotMessage.getSnapVersion(), pair.toString(),
-//                    snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
-        } else {
-//            logger.warn("node-({},{}): LatestSnapshotMessage is null.", dep.getShardId(), dep.getCreatorId());
+            logger.info(">>>>>INFO<<<<<detectAndRepairSnapshotData:\n snapshotMessage: {},\n snapshotPointMap: {},\n treeRootMap: {}",
+                    JSON.toJSONString(snapshotMessage),JSON.toJSONString(dep.getSnapshotPointMap()),JSON.toJSONString(dep.getTreeRootMap()));
         }
-        // 之前DEFAULT_SNAPSHOT_CLEAR_GENERATION个版本的快照
+        // 删除之前DEFAULT_SNAPSHOT_CLEAR_GENERATION个版本的快照
         SnapshotMessage sm = snapshotMessage;
         if (null != sm && StringUtils.isNotEmpty(sm.getPreHash())) {
             clearHistoryEventsBySnapshot(sm.getSnapVersion(), sm.getPreHash());
@@ -48,51 +44,43 @@ public class DetectAndRepairSnapshotData {
         for(int i = 0; i< Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION; i++){
             if( snapshotMessage!=null && StringUtils.isNotEmpty(snapshotMessage.getPreHash()) ) {
                 snapshotMessage = store.querySnapshotMessageByHash(
-                        dbId, snapshotMessage.getPreHash() );
+                        dep.getDbId(), snapshotMessage.getPreHash() );
                 dep.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(),
                         snapshotMessage.getSnapshotPoint());
                 dep.getTreeRootMap().put(snapshotMessage.getSnapVersion(),
                         snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
 
-                System.out.println(JSON.toJSONString(snapshotMessage));
-                System.out.println(JSON.toJSONString(dep.getSnapshotPointMap()));
-                System.out.println(JSON.toJSONString(dep.getTreeRootMap()));
-//                logger.warn("node-({},{}) snap vers: {}, treeRoot: {}", dep.getShardId(), dep.getCreatorId(),
-//                        snapshotMessage.getSnapVersion(), snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
+                logger.info(">>>>>INFO<<<<<detectAndRepairSnapshotData:\n snapshotMessage: {},\n snapshotPointMap: {},\n treeRootMap: {}",
+                        JSON.toJSONString(snapshotMessage),JSON.toJSONString(dep.getSnapshotPointMap()),JSON.toJSONString(dep.getTreeRootMap()));
             } else {
+                logger.info(">>>>>BREAK<<<<<detectAndRepairSnapshotData");
                 break;
             }
         }
+        logger.info(">>>>>END<<<<<detectAndRepairSnapshotData");
     }
 
 
     private void clearHistoryEventsBySnapshot(BigInteger vers, String preHash) {
+        logger.info(">>>>>START<<<<<clearHistoryEventsBySnapshot");
         // 快照消息入库
         if (vers.compareTo(BigInteger.valueOf(Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION)) > 0 ) {
-//            logger.warn("node-({},{}): start to clear history events", node.getShardId(), node.getCreatorId());
             // 查询之前第 Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION) 个快照
             int i = Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION-1;
             while (i>0) {
-//                logger.warn("node-({}, {}): Generation: {}, i: {}, preHash: {}",
-//                        node.getShardId(), node.getCreatorId(), Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION, i, preHash);
                 if (StringUtils.isEmpty(preHash)) {
-//                    logger.error("node-({}, {}): snapshot is null. can not delete events...",
-//                            node.getShardId(), node.getCreatorId());
                     break;
                 } else {
-                    SnapshotMessage sm = store.querySnapshotMessageByHash(dbId, preHash);
+                    SnapshotMessage sm = store.querySnapshotMessageByHash(dep.getDbId(), preHash);
                     if (null == sm) {
-//                        logger.error("node-({}, {}): snapshot is null.", node.getShardId(), node.getCreatorId());
                         break;
                     }
                     preHash = sm.getPreHash();
                     i--;
                     if (i==0) {
                         // 删除其快照点Event之前的所有Event
-//                        logger.warn("node-({}, {}): clear event before snap version {}...",
-//                                node.getShardId(), node.getCreatorId(), sm.getSnapVersion());
                         store.deleteEventsBeforeSnapshotPointEvent(
-                                dbId, sm.getSnapshotPoint().getEventBody(), dep.getnValue());
+                                dep.getDbId(), sm.getSnapshotPoint().getEventBody(), dep.getnValue());
                         // 清除之前版本的treeRootMap
                         dep.getTreeRootMap().remove(
                                 vers.subtract(BigInteger.valueOf(Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION)) );
@@ -103,6 +91,7 @@ public class DetectAndRepairSnapshotData {
  //               logger.debug("========= snapshot message version-{} delete events success.", vers);
             }
         }
+        logger.info(">>>>>END<<<<<clearHistoryEventsBySnapshot");
     }
 
     public static void main(String[] args) {
