@@ -246,6 +246,9 @@ public class Main extends Localfullnode2Pointcut/* GeneralNode */ {
 			this.nodeParameters.init(getCommunicator(), args);
 			logger.warn("params: {}", JSONArray.toJSONString(args));
 
+			// introduce localfullnode2 dep by Francis.Deng 5/9/2019
+			newDepsAndRegisterThem();
+
 			// 清除上一次的缓存
 			initClearCache();
 
