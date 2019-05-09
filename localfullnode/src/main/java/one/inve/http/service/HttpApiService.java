@@ -11,8 +11,6 @@ import org.spongycastle.util.encoders.Hex;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import one.inve.bean.message.SnapshotMessage;
-import one.inve.bean.message.SnapshotPoint;
 import one.inve.beans.dao.BlockBrowserInfo;
 import one.inve.beans.dao.Message;
 import one.inve.beans.dao.SystemAutoArray;
@@ -29,7 +27,6 @@ import one.inve.http.annotation.RequestMapper;
 import one.inve.node.GeneralNode;
 import one.inve.rocksDB.RocksJavaUtil;
 import one.inve.service.CommonApiService;
-import one.inve.service.SnapshotDbService;
 import one.inve.util.HttpUtils;
 import one.inve.util.ResponseUtils;
 import one.inve.util.StringUtils;
@@ -493,21 +490,4 @@ public class HttpApiService {
 		}
 	}
 
-	@RequestMapper(value = "/v1/admin/snapshot/latest", method = MethodEnum.POST)
-	public String getLatestSnapshot(DataMap<String, Object> data) {
-		SnapshotMessage snapshotMessage = SnapshotDbService.queryLatestSnapshotMessage(node.nodeParameters.dbId);
-		HashMap<BigInteger, SnapshotPoint> snapshotPointMap = node.getSnapshotPointMap();
-		HashMap<BigInteger, String> treeRootMap = node.getTreeRootMap();
-		BigInteger totalConsEventCount = node.getTotalConsEventCount();
-
-		String strSnapshotMessage = String.format("SnapshotMessage= %s/r/n", JSONObject.toJSONString(snapshotMessage));
-		String strSnapshotPointMap = String.format("SnapshotPointMap= %s/r/n",
-				JSONObject.toJSONString(snapshotPointMap));
-		String strTreeRootMap = String.format("TreeRootMap= %s/r/n", JSONObject.toJSONString(treeRootMap));
-		String strTotalConsEventCount = String.format("TotalConsEventCount= %s/r/n",
-				JSONObject.toJSONString(totalConsEventCount));
-
-		return strSnapshotMessage + strSnapshotPointMap + strTreeRootMap + strTotalConsEventCount;
-
-	}
 }
