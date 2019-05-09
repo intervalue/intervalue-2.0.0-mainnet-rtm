@@ -10,6 +10,8 @@ import one.inve.localfullnode2.store.mysql.QueryTableSplit;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.store.rocks.TransactionSplit;
 import one.inve.localfullnode2.utilities.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -23,7 +25,7 @@ import java.util.Map;
  * @date   2018/11/2 0002.
  */
 public class SnapshotDbServiceImpl2 implements SnapshotDbService {
-//    private static final Logger logger = LoggerFactory.getLogger(SnapshotDbServiceImpl2.class);
+    private static final Logger logger = LoggerFactory.getLogger(SnapshotDbServiceImpl2.class);
 
     /**
      * 查询最新快照消息
@@ -32,24 +34,25 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
      * @return 最新快照消息
      */
     public SnapshotMessage queryLatestSnapshotMessage(String dbId) {
-//        logger.info("queryLatestSnapshotMessage...");
+        logger.info(">>>>>START<<<<<queryLatestSnapshotMessage");
         SnapshotMessage maxSnapshot = null;
         try {
             String snapHash = queryLatestSnapshotMessageHash(dbId);
             if(StringUtils.isNotEmpty(snapHash)) {
                 String json = querySnapshotMessageFormatStringByHash(dbId, snapHash);
                 if(StringUtils.isNotEmpty(json)){
-                    String smapshotStr = JSON.parseObject(json).getString("message");
-                    maxSnapshot = JSON.parseObject(smapshotStr, SnapshotMessage.class);
+                    String snapshotStr = JSON.parseObject(json).getString("message");
+                    maxSnapshot = JSON.parseObject(snapshotStr, SnapshotMessage.class);
                 } else {
-//                    logger.error("node-{}: snapshotMessage in mysql diff from in Rocksdb. " +
-//                                    "in mysql: {}, but in Rocksdb is null", dbId, snapHash);
+                    logger.error(">>>>>ERROR<<<<<queryLatestSnapshotMessage:\n snapshotMessage in mysql diff from in " +
+                            "Rocksdb.in mysql: , but in Rocksdb is null");
                     System.exit(-1);
                 }
             }
+            logger.info(">>>>>RETURN<<<<<queryLatestSnapshotMessage:\n maxSnapshot: {}", maxSnapshot);
             return maxSnapshot;
         } catch (Exception e) {
-//            logger.error(">>>>>> queryLatestSnapshotMessage() ERROR: {}", e);
+            logger.error(">>>>>ERROR<<<<<queryLatestSnapshotMessage:\n error: {}", e);
             return maxSnapshot;
         }
     }
@@ -61,10 +64,11 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
      * @return 最新快照消息的hash值
      */
     public String queryLatestSnapshotMessageHash(String dbId){
+        logger.info(">>>>>START<<<<<queryLatestSnapshotMessageHash");
         //查找最大的TransactionSplit
         TransactionSplit split = QueryTableSplit.tableExist(dbId);
         if (null == split) {
-//            logger.warn("messages_* tables not exist!!!");
+            logger.info(">>>>>RETURN<<<<<queryLatestSnapshotMessageHash:\n messages_* tables not exist");
             return null;
         }
         int type = MessageType.SNAPSHOT.getIndex();
@@ -81,13 +85,15 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
                 i = i.subtract(BigInteger.ONE);
             }
             if(messageHashs!=null&&messageHashs.size()>0){
+                logger.info(">>>>>RETURN<<<<<queryLatestSnapshotMessageHash:\n latestSnapshotMessageHash: {}",
+                        messageHashs.get(0));
                 return messageHashs.get(0);
             }else{
-//                logger.warn("local db {} latest snapshot message not exist!!!", dbId);
+                logger.info(">>>>>RETURN<<<<<queryLatestSnapshotMessageHash:\n latestSnapshotMessageHash not exist");
                 return null;
             }
         } catch (SQLException e) {
-//            logger.error("querySnapshotMessageHashByVersion(): {}", e);
+            logger.error(">>>>>ERROR<<<<<queryLatestSnapshotMessageHash:\n error: {}", e);
             return null;
         } finally {
             if(h!=null) {
@@ -104,19 +110,18 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
      * @return 快照消息（以字符串形式返回）
      */
     public String querySnapshotMessageFormatStringByHash(String dbId, String hash) {
-//        logger.info("querySnapshotMessageFormatStringByHash...hash: {}", hash);
+        logger.info(">>>>>START<<<<<querySnapshotMessageFormatStringByHash");
         String snapshotStr = null;
         try {
-
             RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
             byte[] snapshotVersionByte = rocksJavaUtil.get(hash);
             if(snapshotVersionByte!=null){
                 snapshotStr = new String(snapshotVersionByte);
             }
-
+            logger.info(">>>>>RETURN<<<<<querySnapshotMessageFormatStringByHash:\n snapshotStr: {}",snapshotStr);
             return snapshotStr;
         } catch (Exception e) {
-//            logger.error(">>>>>> querySnapshotMessageFormatStringByHash() ERROR: {}", e);
+            logger.error(">>>>>ERROR<<<<<querySnapshotMessageFormatStringByHash:\n error: {}", e);
             return null;
         }
     }
@@ -129,10 +134,13 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
      * @return 快照消息（以实体对象形式返回）
      */
     public SnapshotMessage querySnapshotMessageByHash(String dbId, String hash) {
-//        logger.info("querySnapshotMessageByHash...hash: {}", hash);
+        logger.info(">>>>>START<<<<<querySnapshotMessageByHash");
         String json = querySnapshotMessageFormatStringByHash(dbId, hash);
         if(StringUtils.isNotEmpty(json)){
-            return JSON.parseObject(JSON.parseObject(json).getString("message"), SnapshotMessage.class);
+            SnapshotMessage snapshotMessage = JSON.parseObject(JSON.parseObject(json).getString("message"),
+                    SnapshotMessage.class);
+            logger.info(">>>>>RETURN<<<<<querySnapshotMessageByHash:\n snapshotMessage: {}",snapshotMessage);
+            return snapshotMessage;
         } else {
             return null;
         }
