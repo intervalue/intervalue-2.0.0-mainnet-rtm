@@ -1,5 +1,13 @@
 package one.inve.localfullnode2.dep;
 
+import one.inve.localfullnode2.dep.items.DBId;
+import one.inve.localfullnode2.dep.items.LocalFullNodes;
+import one.inve.localfullnode2.dep.items.Mnemonic;
+import one.inve.localfullnode2.dep.items.NValue;
+import one.inve.localfullnode2.dep.items.PublicKey;
+import one.inve.localfullnode2.dep.items.ShardCount;
+import one.inve.localfullnode2.dep.items.ShardId;
+
 /**
  * 
  * 
