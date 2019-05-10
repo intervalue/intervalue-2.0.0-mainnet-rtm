@@ -2,6 +2,8 @@ package one.inve.localfullnode2.dep;
 
 import org.junit.Test;
 
+import one.inve.localfullnode2.dep.items.ShardId;
+
 /**
  * 
  * 
@@ -18,10 +20,11 @@ public class DepItemsManagerTest {
 	public void testShardId() {
 		ShardIdProducer producer = new ShardIdProducer();
 		ShardIdConsumer consumer = new ShardIdConsumer();
+		SilentConsumer silentConsumer = new SilentConsumer();
 
 		producer.produceOneBit();// see nothing
 
-		DepItemsManager.getInstance().attachShardId(consumer);
+		DepItemsManager.getInstance().attachShardId(consumer, silentConsumer);
 
 		producer.produceTwoBits();// see all things
 	}
@@ -64,6 +67,23 @@ public class DepItemsManagerTest {
 			if (item instanceof ShardId) {
 				consumeOne(((ShardId) item));
 			}
+
+		}
+
+	}
+
+	public static class SilentConsumer implements DependentItemConcerned {
+
+		private ShardId shardId;
+
+		public void consume() {
+			// ShardId shardId = DepManager.getInstance().attachShardId(null);
+
+		}
+
+		@Override
+		public void update(DependentItem item) {
+			set(this, item);
 
 		}
 
