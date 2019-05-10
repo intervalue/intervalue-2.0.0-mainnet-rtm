@@ -1,5 +1,20 @@
 package one.inve.localfullnode2.dep;
 
+import one.inve.localfullnode2.dep.items.BlackList4PubKey;
+import one.inve.localfullnode2.dep.items.CreatorId;
+import one.inve.localfullnode2.dep.items.CurrSnapshotVersion;
+import one.inve.localfullnode2.dep.items.DBId;
+import one.inve.localfullnode2.dep.items.EventFlow;
+import one.inve.localfullnode2.dep.items.LastSeqs;
+import one.inve.localfullnode2.dep.items.LocalFullNodes;
+import one.inve.localfullnode2.dep.items.Members;
+import one.inve.localfullnode2.dep.items.Mnemonic;
+import one.inve.localfullnode2.dep.items.NValue;
+import one.inve.localfullnode2.dep.items.PrivateKey;
+import one.inve.localfullnode2.dep.items.PublicKey;
+import one.inve.localfullnode2.dep.items.ShardCount;
+import one.inve.localfullnode2.dep.items.ShardId;
+
 /**
  * 
  * 
@@ -24,4 +39,18 @@ public interface DepItemsManagerial {
 	Mnemonic attachMnemonic(DependentItemConcerned... dependentItemConcerneds);
 
 	PublicKey attachPublicKey(DependentItemConcerned... dependentItemConcerneds);
+
+	Members attachMembers(DependentItemConcerned... dependentItemConcerneds);
+
+	CreatorId attachCreatorId(DependentItemConcerned... dependentItemConcerneds);
+
+	LastSeqs attachLastSeqs(DependentItemConcerned... dependentItemConcerneds);
+
+	CurrSnapshotVersion attachCurrSnapshotVersion(DependentItemConcerned... dependentItemConcerneds);
+
+	EventFlow attachEventFlow(DependentItemConcerned... dependentItemConcerneds);
+
+	BlackList4PubKey attachBlackList4PubKey(DependentItemConcerned... dependentItemConcerneds);
+
+	PrivateKey attachPrivateKey(DependentItemConcerned... dependentItemConcerneds);
 }

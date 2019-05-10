@@ -51,4 +51,24 @@ public class HttpAdminService {
 		return strSnapshotMessage + strSnapshotPointMap + strTreeRootMap + strTotalConsEventCount;
 
 	}
+
+	@RequestMapper(value = "/v1/admin/snapshot/treeRootMap", method = MethodEnum.POST)
+	public String getTreeRootMap(DataMap<String, Object> data) {
+		HashMap<BigInteger, String> treeRootMap = node.getTreeRootMap();
+
+		String strTreeRootMap = String.format("%s", JSONObject.toJSONString(treeRootMap));
+
+		return strTreeRootMap;
+
+	}
+
+	@RequestMapper(value = "/v1/admin/snapshot/consEventCount", method = MethodEnum.POST)
+	public String getConsEventCount(DataMap<String, Object> data) {
+		BigInteger totalConsEventCount = node.getTotalConsEventCount();
+
+		String strTotalConsEventCount = String.format("%s", JSONObject.toJSONString(totalConsEventCount));
+
+		return strTotalConsEventCount;
+
+	}
 }

@@ -1,5 +1,20 @@
 package one.inve.localfullnode2.dep;
 
+import one.inve.localfullnode2.dep.items.BlackList4PubKey;
+import one.inve.localfullnode2.dep.items.CreatorId;
+import one.inve.localfullnode2.dep.items.CurrSnapshotVersion;
+import one.inve.localfullnode2.dep.items.DBId;
+import one.inve.localfullnode2.dep.items.EventFlow;
+import one.inve.localfullnode2.dep.items.LastSeqs;
+import one.inve.localfullnode2.dep.items.LocalFullNodes;
+import one.inve.localfullnode2.dep.items.Members;
+import one.inve.localfullnode2.dep.items.Mnemonic;
+import one.inve.localfullnode2.dep.items.NValue;
+import one.inve.localfullnode2.dep.items.PrivateKey;
+import one.inve.localfullnode2.dep.items.PublicKey;
+import one.inve.localfullnode2.dep.items.ShardCount;
+import one.inve.localfullnode2.dep.items.ShardId;
+
 /**
  * 
  * Copyright © CHXX Co.,Ltd. All rights reserved.
@@ -19,6 +34,13 @@ public final class DepItemsManager implements DepItemsManagerial {
 	private DBId dbId;
 	private Mnemonic mnemonic;
 	private PublicKey publicKey;
+	private Members members;
+	private CreatorId creatorId;
+	private LastSeqs lastSeqs;
+	private CurrSnapshotVersion currSnapshotVersion;
+	private EventFlow eventFlow;
+	private BlackList4PubKey blackList4PubKey;
+	private PrivateKey privateKey;
 
 	private DepItemsManager() {
 		shardId = new ShardId();
@@ -28,6 +50,13 @@ public final class DepItemsManager implements DepItemsManagerial {
 		dbId = new DBId();
 		mnemonic = new Mnemonic();
 		publicKey = new PublicKey();
+		members = new Members();
+		creatorId = new CreatorId();
+		lastSeqs = new LastSeqs();
+		currSnapshotVersion = new CurrSnapshotVersion();
+		eventFlow = new EventFlow();
+		blackList4PubKey = new BlackList4PubKey();
+		privateKey = new PrivateKey();
 	}
 
 	private static class SingletonHelper {
@@ -38,6 +67,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		return SingletonHelper.INSTANCE;
 	}
 
+	@Override
 	public ShardId attachShardId(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			shardId.attach(dependentItemConcerneds);
@@ -46,6 +76,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		return shardId;
 	}
 
+	@Override
 	public ShardCount attachShardCount(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			shardCount.attach(dependentItemConcerneds);
@@ -54,6 +85,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		return shardCount;
 	}
 
+	@Override
 	public NValue attachNValue(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			nValue.attach(dependentItemConcerneds);
@@ -62,6 +94,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		return nValue;
 	}
 
+	@Override
 	public LocalFullNodes attachLocalFullNodes(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			localFullNodes.attach(dependentItemConcerneds);
@@ -70,6 +103,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		return localFullNodes;
 	}
 
+	@Override
 	public DBId attachDBId(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			dbId.attach(dependentItemConcerneds);
@@ -78,6 +112,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		return dbId;
 	}
 
+	@Override
 	public Mnemonic attachMnemonic(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			mnemonic.attach(dependentItemConcerneds);
@@ -86,11 +121,75 @@ public final class DepItemsManager implements DepItemsManagerial {
 		return mnemonic;
 	}
 
+	@Override
 	public PublicKey attachPublicKey(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			publicKey.attach(dependentItemConcerneds);
 		}
 
 		return publicKey;
+	}
+
+	@Override
+	public Members attachMembers(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			members.attach(dependentItemConcerneds);
+		}
+
+		return members;
+	}
+
+	@Override
+	public CreatorId attachCreatorId(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			creatorId.attach(dependentItemConcerneds);
+		}
+
+		return creatorId;
+	}
+
+	@Override
+	public LastSeqs attachLastSeqs(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			lastSeqs.attach(dependentItemConcerneds);
+		}
+
+		return lastSeqs;
+	}
+
+	@Override
+	public CurrSnapshotVersion attachCurrSnapshotVersion(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			currSnapshotVersion.attach(dependentItemConcerneds);
+		}
+
+		return currSnapshotVersion;
+	}
+
+	@Override
+	public EventFlow attachEventFlow(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			eventFlow.attach(dependentItemConcerneds);
+		}
+
+		return eventFlow;
+	}
+
+	@Override
+	public BlackList4PubKey attachBlackList4PubKey(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			blackList4PubKey.attach(dependentItemConcerneds);
+		}
+
+		return blackList4PubKey;
+	}
+
+	@Override
+	public PrivateKey attachPrivateKey(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			privateKey.attach(dependentItemConcerneds);
+		}
+
+		return privateKey;
 	}
 }

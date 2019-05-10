@@ -1,5 +1,9 @@
 package one.inve.localfullnode2.dep;
 
+import java.lang.reflect.Field;
+
+import one.inve.localfullnode2.utilities.ReflectionUtil;
+
 /**
  * 
  * 
@@ -12,5 +16,26 @@ package one.inve.localfullnode2.dep;
  * @version: V1.0
  */
 public interface DependentItemConcerned {
-	public void update(DependentItem item);
+	void update(DependentItem item);
+
+	/**
+	 * inject item into subclass of {@link DependentItemConcerned} if the type is
+	 * matched.
+	 * 
+	 * @param itemWatcher
+	 * @param item
+	 */
+	default void set(DependentItemConcerned itemWatcher, DependentItem item) {
+		Field f = ReflectionUtil.findField(itemWatcher.getClass(), item.getClass());
+
+		if (f != null) {
+			try {
+				ReflectionUtil.setField(f, itemWatcher, item);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+
+	}
 }

@@ -98,8 +98,8 @@ public class GossipEventThread extends Thread {
 			if (gossipFlag) {
 				Instant firstTime = Instant.now();
 
-				List<Member> members = (type == Config.GOSSIP_IN_SHARD) ? node.inshardNeighborPools
-						: node.globalNeighborPools;
+				List<Member> members = (type == Config.GOSSIP_IN_SHARD) ? node.inshardNeighborPools()
+						: node.globalNeighborPools();
 				int memberSize = members.size();
 				if (memberSize <= 0) {
 //                logger.warn("{}there is no neighbor.", pre);
@@ -147,8 +147,8 @@ public class GossipEventThread extends Thread {
 				boolean[] connflag = new boolean[numNeighbors];
 				for (int ni = 0; ni < numNeighbors; ni++) {
 					Member neighbor = (type == Config.GOSSIP_IN_SHARD)
-							? node.inshardNeighborPools.get(neighborIdxes[ni])
-							: node.globalNeighborPools.get(neighborIdxes[ni]);
+							? node.inshardNeighborPools().get(neighborIdxes[ni])
+							: node.globalNeighborPools().get(neighborIdxes[ni]);
 					if (StringUtils.isNotEmpty(ips)) {
 						ips.append("|");
 					}
@@ -243,8 +243,8 @@ public class GossipEventThread extends Thread {
 		for (int ni = 0; ni < numNeighbors; ni++) {
 			if (connflag[ni]) {
 				Instant first = Instant.now();
-				Member neighbor = (type == Config.GOSSIP_IN_SHARD) ? node.inshardNeighborPools.get(neighborIdxes[ni])
-						: node.globalNeighborPools.get(neighborIdxes[ni]);
+				Member neighbor = (type == Config.GOSSIP_IN_SHARD) ? node.inshardNeighborPools().get(neighborIdxes[ni])
+						: node.globalNeighborPools().get(neighborIdxes[ni]);
 				Local2localPrx prx = prxMap.get(neighbor.address());
 
 				logger.info("gossip to a peer [{}]\n", neighbor.toString());
@@ -427,8 +427,8 @@ public class GossipEventThread extends Thread {
 		if (StringUtils.isEmpty(pubkey)) {
 			return false;
 		}
-		List<Member> neighbors = (type == Config.GOSSIP_IN_SHARD) ? node.inshardNeighborPools
-				: node.globalNeighborPools;
+		List<Member> neighbors = (type == Config.GOSSIP_IN_SHARD) ? node.inshardNeighborPools()
+				: node.globalNeighborPools();
 		for (Member neighbor : neighbors) {
 			if (pubkey.equals(neighbor.metadata().get("pubkey")) && neighbor.metadata().get("shard") != null) {
 				Local2localPrx nprx = RpcConnectionService.buildConnection2localFullNode(node.getCommunicator(),
@@ -513,8 +513,8 @@ public class GossipEventThread extends Thread {
 				String pubkey = node.publicKey == null ? "" : HnKeyUtils.getString4PublicKey(node.publicKey);
 				byte[] sig = Cryptos.sign(data.getBytes(), node.privateKey);
 				if ("selfMissing".equals(resultMap.get("result"))) {
-					List<Member> members = (type == Config.GOSSIP_IN_SHARD) ? node.inshardNeighborPools
-							: node.globalNeighborPools;
+					List<Member> members = (type == Config.GOSSIP_IN_SHARD) ? node.inshardNeighborPools()
+							: node.globalNeighborPools();
 					List<Member> successList = new ArrayList<>();
 					int nodes = members.size();
 					// 存放調接口成功返回Event的對象的pubey,其中map的key爲Event的hash值,Set爲pubkey集合
@@ -578,8 +578,8 @@ public class GossipEventThread extends Thread {
 					}
 				}
 				if ("otherMissing".equals(resultMap.get("result"))) {
-					List<Member> members = (type == Config.GOSSIP_IN_SHARD) ? node.inshardNeighborPools
-							: node.globalNeighborPools;
+					List<Member> members = (type == Config.GOSSIP_IN_SHARD) ? node.inshardNeighborPools()
+							: node.globalNeighborPools();
 					List<Member> successList = new ArrayList<>();
 					int nodes = members.size();
 					// 存放調接口成功返回Event的對象的pubey,其中map的key爲Event的hash值,Set爲pubkey集合
@@ -752,8 +752,8 @@ public class GossipEventThread extends Thread {
 							prxMap.putAll(
 									type == Config.GOSSIP_IN_SHARD ? ((Main) node).getConsensusThread().getPrxMap()
 											: ((Main) node).getSyncThread().getPrxMap());
-							List<Member> allMembers = type == Config.GOSSIP_IN_SHARD ? node.inshardNeighborPools
-									: node.globalNeighborPools;
+							List<Member> allMembers = type == Config.GOSSIP_IN_SHARD ? node.inshardNeighborPools()
+									: node.globalNeighborPools();
 							Member centerNeighbor = null;
 							PublicKey centerPubkey = node.getEventFlow().getPubKeys()[0][0];
 							for (Member member : allMembers) {

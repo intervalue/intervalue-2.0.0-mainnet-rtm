@@ -1,4 +1,6 @@
-package one.inve.localfullnode2.dep;
+package one.inve.localfullnode2.dep.items;
+
+import one.inve.localfullnode2.dep.DependentItem;
 
 public class ShardCount extends DependentItem {
 	private int shardCount;
