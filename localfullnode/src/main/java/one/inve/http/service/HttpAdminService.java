@@ -56,7 +56,7 @@ public class HttpAdminService {
 	public String getTreeRootMap(DataMap<String, Object> data) {
 		HashMap<BigInteger, String> treeRootMap = node.getTreeRootMap();
 
-		String strTreeRootMap = String.format("TreeRootMap= %s/r/n", JSONObject.toJSONString(treeRootMap));
+		String strTreeRootMap = String.format("%s", JSONObject.toJSONString(treeRootMap));
 
 		return strTreeRootMap;
 
@@ -66,8 +66,7 @@ public class HttpAdminService {
 	public String getConsEventCount(DataMap<String, Object> data) {
 		BigInteger totalConsEventCount = node.getTotalConsEventCount();
 
-		String strTotalConsEventCount = String.format("TotalConsEventCount= %s/r/n",
-				JSONObject.toJSONString(totalConsEventCount));
+		String strTotalConsEventCount = String.format("%s", JSONObject.toJSONString(totalConsEventCount));
 
 		return strTotalConsEventCount;
 
