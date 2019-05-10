@@ -34,7 +34,7 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
      * @return 最新快照消息
      */
     public SnapshotMessage queryLatestSnapshotMessage(String dbId) {
-        logger.info(">>>>>START<<<<<queryLatestSnapshotMessage");
+        logger.info(">>>>>START<<<<<queryLatestSnapshotMessage:\n dbId: {}",dbId);
         SnapshotMessage maxSnapshot = null;
         try {
             String snapHash = queryLatestSnapshotMessageHash(dbId);
@@ -64,7 +64,7 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
      * @return 最新快照消息的hash值
      */
     public String queryLatestSnapshotMessageHash(String dbId){
-        logger.info(">>>>>START<<<<<queryLatestSnapshotMessageHash");
+        logger.info(">>>>>START<<<<<queryLatestSnapshotMessageHash:\n dbId: {}",dbId);
         //查找最大的TransactionSplit
         TransactionSplit split = QueryTableSplit.tableExist(dbId);
         if (null == split) {
@@ -110,7 +110,7 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
      * @return 快照消息（以字符串形式返回）
      */
     public String querySnapshotMessageFormatStringByHash(String dbId, String hash) {
-        logger.info(">>>>>START<<<<<querySnapshotMessageFormatStringByHash");
+        logger.info(">>>>>START<<<<<querySnapshotMessageFormatStringByHash:\n dbId: {},\n hash: {}",dbId,hash);
         String snapshotStr = null;
         try {
             RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
@@ -134,7 +134,7 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
      * @return 快照消息（以实体对象形式返回）
      */
     public SnapshotMessage querySnapshotMessageByHash(String dbId, String hash) {
-        logger.info(">>>>>START<<<<<querySnapshotMessageByHash");
+        logger.info(">>>>>START<<<<<querySnapshotMessageByHash:\n dbId: {},\n hash: {}",dbId,hash);
         String json = querySnapshotMessageFormatStringByHash(dbId, hash);
         if(StringUtils.isNotEmpty(json)){
             SnapshotMessage snapshotMessage = JSON.parseObject(JSON.parseObject(json).getString("message"),
@@ -232,7 +232,8 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
      */
     public void deleteEventsBeforeSnapshotPointEvent(String dbId, EventBody eb, int nValue) {
 //        logger.info("deleteEventsBeforeSnapshotPointEvent...{}", JSON.toJSONString(eb));
-
+        logger.info(">>>>>START<<<<<deleteEventsBeforeSnapshotPointEvent:\n dbId: {},\n eventBody: {},\n nValue: {}",
+                dbId,eb,nValue);
         try {
             if (eb != null) {
                 RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
@@ -250,7 +251,9 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
             }
         } catch (Exception e) {
 //            logger.error("deleteEventsBeforeSnapshotPointEvent save error: {}", e);
+            logger.error(">>>>>ERROR<<<<<deleteEventsBeforeSnapshotPointEvent:\n error: {}",e);
         }
+        logger.info(">>>>>END<<<<<deleteEventsBeforeSnapshotPointEvent");
     }
 
 

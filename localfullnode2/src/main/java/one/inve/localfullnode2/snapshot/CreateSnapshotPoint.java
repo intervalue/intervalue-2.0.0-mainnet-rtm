@@ -22,17 +22,18 @@ public class CreateSnapshotPoint {
     private static final Logger logger = LoggerFactory.getLogger(CreateSnapshotPoint.class);
 
     private CreateSnapshotPointDependent dep;
-    private String msgHashTreeRoot;
-    private BigInteger vers;
+    private String msgHashTreeRoot = null;
     private EventBody event;
+    private BigInteger vers;
 
     public void createSnapshotPoint(CreateSnapshotPointDependent dep) throws InterruptedException {
         this.dep = dep;
-        this.vers = dep.getCurrSnapshotVersion();
         this.event = dep.getEventBody();
+        this.vers = dep.getCurrSnapshotVersion();
 
         if (dep.getTotalConsEventCount().mod(BigInteger.valueOf(Config.EVENT_NUM_PER_SNAPSHOT))
                 .equals(BigInteger.ZERO)) {
+            logger.info(">>>>>START<<<<<createSnapshotPoint:\n eventBody: {}", JSON.toJSONString(event));
             EventKeyPair pair = new EventKeyPair(event.getShardId(), event.getCreatorId(), event.getCreatorSeq());
 //            logger.info("node-({}, {}): snapshotpoint evt-{}, statistics contributions...",
 //                    dep.getShardId(), dep.getCreatorId(), pair.toString());
@@ -68,6 +69,8 @@ public class CreateSnapshotPoint {
             dep.getTreeRootMap().put(vers, msgHashTreeRoot);
 //            logger.info("\n=========== dep-({}, {}):  vers: {}, msgHashTreeRoot: {}",
 //                    dep.getShardId(), dep.getCreatorId(), vers, msgHashTreeRoot);
+            logger.info(">>>>>INFO<<<<<createSnapshotPoint:\n snapshotPointMap: {},\n treeRootMap: {}",
+                    JSON.toJSONString(dep.getSnapshotPointMap()), JSON.toJSONString(dep.getTreeRootMap()));
 
             // 重置消息hash根
             dep.setContributions(new HashSet<>());
@@ -81,19 +84,13 @@ public class CreateSnapshotPoint {
             o.put("eHash", eHash);
             o.put("lastIdx", true);
             dep.getConsMessageVerifyQueue().put(o);
-
-            System.out.println(JSON.toJSONString(dep.getTreeRootMap()));
-            System.out.println(JSON.toJSONString(dep.getSnapshotPointMap()));
-            System.out.println(o);
+            logger.info(">>>>>INFO<<<<<createSnapshotPoint:\n snapshotPointTrigger: {}",o);
+            logger.info(">>>>>END<<<<<createSnapshotPoint");
         }
+
     }
 
     public static void main(String[] args){
-        CreateSnapshotPointDependent dep = new CreateSnapshotPointDependentImpl();
-        try {
-            new CreateSnapshotPoint().createSnapshotPoint(dep);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
     }
 }

@@ -119,7 +119,7 @@ public class SnapshotSynchronizerDependency implements SnapshotSynchronizerDepen
 	}
 
 	@Override
-	public String getDBId() {
+	public String getDbId() {
 		return dbId;
 	}
 

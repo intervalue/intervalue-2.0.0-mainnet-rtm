@@ -18,8 +18,6 @@ public interface CreateSnapshotPointDependent{
 
     void setContributions(HashSet<Contribution> contributions);
 
-    EventBody getEventBody();
-
     BigInteger getTotalConsEventCount();
 
     int getShardCount();
@@ -41,5 +39,7 @@ public interface CreateSnapshotPointDependent{
     long getCreatorId();
 
     int getShardId();
+
+    EventBody getEventBody();
 
 }
