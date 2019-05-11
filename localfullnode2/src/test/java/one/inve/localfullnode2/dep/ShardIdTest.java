@@ -14,7 +14,7 @@ import one.inve.localfullnode2.dep.items.ShardId;
  * @date: May 8, 2019 1:52:30 AM
  * @version: V1.0
  */
-public class DepItemsManagerTest {
+public class ShardIdTest {
 	// demonstrate how to pass a shardId item between producer and consumer
 	@Test
 	public void testShardId() {
