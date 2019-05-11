@@ -94,10 +94,4 @@ public class DetectAndRepairSnapshotData {
         logger.info(">>>>>END<<<<<clearHistoryEventsBySnapshot");
     }
 
-    public static void main(String[] args) {
-        DetectAndRepairSnapshotDataDependent dep = new DetectAndRepairSnapshotDataDependentImpl();
-        SnapshotDbService store = new SnapshotDbServiceImpl();
-        new DetectAndRepairSnapshotData().detectAndRepairSnapshotData(dep,store);
-    }
-
 }

@@ -306,13 +306,4 @@ public class RepairCurrSnapshotPointInfo {
         logger.info(">>>>>END<<<<<calculateMsgHashTreeRoot:\n msgHashTreeRoot: {}",msgHashTreeRoot);
     }
 
-    public static void main(String[] args) {
-        RepairCurrSnapshotPointInfoDependent dep = new RepairCurrSnapshotPointInfoDependentImpl();
-        try {
-            new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(dep);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

@@ -117,12 +117,4 @@ public class HandleSnapshotPointMessage {
         return preHash;
     }
 
-    public static void main(String[] args) {
-        HandleSnapshotPointMessageDependent dep = new HandleSnapshotPointMessageDependentImpl();
-        try {
-            new HandleSnapshotPointMessage().handleSnapshotPointMessage(dep);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

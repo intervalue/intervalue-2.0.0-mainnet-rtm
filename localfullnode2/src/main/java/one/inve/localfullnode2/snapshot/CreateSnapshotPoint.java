@@ -90,7 +90,4 @@ public class CreateSnapshotPoint {
 
     }
 
-    public static void main(String[] args){
-
-    }
 }
