@@ -7,6 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import one.inve.localfullnode2.staging.RemovableBlockingMechanismQueue.ElementModifiable;
 import one.inve.localfullnode2.utilities.StringUtils;
 
 /**
@@ -21,6 +22,13 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * @version: V1.0
  */
 public class StagingArea {
+	public static final String MessageQueueName = "messageQueue";
+	public static final String EventSaveQueueName = "eventSaveQueue";
+	public static final String ConsEventHandleQueueName = "consEventHandleQueue";
+	public static final String ConsMessageVerifyQueueName = "consMessageVerifyQueue";
+	public static final String ConsMessageHandleQueueName = "consMessageHandleQueue";
+	public static final String ConsMessageSaveQueueName = "consMessageSaveQueue";
+	public static final String SystemAutoTxSaveQueueName = "systemAutoTxSaveQueue";
 
 	private Lock lock = new ReentrantLock();
 	@SuppressWarnings("rawtypes")
@@ -28,18 +36,24 @@ public class StagingArea {
 
 	// an economic approach to share a queue by class
 	@SuppressWarnings("rawtypes")
-	public <T> BlockingQueue getQueue(Class<T> clazz, int size) {
-		return getQueue(clazz, null, size);
+	public <T> BlockingQueue createQueue(Class<T> clazz) {
+		return createQueue(clazz, null, Integer.MAX_VALUE, null);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public <T> BlockingQueue getQueue(Class<T> clazz, String tp, int size) {
+	public <T> BlockingQueue getQueue(Class<T> clazz, String tp) {
+		Queue q = queues.get(toName(clazz, tp));
+		return q == null ? null : (BlockingQueue) q;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public <T> BlockingQueue createQueue(Class<T> clazz, String tp, int size, ElementModifiable modifier) {
 		lock.lock();
 		Queue queue = null;
 		try {
 			queue = queues.get(toName(clazz, tp));
 			if (queue == null) {
-				queue = new LinkedBlockingQueue<T>(size);
+				queue = new RemovableBlockingMechanismQueue<T>(size, modifier);
 			}
 
 		} finally {
