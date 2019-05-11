@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.bean.message.SnapshotPoint;
+import one.inve.core.Config;
 import one.inve.http.DataMap;
 import one.inve.http.annotation.MethodEnum;
 import one.inve.http.annotation.RequestMapper;
@@ -69,6 +70,14 @@ public class HttpAdminService {
 		String strTotalConsEventCount = String.format("%s", JSONObject.toJSONString(totalConsEventCount));
 
 		return strTotalConsEventCount;
+
+	}
+
+	@RequestMapper(value = "/v1/admin/snapshot/snapshotPoint", method = MethodEnum.GET)
+	public String leftbeforeSnapshotPoint(DataMap<String, Object> data) {
+		BigInteger left = node.getTotalConsEventCount().mod(BigInteger.valueOf(Config.EVENT_NUM_PER_SNAPSHOT));
+
+		return left.toString();
 
 	}
 }
