@@ -61,11 +61,11 @@ public class SnapshotSynchronizer {
 		// 获取第snapVersion版快照消息
 		int selfId = (int) dep.getCreatorId();
 //		logger.warn("hash:{}", hash);
-		String snapshotStr = dep.getSnapshotDBService().querySnapshotMessageFormatStringByHash(dep.getDBId(), hash);
+		String snapshotStr = dep.getSnapshotDBService().querySnapshotMessageFormatStringByHash(dep.getDbId(), hash);
 		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
 		// 获取交易信息
 		List<JSONObject> trans = dep.getTransactionDbService().queryMissingTransactionsBeforeSnapshotPoint(
-				originalSnapshotStr, new BigInteger(requestConsMessageMaxId), dep.getDBId());
+				originalSnapshotStr, new BigInteger(requestConsMessageMaxId), dep.getDbId());
 
 		// 构建结果结构
 		SnapObj snapObj = new SnapObj(snapshotStr, (null == trans) ? null : JSONArray.toJSONString(trans));
@@ -113,7 +113,7 @@ public class SnapshotSynchronizer {
 //						+ "neighbor synchronize snapshot...", node.getShardId(), node.getCreatorId());
 //				logger.warn("node-({}, {}): new String(gossipObj.snapHash):{}", node.getShardId(), node.getCreatorId(),
 //						new String(gossipObj.snapHash));
-				logger.warn("synchronizing: more than f+1 neighbor node's snapshot version bigger than mine");
+//				logger.warn("synchronizing: more than f+1 neighbor node's snapshot version bigger than mine");
 
 //				CompletableFuture<?> snapResult = prxMap.get(neighbor.address()).gossipMySnapVersion4SnapAsync(
 //						HnKeyUtils.getString4PublicKey(node.publicKey), "", new String(gossipObj.snapHash),

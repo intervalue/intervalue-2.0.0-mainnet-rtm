@@ -1,5 +1,6 @@
 package one.inve.localfullnode2.snapshot;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import one.inve.bean.message.Contribution;
 import one.inve.bean.message.SnapshotPoint;
@@ -13,23 +14,23 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.utilities.Hash;
 import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.utils.DSA;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RepairCurrSnapshotPointInfo {
+    private static final Logger logger = LoggerFactory.getLogger(RepairCurrSnapshotPointInfo.class);
 
     private RepairCurrSnapshotPointInfoDependent dep;
     private String msgHashTreeRoot;
-    private BigInteger vers;
-    private int shardCount;
-    private String dbId;
 
     public void repairCurrSnapshotPointInfo(RepairCurrSnapshotPointInfoDependent dep) throws InterruptedException {
+        logger.info(">>>>>START<<<<<repairCurrSnapshotPointInfo");
         this.dep = dep;
-        this.shardCount = dep.getShardCount();
-        this.dbId = dep.getDbId();
 
         SnapshotPoint latestSnapshotPoint = calculateLatestSnapshotPoint();
         EventBody latestSnapshotPointEb = null;
@@ -47,7 +48,7 @@ public class RepairCurrSnapshotPointInfo {
 //                null==pair0?null:pair0.toString(), latestSnapshotPointEbHash);
 
         // 模拟全排序线程，排序并恢复contribution
-        EventBody[] events = new EventBody[shardCount];
+        EventBody[] events = new EventBody[dep.getShardCount()];
         boolean statisFlag = false;
         int allSortEvtSize = 0;
         BigInteger transCount = BigInteger.valueOf(Config.CREATION_TX_LIST.size());
@@ -55,18 +56,20 @@ public class RepairCurrSnapshotPointInfo {
         int l = 0;
         int m = 0;
 
-        for (int i = 0; i < shardCount; i++) {
+//        for (int i = 0; i < dep.getShardCount(); i++) {
 //            logger.info("node-({}, {}): ShardSortQueue-{} size = {}",
 //                    node.getShardId(), node.getCreatorId(), i, node.getShardSortQueue(i).size());
-        }
-//        while (true) {
-            for (int i = 0; i < shardCount; i++) {
+//       }
+        while (true) {
+            for (int i = 0; i < dep.getShardCount(); i++) {
                 if (null == events[i]) {
                     events[i] = dep.getShardSortQueue(i).poll();
+                    logger.info(">>>>>INFO<<<<<repairCurrSnapshotPointInfo:\n eventBody[{}]: {}",i,
+                            JSON.toJSONString(events[i]));
                     l++;
                 }
 
-                if (i == shardCount - 1) {
+                if (i == dep.getShardCount() - 1) {
                     EventBody temp = events[0];
                     for (int j = 0; j < events.length; j++) {
                         if (temp == null || null == events[j]) {
@@ -109,6 +112,8 @@ public class RepairCurrSnapshotPointInfo {
                                     statisFlag = true;
                                     transCount = latestSnapshotPointEb.getTransCount();
                                     consEventCount = latestSnapshotPointEb.getConsEventCount();
+                                    logger.info(">>>>>INFO<<<<<repairCurrSnapshotPointInfo:\n transCount: {},\n " +
+                                            "consEventCount: {}",transCount,consEventCount);
                                 } else {
                                     events[temp.getShardId()] = null;
                                     continue;
@@ -137,8 +142,8 @@ public class RepairCurrSnapshotPointInfo {
                             dep.setTotalConsEventCount(consEventCount);
                             temp.setConsEventCount(dep.getTotalConsEventCount());
 
-//                            RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
-                            INosql rocksJavaUtil = new INosqlSnapshotImpl();
+                            INosql rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
+//                            INosql rocksJavaUtil = new INosqlSnapshotImpl();
                             if(temp.getTrans()!=null) {
                                 transCount = transCount.add(BigInteger.valueOf(temp.getTrans().length));
                                 rocksJavaUtil.put(Config.EVT_TX_COUNT_KEY, transCount.toString());
@@ -162,11 +167,15 @@ public class RepairCurrSnapshotPointInfo {
 //                                    logger.error("node-({}, {}): event-{}'s transCount diff, calcu: {}, db: {} ",
 //                                            node.getShardId(), node.getCreatorId(), pair.toString(),
 //                                            temp.getTransCount(), evt.getTransCount());
+                                    logger.error(">>>>>ERROR<<<<<repairCurrSnapshotPointInfo:\n transCount diff,\n " +
+                                            "calcu: {},db: {}",temp.getTransCount(), evt.getTransCount());
                                     System.exit(-1);
                                 } else if (!evt.getConsEventCount().equals(temp.getConsEventCount())) {
 //                                    logger.error("node-({}, {}): event-{}'s consEventCount diff, calcu: {}, db: {} ",
 //                                            node.getShardId(), node.getCreatorId(), pair.toString(),
 //                                            temp.getConsEventCount(), evt.getConsEventCount());
+                                    logger.error(">>>>>ERROR<<<<<repairCurrSnapshotPointInfo:\n consEventCount diff,\n " +
+                                            "calcu: {},db: {}",temp.getConsEventCount(), evt.getConsEventCount());
                                     System.exit(-1);
                                 }
                             }
@@ -192,12 +201,14 @@ public class RepairCurrSnapshotPointInfo {
                                         dep.getConsMessageVerifyQueue().put(o);
 //                                        logger.warn("node-({}, {}): message into ConsMessageVerifyQueue, id: {}",
 //                                                node.getShardId(), node.getCreatorId(), node.getConsMessageMaxId());
+                                        logger.info(">>>>>INFO<<<<<repairCurrSnapshotPointInfo:\n message into " +
+                                                "ConsMessageVerifyQueue: {}",o);
                                     } catch (InterruptedException e) {
+                                        logger.error(">>>>>ERROR<<<<<repairCurrSnapshotPointInfo:\n error: {}",e);
                                         e.printStackTrace();
                                     }
                                 }
                             }
-
                             // 没来的及生成的快照点及时生成快照点
                             createSnapshotPoint(temp);
                         }
@@ -205,15 +216,14 @@ public class RepairCurrSnapshotPointInfo {
                     }
                 }
             }
-//        }
+            logger.info(">>>>>END<<<<<repairCurrSnapshotPointInfo");
+        }
     }
 
     private void createSnapshotPoint(EventBody event) throws InterruptedException {
-        this.vers = dep.getCurrSnapshotVersion();
-
+        logger.info(">>>>>START<<<<<createSnapshotPoint:\n eventBody: {}", JSON.toJSONString(event));
         if (dep.getTotalConsEventCount().mod(BigInteger.valueOf(Config.EVENT_NUM_PER_SNAPSHOT))
                 .equals(BigInteger.ZERO)) {
-//            logger.info("node-({}, {}): repair to createSnapshotPoint, vers: {}", node.getCurrSnapshotVersion());
             // 计算并更新贡献
             ConcurrentHashMap<String, Long> statistics = new ConcurrentHashMap<>();
             long[][] effectiveCounts = new long[dep.getShardCount()][dep.getnValue()];
@@ -242,8 +252,8 @@ public class RepairCurrSnapshotPointInfo {
                     .contributions((null!=statistics && statistics.size()<=0) ? null: statistics)
                     .build());
             dep.getTreeRootMap().put(dep.getCurrSnapshotVersion(), msgHashTreeRoot);
-//            logger.info("\n=========== node-({}, {}):  vers: {}, msgHashTreeRoot: {}",
-//                    node.getShardId(), node.getCreatorId(), node.getCurrSnapshotVersion(), msgHashTreeRoot);
+            logger.info(">>>>>INFO<<<<<createSnapshotPoint:\n snapshotPointMap: {},\n treeRootMap: {}",
+                    JSON.toJSONString(dep.getSnapshotPointMap()), JSON.toJSONString(dep.getTreeRootMap()));
 
             // 重置消息hash根
             dep.setContributions(new HashSet<>());
@@ -256,7 +266,9 @@ public class RepairCurrSnapshotPointInfo {
             o.put("eHash", eHash);
             o.put("lastIdx", true);
             dep.getConsMessageVerifyQueue().put(o);
+            logger.info(">>>>>INFO<<<<<createSnapshotPoint:\n snapshotPointTrigger: {}",o);
         }
+        logger.info(">>>>>END<<<<<createSnapshotPoint");
     }
 
     /**
@@ -264,16 +276,19 @@ public class RepairCurrSnapshotPointInfo {
      * @return SnapshotPoint
      */
     private SnapshotPoint calculateLatestSnapshotPoint() {
+        logger.info(">>>>>START<<<<<calculateLatestSnapshotPoint");
         SnapshotPoint lastSnapshotPoint = null;
         if (null != dep.getSnapshotPointMap()
                 && null != dep.getSnapshotPointMap().get(dep.getCurrSnapshotVersion().subtract(BigInteger.ONE))) {
             lastSnapshotPoint
                     = dep.getSnapshotPointMap().get(dep.getCurrSnapshotVersion().subtract(BigInteger.ONE));
         }
+        logger.info(">>>>>RETURN<<<<<calculateLatestSnapshotPoint: lastSnapshotPoint: {}",JSON.toJSONString(lastSnapshotPoint));
         return lastSnapshotPoint;
     }
 
     private void calculateMsgHashTreeRoot(EventBody event) {
+        logger.info(">>>>>START<<<<<calculateMsgHashTreeRoot:\n eventBody: {}", JSON.toJSONString(event));
         long eventMsgCount = (null!=event.getTrans() && event.getTrans().length > 0)
                 ? event.getTrans().length : 0;
         // 共识消息放入消息签名验证队列
@@ -288,15 +303,7 @@ public class RepairCurrSnapshotPointInfo {
                 }
             }
         }
-    }
-
-    public static void main(String[] args) {
-        RepairCurrSnapshotPointInfoDependent dep = new RepairCurrSnapshotPointInfoDependentImpl();
-        try {
-            new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(dep);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        logger.info(">>>>>END<<<<<calculateMsgHashTreeRoot:\n msgHashTreeRoot: {}",msgHashTreeRoot);
     }
 
 }

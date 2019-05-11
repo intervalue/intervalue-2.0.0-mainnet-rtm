@@ -23,21 +23,6 @@ public class CreateSnapshotPointDependentImpl implements CreateSnapshotPointDepe
         return this.currSnapshotVersion;
     }
 
-    private EventBody eventBody;
-    @Override
-    public EventBody getEventBody() {
-        String eventBodyStr = "{\"generation\":24096409,\"isFamous\":false,\"otherId\":4," +
-                "\"creatorSeq\":14575190,\"signature\":\"EXoOxkG2IRPOWIp6Bx9GcR++w/lrxby6qhHjBP0YWljFdLCwUfLi" +
-                "+gKjtdyUJcaiXCKVRJ2AhshFjfpDJoNKzMbFtyFkXj8JMXo+6yMqzkR0uAsDXtvZ9xQPfP4NjP15tEgaglnHWRK91" +
-                "+aE6WQAWE1RD7zDCu/7+k1Lcej2emc=\",\"transCount\":2627,\"creatorId\":6,\"shardId\":0," +
-                "\"consEventCount\":144900000,\"consTimestamp\":\"2019-05-04T16:37:20.286Z\"," +
-                "\"timeCreated\":\"2019-05-04T16:36:52.241Z\"," +
-                "\"hash\":\"YClht0S1KF+y5vKAwgKyCcnqztGBf3tlrWvwRBCm31OUHTv7BR5/p8P1iRcMFsbO\"," +
-                "\"otherSeq\":13384060}";
-        eventBody = JSONObject.parseObject(eventBodyStr,EventBody.class);
-        return this.eventBody;
-    }
-
     private BigInteger totalConsEventCount;
     @Override
     public BigInteger getTotalConsEventCount() {
@@ -133,6 +118,11 @@ public class CreateSnapshotPointDependentImpl implements CreateSnapshotPointDepe
     public int getShardId() {
         shardId = 0;
         return this.shardId;
+    }
+
+    @Override
+    public EventBody getEventBody() {
+        return null;
     }
 
 }

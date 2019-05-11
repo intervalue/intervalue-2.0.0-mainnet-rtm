@@ -25,10 +25,14 @@ public interface HandleConsensusSnapshotMessageDependent {
 
     LinkedBlockingQueue<JSONObject> getConsMessageSaveQueue();
 
-    void clearHistoryEventsBySnapshot(BigInteger vers, String preHash);
+    int getMultiple();
 
     void setSnapshotMessage(SnapshotMessage snapshotMessage);
 
-    boolean transfer(String dbId, String fromAddr, String toAddr, BigInteger value);
+    void transfer(String dbId, String fromAddr, String toAddr, BigInteger value);
+
+    int getShardCount();
+
+    int getnValue();
 
 }

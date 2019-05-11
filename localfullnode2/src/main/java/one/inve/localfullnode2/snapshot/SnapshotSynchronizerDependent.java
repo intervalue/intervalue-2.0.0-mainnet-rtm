@@ -125,7 +125,7 @@ public interface SnapshotSynchronizerDependent {
 	//
 	long getCreatorId();
 
-	String getDBId();
+	String getDbId();
 
 	List<LocalFullNode> getLocalFullNodes();
 

@@ -6,29 +6,38 @@ import one.inve.bean.message.SnapshotMessage;
 import one.inve.bean.message.SnapshotPoint;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.utils.DSA;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 
 public class HandleSnapshotPointMessage {
+    private static final Logger logger = LoggerFactory.getLogger(HandleSnapshotPointMessage.class);
 
     private HandleSnapshotPointMessageDependent dep;
     private BigInteger vers;
     private JSONObject msgObject;
 
 
-    public void handleConsensusEmptyMessage(HandleSnapshotPointMessageDependent dep) throws Exception{
+    public void handleSnapshotPointMessage(HandleSnapshotPointMessageDependent dep) throws Exception{
         this.dep = dep;
         this.vers = dep.getCurrSnapshotVersion();
         this.msgObject = dep.getMsgObject();
 
+        logger.info(">>>>>START<<<<<handleSnapshotPointMessage:\n msgObject: {}", msgObject);
+
         Boolean lastIdx = msgObject.getBoolean("lastIdx");
         String eHash = msgObject.getString("eHash");
         SnapshotPoint sp = dep.getSnapshotPointMap().get(vers);
+
+        logger.info(">>>>>INFO<<<<<handleSnapshotPointMessage:\n currSnapshotVersion: {},\n snapshotPoint: {}",vers,
+                JSON.toJSONString(sp));
 //        logger.warn("\nspecif msg: {}, \nvers-{} sp: {}",
 //                msgObject.toJSONString(), vers, JSON.toJSONString(sp));
         if (sp == null) {
 //            logger.error("node-({}, {}): snapshotPoint-{} missing\nexit...",
 //                    node.getShardId(), node.getCreatorId(), vers);
+            logger.error(">>>>>ERROR<<<<<handleSnapshotPointMessage:\n snapshotPoint is null");
             System.exit(-1);
         } else {
             if (null!=lastIdx && lastIdx
@@ -40,9 +49,11 @@ public class HandleSnapshotPointMessage {
 //                        node.getShardId(), node.getCreatorId(), msgObject.toJSONString());
             }
         }
+        logger.info(">>>>>END<<<<<handleSnapshotPointMessage");
     }
 
     private void handleSnapshotPoint(BigInteger maxMessageId) throws Exception {
+        logger.info(">>>>>START<<<<<handleSnapshotPoint:\n maxMessageId: {}", maxMessageId);
         // 快照事件，则生成快照消息并丢入队列
         createSnapshotMessage(dep.getSnapshotPointMap().get(vers), maxMessageId);
         // 恢复参数状态
@@ -51,10 +62,12 @@ public class HandleSnapshotPointMessage {
 
 //        logger.info("node-({}, {}): handle snapshotPoint-{} finished!", node.getShardId(), node.getCreatorId(), vers);
         vers = vers.add(BigInteger.ONE);
+        logger.info(">>>>>END<<<<<handleSnapshotPoint");
     }
 
     private void createSnapshotMessage(SnapshotPoint snapshotPoint, BigInteger maxMessageId) throws Exception {
-//        logger.info("====== node-({}, {}): createSnapshotMessage...", node.getShardId(), node.getCreatorId());
+        logger.info(">>>>>START<<<<<createSnapshotMessage:\n snapshotPoint: {},\n maxMessageId:{}",
+                JSON.toJSONString(snapshotPoint),maxMessageId);
         // 快照消息丢入队列
         if ( Config.FOUNDATION_PUBKEY.equals(dep.getPubKey()) ) {
             BigInteger totalFee = dep.getTotalFeeBetween2Snapshots();
@@ -66,7 +79,7 @@ public class HandleSnapshotPointMessage {
                     dep.getMnemonic(), dep.getAddress(),
                     vers, getPreHash(), snapshotPoint);
 
-            System.out.println(JSON.toJSONString(snapshotMessage));
+            logger.info(">>>>>INFO<<<<<createSnapshotMessage:\n snapshotMessage", JSON.toJSONString(snapshotMessage));
 
             // 加入消息队列
             String msg = snapshotMessage.getMessage();
@@ -75,14 +88,15 @@ public class HandleSnapshotPointMessage {
 
             dep.getMessageQueue().add(JSON.parseObject(msg).getString("message").getBytes());
 
-            System.out.println(JSON.parseObject(msg).getString("message"));
         } else {
 //            logger.warn("node-({}, {}): new version-{}, no permission!!",
 //                    node.getShardId(), node.getCreatorId(), vers);
         }
+        logger.info(">>>>>END<<<<<createSnapshotMessage");
     }
 
     private String getPreHash() {
+        logger.info(">>>>>START<<<<<getPreHash");
         SnapshotMessage preSnapshotMessage = dep.getSnapshotMessage();
         String preHash;
         if (null == preSnapshotMessage) {
@@ -99,15 +113,8 @@ public class HandleSnapshotPointMessage {
         } else {
             preHash = preSnapshotMessage.getHash();
         }
+        logger.info(">>>>>RETURN<<<<<getPreHash:\n preHash: {}",preHash);
         return preHash;
     }
 
-    public static void main(String[] args) {
-        HandleSnapshotPointMessageDependent dep = new HandleSnapshotPointMessageDependentImpl();
-        try {
-            new HandleSnapshotPointMessage().handleConsensusEmptyMessage(dep);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

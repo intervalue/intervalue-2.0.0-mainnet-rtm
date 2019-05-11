@@ -224,7 +224,7 @@ public class SnapshotSynchronizerTest {
 		}
 
 		@Override
-		public String getDBId() {
+		public String getDbId() {
 			throw new UnsupportedOperationException("");
 		}
 

@@ -83,8 +83,8 @@ public class HandleConsensusSnapshotMessageDependentImpl implements HandleConsen
     }
 
     @Override
-    public void clearHistoryEventsBySnapshot(BigInteger vers, String preHash) {
-
+    public int getMultiple() {
+        return 0;
     }
 
     @Override
@@ -93,7 +93,17 @@ public class HandleConsensusSnapshotMessageDependentImpl implements HandleConsen
     }
 
     @Override
-    public boolean transfer(String dbId, String fromAddr, String toAddr, BigInteger value) {
-        return true;
+    public void transfer(String dbId, String fromAddr, String toAddr, BigInteger value) {
+
+    }
+
+    @Override
+    public int getShardCount() {
+        return 1;
+    }
+
+    @Override
+    public int getnValue() {
+        return 10;
     }
 }

@@ -62,7 +62,7 @@ public class DetectAndRepairSnapshotData {
 
 
     private void clearHistoryEventsBySnapshot(BigInteger vers, String preHash) {
-        logger.info(">>>>>START<<<<<clearHistoryEventsBySnapshot");
+        logger.info(">>>>>START<<<<<clearHistoryEventsBySnapshot:\n vers: {},\n preHash: {}",vers,preHash);
         // 快照消息入库
         if (vers.compareTo(BigInteger.valueOf(Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION)) > 0 ) {
             // 查询之前第 Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION) 个快照
@@ -92,12 +92,6 @@ public class DetectAndRepairSnapshotData {
             }
         }
         logger.info(">>>>>END<<<<<clearHistoryEventsBySnapshot");
-    }
-
-    public static void main(String[] args) {
-        DetectAndRepairSnapshotDataDependent dep = new DetectAndRepairSnapshotDataDependentImpl();
-        SnapshotDbService store = new SnapshotDbServiceImpl();
-        new DetectAndRepairSnapshotData().detectAndRepairSnapshotData(dep,store);
     }
 
 }
