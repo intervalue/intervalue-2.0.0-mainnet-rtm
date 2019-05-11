@@ -36,24 +36,25 @@ public class StagingArea {
 
 	// an economic approach to share a queue by class
 	@SuppressWarnings("rawtypes")
-	public <T> BlockingQueue createQueue(Class<T> clazz) {
+	public <T> BlockingQueue<T> createQueue(Class<T> clazz) {
 		return createQueue(clazz, null, Integer.MAX_VALUE, null);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public <T> BlockingQueue getQueue(Class<T> clazz, String tp) {
+	public <T> BlockingQueue<T> getQueue(Class<T> clazz, String tp) {
 		Queue q = queues.get(toName(clazz, tp));
 		return q == null ? null : (BlockingQueue) q;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public <T> BlockingQueue createQueue(Class<T> clazz, String tp, int size, ElementModifiable modifier) {
+	public <T> BlockingQueue<T> createQueue(Class<T> clazz, String tp, int size, ElementModifiable modifier) {
 		lock.lock();
 		Queue queue = null;
 		try {
 			queue = queues.get(toName(clazz, tp));
 			if (queue == null) {
 				queue = new RemovableBlockingMechanismQueue<T>(size, modifier);
+				queues.put(toName(clazz, tp), queue);
 			}
 
 		} finally {

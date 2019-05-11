@@ -62,14 +62,15 @@ public class RemovableBlockingMechanismQueue<E> extends AbstractQueue<E> impleme
 	private ElementModifiable<E> modifier;
 
 	public RemovableBlockingMechanismQueue(int capacity, ElementModifiable<E> modifier) {
-		if (capacity <= 0)
-			throw new IllegalArgumentException();
-		this.capacity = capacity;
+		this(capacity);
 		this.modifier = modifier;
 	}
 
 	public RemovableBlockingMechanismQueue(int capacity) {
-		this(capacity, null);
+		if (capacity <= 0)
+			throw new IllegalArgumentException();
+		this.capacity = capacity;
+		last = head = new Node<E>(null);
 	}
 
 	/**
