@@ -69,7 +69,7 @@ public class Config {
     public static String SPLIT          = "_";
 
     // 快照点选取：每多少个Event做一次快照
-    public static final int EVENT_NUM_PER_SNAPSHOT  = 5000;
+    public static final int EVENT_NUM_PER_SNAPSHOT  = 1000;
     // 删除第几代祖先快照之前的Event
     public static final int DEFAULT_SNAPSHOT_CLEAR_GENERATION   = 10;
     // 默认最大交易留言字节数
@@ -115,9 +115,9 @@ public class Config {
      * 基金会钱包
      */
     // 测试
-    public static final String FOUNDATION_MNEMONIC  = "shove call orchard library universe mixture abuse tragic isolate shove sniff slam";
-    public static final String FOUNDATION_PUBKEY    = "Amf/TqeRhXFcLmQ6G5O5rJgiQ2zOWeyQInI0EW/bNzUP";
-    public static final String FOUNDATION_ADDRESS   = "KHCROSWUAN6RZLBNLZ3KFA2U36HVBBBC";
+    public static final String FOUNDATION_MNEMONIC  = "";
+    public static final String FOUNDATION_PUBKEY    = "Alo+zd8kOdUOoGEQzARyx0ZRoTfsWRY5QC6+wm8O9Qfs";
+    public static final String FOUNDATION_ADDRESS   = "7APYB7AMH7SOFZPHG6YGJICIHKXRLVXR";
 
 
     public static final List<String> CREATION_TX_LIST = Arrays.asList(
