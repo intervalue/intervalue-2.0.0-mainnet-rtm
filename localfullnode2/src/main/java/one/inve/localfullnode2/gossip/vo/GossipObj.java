@@ -139,4 +139,28 @@ public class GossipObj implements java.lang.Cloneable, java.io.Serializable {
 	private static final GossipObj _nullMarshalValue = new GossipObj();
 
 	public static final long serialVersionUID = -1634304182004862974L;
+
+	public String getSnapVersion() {
+		return snapVersion;
+	}
+
+	public void setSnapVersion(String snapVersion) {
+		this.snapVersion = snapVersion;
+	}
+
+	public Event[] getEvents() {
+		return events;
+	}
+
+	public void setEvents(Event[] events) {
+		this.events = events;
+	}
+
+	public byte[] getSnapHash() {
+		return snapHash;
+	}
+
+	public void setSnapHash(byte[] snapHash) {
+		this.snapHash = snapHash;
+	}
 }

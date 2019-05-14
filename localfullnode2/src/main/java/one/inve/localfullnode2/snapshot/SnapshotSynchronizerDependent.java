@@ -2,9 +2,13 @@ package one.inve.localfullnode2.snapshot;
 
 import java.math.BigInteger;
 import java.security.PublicKey;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
+import one.inve.bean.message.SnapshotPoint;
+import one.inve.cluster.Member;
+import one.inve.localfullnode2.gossip.vo.GossipObj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,5 +136,15 @@ public interface SnapshotSynchronizerDependent {
 	SnapshotDbService getSnapshotDBService();// only {@code querySnapshotMessageFormatStringByHash} is indispensable.
 
 	ITransactionDbService getTransactionDbService();
+
+	HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
+
+	HashMap<BigInteger, String> getTreeRootMap();
+
+	void setSnapshotMessage(SnapshotMessage snapshotMessage);
+
+	Member getGossipedMember();
+
+	GossipObj getGossipObj();
 
 }

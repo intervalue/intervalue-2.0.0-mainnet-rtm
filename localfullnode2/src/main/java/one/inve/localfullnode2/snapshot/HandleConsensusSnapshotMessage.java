@@ -78,7 +78,7 @@ public class HandleConsensusSnapshotMessage {
         msgObject.put("snapVersion", snapMsg.getSnapVersion().toString());
         dep.getConsMessageSaveQueue().add(msgObject);
 
-        logger.info(">>>>>INFO<<<<<handleConsensusSnapshotMessage:\n consMessageSaveQueue.add: {}",msgObject);
+//        logger.info(">>>>>INFO<<<<<handleConsensusSnapshotMessage:\n consMessageSaveQueue.add: {}",msgObject);
 
         if (valid) {
 //            logger.warn("node-({}, {}): preHash: {}, hash: {}",

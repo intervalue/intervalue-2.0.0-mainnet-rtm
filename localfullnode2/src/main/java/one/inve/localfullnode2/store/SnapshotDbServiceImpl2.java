@@ -139,7 +139,8 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
         if(StringUtils.isNotEmpty(json)){
             SnapshotMessage snapshotMessage = JSON.parseObject(JSON.parseObject(json).getString("message"),
                     SnapshotMessage.class);
-            logger.info(">>>>>RETURN<<<<<querySnapshotMessageByHash:\n snapshotMessage: {}",snapshotMessage);
+            logger.info(">>>>>RETURN<<<<<querySnapshotMessageByHash:\n snapshotMessage: {}",
+                    JSON.toJSONString(snapshotMessage));
             return snapshotMessage;
         } else {
             return null;
@@ -233,7 +234,7 @@ public class SnapshotDbServiceImpl2 implements SnapshotDbService {
     public void deleteEventsBeforeSnapshotPointEvent(String dbId, EventBody eb, int nValue) {
 //        logger.info("deleteEventsBeforeSnapshotPointEvent...{}", JSON.toJSONString(eb));
         logger.info(">>>>>START<<<<<deleteEventsBeforeSnapshotPointEvent:\n dbId: {},\n eventBody: {},\n nValue: {}",
-                dbId,eb,nValue);
+                dbId,JSON.toJSONString(eb),nValue);
         try {
             if (eb != null) {
                 RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);

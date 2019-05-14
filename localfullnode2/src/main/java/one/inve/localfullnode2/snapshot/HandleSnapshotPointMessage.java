@@ -69,6 +69,7 @@ public class HandleSnapshotPointMessage {
         logger.info(">>>>>START<<<<<createSnapshotMessage:\n snapshotPoint: {},\n maxMessageId:{}",
                 JSON.toJSONString(snapshotPoint),maxMessageId);
         // 快照消息丢入队列
+        logger.info(">>>>>INFO<<<<<createSnapshotMessage:\n pubKey: {}",dep.getPubKey());
         if ( Config.FOUNDATION_PUBKEY.equals(dep.getPubKey()) ) {
             BigInteger totalFee = dep.getTotalFeeBetween2Snapshots();
             snapshotPoint.setMsgMaxId(maxMessageId);
@@ -79,7 +80,8 @@ public class HandleSnapshotPointMessage {
                     dep.getMnemonic(), dep.getAddress(),
                     vers, getPreHash(), snapshotPoint);
 
-            logger.info(">>>>>INFO<<<<<createSnapshotMessage:\n snapshotMessage", JSON.toJSONString(snapshotMessage));
+            logger.info(">>>>>INFO<<<<<createSnapshotMessage:\n snapshotMessage: {}",
+                    JSON.toJSONString(snapshotMessage));
 
             // 加入消息队列
             String msg = snapshotMessage.getMessage();
@@ -87,10 +89,12 @@ public class HandleSnapshotPointMessage {
 //                    node.getShardId(), node.getCreatorId(), vers, msg);
 
             dep.getMessageQueue().add(JSON.parseObject(msg).getString("message").getBytes());
-
+            logger.info(">>>>>INFO<<<<<createSnapshotMessage:\n messageQueue.add: {}",
+                    JSON.parseObject(msg).getString("message"));
         } else {
 //            logger.warn("node-({}, {}): new version-{}, no permission!!",
 //                    node.getShardId(), node.getCreatorId(), vers);
+            logger.info(">>>>>INFO<<<<<createSnapshotMessage: no permission");
         }
         logger.info(">>>>>END<<<<<createSnapshotMessage");
     }

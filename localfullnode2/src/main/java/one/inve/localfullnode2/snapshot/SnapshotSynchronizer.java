@@ -3,13 +3,12 @@ package one.inve.localfullnode2.snapshot;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import one.inve.bean.message.SnapshotMessage;
+import one.inve.utils.SignUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,14 @@ public class SnapshotSynchronizer {
 	private static final Logger logger = LoggerFactory.getLogger("snapshotsynchronizer");
 
 	private SnapshotSynchronizerDependent dep;
-	private volatile Map<String, HashSet<String>> snapVersionMap = new HashMap<>();// {$snapHash:{$member.pubkey,...},...}
+	private Member gossipedMember;
+	private GossipObj gossipObj;
+	private volatile Map<String, HashSet<String>> snapVersionMap = new HashMap<>();// {$snapHash:{$member.pubkey,...},
+	// ...}
+
+
+	public SnapshotSynchronizer() {
+	}
 
 	public SnapshotSynchronizer(SnapshotSynchronizerDependent dep) {
 		super();
@@ -81,16 +87,22 @@ public class SnapshotSynchronizer {
 	// there is a constraint that {@code gossipObj} should been higher than current
 	// snapshot version.
 	// {@code false} means that snapshot sync process is not executed.
-	public boolean synchronizeHigher(Member gossipedMember, GossipObj gossipObj) {
+	public boolean synchronizeHigher(SnapshotSynchronizerDependent dep) {
+		this.gossipedMember = dep.getGossipedMember();
+		this.gossipObj = dep.getGossipObj();
+
 		BigInteger snapVers = new BigInteger(gossipObj.snapVersion);
 		if (snapVers.compareTo(dep.getCurrSnapshotVersion().add(BigInteger.ONE)) > 0) {
+			logger.info(">>>>>START<<<<<synchronizeHigher:\n gossipedMember: {},\n gossipObj:{}",
+					JSON.toJSONString(gossipedMember),JSON.toJSONString(gossipObj));
 //			logger.warn("node-({}, {}): neighbor node snapshot version bigger than mine...", node.getShardId(),
 //					node.getCreatorId());
 
 			// snapHash is indispensable part.
 			if (gossipObj.snapHash == null || gossipObj.snapHash.length == 0) {
-				logger.error("gossipObj.snapHash is null");
+//				logger.error("gossipObj.snapHash is null");
 				// return eventSize + "_" + eventSpaces;
+				logger.error(">>>>>RETURN<<<<<synchronizeHigher:\n snapHash: {}",new String(gossipObj.snapHash));
 				return false;
 			}
 
@@ -103,6 +115,7 @@ public class SnapshotSynchronizer {
 				pubKeySet.add(gossipedMember.metadata().get("pubkey"));
 				snapVersionMap.put(new String(gossipObj.snapHash), pubKeySet);
 			}
+			logger.info(">>>>>INFO<<<<<synchronizeHigher:\n snapVersionMap: {}",JSON.toJSONString(snapVersionMap));
 			// 当收集到超过f+1个节点的快照版本比我高过1个时,直接同步快照
 //			logger.warn("1:{}", new String(gossipObj.snapHash));
 //			logger.warn("2:{}", JSONObject.toJSONString(snapVersionMap.get(new String(gossipObj.snapHash))));
@@ -129,9 +142,9 @@ public class SnapshotSynchronizer {
 				SnapObj snapObj = null;
 				try {
 					snapObj = (SnapObj) snapResult.get(30000, TimeUnit.MILLISECONDS);
-
-					snapVersionMap.clear();
-					return dep.execute(snapObj);
+					logger.info(">>>>>INFO<<<<<synchronizeHigher:\n snapObj: {}",JSON.toJSONString(snapObj));
+//					snapVersionMap.clear();
+//					return dep.execute(snapObj);
 				} catch (Exception e) {
 					// logger.error("gossip2Local for snapshot {} completableFuture.get() Exception:
 					// {}-{} ", pre, neighbor.address().host(), e);
@@ -140,12 +153,72 @@ public class SnapshotSynchronizer {
 //							pre, neighbor.address().host(), neighbor.metadata().get("rpcPort"), e);
 //
 //					return eventSize + "_" + eventSpaces;
+					logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
 					return false;
 				}
+				if (snapObj != null) {
+//					logger.warn("snapObj:{}", JSONObject.toJSONString(snapObj));
+					String snapMessageStr = snapObj.snapMessage;
+					String originalSnapshotStr = JSON.parseObject(snapMessageStr).getString("message");
+//					logger.warn("snapMessageStr:{}", snapMessageStr);
+					SnapshotMessage snapshotMessage = JSONObject.parseObject(originalSnapshotStr,
+							SnapshotMessage.class);
+					String MsgHashTreeRoot = snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot();
+					if (StringUtils.isEmpty(MsgHashTreeRoot)) {
+//						return eventSize + "_" + eventSpaces;
+						logger.error(">>>>>RETURN<<<<<synchronizeHigher:\n MsgHashTreeRoot is empty");
+						return false;
+					}
+					List<JSONObject> messages = null;
+					if (!StringUtils.isEmpty(snapObj.messages)) {
+						messages = JSONArray.parseArray(snapObj.messages, JSONObject.class);
+						logger.info(">>>>>INFO<<<<<synchronizeHigher:\n messages: {}",messages.toString());
+					}
+
+					// 正在快照后
+					if (SignUtil.verify(originalSnapshotStr)) {
+						// transaction入库
+						if (messages != null) {
+							for (JSONObject msg : messages) {
+								try {
+//									logger.error(">>>>>each of messages in GossipEventThread= " + msg);
+
+									dep.getConsMessageVerifyQueue().put(msg);
+								} catch (InterruptedException e) {
+									logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
+									e.printStackTrace();
+								}
+							}
+						}
+						try {
+//							logger.error(
+//									"node.getConsMessageVerifyQueue().put(JSONObject.parseObject(snapMessageStr))"
+//											+ snapMessageStr);
+
+							dep.getConsMessageVerifyQueue().put(JSONObject.parseObject(snapMessageStr));
+						} catch (InterruptedException e) {
+							logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
+							e.printStackTrace();
+						}
+						// 更新本节点当前快照信息
+						dep.setSnapshotMessage(snapshotMessage);
+						dep.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(),
+								snapshotMessage.getSnapshotPoint());
+						dep.getTreeRootMap().put(snapshotMessage.getSnapVersion(),
+								snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
+						snapVersionMap.clear();
+					} else {
+//						return eventSize + "_" + eventSpaces;
+						logger.error(">>>>>RETURN<<<<<synchronizeHigher:\n originalSnapshotStr verification failed");
+						return false;
+					}
+				}
 			}
+			logger.info(">>>>>END<<<<<synchronizeHigher");
 		}
-		return false;
+		return true;
 	}
+
 
 	private boolean validate(String pubkey) {
 		Instant first = Instant.now();
@@ -153,8 +226,9 @@ public class SnapshotSynchronizer {
 			logger.error("pubkey is null.");
 			return false;
 		}
-		boolean isValid = dep.getLocalFullNodes().parallelStream().filter(n -> n.getStatus() == NodeStatus.HAS_SHARDED)
-				.anyMatch(p -> p.getPubkey().equals(pubkey));
+		boolean isValid =
+				dep.getLocalFullNodes().parallelStream().filter(n -> n.getStatus() == NodeStatus.HAS_SHARDED)
+						.anyMatch(p -> p.getPubkey().equals(pubkey));
 		long handleInterval = Duration.between(first, Instant.now()).toMillis();
 		if (handleInterval > 10) {
 			logger.warn("Local2local interface validate public keys interval: {}", handleInterval);
