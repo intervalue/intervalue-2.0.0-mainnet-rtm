@@ -115,4 +115,10 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		super.setLocalFullNodes(localFullNodes);
 	}
 
+	@Override
+	public void setBlackList4PubKey(List<String> blackList4PubKey) {
+		depItemsManager.attachBlackList4PubKey(null).set(blackList4PubKey);
+		super.setBlackList4PubKey(blackList4PubKey);
+	}
+
 }
