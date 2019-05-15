@@ -17,6 +17,15 @@ import com.alibaba.fastjson.JSONObject;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
+/**
+ * 
+ * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * 
+ * @Description: TODO
+ * @author: Francis.Deng
+ * @date: May 14, 2019 11:59:44 PM
+ * @version: V1.0
+ */
 public class EventStoreImpl implements EventStore {
 	private static final Logger logger = LoggerFactory.getLogger(EventStoreImpl.class);
 

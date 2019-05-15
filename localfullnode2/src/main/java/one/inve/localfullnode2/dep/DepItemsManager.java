@@ -1,9 +1,15 @@
 package one.inve.localfullnode2.dep;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.dep.items.BlackList4PubKey;
 import one.inve.localfullnode2.dep.items.CreatorId;
 import one.inve.localfullnode2.dep.items.CurrSnapshotVersion;
 import one.inve.localfullnode2.dep.items.DBId;
+import one.inve.localfullnode2.dep.items.DirectCommunicator;
 import one.inve.localfullnode2.dep.items.EventFlow;
 import one.inve.localfullnode2.dep.items.LastSeqs;
 import one.inve.localfullnode2.dep.items.LocalFullNodes;
@@ -41,6 +47,10 @@ public final class DepItemsManager implements DepItemsManagerial {
 	private EventFlow eventFlow;
 	private BlackList4PubKey blackList4PubKey;
 	private PrivateKey privateKey;
+	private AllQueues allQueues;
+	private DirectCommunicator directCommunicator;
+
+	private Map<Class<?>, DependentItemConcerned> allDependentItemConcerned = new HashMap<>();
 
 	private DepItemsManager() {
 		shardId = new ShardId();
@@ -57,6 +67,8 @@ public final class DepItemsManager implements DepItemsManagerial {
 		eventFlow = new EventFlow();
 		blackList4PubKey = new BlackList4PubKey();
 		privateKey = new PrivateKey();
+		allQueues = new AllQueues();
+		directCommunicator = new DirectCommunicator();
 	}
 
 	private static class SingletonHelper {
@@ -67,10 +79,25 @@ public final class DepItemsManager implements DepItemsManagerial {
 		return SingletonHelper.INSTANCE;
 	}
 
+	protected void retainItemConcernedsByClass(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			Arrays.asList(dependentItemConcerneds).stream().forEach((e) -> {
+				allDependentItemConcerned.put(e.getClass(), e);
+			});
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getItemConcerned(Class<T> itemConcernedClass) {
+		return (T) allDependentItemConcerned.get(itemConcernedClass);
+	}
+
 	@Override
 	public ShardId attachShardId(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			shardId.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return shardId;
@@ -80,6 +107,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public ShardCount attachShardCount(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			shardCount.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return shardCount;
@@ -89,6 +117,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public NValue attachNValue(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			nValue.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return nValue;
@@ -98,6 +127,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public LocalFullNodes attachLocalFullNodes(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			localFullNodes.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return localFullNodes;
@@ -107,6 +137,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public DBId attachDBId(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			dbId.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return dbId;
@@ -116,6 +147,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public Mnemonic attachMnemonic(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			mnemonic.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return mnemonic;
@@ -125,6 +157,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public PublicKey attachPublicKey(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			publicKey.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return publicKey;
@@ -134,6 +167,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public Members attachMembers(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			members.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return members;
@@ -143,6 +177,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public CreatorId attachCreatorId(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			creatorId.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return creatorId;
@@ -152,6 +187,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public LastSeqs attachLastSeqs(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			lastSeqs.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return lastSeqs;
@@ -161,6 +197,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public CurrSnapshotVersion attachCurrSnapshotVersion(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			currSnapshotVersion.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return currSnapshotVersion;
@@ -170,6 +207,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public EventFlow attachEventFlow(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			eventFlow.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return eventFlow;
@@ -179,6 +217,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public BlackList4PubKey attachBlackList4PubKey(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			blackList4PubKey.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return blackList4PubKey;
@@ -188,8 +227,30 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public PrivateKey attachPrivateKey(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			privateKey.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
 		return privateKey;
 	}
+
+	@Override
+	public AllQueues attachAllQueues(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			allQueues.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
+		}
+
+		return allQueues;
+	}
+
+	@Override
+	public DirectCommunicator attachDirectCommunicator(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			directCommunicator.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
+		}
+
+		return directCommunicator;
+	}
+
 }

@@ -1,9 +1,11 @@
 package one.inve.localfullnode2.dep;
 
+import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.dep.items.BlackList4PubKey;
 import one.inve.localfullnode2.dep.items.CreatorId;
 import one.inve.localfullnode2.dep.items.CurrSnapshotVersion;
 import one.inve.localfullnode2.dep.items.DBId;
+import one.inve.localfullnode2.dep.items.DirectCommunicator;
 import one.inve.localfullnode2.dep.items.EventFlow;
 import one.inve.localfullnode2.dep.items.LastSeqs;
 import one.inve.localfullnode2.dep.items.LocalFullNodes;
@@ -26,6 +28,8 @@ import one.inve.localfullnode2.dep.items.ShardId;
  * @version: V1.0
  */
 public interface DepItemsManagerial {
+	<T> T getItemConcerned(Class<T> itemConcernedClass);
+
 	ShardId attachShardId(DependentItemConcerned... dependentItemConcerneds);
 
 	ShardCount attachShardCount(DependentItemConcerned... dependentItemConcerneds);
@@ -53,4 +57,8 @@ public interface DepItemsManagerial {
 	BlackList4PubKey attachBlackList4PubKey(DependentItemConcerned... dependentItemConcerneds);
 
 	PrivateKey attachPrivateKey(DependentItemConcerned... dependentItemConcerneds);
+
+	AllQueues attachAllQueues(DependentItemConcerned... dependentItemConcerneds);
+
+	DirectCommunicator attachDirectCommunicator(DependentItemConcerned... dependentItemConcerneds);
 }

@@ -152,8 +152,8 @@ public class Gossiper {
 //					evtResults[ni] = prxMap.get(neighbor.address()).gossipMyMaxSeqList4ConsensusAsync(
 //							HnKeyUtils.getString4PublicKey(node.publicKey), "",
 //							node.getCurrSnapshotVersion().toString(), null, seqs);
-					evtResults[ni] = communication.gossipMyMaxSeqList4ConsensusAsync(neighbor, dep.getPublicKey(), "",
-							dep.getCurrSnapshotVersion().toString(), null, seqs);
+					evtResults[ni] = communication.gossipMyMaxSeqList4ConsensusAsync(dep.getCommunicator(), neighbor,
+							dep.getPublicKey(), "", dep.getCurrSnapshotVersion().toString(), null, seqs);
 				} else {
 //					long[] seqs = node.getEventStore().getLastSeqsByShardId(otherShardId);
 //					evtResults[ni] = prxMap.get(neighbor.address()).gossipMyMaxSeqList4SyncAsync(
@@ -161,8 +161,8 @@ public class Gossiper {
 //							node.getCurrSnapshotVersion().toString(), null, seqs);
 
 					long[] seqs = dep.getLastSeqsByShardId(otherShardId);
-					evtResults[ni] = communication.gossipMyMaxSeqList4SyncAsync(neighbor, dep.getPublicKey(), "",
-							otherShardId, dep.getCurrSnapshotVersion().toString(), null, seqs);
+					evtResults[ni] = communication.gossipMyMaxSeqList4SyncAsync(dep.getCommunicator(), neighbor,
+							dep.getPublicKey(), "", otherShardId, dep.getCurrSnapshotVersion().toString(), null, seqs);
 				}
 				connflag[ni] = true;
 			} catch (Exception e) {
@@ -455,8 +455,8 @@ public class Gossiper {
 //							Local2localPrx nprx = RpcConnectionService
 //									.buildConnection2localFullNode(node.getCommunicator(), member);
 							try {
-								AppointEvent appointEvent = communication.gossip4AppointEvent(member, pubkey,
-										sig == null ? "" : DSA.encryptBASE64(sig), shardId, evt.selfId,
+								AppointEvent appointEvent = communication.gossip4AppointEvent(dep.getCommunicator(),
+										member, pubkey, sig == null ? "" : DSA.encryptBASE64(sig), shardId, evt.selfId,
 										evt.selfSeq - 1);
 								successList.add(member);
 								if (appointEvent != null && appointEvent.event != null
@@ -521,8 +521,9 @@ public class Gossiper {
 //							Local2localPrx nprx = RpcConnectionService
 //									.buildConnection2localFullNode(node.getCommunicator(), member);
 							try {
-								AppointEvent appointEvent = communication.gossip4AppointEvent(member, pubkey,
-										sig == null ? "" : DSA.encryptBASE64(sig), shardId, evt.otherId, evt.otherSeq);
+								AppointEvent appointEvent = communication.gossip4AppointEvent(dep.getCommunicator(),
+										member, pubkey, sig == null ? "" : DSA.encryptBASE64(sig), shardId, evt.otherId,
+										evt.otherSeq);
 								successList.add(member);
 								if (appointEvent != null && appointEvent.event != null
 										&& appointEvent.event.hash != null && appointEvent.event.hash.length > 0) {

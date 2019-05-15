@@ -24,6 +24,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
 public class StagingArea {
 	public static final String MessageQueueName = "messageQueue";
 	public static final String EventSaveQueueName = "eventSaveQueue";
+	public static final String ShardSortQueueName = "shardSortQueue";
 	public static final String ConsEventHandleQueueName = "consEventHandleQueue";
 	public static final String ConsMessageVerifyQueueName = "consMessageVerifyQueue";
 	public static final String ConsMessageHandleQueueName = "consMessageHandleQueue";
@@ -34,27 +35,41 @@ public class StagingArea {
 	@SuppressWarnings("rawtypes")
 	private HashMap<String, Queue> queues = new HashMap<>();
 
+	public <T> BlockingQueue<T> getQueue(Class<T> clazz, String tp) {
+		return getQueue(clazz, tp, 0);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public <T> BlockingQueue<T> getQueue(Class<T> clazz, String tp, int index) {
+		Queue q = queues.get(toName(clazz, tp, index));
+		return q == null ? null : (BlockingQueue) q;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public <T> void setQueue(Class<T> clazz, String tp, int size, BlockingQueue<T> queue) {
+		queues.put(toName(clazz, tp, size), queue);
+	}
+
 	// an economic approach to share a queue by class
 	@SuppressWarnings("rawtypes")
 	public <T> BlockingQueue<T> createQueue(Class<T> clazz) {
 		return createQueue(clazz, null, Integer.MAX_VALUE, null);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public <T> BlockingQueue<T> getQueue(Class<T> clazz, String tp) {
-		Queue q = queues.get(toName(clazz, tp));
-		return q == null ? null : (BlockingQueue) q;
+	public <T> BlockingQueue<T> createQueue(Class<T> clazz, String tp, int size, ElementModifiable modifier) {
+		return createQueue(clazz, tp, size, 0, modifier);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public <T> BlockingQueue<T> createQueue(Class<T> clazz, String tp, int size, ElementModifiable modifier) {
+	public <T> BlockingQueue<T> createQueue(Class<T> clazz, String tp, int size, int index,
+			ElementModifiable modifier) {
 		lock.lock();
 		Queue queue = null;
 		try {
-			queue = queues.get(toName(clazz, tp));
+			queue = queues.get(toName(clazz, tp, index));
 			if (queue == null) {
 				queue = new RemovableBlockingMechanismQueue<T>(size, modifier);
-				queues.put(toName(clazz, tp), queue);
+				queues.put(toName(clazz, tp, index), queue);
 			}
 
 		} finally {
@@ -64,8 +79,8 @@ public class StagingArea {
 		return (BlockingQueue) queue;
 	}
 
-	protected String toName(Class clazz, String tp) {
-		String type = StringUtils.isEmpty(tp) ? "" : "[[" + tp;
+	protected String toName(Class clazz, String tp, int index) {
+		String type = StringUtils.isEmpty(tp) ? "" : "[[" + tp + "[[" + index;
 
 		return clazz.getCanonicalName() + type;
 	}

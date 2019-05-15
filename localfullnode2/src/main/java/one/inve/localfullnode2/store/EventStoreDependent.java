@@ -1,6 +1,6 @@
 package one.inve.localfullnode2.store;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public interface EventStoreDependent {
 	String getDbId();
@@ -11,5 +11,5 @@ public interface EventStoreDependent {
 
 	int getCreatorId();
 
-	LinkedBlockingQueue<EventBody> getEventSaveQueue();
+	BlockingQueue<EventBody> getEventSaveQueue();
 }

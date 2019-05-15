@@ -2,6 +2,7 @@ package one.inve.localfullnode2.snapshot;
 
 import java.math.BigInteger;
 import java.security.PublicKey;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
@@ -9,7 +10,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Communicator;
 
 import one.inve.bean.message.SnapshotMessage;
+import one.inve.bean.message.SnapshotPoint;
 import one.inve.bean.node.LocalFullNode;
+import one.inve.cluster.Member;
+import one.inve.localfullnode2.gossip.vo.GossipObj;
 import one.inve.localfullnode2.message.service.ITransactionDbService;
 import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.store.SnapshotDbService;
@@ -138,6 +142,36 @@ public class SnapshotSynchronizerDependency implements SnapshotSynchronizerDepen
 	@Override
 	public ITransactionDbService getTransactionDbService() {
 		return new TransactionDbService();
+	}
+
+	@Override
+	public HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<BigInteger, String> getTreeRootMap() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSnapshotMessage(SnapshotMessage snapshotMessage) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Member getGossipedMember() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GossipObj getGossipObj() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

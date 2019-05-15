@@ -7,7 +7,7 @@ import one.inve.localfullnode2.dep.DependentItem;
 public class CurrSnapshotVersion extends DependentItem {
 	private BigInteger currSnapshotVersion;
 
-	public BigInteger ge() {
+	public BigInteger get() {
 		return currSnapshotVersion;
 	}
 

@@ -5,6 +5,8 @@ import java.security.PrivateKey;
 import java.util.List;
 import java.util.Queue;
 
+import com.zeroc.Ice.Communicator;
+
 import one.inve.cluster.Member;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
 import one.inve.localfullnode2.store.IEventFlow;
@@ -64,4 +66,6 @@ public interface GossipDependent {
 	List<String> getBlackList4PubKey();
 
 	PrivateKey getPrivateKey();
+
+	Communicator getCommunicator();
 }
