@@ -1,6 +1,6 @@
 package one.inve.localfullnode2.http;
 
-import one.inve.localfullnode2.LocalFullNode1GeneralNode;
+import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.utilities.http.HttpServiceImplsDependent;
 
 public class HttpServiceDependency implements HttpServiceImplsDependent {

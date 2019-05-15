@@ -1,4 +1,4 @@
-package one.inve.localfullnode2;
+package one.inve.localfullnode2.nodes;
 
 import java.io.File;
 import java.io.IOException;

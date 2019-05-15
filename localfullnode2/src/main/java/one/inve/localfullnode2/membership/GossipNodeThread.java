@@ -20,8 +20,8 @@ import one.inve.bean.node.NodeTypes;
 import one.inve.cluster.Cluster;
 import one.inve.cluster.ClusterConfig;
 import one.inve.cluster.Member;
-import one.inve.localfullnode2.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.utilities.StringUtils;
 

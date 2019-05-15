@@ -7,10 +7,10 @@ import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import one.inve.localfullnode2.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.message.service.TransactionDbService;
+import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.mysql.QueryTableSplit;
 import one.inve.localfullnode2.store.rocks.Message;

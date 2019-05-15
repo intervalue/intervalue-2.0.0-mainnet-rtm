@@ -15,8 +15,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import one.inve.localfullnode2.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;
 import one.inve.localfullnode2.store.mysql.NewTableCreate;
 import one.inve.localfullnode2.store.rocks.Message;

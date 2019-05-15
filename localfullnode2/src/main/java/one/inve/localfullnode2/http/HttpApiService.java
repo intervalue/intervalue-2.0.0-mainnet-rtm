@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
-import one.inve.localfullnode2.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.rocks.BlockBrowserInfo;
 import one.inve.localfullnode2.store.rocks.Message;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
