@@ -40,7 +40,7 @@ public interface GossipDependent {
 
 	int getShardId();
 
-	int getCreatorId();
+	long getCreatorId();
 
 	// last seqs is equal to height
 	long[] getLastSeqsByShardId(int shardId);

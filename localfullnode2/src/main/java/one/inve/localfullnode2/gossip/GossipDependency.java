@@ -74,7 +74,7 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 	}
 
 	@Override
-	public int getCreatorId() {
+	public long getCreatorId() {
 		return creatorId.get();
 	}
 
