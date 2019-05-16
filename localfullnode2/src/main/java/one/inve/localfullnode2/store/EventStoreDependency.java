@@ -34,7 +34,7 @@ public class EventStoreDependency implements EventStoreDependent, DependentItemC
 	}
 
 	@Override
-	public int getCreatorId() {
+	public long getCreatorId() {
 		return creatorId.get();
 	}
 

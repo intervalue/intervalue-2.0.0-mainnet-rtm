@@ -9,7 +9,7 @@ public interface EventStoreDependent {
 
 	int getShardCount();
 
-	int getCreatorId();
+	long getCreatorId();
 
 	BlockingQueue<EventBody> getEventSaveQueue();
 }
