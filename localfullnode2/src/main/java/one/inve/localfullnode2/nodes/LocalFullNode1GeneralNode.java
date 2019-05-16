@@ -566,8 +566,9 @@ public class LocalFullNode1GeneralNode {
 //				}
 				// Francis.Deng {@code LocalFullNodeSkeleton::buildShardSortQueue()} initializes
 				// them
-				BlockingQueue<EventBody> shardSortQueue = DepItemsManager.getInstance().attachAllQueues(null).get()
-						.getQueue(EventBody.class, StagingArea.ShardSortQueueName, i);
+				StagingArea stagingArea = DepItemsManager.getInstance().attachAllQueues(null).get();
+				BlockingQueue<EventBody> shardSortQueue = stagingArea.getQueue(EventBody.class,
+						StagingArea.ShardSortQueueName, i);
 
 				// 读取所有Event
 				ArrayList<EventBody> events = new ArrayList<>();

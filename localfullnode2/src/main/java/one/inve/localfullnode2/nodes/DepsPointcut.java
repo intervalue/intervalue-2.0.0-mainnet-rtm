@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Communicator;
 
 import one.inve.bean.node.LocalFullNode;
+import one.inve.cluster.Member;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.DepItemsManagerial;
 import one.inve.localfullnode2.dep.items.AllQueues;
@@ -143,6 +144,18 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	public void setBlackList4PubKey(List<String> blackList4PubKey) {
 		depItemsManager.attachBlackList4PubKey(null).set(blackList4PubKey);
 		super.setBlackList4PubKey(blackList4PubKey);
+	}
+
+	@Override
+	public void inshardNeighborPools(List<Member> members) {
+		depItemsManager.attachMembers(null).setInSharding(members);
+		super.inshardNeighborPools(members);
+	}
+
+	@Override
+	public void globalNeighborPools(List<Member> members) {
+		depItemsManager.attachMembers(null).setGlobally(members);
+		super.globalNeighborPools(members);
 	}
 
 }
