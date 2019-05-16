@@ -55,12 +55,12 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 
 	@Override
 	public List<Member> getMembers(int gossipType) {
-		return members.get();
+		return members.get(gossipType);
 	}
 
 	@Override
 	public Member getMember(int gossipType, int index) {
-		return members.get().get(index);
+		return members.get(gossipType).get(index);
 	}
 
 	@Override
