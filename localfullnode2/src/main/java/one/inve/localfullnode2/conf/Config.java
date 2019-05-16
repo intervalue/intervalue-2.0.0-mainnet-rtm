@@ -6,8 +6,6 @@ import java.util.List;
 /**
  * 参数配置类
  * 
- * @author Clare lau (Clarelau61803@gmail.com)
- * @date 2018/7/22 0022.
  */
 public class Config {
 	public static final String VERSION_VALUE = "3.0.0"; //
