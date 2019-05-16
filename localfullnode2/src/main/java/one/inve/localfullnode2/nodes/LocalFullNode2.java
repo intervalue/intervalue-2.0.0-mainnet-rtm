@@ -21,7 +21,8 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * 
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
- * @Description: The class is able to communicate with seed node.
+ * @Description: The class is able to communicate with seed node to complete the
+ *               tasks like registering,retrieving sharding.
  * @author: Francis.Deng
  * @date: May 14, 2019 11:34:32 PM
  * @version: V1.0

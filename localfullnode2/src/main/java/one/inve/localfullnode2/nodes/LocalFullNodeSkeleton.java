@@ -149,8 +149,10 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			// 启动http接口
 			HttpServiceDependency httpServiceDependency = new HttpServiceDependency();
 			httpServiceDependency.setNode(this);
-			NettyHttpServer.boostrapHttpService(httpServiceDependency,
-					this.nodeParameters().selfGossipAddress.httpPort);
+
+			int port = this.nodeParameters().selfGossipAddress.httpPort;
+			logger.info("Http server is listening to {}", port);
+			NettyHttpServer.boostrapHttpService(httpServiceDependency, port);
 
 			// 启动rpc接口
 			loadRPC(this);
