@@ -7,7 +7,7 @@ import one.inve.bean.message.SnapshotPoint;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.snapshot.vo.EventKeyPair;
+import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.localfullnode2.store.rocks.INosqlSnapshotImpl;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
@@ -221,9 +221,10 @@ public class RepairCurrSnapshotPointInfo {
     }
 
     private void createSnapshotPoint(EventBody event) throws InterruptedException {
-        logger.info(">>>>>START<<<<<createSnapshotPoint:\n eventBody: {}", JSON.toJSONString(event));
+
         if (dep.getTotalConsEventCount().mod(BigInteger.valueOf(Config.EVENT_NUM_PER_SNAPSHOT))
                 .equals(BigInteger.ZERO)) {
+            logger.info(">>>>>START<<<<<createSnapshotPoint:\n eventBody: {}", JSON.toJSONString(event));
             // 计算并更新贡献
             ConcurrentHashMap<String, Long> statistics = new ConcurrentHashMap<>();
             long[][] effectiveCounts = new long[dep.getShardCount()][dep.getnValue()];
@@ -267,8 +268,9 @@ public class RepairCurrSnapshotPointInfo {
             o.put("lastIdx", true);
             dep.getConsMessageVerifyQueue().put(o);
             logger.info(">>>>>INFO<<<<<createSnapshotPoint:\n snapshotPointTrigger: {}",o);
+            logger.info(">>>>>END<<<<<createSnapshotPoint");
         }
-        logger.info(">>>>>END<<<<<createSnapshotPoint");
+
     }
 
     /**
@@ -304,6 +306,12 @@ public class RepairCurrSnapshotPointInfo {
             }
         }
         logger.info(">>>>>END<<<<<calculateMsgHashTreeRoot:\n msgHashTreeRoot: {}",msgHashTreeRoot);
+    }
+
+    public static void main(String[] args) {
+        String eventStr = "";
+        EventBody event = JSON.parseObject(eventStr,EventBody.class);
+
     }
 
 }

@@ -3,7 +3,7 @@ package one.inve.localfullnode2.snapshot;
 import com.alibaba.fastjson.JSON;
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.snapshot.vo.EventKeyPair;
+import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.SnapshotDbService;
 import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
 import one.inve.localfullnode2.utilities.StringUtils;

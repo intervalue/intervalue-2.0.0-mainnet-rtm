@@ -7,7 +7,7 @@ import one.inve.bean.message.SnapshotPoint;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.snapshot.vo.EventKeyPair;
+import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.utils.DSA;
 import org.slf4j.Logger;
