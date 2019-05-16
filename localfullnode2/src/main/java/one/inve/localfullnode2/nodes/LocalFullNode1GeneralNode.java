@@ -30,6 +30,7 @@ import com.zeroc.Ice.Object;
 import com.zeroc.Ice.ObjectAdapter;
 import com.zeroc.Ice.Util;
 
+import one.inve.bean.message.SnapshotMessage;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.bean.wallet.Keys;
 import one.inve.bean.wallet.Wallet;
@@ -68,6 +69,11 @@ public class LocalFullNode1GeneralNode {
 	private ObjectAdapter adapter;
 
 	/**
+	 * 最新快照消息
+	 */
+	private SnapshotMessage snapshotMessage = null;
+
+	/**
 	 * 抗量子公私钥
 	 */
 	private PublicKey publicKey = null;
@@ -88,6 +94,9 @@ public class LocalFullNode1GeneralNode {
 	private List<String> whiteList;
 	private List<String> blackList;
 	private List<String> blackList4PubKey;
+
+	// the height of events
+	private long[][] lastSeqs;
 
 	/**
 	 * 分片内局部全节点邻居池
@@ -289,6 +298,26 @@ public class LocalFullNode1GeneralNode {
 
 	public void privateKey(PrivateKey privateKey) {
 		this.privateKey = privateKey;
+	}
+
+	public SnapshotMessage getSnapshotMessage() {
+		return snapshotMessage;
+	}
+
+	public void setSnapshotMessage(SnapshotMessage snapshotMessage) {
+		this.snapshotMessage = snapshotMessage;
+	}
+
+	public BigInteger getCurrSnapshotVersion() {
+		return (null == snapshotMessage) ? BigInteger.ONE : BigInteger.ONE.add(snapshotMessage.getSnapVersion());
+	}
+
+	public long[][] getLastSeqs() {
+		return lastSeqs;
+	}
+
+	public void setLastSeqs(long[][] lastSeqs) {
+		this.lastSeqs = lastSeqs;
 	}
 
 	/**
@@ -534,7 +563,13 @@ public class LocalFullNode1GeneralNode {
 				}
 			});
 			eventFlow = new EventFlow(publicKeys, privateKey, eventStore);
+
+			DepItemsManager.getInstance().attachEventFlow(null).set(eventFlow);
 		}
+	}
+
+	public EventFlow getEventFlow() {
+		return eventFlow;
 	}
 
 	//

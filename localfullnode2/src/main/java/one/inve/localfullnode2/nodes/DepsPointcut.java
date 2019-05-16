@@ -7,6 +7,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Communicator;
 
+import one.inve.bean.message.SnapshotMessage;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.cluster.Member;
 import one.inve.localfullnode2.dep.DepItemsManager;
@@ -156,6 +157,12 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	public void globalNeighborPools(List<Member> members) {
 		depItemsManager.attachMembers(null).setGlobally(members);
 		super.globalNeighborPools(members);
+	}
+
+	@Override
+	public void setSnapshotMessage(SnapshotMessage snapshotMessage) {
+		depItemsManager.attachUpdatedSnapshotMessage(null).set(snapshotMessage);
+		super.setSnapshotMessage(snapshotMessage);
 	}
 
 }
