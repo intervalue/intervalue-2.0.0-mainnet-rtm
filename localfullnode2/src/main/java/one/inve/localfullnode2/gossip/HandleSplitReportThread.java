@@ -3,7 +3,7 @@ package one.inve.localfullnode2.gossip;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 
 /**
- * @author liux
+ * 
  */
 public class HandleSplitReportThread extends Thread {
 
