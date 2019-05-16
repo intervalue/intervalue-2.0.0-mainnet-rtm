@@ -200,7 +200,7 @@ public class EventStoreImpl implements EventStore {
 
 	@Override
 	public Iterator<EventBody> genOrderedIterator(int shardId, int n) {
-		return new EventIterator<>(shardId, dep.getCreatorId(), n, dep.getDbId());
+		return new EventIterator<>(shardId, (int) dep.getCreatorId(), n, dep.getDbId());
 	}
 
 	@Override
