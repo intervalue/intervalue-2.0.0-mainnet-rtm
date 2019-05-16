@@ -13,5 +13,6 @@ public class CurrSnapshotVersion extends DependentItem {
 
 	public void set(BigInteger currSnapshotVersion) {
 		this.currSnapshotVersion = currSnapshotVersion;
+		nodifyAll();
 	}
 }

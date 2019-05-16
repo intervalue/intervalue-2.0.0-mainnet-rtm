@@ -12,6 +12,7 @@ public class EventFlow extends DependentItem {
 
 	public void set(IEventFlow eventFlow) {
 		this.eventFlow = eventFlow;
+		nodifyAll();
 	}
 
 }

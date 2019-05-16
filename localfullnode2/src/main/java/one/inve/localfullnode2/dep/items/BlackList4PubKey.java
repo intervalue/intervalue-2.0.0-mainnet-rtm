@@ -13,5 +13,6 @@ public class BlackList4PubKey extends DependentItem {
 
 	public void set(List<String> blackList4PubKey) {
 		this.blackList4PubKey = blackList4PubKey;
+		nodifyAll();
 	}
 }

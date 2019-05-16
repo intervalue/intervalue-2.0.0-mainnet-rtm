@@ -11,6 +11,7 @@ public class PrivateKey extends DependentItem {
 
 	public void set(java.security.PrivateKey privateKey) {
 		this.privateKey = privateKey;
+		nodifyAll();
 	}
 
 }

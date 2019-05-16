@@ -11,6 +11,7 @@ public class LastSeqs extends DependentItem {
 
 	public void set(long[][] lastSeqs) {
 		this.lastSeqs = lastSeqs;
+		nodifyAll();
 	}
 
 }

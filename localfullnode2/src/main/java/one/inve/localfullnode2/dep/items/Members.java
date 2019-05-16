@@ -14,6 +14,7 @@ public class Members extends DependentItem {
 
 	public void set(List<Member> members) {
 		this.members = members;
+		nodifyAll();
 	}
 
 }

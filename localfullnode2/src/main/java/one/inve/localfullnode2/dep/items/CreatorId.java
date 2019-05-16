@@ -11,6 +11,7 @@ public class CreatorId extends DependentItem {
 
 	public void set(long creatorId) {
 		this.creatorId = creatorId;
+		nodifyAll();
 	}
 
 }
