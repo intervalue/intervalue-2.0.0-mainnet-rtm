@@ -10,6 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
 import com.zeroc.Ice.Util;
@@ -29,8 +30,8 @@ import one.inve.localfullnode2.utilities.PathUtils;
 import one.inve.localfullnode2.utilities.http.NettyHttpServer;
 
 public abstract class LocalFullNodeSkeleton extends DepsPointcut implements NodeEnrolled {
-	// private static final Logger logger = LoggerFactory.getLogger(Main.class);
-	private static Logger logger = null;
+	private static final Logger logger = LoggerFactory.getLogger(LocalFullNodeSkeleton.class);
+	// private static Logger logger = null;
 
 	private ConcurrentHashMap<String, BigInteger> accounts = new ConcurrentHashMap<>();
 	private Map<Integer, LinkedBlockingQueue<EventBody>> shardSortQueue = new HashMap<>();
@@ -124,8 +125,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 //			logger.info("-------------> node id is: {} <--------------", (getShardId() + 1) * 100 + selfId);
 //			// 设置全局变量，初始化世界状态
 //			RepositoryProvider.getTrack(nodeParameters.dbId);
-//			// 初始化数据库： MySQL、RocksDB，创世交易记录
-//			DbUtils.initDataBase(this);
+			// 初始化数据库： MySQL、RocksDB，创世交易记录
+			DbUtils.initDataBase(this);
 
 			// call seed node to get local full node list
 			// setLocalFullNodes

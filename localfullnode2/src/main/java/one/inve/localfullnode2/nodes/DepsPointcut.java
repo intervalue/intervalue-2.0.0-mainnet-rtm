@@ -88,6 +88,30 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	}
 
 	@Override
+	public void setShardId(int shardId) {
+		depItemsManager.attachShardId(null).set(shardId);
+		super.setShardId(shardId);
+	}
+
+	@Override
+	public void setCreatorId(long creatorId) {
+		depItemsManager.attachCreatorId(null).set(creatorId);
+		super.setCreatorId(creatorId);
+	}
+
+	@Override
+	public void setnValue(int nValue) {
+		depItemsManager.attachNValue(null).set(nValue);
+		super.setnValue(nValue);
+	}
+
+	@Override
+	public void setShardCount(int shardCount) {
+		depItemsManager.attachShardCount(null).set(shardCount);
+		super.setShardCount(shardCount);
+	}
+
+	@Override
 	public void setCommunicator(Communicator communicator) {
 		depItemsManager.attachDirectCommunicator(null).set(communicator);
 		super.setCommunicator(communicator);

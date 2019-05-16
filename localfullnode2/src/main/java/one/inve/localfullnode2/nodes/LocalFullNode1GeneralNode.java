@@ -515,7 +515,10 @@ public class LocalFullNode1GeneralNode {
 	private void initEventStore(LocalFullNode1GeneralNode node) {
 		if (null == eventStore) {
 			// eventStore = new EventStoreImpl(node);
-			eventStore = new EventStoreImpl(DepItemsManager.getInstance().getItemConcerned(EventStoreDependency.class));
+			EventStoreDependency eventStoreDep = DepItemsManager.getInstance()
+					.getItemConcerned(EventStoreDependency.class);
+
+			eventStore = new EventStoreImpl(eventStoreDep);
 		}
 	}
 
