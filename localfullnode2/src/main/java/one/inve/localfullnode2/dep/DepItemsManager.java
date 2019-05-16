@@ -20,6 +20,7 @@ import one.inve.localfullnode2.dep.items.PrivateKey;
 import one.inve.localfullnode2.dep.items.PublicKey;
 import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.dep.items.ShardId;
+import one.inve.localfullnode2.dep.items.UpdatedSnapshotMessage;
 
 /**
  * 
@@ -49,6 +50,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	private PrivateKey privateKey;
 	private AllQueues allQueues;
 	private DirectCommunicator directCommunicator;
+	private UpdatedSnapshotMessage updatedSnapshotMessage;
 
 	private Map<Class<?>, DependentItemConcerned> allDependentItemConcerned = new HashMap<>();
 
@@ -193,7 +195,11 @@ public final class DepItemsManager implements DepItemsManagerial {
 		return lastSeqs;
 	}
 
+	/**
+	 * replaced by {@code attachUpdatedSnapshotMessage}
+	 */
 	@Override
+	@Deprecated
 	public CurrSnapshotVersion attachCurrSnapshotVersion(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			currSnapshotVersion.attach(dependentItemConcerneds);
@@ -251,6 +257,16 @@ public final class DepItemsManager implements DepItemsManagerial {
 		}
 
 		return directCommunicator;
+	}
+
+	@Override
+	public UpdatedSnapshotMessage attachUpdatedSnapshotMessage(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			updatedSnapshotMessage.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
+		}
+
+		return updatedSnapshotMessage;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 import one.inve.localfullnode2.dep.DependentItem;
 
+@Deprecated
 public class CurrSnapshotVersion extends DependentItem {
 	private BigInteger currSnapshotVersion;
 
