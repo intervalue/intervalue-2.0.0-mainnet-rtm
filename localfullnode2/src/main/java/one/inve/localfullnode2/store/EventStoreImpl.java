@@ -35,7 +35,32 @@ public class EventStoreImpl implements EventStore {
 //	private int selfId;
 	private ConcurrentHashMap<EventKeyPair, EventBody> existEvents;
 	private LinkedBlockingQueue<EventKeyPair> existEventKeys;
-	private final ConcurrentHashMap<Integer, AtomicLongArray> lastSeq = new ConcurrentHashMap<>();
+
+	// replace it with {@link LastSeqHolder} instance
+	// private final ConcurrentHashMap<Integer, AtomicLongArray> lastSeq = new
+	// ConcurrentHashMap<>();
+
+	private final LastSeqHolder lastSeq = new LastSeqHolder();
+
+	private final class LastSeqHolder implements AtomicLongArrayWrapper.WriteNotifiable {
+		private final ConcurrentHashMap<Integer, AtomicLongArrayWrapper> lastSeq = new ConcurrentHashMap<>();
+
+		public void put(int shardId, AtomicLongArray lastSeqs) {
+			AtomicLongArrayWrapper atomicLongArrayWrapper = AtomicLongArrayWrapper.of(lastSeqs);
+			atomicLongArrayWrapper.setNotifier(this);
+			lastSeq.put(shardId, AtomicLongArrayWrapper.of(lastSeqs));
+		}
+
+		public AtomicLongArrayWrapper get(int shardId) {
+			return lastSeq.get(shardId);
+		}
+
+		@Override
+		public void notify(AtomicLongArrayWrapper atomicLongArrayWrapper) {
+
+		}
+
+	}
 
 	public EventStoreImpl(EventStoreDependent dep) {
 		this.dep = dep;
@@ -188,7 +213,9 @@ public class EventStoreImpl implements EventStore {
 
 	@Override
 	public long[] getLastSeqsByShardId(int shardId) {
-		AtomicLongArray lastSeqs = this.lastSeq.get(shardId);
+		// AtomicLongArray lastSeqs = this.lastSeq.get(shardId);
+		AtomicLongArrayWrapper lastSeqs = this.lastSeq.get(shardId);
+
 		int len = lastSeqs.length();
 		long[] result = new long[len];
 
