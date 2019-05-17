@@ -71,6 +71,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		privateKey = new PrivateKey();
 		allQueues = new AllQueues();
 		directCommunicator = new DirectCommunicator();
+		updatedSnapshotMessage = new UpdatedSnapshotMessage();
 	}
 
 	private static class SingletonHelper {
