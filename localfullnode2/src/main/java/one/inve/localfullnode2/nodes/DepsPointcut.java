@@ -71,6 +71,9 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		DepItemsManager.getInstance().attachPrivateKey(gossipDependency);
 		DepItemsManager.getInstance().attachDirectCommunicator(gossipDependency);
 		DepItemsManager.getInstance().attachAllQueues(gossipDependency);
+		DepItemsManager.getInstance().attachLastSeqs(gossipDependency);
+		DepItemsManager.getInstance().attachUpdatedSnapshotMessage(gossipDependency);
+
 	}
 
 	// replace queues in {@link GeneralNode}
@@ -158,6 +161,12 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		depItemsManager.attachMembers(null).setGlobally(members);
 		super.globalNeighborPools(members);
 	}
+
+//	@Override
+//	public void setLastSeqs(long[][] lastSeqs) {
+//		depItemsManager.attachLastSeqs(null).set(lastSeqs);
+//		super.setLastSeqs(lastSeqs);
+//	}
 
 	@Override
 	public void setSnapshotMessage(SnapshotMessage snapshotMessage) {

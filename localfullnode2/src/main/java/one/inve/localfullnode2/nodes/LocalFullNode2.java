@@ -147,4 +147,10 @@ public class LocalFullNode2 extends LocalFullNodeSkeleton {
 		logger.info(">>>>>> shard: {}", this.getShardId());
 		logger.info(">>>>>> index: {}", this.getCreatorId());
 	}
+
+	@Override
+	protected void performCoreTasks() {
+		// TODO Auto-generated method stub
+
+	}
 }

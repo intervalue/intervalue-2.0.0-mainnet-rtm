@@ -157,6 +157,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			// 启动rpc接口
 			loadRPC(this);
 
+			performCoreTasks();
+
 //			// 将新的eventbody添加到hashnet
 //			new EventBody2HashnetThread(this).start();
 //
@@ -190,6 +192,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		}
 	}
 
+	// initialize shardSortQueue($shardCount)
 	protected void buildShardSortQueue() {
 		AllQueues allQueues = DepItemsManager.getInstance().attachAllQueues(null);
 		StagingArea stagingArea = allQueues.get();
@@ -256,5 +259,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 		}
 	}
+
+	abstract protected void performCoreTasks();
 
 }
