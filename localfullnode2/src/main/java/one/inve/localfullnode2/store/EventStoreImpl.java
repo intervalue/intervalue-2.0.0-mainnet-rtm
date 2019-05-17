@@ -15,13 +15,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.dep.items.LastSeqs;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
 /**
  * 
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
- * @Description: TODO
+ * @Description: {@code lastSeq} is a key to record lastSeqs changes.
  * @author: Francis.Deng
  * @date: May 14, 2019 11:59:44 PM
  * @version: V1.0
@@ -49,6 +51,8 @@ public class EventStoreImpl implements EventStore {
 			AtomicLongArrayWrapper atomicLongArrayWrapper = AtomicLongArrayWrapper.of(lastSeqs);
 			atomicLongArrayWrapper.setNotifier(this);
 			lastSeq.put(shardId, AtomicLongArrayWrapper.of(lastSeqs));
+
+			notifyDeps(lastSeq);
 		}
 
 		public AtomicLongArrayWrapper get(int shardId) {
@@ -57,7 +61,12 @@ public class EventStoreImpl implements EventStore {
 
 		@Override
 		public void notify(AtomicLongArrayWrapper atomicLongArrayWrapper) {
+			notifyDeps(lastSeq);
+		}
 
+		private void notifyDeps(ConcurrentHashMap<Integer, AtomicLongArrayWrapper> lastSeq) {
+			LastSeqs lastSeqs = DepItemsManager.getInstance().attachLastSeqs(null);
+			lastSeqs.set(lastSeq);
 		}
 
 	}
