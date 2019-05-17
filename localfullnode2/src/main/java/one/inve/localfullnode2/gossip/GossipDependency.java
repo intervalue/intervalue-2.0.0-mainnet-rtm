@@ -2,7 +2,9 @@ package one.inve.localfullnode2.gossip;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.zeroc.Ice.Communicator;
 
@@ -13,7 +15,6 @@ import one.inve.localfullnode2.dep.DependentItemConcerned;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.dep.items.BlackList4PubKey;
 import one.inve.localfullnode2.dep.items.CreatorId;
-import one.inve.localfullnode2.dep.items.CurrSnapshotVersion;
 import one.inve.localfullnode2.dep.items.DirectCommunicator;
 import one.inve.localfullnode2.dep.items.EventFlow;
 import one.inve.localfullnode2.dep.items.LastSeqs;
@@ -22,9 +23,11 @@ import one.inve.localfullnode2.dep.items.PrivateKey;
 import one.inve.localfullnode2.dep.items.PublicKey;
 import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.dep.items.ShardId;
+import one.inve.localfullnode2.dep.items.UpdatedSnapshotMessage;
 import one.inve.localfullnode2.gossip.communicator.DefaultRpcCommunicator;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
 import one.inve.localfullnode2.staging.StagingArea;
+import one.inve.localfullnode2.store.AtomicLongArrayWrapper;
 import one.inve.localfullnode2.store.IEventFlow;
 
 /**
@@ -45,7 +48,8 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 	private CreatorId creatorId;
 	private LastSeqs lastSeqs;
 	private PublicKey publicKey;
-	private CurrSnapshotVersion currSnapshotVersion;
+	private UpdatedSnapshotMessage snapshotMessage;
+//	private CurrSnapshotVersion currSnapshotVersion;
 	private EventFlow eventFlow;
 	private BlackList4PubKey blackList4PubKey;
 	private PrivateKey privateKey;
@@ -80,12 +84,28 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 
 	@Override
 	public long[] getLastSeqsByShardId(int shardId) {
-		return lastSeqs.get()[shardId];
+		AtomicLongArrayWrapper longArray = lastSeqs.get().get(new Integer(shardId));
+		long[] ls = new long[longArray.length()];
+		for (int i = 0; i < longArray.length(); i++) {
+			ls[i] = longArray.get(i);
+		}
+
+		return ls;
 	}
 
 	@Override
 	public long[][] getLastSeqs() {
-		return lastSeqs.get();
+		ConcurrentHashMap<Integer, AtomicLongArrayWrapper> allSeqs = lastSeqs.get();
+		long[][] allLastSeqs = new long[allSeqs.size()][];
+		for (Entry<Integer, AtomicLongArrayWrapper> s : allSeqs.entrySet()) {
+			allLastSeqs[s.getKey().intValue()] = new long[s.getValue().length()];
+
+			for (int i = 0; i < s.getValue().length(); i++) {
+				allLastSeqs[s.getKey().intValue()][i] = s.getValue().get(i);
+			}
+		}
+
+		return allLastSeqs;
 	}
 
 	@Override
@@ -95,7 +115,9 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 
 	@Override
 	public BigInteger getCurrSnapshotVersion() {
-		return currSnapshotVersion.get();
+		// return currSnapshotVersion.get();
+		return (null == snapshotMessage) ? BigInteger.ONE : BigInteger.ONE.add(snapshotMessage.get().getSnapVersion());
+
 	}
 
 	@Override
