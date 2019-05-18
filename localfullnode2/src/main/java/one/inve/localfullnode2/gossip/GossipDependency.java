@@ -29,6 +29,7 @@ import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.AtomicLongArrayWrapper;
 import one.inve.localfullnode2.store.IEventFlow;
+import one.inve.localfullnode2.utilities.HnKeyUtils;
 
 /**
  * 
@@ -110,7 +111,7 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 
 	@Override
 	public String getPublicKey() {
-		return publicKey.get().toString();
+		return HnKeyUtils.getString4PublicKey(publicKey.get());
 	}
 
 	@Override
