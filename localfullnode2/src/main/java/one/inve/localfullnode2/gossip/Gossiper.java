@@ -167,6 +167,7 @@ public class Gossiper {
 				connflag[ni] = true;
 			} catch (Exception e) {
 //				logger.error("{}gossipMyMaxSeqList ConnectionRefusedException: {}", pre, neighbor.address().host());
+				logger.error("gossipMyMaxSeqList ConnectionRefusedException: {}", neighbor.address());
 //				logger.warn("remove gossipAddress: {}", JSON.toJSONString(neighbor.address()));
 //				prxMap.remove(neighbor.address());
 				connflag[ni] = false;
@@ -222,7 +223,7 @@ public class Gossiper {
 				eventSize += result.split("_")[0] == null ? 0 : Integer.parseInt(result.split("_")[0]);
 				eventSpaces += result.split("_")[1] == null ? 0 : Integer.parseInt(result.split("_")[1]);
 			} else {
-				logger.warn("numNeighbors is null.");
+				logger.warn("gossip connection error.");
 			}
 		}
 		return eventSize + "_" + eventSpaces;
