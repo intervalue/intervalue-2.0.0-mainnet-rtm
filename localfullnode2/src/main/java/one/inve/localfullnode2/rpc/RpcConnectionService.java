@@ -25,8 +25,7 @@ public class RpcConnectionService {
 
 			logger.info("build a rpc proxy,connection info is [{}]", str2Proxy);
 		} catch (Exception e) {
-			logger.error("buildConnection2localFullNode(): local full node {} is not connected.",
-					member.address().host());
+			logger.error("buildConnection2localFullNode(): local full node {} is not connected.", member.address());
 		}
 		return local2localPrx;
 	}
