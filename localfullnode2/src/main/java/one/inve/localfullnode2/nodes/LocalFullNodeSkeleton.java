@@ -20,12 +20,10 @@ import one.inve.localfullnode2.conf.NodeParameters;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.http.HttpServiceDependency;
-import one.inve.localfullnode2.membership.GossipNodeThread;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.DbUtils;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.utilities.FileLockUtils;
-import one.inve.localfullnode2.utilities.HnKeyUtils;
 import one.inve.localfullnode2.utilities.PathUtils;
 import one.inve.localfullnode2.utilities.http.NettyHttpServer;
 
@@ -143,8 +141,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			// 初始化hashnet数据结构
 			initHashnet(this);
 
-			// 加入gossip网络
-			new GossipNodeThread(this, HnKeyUtils.getString4PublicKey(publicKey())).start();
+			startMembership();
 
 			// 启动http接口
 			HttpServiceDependency httpServiceDependency = new HttpServiceDependency();
@@ -261,5 +258,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 	}
 
 	abstract protected void performCoreTasks();
+
+	abstract protected void startMembership();
 
 }

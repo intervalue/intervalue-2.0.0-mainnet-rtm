@@ -14,6 +14,7 @@ import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.DepItemsManagerial;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.gossip.GossipDependency;
+import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependency;
@@ -35,18 +36,29 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	protected void registerDeps() {
 		// new instance of listeners and register them
 		EventStoreDependency eventStoreDependency = new EventStoreDependency();
-		registerEventStoreDependency(eventStoreDependency);
+		register(eventStoreDependency);
 
 		GossipDependency gossipDependency = new GossipDependency();
-		registerGossipDependency(gossipDependency);
+		register(gossipDependency);
+
+		NewGossipEventsPersistenceDependency newGossipEventsPersistenceDependency = new NewGossipEventsPersistenceDependency();
+		register(newGossipEventsPersistenceDependency);
 
 		buildStagingArea();
 	}
 
 	/**
-	 * for {@code EventStoreImpl(EventStoreDependent dep)}
+	 * {@code persistNewEvents(NewGossipEventsPersistenceDependent dep)}
 	 */
-	protected void registerEventStoreDependency(EventStoreDependency eventStoreDependency) {
+	protected void register(NewGossipEventsPersistenceDependency newGossipEventsPersistenceDependency) {
+		DepItemsManager.getInstance().attachAllQueues(newGossipEventsPersistenceDependency);
+		DepItemsManager.getInstance().attachDBId(newGossipEventsPersistenceDependency);
+	}
+
+	/**
+	 * {@code EventStoreImpl(EventStoreDependent dep)}
+	 */
+	protected void register(EventStoreDependency eventStoreDependency) {
 		DepItemsManager.getInstance().attachDBId(eventStoreDependency);
 		DepItemsManager.getInstance().attachNValue(eventStoreDependency);
 		DepItemsManager.getInstance().attachShardCount(eventStoreDependency);
@@ -58,7 +70,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	/**
 	 * for {@code talkGossip(GossipDependent dep)}
 	 */
-	protected void registerGossipDependency(GossipDependency gossipDependency) {
+	protected void register(GossipDependency gossipDependency) {
 		DepItemsManager.getInstance().attachMembers(gossipDependency);
 		DepItemsManager.getInstance().attachShardCount(gossipDependency);
 		DepItemsManager.getInstance().attachShardId(gossipDependency);

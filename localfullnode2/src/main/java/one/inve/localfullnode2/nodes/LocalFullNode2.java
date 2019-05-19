@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.node.LocalFullNode;
+import one.inve.localfullnode2.membership.GossipNodeThread;
 import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.rpc.RegisterPrx;
 import one.inve.localfullnode2.rpc.RpcConnectionService;
@@ -22,7 +23,8 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
  * @Description: The class is able to communicate with seed node to complete the
- *               tasks like registering,retrieving sharding.
+ *               tasks like registering,retrieving sharding,maintaining
+ *               membership.
  * @author: Francis.Deng
  * @date: May 14, 2019 11:34:32 PM
  * @version: V1.0
@@ -151,6 +153,13 @@ public class LocalFullNode2 extends LocalFullNodeSkeleton {
 	@Override
 	protected void performCoreTasks() {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void startMembership() {
+		// 加入gossip网络
+		new GossipNodeThread(this, HnKeyUtils.getString4PublicKey(publicKey())).start();
 
 	}
 }
