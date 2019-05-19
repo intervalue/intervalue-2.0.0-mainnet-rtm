@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;
 import one.inve.localfullnode2.store.mysql.NewTableCreate;
@@ -755,6 +756,8 @@ public class DbUtils {
 		}
 		logger.info("node-({},{}): initStatistics() SystemAutoTxMaxId = {}", node.getShardId(), node.getCreatorId(),
 				node.getSystemAutoTxMaxId());
+
+		DepItemsManager.getInstance().attachStat(null).addTotalEventCount(node.getTotalConsEventCount().longValue());
 	}
 
 	private static void saveCreationTransacstionMessage(LocalFullNode1GeneralNode node, int id, String message)

@@ -16,6 +16,7 @@ import one.inve.localfullnode2.dep.items.PrivateKey;
 import one.inve.localfullnode2.dep.items.PublicKey;
 import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.dep.items.ShardId;
+import one.inve.localfullnode2.dep.items.Stat;
 import one.inve.localfullnode2.dep.items.UpdatedSnapshotMessage;
 
 /**
@@ -64,4 +65,6 @@ public interface DepItemsManagerial {
 	DirectCommunicator attachDirectCommunicator(DependentItemConcerned... dependentItemConcerneds);
 
 	UpdatedSnapshotMessage attachUpdatedSnapshotMessage(DependentItemConcerned... dependentItemConcerneds);
+
+	Stat attachStat(DependentItemConcerned... dependentItemConcerneds);
 }

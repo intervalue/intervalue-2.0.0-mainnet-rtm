@@ -22,7 +22,7 @@ public interface NewGossipEventsPersistenceDependent {
 	/**
 	 * <snippet>node.setTotalEventCount(node.getTotalEventCount().add(BigInteger.ONE));</snippet>
 	 */
-	void setTotalEventCount(BigInteger totalEventCount);
+	void addTotalEventCount(long delta);
 
 	BigInteger getTotalEventCount();
 }

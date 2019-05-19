@@ -53,6 +53,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	protected void register(NewGossipEventsPersistenceDependency newGossipEventsPersistenceDependency) {
 		DepItemsManager.getInstance().attachAllQueues(newGossipEventsPersistenceDependency);
 		DepItemsManager.getInstance().attachDBId(newGossipEventsPersistenceDependency);
+		DepItemsManager.getInstance().attachStat(newGossipEventsPersistenceDependency);
 	}
 
 	/**

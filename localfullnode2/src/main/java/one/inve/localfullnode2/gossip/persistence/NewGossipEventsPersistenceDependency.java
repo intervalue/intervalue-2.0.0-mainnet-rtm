@@ -7,6 +7,7 @@ import one.inve.localfullnode2.dep.DependentItem;
 import one.inve.localfullnode2.dep.DependentItemConcerned;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.dep.items.DBId;
+import one.inve.localfullnode2.dep.items.Stat;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventBody;
 
@@ -15,6 +16,7 @@ public class NewGossipEventsPersistenceDependency
 
 	private DBId dbId;
 	private AllQueues allQueues;
+	private Stat stat;
 
 	@Override
 	public BlockingQueue<EventBody> getEventSaveQueue() {
@@ -27,17 +29,14 @@ public class NewGossipEventsPersistenceDependency
 	}
 
 	@Override
-	public void setTotalEventCount(BigInteger totalEventCount) {
-		// temporal comment
-		// see if the variable is useful
+	public void addTotalEventCount(long delta) {
+		stat.addTotalEventCount(delta);
 
 	}
 
 	@Override
 	public BigInteger getTotalEventCount() {
-		// temporal comment
-		// see if the variable is useful
-		return null;
+		return stat.getTotalEventCount();
 	}
 
 	@Override

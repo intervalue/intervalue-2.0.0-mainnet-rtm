@@ -20,6 +20,7 @@ import one.inve.localfullnode2.dep.items.PrivateKey;
 import one.inve.localfullnode2.dep.items.PublicKey;
 import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.dep.items.ShardId;
+import one.inve.localfullnode2.dep.items.Stat;
 import one.inve.localfullnode2.dep.items.UpdatedSnapshotMessage;
 
 /**
@@ -51,6 +52,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	private AllQueues allQueues;
 	private DirectCommunicator directCommunicator;
 	private UpdatedSnapshotMessage updatedSnapshotMessage;
+	private Stat stat;
 
 	private Map<Class<?>, DependentItemConcerned> allDependentItemConcerned = new HashMap<>();
 
@@ -72,6 +74,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		allQueues = new AllQueues();
 		directCommunicator = new DirectCommunicator();
 		updatedSnapshotMessage = new UpdatedSnapshotMessage();
+		stat = new Stat();
 	}
 
 	private static class SingletonHelper {
@@ -268,6 +271,16 @@ public final class DepItemsManager implements DepItemsManagerial {
 		}
 
 		return updatedSnapshotMessage;
+	}
+
+	@Override
+	public Stat attachStat(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			stat.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
+		}
+
+		return stat;
 	}
 
 }

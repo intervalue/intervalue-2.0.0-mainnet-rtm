@@ -1,6 +1,5 @@
 package one.inve.localfullnode2.gossip.persistence;
 
-import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -90,7 +89,8 @@ public class NewGossipEventsPersistence {
 			}
 
 			// 保存总的Event数量
-			dep.setTotalEventCount(dep.getTotalEventCount().add(BigInteger.ONE));
+			// dep.setTotalEventCount(dep.getTotalEventCount().add(BigInteger.ONE));
+			dep.addTotalEventCount(1);
 			rocksJavaUtil.put(Config.EVT_COUNT_KEY, dep.getTotalEventCount().toString());
 		} catch (Exception e) {
 			logger.error("saveEvent {} error: {}", pair.toString(), e);
