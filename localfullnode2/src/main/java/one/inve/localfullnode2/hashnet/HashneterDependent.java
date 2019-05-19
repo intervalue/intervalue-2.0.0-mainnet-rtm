@@ -6,7 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventStore;
 
-public interface HashnetDependent {
+public interface HashneterDependent {
 	int getShardCount();
 
 	int getShardId();

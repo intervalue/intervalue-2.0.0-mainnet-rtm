@@ -11,8 +11,8 @@ package one.inve.localfullnode2.hashnet;
  * @date: May 3, 2019 7:15:51 PM
  * @version: V1.0
  */
-public class HN {
-	public void pull(HNDependent dep) {
+public class HashneterUpstream {
+	public void pull(HashneterUpstreamDependent dep) {
 		for (int i = 0; i < dep.getShardCount(); i++) {
 			dep.addToHashnet(i);
 		}

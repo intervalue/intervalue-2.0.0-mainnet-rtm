@@ -29,7 +29,7 @@ public class Hashneter {
 
 	private Hashnet hashnet;
 
-	public void initHashnet(HashnetDependent dep) throws InterruptedException {
+	public void initHashnet(HashneterDependent dep) throws InterruptedException {
 		if (dep.getTotalEventCount().compareTo(BigInteger.ZERO) <= 0) {
 			// 创建hashnet
 			createHashnet(dep);
@@ -42,7 +42,7 @@ public class Hashneter {
 		}
 	}
 
-	public void addToHashnet(HashnetDependent dep, int shardId) {
+	public void addToHashnet(HashneterDependent dep, int shardId) {
 		EventBody[] ebs = dep.getAllQueuedEvents(shardId);
 		for (EventBody eb : ebs) {
 			hashnet.addEvent(eb);
@@ -52,7 +52,7 @@ public class Hashneter {
 	/**
 	 * 重载hashnet
 	 */
-	private void reloadHashnet(HashnetDependent dep) throws InterruptedException {
+	private void reloadHashnet(HashneterDependent dep) throws InterruptedException {
 		logger.info(">>>>>> reload Hashnet...");
 
 		// temporal comment
@@ -112,7 +112,7 @@ public class Hashneter {
 //				node.getCreatorId(), eventStore.getLastSeqsByShardId(0));
 	}
 
-	private void createHashnet(HashnetDependent dep) {
+	private void createHashnet(HashneterDependent dep) {
 		logger.info(">>>>>> init Hashnet...");
 		// temporal comment
 		// initEventStore(node);

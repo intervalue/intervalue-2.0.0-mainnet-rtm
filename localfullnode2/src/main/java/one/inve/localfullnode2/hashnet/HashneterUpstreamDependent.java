@@ -9,7 +9,7 @@ package one.inve.localfullnode2.hashnet;
  * @date: December 3, 2018 7:14:32 PM
  * @version: V1.0
  */
-public interface HNDependent {
+public interface HashneterUpstreamDependent {
 	int getShardCount();
 
 	// push a sharding's event to hashnet
