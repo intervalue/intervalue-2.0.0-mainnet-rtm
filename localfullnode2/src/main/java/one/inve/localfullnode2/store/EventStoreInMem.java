@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLongArray;
 
-public class EventStoreInMem implements EventStore {
+public class EventStoreInMem implements IEventStore {
     private static final Logger logger = LoggerFactory.getLogger(EventStoreInMem.class);
 
     private int shardCount;

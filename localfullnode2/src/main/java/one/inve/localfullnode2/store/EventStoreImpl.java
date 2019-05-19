@@ -28,7 +28,7 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
  * @date: May 14, 2019 11:59:44 PM
  * @version: V1.0
  */
-public class EventStoreImpl implements EventStore {
+public class EventStoreImpl implements IEventStore {
 	private static final Logger logger = LoggerFactory.getLogger(EventStoreImpl.class);
 
 	private EventStoreDependent dep;

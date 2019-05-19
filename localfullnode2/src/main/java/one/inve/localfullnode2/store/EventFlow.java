@@ -24,7 +24,7 @@ import one.inve.utils.DSA;
 public class EventFlow implements IEventFlow {
 	private static final Logger logger = LoggerFactory.getLogger(EventFlow.class);
 
-	private final EventStore eventStore;
+	private final IEventStore eventStore;
 	private final PublicKey[][] pubKeys;
 	private final PrivateKey privKey;
 
@@ -34,7 +34,7 @@ public class EventFlow implements IEventFlow {
 		return pubKeys;
 	}
 
-	public EventFlow(PublicKey[][] pubKeys, PrivateKey privKey, EventStore eventStore) {
+	public EventFlow(PublicKey[][] pubKeys, PrivateKey privKey, IEventStore eventStore) {
 		this.eventStore = eventStore;
 		this.pubKeys = pubKeys;
 		this.privKey = privKey;
