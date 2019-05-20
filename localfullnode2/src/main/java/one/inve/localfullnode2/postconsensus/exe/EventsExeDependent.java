@@ -2,12 +2,12 @@ package one.inve.localfullnode2.postconsensus.exe;
 
 import java.math.BigInteger;
 import java.util.HashSet;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.Contribution;
-import one.inve.core.EventBody;
+import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.rocks.INosql;
 
 public interface EventsExeDependent {
@@ -15,24 +15,23 @@ public interface EventsExeDependent {
 
 	String msgHashTreeRoot();
 
-	void setTotalConsEventCount(BigInteger totalConsEventCount);
+	// void setTotalConsEventCount(BigInteger totalConsEventCount);
+	void addTotalConsEventCount(long delta);
 
 	BigInteger getTotalConsEventCount();
 
 	HashSet<Contribution> getContributions();
 
-	void setConsMessageMaxId(BigInteger consMessageMaxId);
+	void addConsMessageMaxId(long delta);
 
 	BigInteger getConsMessageMaxId();
 
-	String dbId();
-
-	INosql getNosql(String dbId);
+	INosql getNosql();
 
 	// the source
-	LinkedBlockingQueue<EventBody> getConsEventHandleQueue();
+	BlockingQueue<EventBody> getConsEventHandleQueue();
 
 	// the destination
-	LinkedBlockingQueue<JSONObject> getConsMessageVerifyQueue();
+	BlockingQueue<JSONObject> getConsMessageVerifyQueue();
 
 }

@@ -9,13 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 
-import one.inve.bean.message.Contribution;
-import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.INosql;
-import one.inve.localfullnode2.utilities.Hash;
-import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.utils.DSA;
 
 /**
@@ -25,9 +22,8 @@ import one.inve.utils.DSA;
  * @Description: The process consists of saving event, calculate
  *               statistics(Config.EVT_TX_COUNT_KEY，Config.CONS_EVT_COUNT_KEY，msgHashTreeRoot),check
  *               snapshot point
- *               <p>
- *               <code>one.inve.threads.localfullnode.ConsensusEventHandleThread</code>
  * @author: Francis.Deng
+ * @see ConsensusEventHandleThread
  * @date: May 3, 2019 8:40:56 PM
  * @version: V1.0
  */
@@ -43,6 +39,7 @@ public class EventsExe {
 
 	public EventsExe(EventsExeDependent dep) {
 		this.selfId = (int) dep.getCreatorId();
+		this.dep = dep;
 
 		this.msgHashTreeRoot = dep.msgHashTreeRoot();
 		// key condition - SnapshotPoint
@@ -69,7 +66,7 @@ public class EventsExe {
 		Instant t0 = Instant.now();
 		Instant t1;
 		long eventCount = 0L;
-		while (true) {
+		// while (true) {
 //            while (-1==selfId) {
 //                // 节点在片内的ID不存在，在一直等待
 //                try {
@@ -79,30 +76,32 @@ public class EventsExe {
 //                }
 //            }
 
-			try {
-				if (!dep.getConsEventHandleQueue().isEmpty()) {
-					// 取共识Event
-					EventBody event = dep.getConsEventHandleQueue().poll();
-					// 更新共识Event数
-					dep.setTotalConsEventCount(dep.getTotalConsEventCount().add(BigInteger.ONE));
-					// 累计各分片各节点event数
-					dep.getContributions()
-							.add(new Contribution.Builder().shardId(event.getShardId()).creatorId(event.getCreatorId())
-									.otherId(event.getOtherId()).otherSeq(event.getOtherSeq()).build());
+		try {
+			if (!dep.getConsEventHandleQueue().isEmpty()) {
+				// 取共识Event
+				EventBody event = dep.getConsEventHandleQueue().poll();
+				// 更新共识Event数
+				// dep.setTotalConsEventCount(dep.getTotalConsEventCount().add(BigInteger.ONE));
+				dep.addTotalConsEventCount(1);
+				// key condition
+				// 累计各分片各节点event数
+//				dep.getContributions()
+//						.add(new Contribution.Builder().shardId(event.getShardId()).creatorId(event.getCreatorId())
+//								.otherId(event.getOtherId()).otherSeq(event.getOtherSeq()).build());
 
-					// 保存共识Event
-					saveConsEvent(event);
+				// 保存共识Event
+				saveConsEvent(event);
 
-					// 将Event打包的交易放入待签名验证共识消息队列，并计算更新本快照版本的所有消息hash根
-					addConsMessage2VerifyQueue(event);
+				// 将Event打包的交易放入待签名验证共识消息队列，并计算更新本快照版本的所有消息hash根
+				addConsMessage2VerifyQueue(event);
 
-					// key condition - 达到生成快照点条件，则生成快照点
-					// createSnapshotPoint(event);
+				// key condition - 达到生成快照点条件，则生成快照点
+				// createSnapshotPoint(event);
 
-					// 打印信息
-					eventCount++;
-					t1 = Instant.now();
-					long interval = Duration.between(t0, t1).toMillis();
+				// 打印信息
+				eventCount++;
+				t1 = Instant.now();
+				long interval = Duration.between(t0, t1).toMillis();
 //					if (interval > 5000) {
 //						logger.info(statisticInfo.toString(), node.getShardId(), node.getCreatorId(), interval,
 //								eventCount, node.getConsEventHandleQueue().size(),
@@ -111,14 +110,14 @@ public class EventsExe {
 //						t0 = t1;
 //						eventCount = 0L;
 //					}
-				} else {
-					// sleep(50);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("error: {}", e);
+			} else {
+				// sleep(50);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("error: {}", e);
 		}
+		// }
 	}
 
 	/**
@@ -128,7 +127,7 @@ public class EventsExe {
 	 */
 	private void saveConsEvent(EventBody event) {
 		// RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dep.dbId());
-		INosql rocksJavaUtil = dep.getNosql(dep.dbId());
+		INosql rocksJavaUtil = dep.getNosql();
 		// 计算并set eventBody的最大transaction的ID
 		if (event.getTrans() != null) {
 			transCount = transCount.add(BigInteger.valueOf(event.getTrans().length));
@@ -165,7 +164,8 @@ public class EventsExe {
 			logger.error(">>>>>>before event.getTrans() " + event.getTrans().length);
 
 			for (byte[] msg : event.getTrans()) {
-				dep.setConsMessageMaxId(dep.getConsMessageMaxId().add(BigInteger.ONE));
+				// dep.setConsMessageMaxId(dep.getConsMessageMaxId().add(BigInteger.ONE));
+				dep.addConsMessageMaxId(1);
 				JSONObject o = new JSONObject();
 				logger.error(">>>>>>before node.getConsMessageMaxId():" + dep.getConsMessageMaxId());
 				o.put("id", dep.getConsMessageMaxId());
@@ -179,13 +179,14 @@ public class EventsExe {
 				}
 //                logger.warn("id: {}", o.getString("id"));
 
+				// key condition
 				// 计算更新消息hash根
-				JSONObject msgObj = JSONObject.parseObject(new String(msg));
-				if (StringUtils.isEmpty(msgHashTreeRoot)) {
-					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
-				} else {
-					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
-				}
+//				JSONObject msgObj = JSONObject.parseObject(new String(msg));
+//				if (StringUtils.isEmpty(msgHashTreeRoot)) {
+//					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
+//				} else {
+//					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
+//				}
 
 				try {
 					dep.getConsMessageVerifyQueue().put(o);
