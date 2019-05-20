@@ -30,7 +30,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * @date: May 14, 2019 11:34:32 PM
  * @version: V1.0
  */
-public class LocalFullNode2 extends LocalFullNodeSkeleton {
+public class LocalFullNode2 extends HashneterInitializer {
 	private static final Logger logger = LoggerFactory.getLogger(LocalFullNode2.class);
 
 	@Override
@@ -163,4 +163,5 @@ public class LocalFullNode2 extends LocalFullNodeSkeleton {
 		new GossipNodeThread(this, HnKeyUtils.getString4PublicKey(publicKey())).start();
 
 	}
+
 }
