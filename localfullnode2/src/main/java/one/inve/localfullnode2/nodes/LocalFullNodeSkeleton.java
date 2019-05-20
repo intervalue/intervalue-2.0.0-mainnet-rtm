@@ -23,6 +23,7 @@ import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.hashnet.HashneterDependency;
 import one.inve.localfullnode2.hashnet.HashneterUpstreamDependency;
 import one.inve.localfullnode2.http.HttpServiceDependency;
+import one.inve.localfullnode2.postconsensus.readout.EventsReadoutDependency;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.DbUtils;
 import one.inve.localfullnode2.store.EventBody;
@@ -269,13 +270,15 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		HashneterDependency hashneterDep = DepItemsManager.getInstance().getItemConcerned(HashneterDependency.class);
 		HashneterUpstreamDependency hashneterUpstreamDep = DepItemsManager.getInstance()
 				.getItemConcerned(HashneterUpstreamDependency.class);
+		EventsReadoutDependency eventsReadoutDep = DepItemsManager.getInstance()
+				.getItemConcerned(EventsReadoutDependency.class);
 
 		try {
 			hashneter.initHashnet(hashneterDep);
 
 			hashneterUpstreamDep.set(hashneter, hashneterDep);// which indicats that {@code hashneterUpstreamDep} is
 																// based on {@code hashneter},{@code hashneterDep}
-
+			eventsReadoutDep.setHashneter(hashneter);
 			return hashneter;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
