@@ -52,12 +52,10 @@ public abstract class HashneterInitializer extends LocalFullNodeSkeleton {
 		this.eventStore = eventStore;
 	}
 
-	@Override
 	public IEventFlow getEventFlow() {
 		return eventFlow;
 	}
 
-	@Override
 	public IEventStore getEventStore() {
 		return eventStore;
 	}
