@@ -32,14 +32,13 @@ public class AllQueuesTest {
 					10000000, null);
 //			BlockingQueue<EventBody> eventSaveQueue = stagingArea.createQueue(EventBody.class,
 //					StagingArea.EventSaveQueueName, 10000000, null);
-
 			messageQueue.offer("hello".getBytes());
 			messageQueue.offer("world".getBytes());
 			messageQueue.offer("shao".getBytes());
 
-			allQueues.set(stagingArea);
-
 			messageQueue.offer("yi".getBytes());
+
+			allQueues.set(stagingArea);
 
 			directOperation();
 
