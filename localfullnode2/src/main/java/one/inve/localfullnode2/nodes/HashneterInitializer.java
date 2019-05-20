@@ -5,6 +5,8 @@ import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.hashnet.HashneterDependency;
 import one.inve.localfullnode2.hashnet.HashneterUpstreamDependency;
 import one.inve.localfullnode2.postconsensus.readout.EventsReadoutDependency;
+import one.inve.localfullnode2.store.IEventFlow;
+import one.inve.localfullnode2.store.IEventStore;
 
 /**
  * Copyright © CHXX Co.,Ltd. All rights reserved.
@@ -15,6 +17,10 @@ import one.inve.localfullnode2.postconsensus.readout.EventsReadoutDependency;
  * @version: V1.0
  */
 public abstract class HashneterInitializer extends LocalFullNodeSkeleton {
+
+	private IEventFlow eventFlow;
+	private IEventStore eventStore;
+
 	protected Hashneter initHashneter() {
 		Hashneter hashneter = new Hashneter();
 
@@ -30,11 +36,29 @@ public abstract class HashneterInitializer extends LocalFullNodeSkeleton {
 			hashneterUpstreamDep.set(hashneter, hashneterDep);// which indicats that {@code hashneterUpstreamDep} is
 																// based on {@code hashneter},{@code hashneterDep}
 			eventsReadoutDep.setHashneter(hashneter);
+
+			set(hashneter.getEventFlow(), hashneter.getEventStore());
+
 			return hashneter;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
 		return null;
+	}
+
+	private void set(IEventFlow eventFlow, IEventStore eventStore) {
+		this.eventFlow = eventFlow;
+		this.eventStore = eventStore;
+	}
+
+	@Override
+	public IEventFlow getEventFlow() {
+		return eventFlow;
+	}
+
+	@Override
+	public IEventStore getEventStore() {
+		return eventStore;
 	}
 }

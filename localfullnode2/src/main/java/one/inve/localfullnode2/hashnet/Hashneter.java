@@ -52,7 +52,7 @@ public class Hashneter implements IHashneter {
 
 	public void addToHashnet(HashneterDependent dep, int shardId) {
 		// EventBody[] ebs = dep.getAllQueuedEvents(shardId);
-		EventBody[] ebs = dep.getEventFlow().getAllQueuedEvents(shardId);
+		EventBody[] ebs = eventFlow.getAllQueuedEvents(shardId);
 		for (EventBody eb : ebs) {
 			hashnet.addEvent(eb);
 		}

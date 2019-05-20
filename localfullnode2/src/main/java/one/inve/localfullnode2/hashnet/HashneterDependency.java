@@ -19,7 +19,6 @@ import one.inve.localfullnode2.dep.items.Stat;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependent;
-import one.inve.localfullnode2.store.IEventFlow;
 
 /**
  * Copyright © CHXX Co.,Ltd. All rights reserved.
@@ -54,10 +53,10 @@ public class HashneterDependency implements HashneterDependent, DependentItemCon
 		return shardId.get();
 	}
 
-	@Override
-	public IEventFlow getEventFlow() {
-		return eventFlow.get();
-	}
+//	@Override
+//	public IEventFlow getEventFlow() {
+//		return eventFlow.get();
+//	}
 
 	@Override
 	public BigInteger getTotalEventCount() {
