@@ -16,6 +16,7 @@ import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
 import one.inve.localfullnode2.hashnet.HashneterDependency;
+import one.inve.localfullnode2.hashnet.HashneterUpstreamDependency;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependency;
@@ -25,7 +26,7 @@ import one.inve.localfullnode2.store.EventStoreDependency;
  * 
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
- * @Description: TODO
+ * @Description: maintain data convey via {@link DepItemsManager}
  * @author: Francis.Deng
  * @date: May 15, 2019 12:12:19 AM
  * @version: V1.0
@@ -49,7 +50,17 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		register(hashneterDependency);
 		hashneterDependency.setEventStoreDependent(eventStoreDependency);// depending on {@code eventStoreDependency}
 
+		HashneterUpstreamDependency hashneterUpstreamDependency = new HashneterUpstreamDependency();
+		register(hashneterUpstreamDependency);
+
 		buildStagingArea();
+	}
+
+	/**
+	 * {@code pull(HashneterUpstreamDependent dep)}
+	 */
+	protected void register(HashneterUpstreamDependency hashneterUpstreamDependency) {
+		DepItemsManager.getInstance().attachShardCount(hashneterUpstreamDependency);
 	}
 
 	/**

@@ -30,7 +30,7 @@ import one.inve.localfullnode2.utilities.HnKeyUtils;
  * @date: July 30, 2018 3:03:10 AM
  * @version: V1.0
  */
-public class Hashneter {
+public class Hashneter implements IHashneter {
 	private static final Logger logger = LoggerFactory.getLogger(Hashneter.class);
 
 	private Hashnet hashnet;
