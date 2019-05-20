@@ -44,7 +44,7 @@ import one.inve.localfullnode2.hashnet.Hashnet;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventFlow;
-import one.inve.localfullnode2.store.EventStore;
+import one.inve.localfullnode2.store.IEventStore;
 import one.inve.localfullnode2.store.EventStoreDependency;
 import one.inve.localfullnode2.store.EventStoreImpl;
 import one.inve.localfullnode2.utilities.Cryptos;
@@ -81,7 +81,7 @@ public class LocalFullNode1GeneralNode {
 
 	private Hashnet hashnet;
 	private EventFlow eventFlow;
-	private EventStore eventStore;
+	private IEventStore eventStore;
 
 	private int nValue = 1;
 	private int shardCount;
@@ -188,7 +188,7 @@ public class LocalFullNode1GeneralNode {
 		this.creatorId = creatorId;
 	}
 
-	public EventStore getEventStore() {
+	public IEventStore getEventStore() {
 		return eventStore;
 	}
 

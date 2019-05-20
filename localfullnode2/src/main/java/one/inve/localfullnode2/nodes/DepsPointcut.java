@@ -15,6 +15,7 @@ import one.inve.localfullnode2.dep.DepItemsManagerial;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
+import one.inve.localfullnode2.hashnet.HashneterDependency;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependency;
@@ -44,7 +45,26 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		NewGossipEventsPersistenceDependency newGossipEventsPersistenceDependency = new NewGossipEventsPersistenceDependency();
 		register(newGossipEventsPersistenceDependency);
 
+		HashneterDependency hashneterDependency = new HashneterDependency();
+		register(hashneterDependency);
+		hashneterDependency.setEventStoreDependent(eventStoreDependency);// depending on {@code eventStoreDependency}
+
 		buildStagingArea();
+	}
+
+	/**
+	 * {@code initHashnet(HashneterDependent dep)}
+	 */
+	protected void register(HashneterDependency hashneterDependency) {
+		DepItemsManager.getInstance().attachShardCount(hashneterDependency);
+		DepItemsManager.getInstance().attachShardId(hashneterDependency);
+		DepItemsManager.getInstance().attachEventFlow(hashneterDependency);
+		DepItemsManager.getInstance().attachStat(hashneterDependency);
+		DepItemsManager.getInstance().attachNValue(hashneterDependency);
+		DepItemsManager.getInstance().attachCreatorId(hashneterDependency);
+		DepItemsManager.getInstance().attachAllQueues(hashneterDependency);
+		DepItemsManager.getInstance().attachLocalFullNodes(hashneterDependency);
+		DepItemsManager.getInstance().attachPrivateKey(hashneterDependency);
 	}
 
 	/**
@@ -69,7 +89,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	}
 
 	/**
-	 * for {@code talkGossip(GossipDependent dep)}
+	 * {@code talkGossip(GossipDependent dep)}
 	 */
 	protected void register(GossipDependency gossipDependency) {
 		DepItemsManager.getInstance().attachMembers(gossipDependency);

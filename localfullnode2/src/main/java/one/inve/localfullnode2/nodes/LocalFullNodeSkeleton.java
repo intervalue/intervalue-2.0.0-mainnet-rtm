@@ -19,6 +19,8 @@ import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.conf.NodeParameters;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.AllQueues;
+import one.inve.localfullnode2.hashnet.Hashneter;
+import one.inve.localfullnode2.hashnet.HashneterDependency;
 import one.inve.localfullnode2.http.HttpServiceDependency;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.DbUtils;
@@ -139,7 +141,10 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			buildShardSortQueue();
 
 			// 初始化hashnet数据结构
-			initHashnet(this);
+			// initHashnet(this);
+			Hashneter hashneter = initHashneter();
+			if (hashneter == null)
+				System.exit(-1);
 
 			startMembership();
 
@@ -154,7 +159,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			// 启动rpc接口
 			loadRPC(this);
 
-			performCoreTasks();
+			performCoreTasks(hashneter);
 
 //			// 将新的eventbody添加到hashnet
 //			new EventBody2HashnetThread(this).start();
@@ -257,7 +262,22 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		}
 	}
 
-	abstract protected void performCoreTasks();
+	protected Hashneter initHashneter() {
+		Hashneter hashneter = new Hashneter();
+
+		HashneterDependency hashneterDep = DepItemsManager.getInstance().getItemConcerned(HashneterDependency.class);
+
+		try {
+			hashneter.initHashnet(hashneterDep);
+			return hashneter;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	abstract protected void performCoreTasks(Hashneter hashneter);
 
 	abstract protected void startMembership();
 

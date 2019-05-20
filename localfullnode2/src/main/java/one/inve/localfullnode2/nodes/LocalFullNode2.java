@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.node.LocalFullNode;
+import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.membership.GossipNodeThread;
 import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.rpc.RegisterPrx;
@@ -151,7 +152,7 @@ public class LocalFullNode2 extends LocalFullNodeSkeleton {
 	}
 
 	@Override
-	protected void performCoreTasks() {
+	protected void performCoreTasks(Hashneter hashneter) {
 		// TODO Auto-generated method stub
 
 	}
