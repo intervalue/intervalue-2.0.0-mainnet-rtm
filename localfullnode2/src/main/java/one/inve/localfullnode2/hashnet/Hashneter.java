@@ -168,4 +168,9 @@ public class Hashneter implements IHashneter {
 		return eventStore;
 	}
 
+	@Override
+	public Event[] getAllConsEvents(int shardId) {
+		return hashnet.getAllConsEvents(shardId);
+	}
+
 }
