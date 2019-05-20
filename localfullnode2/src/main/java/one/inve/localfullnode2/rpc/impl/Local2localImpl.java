@@ -38,7 +38,7 @@ import one.inve.localfullnode2.snapshot.vo.SnapObj;
 import one.inve.localfullnode2.store.DbUtils;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventKeyPair;
-import one.inve.localfullnode2.store.EventStore;
+import one.inve.localfullnode2.store.IEventStore;
 import one.inve.localfullnode2.store.SnapshotDbService;
 import one.inve.localfullnode2.store.SnapshotDbServiceImpl2;
 import one.inve.localfullnode2.utilities.Cryptos;
@@ -318,7 +318,7 @@ public class Local2localImpl implements Local2local {
 	 * @return 未知events
 	 */
 	private ArrayList<EventBody> getUnknownEvents(int shardId, long[] otherCounts, String connInfo) {
-		EventStore myStore = node.getEventStore();
+		IEventStore myStore = node.getEventStore();
 		long[] currMyCounts = myStore.getLastSeqsByShardId(shardId);
 
 		// verbose output to compare two seqs.
