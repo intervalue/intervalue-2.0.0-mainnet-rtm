@@ -68,37 +68,38 @@ public class EventsSorting {
 			}
 		}
 
-		// 将全排序后的共识Event放入共识Event处理队列
-		Instant time1 = Instant.now();
-		try {
-			dep.getConsEventHandleQueue().put(temp);
-		} catch (Exception e) {
-			logger.error("allsort thread consensus event into save queue error: {}", e);
-		}
-
-		// temp入库后重新初始化temp，保证每次for循环时temp的初始值都为第0个片的event，就可保证时间戳相等时最小片号先入库
-		try {
-			// 上一次for循环结束时，如果第0个片的event最小，在入库后temp直接从第0个片对应的消息队列中获取event
-			if (smallIndex == 0) {
-				temp = queueList.get(smallIndex).take();
-				// 上一次for循环结束时，如果最小event不是第0个片的，则将数组中的第0个片的event赋值给temp，并将event数组中第0个event清空。
-				// 然后从入库event对应片号的阻塞队列获取新的event放入event数组中，最后初始化smallIndex与temp片号保持一致，开始下一次for循环比较
-			} else {
-				temp = events[0];
-				events[0] = null;
-				events[smallIndex] = queueList.get(smallIndex).take();
-				smallIndex = 0;
+		if (temp != null) {
+			// 将全排序后的共识Event放入共识Event处理队列
+			Instant time1 = Instant.now();
+			try {
+				dep.getConsEventHandleQueue().put(temp);
+			} catch (Exception e) {
+				logger.error("allsort thread consensus event into save queue error: {}", e);
 			}
-		} catch (InterruptedException e) {
-			logger.error("allsort thread switch queue error: {}", e);
-		}
+
+			// temp入库后重新初始化temp，保证每次for循环时temp的初始值都为第0个片的event，就可保证时间戳相等时最小片号先入库
+			try {
+				// 上一次for循环结束时，如果第0个片的event最小，在入库后temp直接从第0个片对应的消息队列中获取event
+				if (smallIndex == 0) {
+					temp = queueList.get(smallIndex).take();
+					// 上一次for循环结束时，如果最小event不是第0个片的，则将数组中的第0个片的event赋值给temp，并将event数组中第0个event清空。
+					// 然后从入库event对应片号的阻塞队列获取新的event放入event数组中，最后初始化smallIndex与temp片号保持一致，开始下一次for循环比较
+				} else {
+					temp = events[0];
+					events[0] = null;
+					events[smallIndex] = queueList.get(smallIndex).take();
+					smallIndex = 0;
+				}
+			} catch (InterruptedException e) {
+				logger.error("allsort thread switch queue error: {}", e);
+			}
 //			long interval = Duration.between(time1, Instant.now()).toMillis();
-		count = count.add(BigInteger.ONE);
+			count = count.add(BigInteger.ONE);
 //			if (interval > 150) {
 //				logger.info("===^^^=== node-({}, {}): the {}-th ConsensusEventAllSortThread total cost: {} sec",
 //						node.getShardId(), node.getCreatorId(), count.toString(), interval / 1000.0);
 //			}
-		// }
-
+			// }
+		}
 	}
 }
