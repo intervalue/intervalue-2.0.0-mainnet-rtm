@@ -1,6 +1,7 @@
 package one.inve.localfullnode2.hashnet;
 
 import java.math.BigInteger;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,6 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import one.inve.localfullnode2.store.EventBody;
+import one.inve.localfullnode2.store.EventFlow;
+import one.inve.localfullnode2.store.EventStoreImpl;
+import one.inve.localfullnode2.store.IEventFlow;
+import one.inve.localfullnode2.store.IEventStore;
+import one.inve.localfullnode2.utilities.HnKeyUtils;
 
 /**
  * Copyright © CHXX Co.,Ltd. All rights reserved.
@@ -28,6 +34,8 @@ public class Hashneter {
 	private static final Logger logger = LoggerFactory.getLogger(Hashneter.class);
 
 	private Hashnet hashnet;
+	private IEventFlow eventFlow;
+	private IEventStore eventStore;
 
 	public void initHashnet(HashneterDependent dep) throws InterruptedException {
 		if (dep.getTotalEventCount().compareTo(BigInteger.ZERO) <= 0) {
@@ -43,7 +51,8 @@ public class Hashneter {
 	}
 
 	public void addToHashnet(HashneterDependent dep, int shardId) {
-		EventBody[] ebs = dep.getAllQueuedEvents(shardId);
+		// EventBody[] ebs = dep.getAllQueuedEvents(shardId);
+		EventBody[] ebs = dep.getEventFlow().getAllQueuedEvents(shardId);
 		for (EventBody eb : ebs) {
 			hashnet.addEvent(eb);
 		}
@@ -55,9 +64,8 @@ public class Hashneter {
 	private void reloadHashnet(HashneterDependent dep) throws InterruptedException {
 		logger.info(">>>>>> reload Hashnet...");
 
-		// temporal comment
-		// initEventStore(node);
-		// initEventFlow();
+		initEventStore(dep);
+		initEventFlow(dep);
 
 		Map<Integer, LinkedBlockingQueue<EventBody>> shardSortQueue = new HashMap<>();
 		if (null == hashnet) {
@@ -70,7 +78,7 @@ public class Hashneter {
 
 				// 读取所有Event
 				ArrayList<EventBody> events = new ArrayList<>();
-				Iterator iter = dep.getEventStore().genOrderedIterator(i, dep.getNValue());
+				Iterator iter = eventStore.genOrderedIterator(i, dep.getNValue());
 				while (iter.hasNext()) {
 					EventBody eb = (EventBody) iter.next();
 					events.add(eb);
@@ -83,7 +91,7 @@ public class Hashneter {
 				}
 				events.forEach(e -> hashnet.addEvent(e));
 				logger.warn("node-({}, {}): reload events successfully. shard-{}'s lastSeqs: {} ", dep.getShardId(),
-						dep.getCreatorId(), i, dep.getEventStore().getLastSeqsByShardId(i));
+						dep.getCreatorId(), i, eventStore.getLastSeqsByShardId(i));
 
 				// 恢复共识Event全排序等待队列
 				Event[] evts = hashnet.getAllConsEvents(i);
@@ -114,9 +122,9 @@ public class Hashneter {
 
 	private void createHashnet(HashneterDependent dep) {
 		logger.info(">>>>>> init Hashnet...");
-		// temporal comment
-		// initEventStore(node);
-		// initEventFlow();
+
+		initEventStore(dep);
+		initEventFlow(dep);
 		if (null == hashnet) {
 			hashnet = new Hashnet(dep.getShardCount(), dep.getNValue());
 		}
@@ -125,6 +133,39 @@ public class Hashneter {
 		// initFromScratch();
 //		logger.warn("node-({}, {}): init Hashnet successfully. shard-0's lastSeqs: {} ", node.getShardId(),
 //				node.getCreatorId(), eventStore.getLastSeqsByShardId(0));
+	}
+
+	private void initEventStore(HashneterDependent dep) {
+		if (null == eventStore) {
+			eventStore = new EventStoreImpl(dep.getEventStoreDependent());
+		}
+	}
+
+	private void initEventFlow(HashneterDependent dep) {
+		if (null == eventFlow) {
+			PublicKey[][] publicKeys = new PublicKey[dep.getShardCount()][dep.getNValue()];
+			dep.getLocalFullNodes().forEach(n -> {
+				try {
+					publicKeys[Integer.parseInt(n.getShard())][Integer.parseInt(n.getIndex())] = HnKeyUtils
+							.getPublicKey4String(n.getPubkey());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			eventFlow = new EventFlow(publicKeys, dep.getPrivateKey(), eventStore);
+		}
+	}
+
+	public Hashnet getHashnet() {
+		return hashnet;
+	}
+
+	public IEventFlow getEventFlow() {
+		return eventFlow;
+	}
+
+	public IEventStore getEventStore() {
+		return eventStore;
 	}
 
 }
