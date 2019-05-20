@@ -1,6 +1,6 @@
 package one.inve.localfullnode2.postconsensus.readout;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import one.inve.localfullnode2.hashnet.Event;
 import one.inve.localfullnode2.store.EventBody;
@@ -12,5 +12,5 @@ public interface EventsReadoutDependent {
 	Event[] getAllConsEvents(int shardId);
 
 	// the destination to which impls push EventBodies
-	LinkedBlockingQueue<EventBody> getShardSortQueue(int shardId);
+	BlockingQueue<EventBody> getShardSortQueue(int shardId);
 }
