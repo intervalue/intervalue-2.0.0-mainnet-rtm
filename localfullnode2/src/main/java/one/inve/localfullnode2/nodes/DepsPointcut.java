@@ -17,6 +17,7 @@ import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
 import one.inve.localfullnode2.hashnet.HashneterDependency;
 import one.inve.localfullnode2.hashnet.HashneterUpstreamDependency;
+import one.inve.localfullnode2.postconsensus.readout.EventsReadoutDependency;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependency;
@@ -53,7 +54,18 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		HashneterUpstreamDependency hashneterUpstreamDependency = new HashneterUpstreamDependency();
 		register(hashneterUpstreamDependency);
 
+		EventsReadoutDependency eventsReadoutDependency = new EventsReadoutDependency();
+		register(eventsReadoutDependency);
+
 		buildStagingArea();
+	}
+
+	/**
+	 * {@code void read(EventsReadoutDependent dep)}
+	 */
+	protected void register(EventsReadoutDependency eventsReadoutDependency) {
+		DepItemsManager.getInstance().attachShardCount(eventsReadoutDependency);
+		DepItemsManager.getInstance().attachAllQueues(eventsReadoutDependency);
 	}
 
 	/**

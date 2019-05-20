@@ -7,7 +7,6 @@ import org.junit.Test;
 import junit.framework.Assert;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.store.EventBody;
 
 public class AllQueuesTest {
 	// demonstrate how to pass a AllQueues item between producer and consumer
@@ -31,14 +30,16 @@ public class AllQueuesTest {
 
 			BlockingQueue<byte[]> messageQueue = stagingArea.createQueue(byte[].class, StagingArea.MessageQueueName,
 					10000000, null);
-			BlockingQueue<EventBody> eventSaveQueue = stagingArea.createQueue(EventBody.class,
-					StagingArea.EventSaveQueueName, 10000000, null);
+//			BlockingQueue<EventBody> eventSaveQueue = stagingArea.createQueue(EventBody.class,
+//					StagingArea.EventSaveQueueName, 10000000, null);
 
 			messageQueue.offer("hello".getBytes());
 			messageQueue.offer("world".getBytes());
 			messageQueue.offer("shao".getBytes());
 
 			allQueues.set(stagingArea);
+
+			messageQueue.offer("yi".getBytes());
 
 			directOperation();
 
@@ -53,6 +54,10 @@ public class AllQueuesTest {
 			byte[] shao = messageQueue.poll();
 			System.out.println(new String(shao));
 			Assert.assertEquals(new String(shao), "shao");
+
+			BlockingQueue<byte[]> mq = stagingArea.getQueue(byte[].class, StagingArea.MessageQueueName);
+			System.out.println(mq.size());
+
 		}
 
 	}

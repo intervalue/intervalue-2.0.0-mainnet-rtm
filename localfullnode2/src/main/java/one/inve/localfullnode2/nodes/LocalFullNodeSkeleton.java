@@ -20,8 +20,6 @@ import one.inve.localfullnode2.conf.NodeParameters;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.hashnet.Hashneter;
-import one.inve.localfullnode2.hashnet.HashneterDependency;
-import one.inve.localfullnode2.hashnet.HashneterUpstreamDependency;
 import one.inve.localfullnode2.http.HttpServiceDependency;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.DbUtils;
@@ -263,26 +261,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		}
 	}
 
-	protected Hashneter initHashneter() {
-		Hashneter hashneter = new Hashneter();
-
-		HashneterDependency hashneterDep = DepItemsManager.getInstance().getItemConcerned(HashneterDependency.class);
-		HashneterUpstreamDependency hashneterUpstreamDep = DepItemsManager.getInstance()
-				.getItemConcerned(HashneterUpstreamDependency.class);
-
-		try {
-			hashneter.initHashnet(hashneterDep);
-
-			hashneterUpstreamDep.set(hashneter, hashneterDep);// which indicats that {@code hashneterUpstreamDep} is
-																// based on {@code hashneter},{@code hashneterDep}
-
-			return hashneter;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
+	abstract protected Hashneter initHashneter();
 
 	abstract protected void performCoreTasks(Hashneter hashneter);
 
