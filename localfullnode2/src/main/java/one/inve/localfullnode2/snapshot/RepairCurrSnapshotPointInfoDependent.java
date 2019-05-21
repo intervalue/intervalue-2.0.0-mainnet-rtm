@@ -48,4 +48,8 @@ public interface RepairCurrSnapshotPointInfoDependent {
 
     void setConsMessageMaxId(BigInteger consMessageMaxId);
 
+    String getMsgHashTreeRoot();
+
+    void setMsgHashTreeRoot(String msgHashTreeRoot);
+
 }

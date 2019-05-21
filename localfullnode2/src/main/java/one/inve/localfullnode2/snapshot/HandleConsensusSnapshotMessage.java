@@ -114,6 +114,7 @@ public class HandleConsensusSnapshotMessage {
 //                snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot(),
 //                node.getTreeRootMap().get(snapshotMessage.getSnapVersion()) );
 
+        logger.info(">>>>>START<<<<<verifySnapshotMessage:\n snapshotMessage: {},\n treeRootMap: {}",JSON.toJSONString(snapshotMessage),JSON.toJSONString(dep.getTreeRootMap()));
         boolean verifySnapshotMessage = snapshotMessage.getPubkey().equals(Config.FOUNDATION_PUBKEY)
                 && snapshotMessage.getFromAddress().equals(Config.FOUNDATION_ADDRESS)
                 && snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot()

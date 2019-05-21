@@ -120,7 +120,17 @@ public class Config {
 			"{\"nrgPrice\":\"1000000000\",\"amount\":\"4178372000000000000000000\",\"signature\":\"33AJDtCIW1abODA0i0LSWe+n6bsrCFook5XQ7MW/Eg1gzLesidZlnBeo4Ww7zkFX8XRmCIcEpQYwF045I0vycwXyU=\",\"fee\":\"500000\",\"vers\":\"2.0\",\"fromAddress\":\"MIYC75ZL5QXFYAQIQ2UMY34CFWUWJWWG\",\"remark\":\"\",\"type\":1,\"toAddress\":\"JCKNOS7KFSBZVRFYLJB7OSC35TQOEMF6\",\"timestamp\":1553224878408,\"pubkey\":\"Avg327cX3EtpqOZTqU6RWChQBcjJ3WMDsOWCIB0EBgN6\"}",
 			"{\"nrgPrice\":\"1000000000\",\"amount\":\"78496427000000000000000000\",\"signature\":\"32Bnc6+GDk0UPlhXUfV73dLvLm34HODy++7WAdd7Mt8QF7HoPguZjbO29ntRgTFuDVwKpyZaQxXZFG28Q86L8Dxg==\",\"fee\":\"500000\",\"vers\":\"2.0\",\"fromAddress\":\"MIYC75ZL5QXFYAQIQ2UMY34CFWUWJWWG\",\"remark\":\"\",\"type\":1,\"toAddress\":\"OZGPDQBUUWC4H4XCOVOYKSQY32EX3GGO\",\"timestamp\":1553224878489,\"pubkey\":\"Avg327cX3EtpqOZTqU6RWChQBcjJ3WMDsOWCIB0EBgN6\"}");
 
-	public static final List<String> WHITE_LIST = Arrays.asList("172.17.2.62", "172.17.2.118", "172.17.2.119");
+	public static final List<String> WHITE_LIST = Arrays.asList(
+			"172.17.2.62",
+			"172.17.2.118",
+			"172.17.2.119",
+			"172.17.2.117",
+			"172.17.2.120",
+			"172.17.2.123",
+			"172.17.2.126",
+			"172.17.2.127",
+			"172.17.2.128"
+	);
 
 	public static final List<String> BLACK_LIST = Arrays.asList("192.168.0.1");
 

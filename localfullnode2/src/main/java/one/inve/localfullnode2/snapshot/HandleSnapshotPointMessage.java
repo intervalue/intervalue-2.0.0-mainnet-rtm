@@ -38,6 +38,7 @@ public class HandleSnapshotPointMessage {
 //            logger.error("node-({}, {}): snapshotPoint-{} missing\nexit...",
 //                    node.getShardId(), node.getCreatorId(), vers);
             logger.error(">>>>>ERROR<<<<<handleSnapshotPointMessage:\n snapshotPoint is null");
+            logger.error(">>>>>EXIT<<<<<handleSnapshotPointMessage");
             System.exit(-1);
         } else {
             if (null!=lastIdx && lastIdx

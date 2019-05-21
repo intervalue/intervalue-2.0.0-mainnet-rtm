@@ -42,4 +42,8 @@ public interface CreateSnapshotPointDependent{
 
     EventBody getEventBody();
 
+    String getMsgHashTreeRoot();
+
+    void setMsgHashTreeRoot(String msgHashTreeRoot);
+
 }
