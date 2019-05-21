@@ -10,6 +10,12 @@ import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistence;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
 import one.inve.localfullnode2.hashnet.HashneterUpstream;
 import one.inve.localfullnode2.hashnet.HashneterUpstreamDependency;
+import one.inve.localfullnode2.message.MessagePersistence;
+import one.inve.localfullnode2.message.MessagePersistenceDependency;
+import one.inve.localfullnode2.message.MessagesExe;
+import one.inve.localfullnode2.message.MessagesExeDependent;
+import one.inve.localfullnode2.message.MessagesVerification;
+import one.inve.localfullnode2.message.MessagesVerificationDependency;
 import one.inve.localfullnode2.postconsensus.exe.EventsExe;
 import one.inve.localfullnode2.postconsensus.exe.EventsExeDependency;
 import one.inve.localfullnode2.postconsensus.readout.EventsReadout;
@@ -22,8 +28,8 @@ import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
  * 
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
- * @Description: build a loop to execute over and over again and take a sleep at
- *               the end of tasks.
+ * @Description: build a loop to execute(nine steps together) over and over
+ *               again and take a sleep at the end of tasks.
  * @author: Francis.Deng
  * @date: May 21, 2019 12:17:08 AM
  * @version: V1.0
@@ -56,6 +62,12 @@ public class StoppableInfiniteLoop extends LazyLifecycle implements ILifecycle {
 
 			EventsExeDependency eventsExeDependency = null;
 
+			MessagesVerificationDependency messagesVerificationDependency = null;
+
+			MessagesExeDependent messagesExeDependent = null;
+
+			MessagePersistenceDependency messagePersistenceDependency = null;
+
 			while (!stopMe) {
 
 				// first,gossip communication
@@ -84,6 +96,24 @@ public class StoppableInfiniteLoop extends LazyLifecycle implements ILifecycle {
 				eventsExeDependency = DepItemsManager.getInstance().getItemConcerned(EventsExeDependency.class);
 				EventsExe eventsExe = new EventsExe(eventsExeDependency);
 				eventsExe.run();
+
+				// seventh,verify all messages
+				messagesVerificationDependency = DepItemsManager.getInstance()
+						.getItemConcerned(MessagesVerificationDependency.class);
+				MessagesVerification messagesVerification = new MessagesVerification(messagesVerificationDependency);
+				messagesVerification.verifyMessages();
+
+				// eighth,execute all messages
+				messagesExeDependent = DepItemsManager.getInstance().getItemConcerned(MessagesExeDependent.class);
+				MessagesExe messagesExe = new MessagesExe(messagesExeDependent);
+				messagesExe.exe();
+
+				// ninth,save all messages and system's messages
+				messagePersistenceDependency = DepItemsManager.getInstance()
+						.getItemConcerned(MessagePersistenceDependency.class);
+				MessagePersistence messagePersistence = new MessagePersistence(messagePersistenceDependency);
+				messagePersistence.persisMessages();
+				messagePersistence.persistSystemMessages();
 
 				sleep(5);// take a break
 			}
