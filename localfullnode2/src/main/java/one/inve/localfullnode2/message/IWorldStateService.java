@@ -3,7 +3,7 @@ package one.inve.localfullnode2.message;
 import java.math.BigInteger;
 
 public interface IWorldStateService {
-	boolean decreaseBalance(String dbId, String address, BigInteger value);
+//	boolean decreaseBalance(String dbId, String address, BigInteger value);
 
 	boolean transfer(String dbId, String fromAddr, String toAddr, BigInteger value);
 

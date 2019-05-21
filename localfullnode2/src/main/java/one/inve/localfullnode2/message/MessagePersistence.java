@@ -26,10 +26,9 @@ import one.inve.localfullnode2.store.rocks.TransactionSplit;
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
  * @Description: persist messages or system messages(transaction fee)
- *               <p/>
- *               {@link ConsensusMessageSaveThread}
- *               {@link ConsensusSystemAutoTxSaveThread}
  * @author: Francis.Deng
+ * @see ConsensusMessageSaveThread
+ * @see ConsensusSystemAutoTxSaveThread
  * @date: Oct 7, 2018 8:29:20 PM
  * @version: V1.0
  */

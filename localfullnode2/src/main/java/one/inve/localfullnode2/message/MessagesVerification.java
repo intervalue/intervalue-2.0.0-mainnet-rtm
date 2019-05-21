@@ -21,9 +21,8 @@ import one.inve.utils.SignUtil;
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
  * @Description: verify messages from queue.
- *               <p>
- *               {@link ConsensusMessageVerifyThread}
  * @author: Francis.Deng
+ * @see ConsensusMessageVerifyThread
  * @date: Oct 7, 2018 2:44:24 AM
  * @version: V1.0
  */
@@ -88,6 +87,7 @@ public class MessagesVerification {
 			}
 		} catch (Exception e) {
 //			logger.error("node-({}, {}): messages verify thread error: {}", node.getShardId(), node.getCreatorId(), e);
+			logger.error("message signature verification error: {}", e.toString());
 		}
 		// }
 	}

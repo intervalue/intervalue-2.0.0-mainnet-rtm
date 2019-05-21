@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import one.inve.bean.message.MessageType;
 import one.inve.bean.message.TextMessage;
 import one.inve.bean.message.TransactionMessage;
+import one.inve.contract.MVM.WorldStateService;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.localfullnode2.utilities.TxVerifyUtils;
@@ -21,9 +22,9 @@ import one.inve.localfullnode2.utilities.TxVerifyUtils;
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
  * @Description: execute messages that has own type-handler
- *               <p>
- *               {@link ConsensusMessageHandleThread} {@link WorldStateService}
  * @author: Francis.Deng
+ * @see ConsensusMessageHandleThread
+ * @see WorldStateService
  * @date: Oct 7, 2018 2:47:59 AM
  * @version: V1.0
  */
@@ -379,7 +380,8 @@ public class MessagesExe {
 
 	private void addTransactionFeeTx2SaveQueue(String mHash, String fromAddress, BigInteger fee)
 			throws InterruptedException {
-		dep.setSystemAutoTxMaxId(dep.getSystemAutoTxMaxId().add(BigInteger.ONE));
+		// dep.setSystemAutoTxMaxId(dep.getSystemAutoTxMaxId().add(BigInteger.ONE));
+		dep.addSystemAutoTxMaxId(1);
 		JSONObject o = new JSONObject();
 		o.put("id", dep.getSystemAutoTxMaxId());
 		o.put("type", "transaction_fee_tx");
@@ -392,7 +394,8 @@ public class MessagesExe {
 	}
 
 	private void addTextFeeTx2SaveQueue(String mHash, String fromAddress, BigInteger fee) throws InterruptedException {
-		dep.setSystemAutoTxMaxId(dep.getSystemAutoTxMaxId().add(BigInteger.ONE));
+		// dep.setSystemAutoTxMaxId(dep.getSystemAutoTxMaxId().add(BigInteger.ONE));
+		dep.addSystemAutoTxMaxId(1);
 		JSONObject o = new JSONObject();
 		o.put("id", dep.getSystemAutoTxMaxId());
 		o.put("type", "transaction_fee_tx");

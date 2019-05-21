@@ -27,7 +27,8 @@ public interface MessagesExeDependent {
 
 	String getDbId();
 
-	void setSystemAutoTxMaxId(BigInteger systemAutoTxMaxId);
+	// void setSystemAutoTxMaxId(BigInteger systemAutoTxMaxId);
+	void addSystemAutoTxMaxId(long delta);
 
 	BigInteger getSystemAutoTxMaxId();
 
