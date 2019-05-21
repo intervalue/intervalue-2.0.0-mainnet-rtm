@@ -28,12 +28,7 @@ public class CreateSnapshotPoint {
         this.dep = dep;
         this.event = dep.getEventBody();
         this.msgHashTreeRoot = dep.getMsgHashTreeRoot();
-        SnapshotPoint sp = dep.getSnapshotPointMap().get(dep.getCurrSnapshotVersion());
-        if(null != sp){
-            this.vers = dep.getCurrSnapshotVersion().add(BigInteger.ONE);
-        }else {
-            this.vers = dep.getCurrSnapshotVersion();
-        }
+        this.vers = dep.getCurrSnapshotVersion();
 
         if (dep.getTotalConsEventCount().mod(BigInteger.valueOf(Config.EVENT_NUM_PER_SNAPSHOT))
                 .equals(BigInteger.ZERO)) {
