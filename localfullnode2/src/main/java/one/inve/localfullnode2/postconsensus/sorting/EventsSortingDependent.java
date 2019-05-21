@@ -1,6 +1,6 @@
 package one.inve.localfullnode2.postconsensus.sorting;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import one.inve.localfullnode2.store.EventBody;
 
@@ -8,8 +8,8 @@ public interface EventsSortingDependent {
 	int getShardCount();
 
 	// the source
-	LinkedBlockingQueue<EventBody> getShardSortQueue(int shardId);
+	BlockingQueue<EventBody> getShardSortQueue(int shardId);
 
 	// the destination
-	LinkedBlockingQueue<EventBody> getConsEventHandleQueue();
+	BlockingQueue<EventBody> getConsEventHandleQueue();
 }

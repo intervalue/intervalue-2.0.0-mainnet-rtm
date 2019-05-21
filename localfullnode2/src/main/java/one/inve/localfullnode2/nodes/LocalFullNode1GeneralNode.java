@@ -44,9 +44,9 @@ import one.inve.localfullnode2.hashnet.Hashnet;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventFlow;
-import one.inve.localfullnode2.store.IEventStore;
 import one.inve.localfullnode2.store.EventStoreDependency;
 import one.inve.localfullnode2.store.EventStoreImpl;
+import one.inve.localfullnode2.store.IEventStore;
 import one.inve.localfullnode2.utilities.Cryptos;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 import one.inve.localfullnode2.utilities.PathUtils;
@@ -188,9 +188,9 @@ public class LocalFullNode1GeneralNode {
 		this.creatorId = creatorId;
 	}
 
-	public IEventStore getEventStore() {
-		return eventStore;
-	}
+//	public IEventStore getEventStore() {
+//		return eventStore;
+//	}
 
 	public List<String> getWhiteList() {
 		return whiteList;
@@ -568,9 +568,9 @@ public class LocalFullNode1GeneralNode {
 		}
 	}
 
-	public EventFlow getEventFlow() {
-		return eventFlow;
-	}
+//	public IEventFlow getEventFlow() {
+//		return eventFlow;
+//	}
 
 	//
 	private void initFromScratch() {

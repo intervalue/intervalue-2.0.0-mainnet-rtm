@@ -8,7 +8,6 @@ import java.util.concurrent.BlockingQueue;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependent;
-import one.inve.localfullnode2.store.IEventFlow;
 
 public interface HashneterDependent {
 	int getShardCount();
@@ -17,7 +16,7 @@ public interface HashneterDependent {
 
 	// the source from which it retrieved
 	// EventBody[] getAllQueuedEvents(int shardId);
-	IEventFlow getEventFlow();
+	// IEventFlow getEventFlow();
 
 	BigInteger getTotalEventCount();
 

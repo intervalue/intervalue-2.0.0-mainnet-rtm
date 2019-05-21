@@ -17,7 +17,9 @@ import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
 import one.inve.localfullnode2.hashnet.HashneterDependency;
 import one.inve.localfullnode2.hashnet.HashneterUpstreamDependency;
+import one.inve.localfullnode2.postconsensus.exe.EventsExeDependency;
 import one.inve.localfullnode2.postconsensus.readout.EventsReadoutDependency;
+import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependency;
@@ -57,7 +59,31 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		EventsReadoutDependency eventsReadoutDependency = new EventsReadoutDependency();
 		register(eventsReadoutDependency);
 
+		EventsSortingDependency eventsSortingDependency = new EventsSortingDependency();
+		register(eventsSortingDependency);
+
+		EventsExeDependency eventsExeDependency = new EventsExeDependency();
+		register(eventsExeDependency);
+
 		buildStagingArea();
+	}
+
+	/**
+	 * {@code EventsExe(EventsExeDependent dep)}
+	 */
+	protected void register(EventsExeDependency eventsExeDependency) {
+		DepItemsManager.getInstance().attachCreatorId(eventsExeDependency);
+		DepItemsManager.getInstance().attachStat(eventsExeDependency);
+		DepItemsManager.getInstance().attachDBId(eventsExeDependency);
+		DepItemsManager.getInstance().attachAllQueues(eventsExeDependency);
+	}
+
+	/**
+	 * {@code work(EventsSortingDependent dep)}
+	 */
+	protected void register(EventsSortingDependency eventsSortingDependency) {
+		DepItemsManager.getInstance().attachShardCount(eventsSortingDependency);
+		DepItemsManager.getInstance().attachAllQueues(eventsSortingDependency);
 	}
 
 	/**

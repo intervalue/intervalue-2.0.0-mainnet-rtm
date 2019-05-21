@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,18 +16,17 @@ import one.inve.localfullnode2.store.EventBody;
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
  * @Description: sort all events across all nodes.The algorithm is unknown.
- *               <p>
- *               <code>one.inve.threads.localfullnode.ConsensusEventAllSortThread</code>
  * @author: Francis.Deng
+ * @see ConsensusEventAllSortThread
  * @date: May 3, 2019 8:00:21 PM
  * @version: V1.0
  */
 public class EventsSorting {
-	private static final Logger logger = LoggerFactory.getLogger("eventsorting");
+	private static final Logger logger = LoggerFactory.getLogger("eventssorting");
 
 	public void work(EventsSortingDependent dep) {
 		// logger.info(">>> start ConsensusEventAllSortThread...");
-		List<LinkedBlockingQueue<EventBody>> queueList = new ArrayList<>();
+		List<BlockingQueue<EventBody>> queueList = new ArrayList<>();
 		EventBody[] events = new EventBody[dep.getShardCount()];
 		EventBody temp = null;
 		int smallIndex = 0;
@@ -52,23 +51,24 @@ public class EventsSorting {
 
 		BigInteger count = BigInteger.ZERO;
 		// 上面部分都是初始化，进入while循环后开始不停的比较入库
-		while (true) {
-			// for循环比较temp和evnet数组中的每一个event， 直到for循环结束，temp就是共识时间戳最小（共识时间戳一致时片号最小）的event
-			for (int i = 0; i < dep.getShardCount(); i++) {
-				if (events[i] == null) {
-					continue;
-				}
-				if (temp == null) {
-					throw new RuntimeException();
-				}
-				if (events[i].getConsTimestamp().isBefore(temp.getConsTimestamp())) {
-					events[smallIndex] = temp;
-					temp = events[i];
-					events[i] = null;
-					smallIndex = i;
-				}
+		// while (true) {
+		// for循环比较temp和evnet数组中的每一个event， 直到for循环结束，temp就是共识时间戳最小（共识时间戳一致时片号最小）的event
+		for (int i = 0; i < dep.getShardCount(); i++) {
+			if (events[i] == null) {
+				continue;
 			}
+			if (temp == null) {
+				throw new RuntimeException();
+			}
+			if (events[i].getConsTimestamp().isBefore(temp.getConsTimestamp())) {
+				events[smallIndex] = temp;
+				temp = events[i];
+				events[i] = null;
+				smallIndex = i;
+			}
+		}
 
+		if (temp != null) {
 			// 将全排序后的共识Event放入共识Event处理队列
 			Instant time1 = Instant.now();
 			try {
@@ -99,7 +99,7 @@ public class EventsSorting {
 //				logger.info("===^^^=== node-({}, {}): the {}-th ConsensusEventAllSortThread total cost: {} sec",
 //						node.getShardId(), node.getCreatorId(), count.toString(), interval / 1000.0);
 //			}
+			// }
 		}
-
 	}
 }
