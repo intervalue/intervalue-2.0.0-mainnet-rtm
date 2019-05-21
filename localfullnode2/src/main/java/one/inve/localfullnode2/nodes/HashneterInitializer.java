@@ -1,6 +1,7 @@
 package one.inve.localfullnode2.nodes;
 
 import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.hashnet.HashneterDependency;
 import one.inve.localfullnode2.hashnet.HashneterUpstreamDependency;
@@ -29,6 +30,7 @@ public abstract class HashneterInitializer extends LocalFullNodeSkeleton {
 				.getItemConcerned(HashneterUpstreamDependency.class);
 		EventsReadoutDependency eventsReadoutDep = DepItemsManager.getInstance()
 				.getItemConcerned(EventsReadoutDependency.class);
+		GossipDependency gossipDependency = DepItemsManager.getInstance().getItemConcerned(GossipDependency.class);
 
 		try {
 			hashneter.initHashnet(hashneterDep);
@@ -38,6 +40,7 @@ public abstract class HashneterInitializer extends LocalFullNodeSkeleton {
 			eventsReadoutDep.setHashneter(hashneter);
 
 			set(hashneter.getEventFlow(), hashneter.getEventStore());
+			gossipDependency.setEventFlow(hashneter.getEventFlow());
 
 			return hashneter;
 		} catch (InterruptedException e) {

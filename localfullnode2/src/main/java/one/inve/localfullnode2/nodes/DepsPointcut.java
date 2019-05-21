@@ -17,6 +17,9 @@ import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
 import one.inve.localfullnode2.hashnet.HashneterDependency;
 import one.inve.localfullnode2.hashnet.HashneterUpstreamDependency;
+import one.inve.localfullnode2.message.MessagePersistenceDependency;
+import one.inve.localfullnode2.message.MessagesExeDependency;
+import one.inve.localfullnode2.message.MessagesVerificationDependency;
 import one.inve.localfullnode2.postconsensus.exe.EventsExeDependency;
 import one.inve.localfullnode2.postconsensus.readout.EventsReadoutDependency;
 import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
@@ -38,40 +41,75 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	private DepItemsManagerial depItemsManager = DepItemsManager.getInstance();
 
 	// making ensure that event being triggered happened after registration.
-	protected void registerDeps() {
-		// new instance of listeners and register them
+	protected void loadDeps() {
+		// new instance of listeners and of them
 		EventStoreDependency eventStoreDependency = new EventStoreDependency();
-		register(eventStoreDependency);
+		of(eventStoreDependency);
 
 		GossipDependency gossipDependency = new GossipDependency();
-		register(gossipDependency);
+		of(gossipDependency);
 
 		NewGossipEventsPersistenceDependency newGossipEventsPersistenceDependency = new NewGossipEventsPersistenceDependency();
-		register(newGossipEventsPersistenceDependency);
+		of(newGossipEventsPersistenceDependency);
 
 		HashneterDependency hashneterDependency = new HashneterDependency();
-		register(hashneterDependency);
+		of(hashneterDependency);
 		hashneterDependency.setEventStoreDependent(eventStoreDependency);// depending on {@code eventStoreDependency}
 
 		HashneterUpstreamDependency hashneterUpstreamDependency = new HashneterUpstreamDependency();
-		register(hashneterUpstreamDependency);
+		of(hashneterUpstreamDependency);
 
 		EventsReadoutDependency eventsReadoutDependency = new EventsReadoutDependency();
-		register(eventsReadoutDependency);
+		of(eventsReadoutDependency);
 
 		EventsSortingDependency eventsSortingDependency = new EventsSortingDependency();
-		register(eventsSortingDependency);
+		of(eventsSortingDependency);
 
 		EventsExeDependency eventsExeDependency = new EventsExeDependency();
-		register(eventsExeDependency);
+		of(eventsExeDependency);
+
+		MessagesVerificationDependency messagesVerificationDependency = new MessagesVerificationDependency();
+		of(messagesVerificationDependency);
+
+		MessagesExeDependency messagesExeDependency = new MessagesExeDependency();
+		of(messagesExeDependency);
+
+		MessagePersistenceDependency messagePersistenceDependency = new MessagePersistenceDependency();
+		of(messagePersistenceDependency);
 
 		buildStagingArea();
 	}
 
 	/**
+	 * {@code MessagePersistence(MessagePersistenceDependent dep)}
+	 */
+	protected void of(MessagePersistenceDependency messagePersistenceDependency) {
+		DepItemsManager.getInstance().attachAllQueues(messagePersistenceDependency);
+		DepItemsManager.getInstance().attachStat(messagePersistenceDependency);
+		DepItemsManager.getInstance().attachDBId(messagePersistenceDependency);
+	}
+
+	/**
+	 * {@code MessagesExe(MessagesExeDependent dep)}
+	 */
+	protected void of(MessagesExeDependency messagesExeDependency) {
+		DepItemsManager.getInstance().attachAllQueues(messagesExeDependency);
+		DepItemsManager.getInstance().attachShardCount(messagesExeDependency);
+		DepItemsManager.getInstance().attachDBId(messagesExeDependency);
+		DepItemsManager.getInstance().attachStat(messagesExeDependency);
+	}
+
+	/**
+	 * {@code MessagesVerification(MessagesVerificationDependent dep)}
+	 */
+	protected void of(MessagesVerificationDependency messagesVerificationDependency) {
+		DepItemsManager.getInstance().attachAllQueues(messagesVerificationDependency);
+	}
+
+	/**
 	 * {@code EventsExe(EventsExeDependent dep)}
 	 */
-	protected void register(EventsExeDependency eventsExeDependency) {
+	protected void of(EventsExeDependency eventsExeDependency) {
 		DepItemsManager.getInstance().attachCreatorId(eventsExeDependency);
 		DepItemsManager.getInstance().attachStat(eventsExeDependency);
 		DepItemsManager.getInstance().attachDBId(eventsExeDependency);
@@ -81,7 +119,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	/**
 	 * {@code work(EventsSortingDependent dep)}
 	 */
-	protected void register(EventsSortingDependency eventsSortingDependency) {
+	protected void of(EventsSortingDependency eventsSortingDependency) {
 		DepItemsManager.getInstance().attachShardCount(eventsSortingDependency);
 		DepItemsManager.getInstance().attachAllQueues(eventsSortingDependency);
 	}
@@ -89,7 +127,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	/**
 	 * {@code void read(EventsReadoutDependent dep)}
 	 */
-	protected void register(EventsReadoutDependency eventsReadoutDependency) {
+	protected void of(EventsReadoutDependency eventsReadoutDependency) {
 		DepItemsManager.getInstance().attachShardCount(eventsReadoutDependency);
 		DepItemsManager.getInstance().attachAllQueues(eventsReadoutDependency);
 	}
@@ -97,14 +135,14 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	/**
 	 * {@code pull(HashneterUpstreamDependent dep)}
 	 */
-	protected void register(HashneterUpstreamDependency hashneterUpstreamDependency) {
+	protected void of(HashneterUpstreamDependency hashneterUpstreamDependency) {
 		DepItemsManager.getInstance().attachShardCount(hashneterUpstreamDependency);
 	}
 
 	/**
 	 * {@code initHashnet(HashneterDependent dep)}
 	 */
-	protected void register(HashneterDependency hashneterDependency) {
+	protected void of(HashneterDependency hashneterDependency) {
 		DepItemsManager.getInstance().attachShardCount(hashneterDependency);
 		DepItemsManager.getInstance().attachShardId(hashneterDependency);
 		DepItemsManager.getInstance().attachEventFlow(hashneterDependency);
@@ -119,7 +157,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	/**
 	 * {@code persistNewEvents(NewGossipEventsPersistenceDependent dep)}
 	 */
-	protected void register(NewGossipEventsPersistenceDependency newGossipEventsPersistenceDependency) {
+	protected void of(NewGossipEventsPersistenceDependency newGossipEventsPersistenceDependency) {
 		DepItemsManager.getInstance().attachAllQueues(newGossipEventsPersistenceDependency);
 		DepItemsManager.getInstance().attachDBId(newGossipEventsPersistenceDependency);
 		DepItemsManager.getInstance().attachStat(newGossipEventsPersistenceDependency);
@@ -128,7 +166,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	/**
 	 * {@code EventStoreImpl(EventStoreDependent dep)}
 	 */
-	protected void register(EventStoreDependency eventStoreDependency) {
+	protected void of(EventStoreDependency eventStoreDependency) {
 		DepItemsManager.getInstance().attachDBId(eventStoreDependency);
 		DepItemsManager.getInstance().attachNValue(eventStoreDependency);
 		DepItemsManager.getInstance().attachShardCount(eventStoreDependency);
@@ -140,7 +178,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	/**
 	 * {@code talkGossip(GossipDependent dep)}
 	 */
-	protected void register(GossipDependency gossipDependency) {
+	protected void of(GossipDependency gossipDependency) {
 		DepItemsManager.getInstance().attachMembers(gossipDependency);
 		DepItemsManager.getInstance().attachShardCount(gossipDependency);
 		DepItemsManager.getInstance().attachShardId(gossipDependency);

@@ -21,10 +21,12 @@ import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.http.HttpServiceDependency;
+import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.DbUtils;
 import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.utilities.FileLockUtils;
+import one.inve.localfullnode2.utilities.GracefulShutdown;
 import one.inve.localfullnode2.utilities.PathUtils;
 import one.inve.localfullnode2.utilities.http.NettyHttpServer;
 
@@ -71,7 +73,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 	 *             --Ice.Config={{default.config}}，注：这里的{{default.config}}是default.config文件的路径
 	 */
 	protected void start(String[] args) {
-		registerDeps();
+		loadDeps();
+		GracefulShutdown gs = GracefulShutdown.with("TERM");
 
 		try {
 			setCommunicator(Util.initialize(args));
@@ -158,7 +161,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			// 启动rpc接口
 			loadRPC(this);
 
-			performCoreTasks(hashneter);
+			ILifecycle coreTask = performCoreTasks(hashneter);
+			gs.addLcs(coreTask);
 
 //			// 将新的eventbody添加到hashnet
 //			new EventBody2HashnetThread(this).start();
@@ -263,7 +267,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 	abstract protected Hashneter initHashneter();
 
-	abstract protected void performCoreTasks(Hashneter hashneter);
+	abstract protected ILifecycle performCoreTasks(Hashneter hashneter);
 
 	abstract protected void startMembership();
 
