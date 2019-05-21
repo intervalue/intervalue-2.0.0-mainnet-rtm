@@ -143,6 +143,13 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 		return eventFlow.get();
 	}
 
+	public void setEventFlow(IEventFlow evetnFlowImpl) {
+		if (eventFlow == null)
+			eventFlow = new EventFlow();
+
+		eventFlow.set(evetnFlowImpl);
+	}
+
 	@Override
 	public List<String> getBlackList4PubKey() {
 		return blackList4PubKey.get();
