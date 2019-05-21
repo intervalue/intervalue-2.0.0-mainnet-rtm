@@ -5,7 +5,6 @@ import one.inve.bean.message.SnapshotMessage;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.SnapshotDbService;
-import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
 import one.inve.localfullnode2.utilities.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

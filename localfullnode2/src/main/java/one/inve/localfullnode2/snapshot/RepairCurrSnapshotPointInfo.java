@@ -9,7 +9,6 @@ import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.INosql;
-import one.inve.localfullnode2.store.rocks.INosqlSnapshotImpl;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.utilities.Hash;
 import one.inve.localfullnode2.utilities.StringUtils;
@@ -26,7 +25,6 @@ public class RepairCurrSnapshotPointInfo {
     private static final Logger logger = LoggerFactory.getLogger(RepairCurrSnapshotPointInfo.class);
 
     private RepairCurrSnapshotPointInfoDependent dep;
-    private String msgHashTreeRoot;
 
     public void repairCurrSnapshotPointInfo(RepairCurrSnapshotPointInfoDependent dep) throws InterruptedException {
         logger.info(">>>>>START<<<<<repairCurrSnapshotPointInfo");
@@ -216,12 +214,11 @@ public class RepairCurrSnapshotPointInfo {
                     }
                 }
             }
-            logger.info(">>>>>END<<<<<repairCurrSnapshotPointInfo");
+//            logger.info(">>>>>END<<<<<repairCurrSnapshotPointInfo");
         }
     }
 
     private void createSnapshotPoint(EventBody event) throws InterruptedException {
-
         if (dep.getTotalConsEventCount().mod(BigInteger.valueOf(Config.EVENT_NUM_PER_SNAPSHOT))
                 .equals(BigInteger.ZERO)) {
             logger.info(">>>>>START<<<<<createSnapshotPoint:\n eventBody: {}", JSON.toJSONString(event));
@@ -245,20 +242,20 @@ public class RepairCurrSnapshotPointInfo {
 
             // 生成快照点
             final String eHash = DSA.encryptBASE64(event.getHash());
-            if (StringUtils.isEmpty(msgHashTreeRoot)) {
-                msgHashTreeRoot = eHash;
+            if (StringUtils.isEmpty(dep.getMsgHashTreeRoot())) {
+                dep.setMsgHashTreeRoot(eHash);
             }
             dep.getSnapshotPointMap().put(dep.getCurrSnapshotVersion(), new SnapshotPoint.Builder()
-                    .eventBody(event).msgHashTreeRoot(msgHashTreeRoot)
+                    .eventBody(event).msgHashTreeRoot(dep.getMsgHashTreeRoot())
                     .contributions((null!=statistics && statistics.size()<=0) ? null: statistics)
                     .build());
-            dep.getTreeRootMap().put(dep.getCurrSnapshotVersion(), msgHashTreeRoot);
+            dep.getTreeRootMap().put(dep.getCurrSnapshotVersion(), dep.getMsgHashTreeRoot());
             logger.info(">>>>>INFO<<<<<createSnapshotPoint:\n snapshotPointMap: {},\n treeRootMap: {}",
                     JSON.toJSONString(dep.getSnapshotPointMap()), JSON.toJSONString(dep.getTreeRootMap()));
 
             // 重置消息hash根
             dep.setContributions(new HashSet<>());
-            msgHashTreeRoot = null;
+            dep.setMsgHashTreeRoot(null);
 
             // 增加创建快照触发器
             JSONObject o = new JSONObject();
@@ -298,20 +295,16 @@ public class RepairCurrSnapshotPointInfo {
             for (byte[] msg : event.getTrans()) {
                 // 计算更新消息hash根
                 JSONObject msgObj = JSONObject.parseObject(new String(msg));
-                if(StringUtils.isEmpty(msgHashTreeRoot)) {
-                    msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
-                } else {
-                    msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
-                }
+                logger.info(">>>>>INFO<<<<<calculateMsgHashTreeRoot:\n msgObj: {}", msgObj);
+                    if (StringUtils.isEmpty(dep.getMsgHashTreeRoot())) {
+                        dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(msgObj.getString("signature"))));
+                    } else {
+                        dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(dep.getMsgHashTreeRoot(), msgObj.getString("signature"))));
+                    }
+
             }
         }
-        logger.info(">>>>>END<<<<<calculateMsgHashTreeRoot:\n msgHashTreeRoot: {}",msgHashTreeRoot);
-    }
-
-    public static void main(String[] args) {
-        String eventStr = "";
-        EventBody event = JSON.parseObject(eventStr,EventBody.class);
-
+        logger.info(">>>>>END<<<<<calculateMsgHashTreeRoot:\n msgHashTreeRoot: {}",dep.getMsgHashTreeRoot());
     }
 
 }

@@ -2,7 +2,6 @@ package one.inve.localfullnode2.snapshot;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import one.inve.bean.message.Contribution;
 import one.inve.bean.message.SnapshotPoint;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.core.EventBody;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class CreateSnapshotPoint {
     private static final Logger logger = LoggerFactory.getLogger(CreateSnapshotPoint.class);
@@ -29,7 +27,13 @@ public class CreateSnapshotPoint {
     public void createSnapshotPoint(CreateSnapshotPointDependent dep) throws InterruptedException {
         this.dep = dep;
         this.event = dep.getEventBody();
-        this.vers = dep.getCurrSnapshotVersion();
+        this.msgHashTreeRoot = dep.getMsgHashTreeRoot();
+        SnapshotPoint sp = dep.getSnapshotPointMap().get(dep.getCurrSnapshotVersion());
+        if(null != sp){
+            this.vers = dep.getCurrSnapshotVersion().add(BigInteger.ONE);
+        }else {
+            this.vers = dep.getCurrSnapshotVersion();
+        }
 
         if (dep.getTotalConsEventCount().mod(BigInteger.valueOf(Config.EVENT_NUM_PER_SNAPSHOT))
                 .equals(BigInteger.ZERO)) {
