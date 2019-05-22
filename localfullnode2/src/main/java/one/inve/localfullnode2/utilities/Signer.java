@@ -38,8 +38,7 @@ public class Signer {
 	/**
 	 * signing a "2.0" transaction message
 	 */
-	public String signMessage(String fromAddress, String toAddress, BigInteger amount, BigInteger fee,
-			BigInteger nrgPrice) {
+	public String signTx(String fromAddress, String toAddress, BigInteger amount, BigInteger fee, BigInteger nrgPrice) {
 		JSONObject json = getMessage("2.0", fromAddress, toAddress, amount, fee, nrgPrice);
 
 		String msgSignature = SignUtil.sign(json.toJSONString(), ECKey.fromPrivate(DSA.decryptBASE64(sPrivateKey)));
