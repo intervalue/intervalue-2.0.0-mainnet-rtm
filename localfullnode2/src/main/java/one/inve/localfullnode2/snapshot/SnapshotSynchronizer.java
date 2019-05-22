@@ -194,13 +194,17 @@ public class SnapshotSynchronizer {
 //							logger.error(
 //									"node.getConsMessageVerifyQueue().put(JSONObject.parseObject(snapMessageStr))"
 //											+ snapMessageStr);
-
-							dep.getConsMessageVerifyQueue().put(JSONObject.parseObject(snapMessageStr));
+                            //2019.5.21 数据结构不对应，ConsensusMessageHandleThread无法解析
+                            JSONObject snapMessage = JSONObject.parseObject(snapMessageStr);
+                            snapMessage.put("msg",originalSnapshotStr);
+                            snapMessage.put("eShardId",snapshotMessage.getSnapshotPoint().getEventBody().getShardId());
+                            dep.getConsMessageVerifyQueue().put(snapMessage);
 						} catch (InterruptedException e) {
 							logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
 							e.printStackTrace();
 						}
 						// 更新本节点当前快照信息
+						dep.setMsgHashTreeRoot(null);//2019.05.22 重置treeRoot
 						dep.setSnapshotMessage(snapshotMessage);
 						dep.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(),
 								snapshotMessage.getSnapshotPoint());

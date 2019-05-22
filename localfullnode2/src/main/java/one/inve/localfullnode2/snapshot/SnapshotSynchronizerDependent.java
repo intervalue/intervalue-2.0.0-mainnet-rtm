@@ -147,4 +147,6 @@ public interface SnapshotSynchronizerDependent {
 
 	GossipObj getGossipObj();
 
+    void setMsgHashTreeRoot(String msgHashTreeRoot);
+
 }
