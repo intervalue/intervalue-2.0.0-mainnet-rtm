@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import one.inve.contract.MVM.WorldStateService;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
@@ -807,10 +808,9 @@ public class DbUtils {
 		node.setConsMessageMaxId(node.getConsMessageMaxId().add(BigInteger.ONE));
 		rocksJavaUtil.put(Config.CONS_MSG_COUNT_KEY, node.getConsMessageMaxId().toString());
 
-		// key condition
 //		// 更新世界状态
-//		WorldStateService.transfer(dbId, fromAddress, toAddress, amount);
-//		WorldStateService.transfer(dbId, fromAddress, Config.FOUNDATION_ADDRESS, fee.multiply(nrgPrice));
+		WorldStateService.transfer(dbId, fromAddress, toAddress, amount);
+		WorldStateService.transfer(dbId, fromAddress, Config.FOUNDATION_ADDRESS, fee.multiply(nrgPrice));
 	}
 
 	/**
