@@ -12,7 +12,7 @@ public class Config {
     public static final String GOD_ADDRESS     = "CMUORK2YLSE4UA6C6DSFVMRPGWKWH3QH";
 
     // 线上
-    public static final List<String> CREATION_ADDRESSES = Arrays.asList(
+    public static List<String> CREATION_ADDRESSES = Arrays.asList(
             "XK37G6UQIZG26IG2Z7V3RF53PUMO2IZV",
             "65VPMI7HEWSSCKPFPHGJSUNJGAKPCY7B",
             "BYLSEJXAURGNJKSYN6WC6NLXSFBSVNZO",
@@ -29,4 +29,8 @@ public class Config {
      * 基金会钱包
      */
     public static final String FOUNDATION_ADDRESS   = "NUOX47THDUFUT7Z6XPNN75YJYRJK2LVC";
+
+    public static void setCreationAddress(List<String> _CREATION_ADDRESSES) {
+        CREATION_ADDRESSES = _CREATION_ADDRESSES;
+    }
 }
