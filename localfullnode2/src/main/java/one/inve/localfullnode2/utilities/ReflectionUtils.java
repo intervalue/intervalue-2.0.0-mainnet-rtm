@@ -202,4 +202,30 @@ public class ReflectionUtils {
 		}
 
 	}
+
+	public static Field findField(Class<?> clazz, Class<?> type) {
+
+		Class<?> searchType = clazz;
+		while (!Object.class.equals(searchType) && searchType != null) {
+			Field[] fields = searchType.getDeclaredFields();
+			for (Field field : fields) {
+				if (type == null || type.equals(field.getType())) {
+					return field;
+				}
+			}
+			searchType = searchType.getSuperclass();
+		}
+		return null;
+	}
+
+	public static void setField(Field field, Object target, Object value) {
+		try {
+			field.setAccessible(true);
+			field.set(target, value);
+		} catch (IllegalAccessException ex) {
+			throw new IllegalStateException(
+					"Unexpected reflection exception - " + ex.getClass().getName() + ": " + ex.getMessage());
+		}
+	}
+
 }
