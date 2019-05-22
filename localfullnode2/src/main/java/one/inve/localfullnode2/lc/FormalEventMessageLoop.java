@@ -1,7 +1,5 @@
 package one.inve.localfullnode2.lc;
 
-import java.util.concurrent.TimeUnit;
-
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.GossipDependent;
@@ -130,15 +128,6 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 	@Override
 	public boolean isRunning() {
 		return super.isRunning();
-	}
-
-	private void sleep(int seconds) {
-		try {
-			TimeUnit.SECONDS.sleep(seconds);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 }

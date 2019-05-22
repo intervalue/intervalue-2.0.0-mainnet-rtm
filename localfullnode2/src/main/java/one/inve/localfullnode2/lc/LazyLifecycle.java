@@ -1,5 +1,7 @@
 package one.inve.localfullnode2.lc;
 
+import java.util.concurrent.TimeUnit;
+
 public class LazyLifecycle implements ILifecycle {
 	protected boolean isRunning = false;
 
@@ -18,6 +20,15 @@ public class LazyLifecycle implements ILifecycle {
 	@Override
 	public boolean isRunning() {
 		return isRunning;
+	}
+
+	protected void sleep(int seconds) {
+		try {
+			TimeUnit.SECONDS.sleep(seconds);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
