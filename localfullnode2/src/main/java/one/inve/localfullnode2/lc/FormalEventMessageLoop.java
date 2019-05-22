@@ -13,7 +13,7 @@ import one.inve.localfullnode2.hashnet.HashneterUpstreamDependency;
 import one.inve.localfullnode2.message.MessagePersistence;
 import one.inve.localfullnode2.message.MessagePersistenceDependency;
 import one.inve.localfullnode2.message.MessagesExe;
-import one.inve.localfullnode2.message.MessagesExeDependent;
+import one.inve.localfullnode2.message.MessagesExeDependency;
 import one.inve.localfullnode2.message.MessagesVerification;
 import one.inve.localfullnode2.message.MessagesVerificationDependency;
 import one.inve.localfullnode2.postconsensus.exe.EventsExe;
@@ -34,7 +34,7 @@ import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
  * @date: May 21, 2019 12:17:08 AM
  * @version: V1.0
  */
-public class StoppableInfiniteLoop extends LazyLifecycle implements ILifecycle {
+public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle {
 
 	private boolean stopMe = true;// control the loop
 
@@ -64,12 +64,11 @@ public class StoppableInfiniteLoop extends LazyLifecycle implements ILifecycle {
 
 			MessagesVerificationDependency messagesVerificationDependency = null;
 
-			MessagesExeDependent messagesExeDependent = null;
+			MessagesExeDependency messagesExeDependency = null;
 
 			MessagePersistenceDependency messagePersistenceDependency = null;
 
 			while (!stopMe) {
-
 				// first,gossip communication
 				gossipDep = DepItemsManager.getInstance().getItemConcerned(GossipDependency.class);
 				g.talkGossip(gossipDep);
@@ -104,8 +103,8 @@ public class StoppableInfiniteLoop extends LazyLifecycle implements ILifecycle {
 				messagesVerification.verifyMessages();
 
 				// eighth,execute all messages
-				messagesExeDependent = DepItemsManager.getInstance().getItemConcerned(MessagesExeDependent.class);
-				MessagesExe messagesExe = new MessagesExe(messagesExeDependent);
+				messagesExeDependency = DepItemsManager.getInstance().getItemConcerned(MessagesExeDependency.class);
+				MessagesExe messagesExe = new MessagesExe(messagesExeDependency);
 				messagesExe.exe();
 
 				// ninth,save all messages and system's messages
