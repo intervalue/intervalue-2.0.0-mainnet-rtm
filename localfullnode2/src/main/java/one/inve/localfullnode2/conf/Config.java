@@ -102,8 +102,8 @@ public class Config {
 	 * 创世钱包
 	 */
 //    // 测试
-	public static final List<String> CREATION_ADDRESSES = Arrays.asList("FODALDEJMW5YIMUNPBCYB7P5QQPXQZ73",
-			"LR4D5HXC4FBNM2RLNJIDTR63QXHIVQRO", "JCKNOS7KFSBZVRFYLJB7OSC35TQOEMF6", "OZGPDQBUUWC4H4XCOVOYKSQY32EX3GGO");
+	public static final List<String> CREATION_ADDRESSES = Arrays.asList("IFQIIX4Q4HL2AB5VZ2ACP3PJVNRPBYUN",
+			"VL6OO34HEWM4L7OKAK253RBIZ47V73J2", "FJPJKQ6DK7IT7Z7QSTZM6L4BJBYEM3QF", "ASWD2MRMIEYR27PMUXGOOZYCBOXLOXPK");
 
 	/**
 	 * 基金会钱包
@@ -115,22 +115,13 @@ public class Config {
 
 	public static final List<String> CREATION_TX_LIST = Arrays.asList(
 			// 测试
-			"{\"nrgPrice\":\"1000000000\",\"amount\":\"2139981000000000000000000\",\"signature\":\"33AMEBosgSUDUAh4uwqcSqCysEP9yXvimBVeKzA1nWQeHCdHPpejFg+OksTPQW4DxGUvA/TSg1WRrdDo641+uEpY8=\",\"fee\":\"500000\",\"vers\":\"2.0\",\"fromAddress\":\"MIYC75ZL5QXFYAQIQ2UMY34CFWUWJWWG\",\"remark\":\"\",\"type\":1,\"toAddress\":\"FODALDEJMW5YIMUNPBCYB7P5QQPXQZ73\",\"timestamp\":1553224878076,\"pubkey\":\"Avg327cX3EtpqOZTqU6RWChQBcjJ3WMDsOWCIB0EBgN6\"}",
-			"{\"nrgPrice\":\"1000000000\",\"amount\":\"15185220000000000000000000\",\"signature\":\"33AOrldMUbAy9Ba5AfTkF5sUzc4/vnjWaisCiiGcIhtH4CUSBFFvmKuRsMX/nZomwta+nPlhbHGhTcIZoBFDF2RYY=\",\"fee\":\"500000\",\"vers\":\"2.0\",\"fromAddress\":\"MIYC75ZL5QXFYAQIQ2UMY34CFWUWJWWG\",\"remark\":\"\",\"type\":1,\"toAddress\":\"LR4D5HXC4FBNM2RLNJIDTR63QXHIVQRO\",\"timestamp\":1553224878304,\"pubkey\":\"Avg327cX3EtpqOZTqU6RWChQBcjJ3WMDsOWCIB0EBgN6\"}",
-			"{\"nrgPrice\":\"1000000000\",\"amount\":\"4178372000000000000000000\",\"signature\":\"33AJDtCIW1abODA0i0LSWe+n6bsrCFook5XQ7MW/Eg1gzLesidZlnBeo4Ww7zkFX8XRmCIcEpQYwF045I0vycwXyU=\",\"fee\":\"500000\",\"vers\":\"2.0\",\"fromAddress\":\"MIYC75ZL5QXFYAQIQ2UMY34CFWUWJWWG\",\"remark\":\"\",\"type\":1,\"toAddress\":\"JCKNOS7KFSBZVRFYLJB7OSC35TQOEMF6\",\"timestamp\":1553224878408,\"pubkey\":\"Avg327cX3EtpqOZTqU6RWChQBcjJ3WMDsOWCIB0EBgN6\"}",
-			"{\"nrgPrice\":\"1000000000\",\"amount\":\"78496427000000000000000000\",\"signature\":\"32Bnc6+GDk0UPlhXUfV73dLvLm34HODy++7WAdd7Mt8QF7HoPguZjbO29ntRgTFuDVwKpyZaQxXZFG28Q86L8Dxg==\",\"fee\":\"500000\",\"vers\":\"2.0\",\"fromAddress\":\"MIYC75ZL5QXFYAQIQ2UMY34CFWUWJWWG\",\"remark\":\"\",\"type\":1,\"toAddress\":\"OZGPDQBUUWC4H4XCOVOYKSQY32EX3GGO\",\"timestamp\":1553224878489,\"pubkey\":\"Avg327cX3EtpqOZTqU6RWChQBcjJ3WMDsOWCIB0EBgN6\"}");
+			"{\"nrgPrice\":\"1000000000\",\"amount\":\"2139981000000000000000000\",\"signature\":\"33AMEBosgSUDUAh4uwqcSqCysEP9yXvimBVeKzA1nWQeHCdHPpejFg+OksTPQW4DxGUvA/TSg1WRrdDo641+uEpY8=\",\"fee\":\"500000\",\"vers\":\"2.0\",\"fromAddress\":\"MIYC75ZL5QXFYAQIQ2UMY34CFWUWJWWG\",\"remark\":\"\",\"type\":1,\"toAddress\":\"IFQIIX4Q4HL2AB5VZ2ACP3PJVNRPBYUN\",\"timestamp\":1553224878076,\"pubkey\":\"Avg327cX3EtpqOZTqU6RWChQBcjJ3WMDsOWCIB0EBgN6\"}",
+			"{\"nrgPrice\":\"1000000000\",\"amount\":\"15185220000000000000000000\",\"signature\":\"33AOrldMUbAy9Ba5AfTkF5sUzc4/vnjWaisCiiGcIhtH4CUSBFFvmKuRsMX/nZomwta+nPlhbHGhTcIZoBFDF2RYY=\",\"fee\":\"500000\",\"vers\":\"2.0\",\"fromAddress\":\"MIYC75ZL5QXFYAQIQ2UMY34CFWUWJWWG\",\"remark\":\"\",\"type\":1,\"toAddress\":\"VL6OO34HEWM4L7OKAK253RBIZ47V73J2\",\"timestamp\":1553224878304,\"pubkey\":\"Avg327cX3EtpqOZTqU6RWChQBcjJ3WMDsOWCIB0EBgN6\"}",
+			"{\"nrgPrice\":\"1000000000\",\"amount\":\"4178372000000000000000000\",\"signature\":\"33AJDtCIW1abODA0i0LSWe+n6bsrCFook5XQ7MW/Eg1gzLesidZlnBeo4Ww7zkFX8XRmCIcEpQYwF045I0vycwXyU=\",\"fee\":\"500000\",\"vers\":\"2.0\",\"fromAddress\":\"MIYC75ZL5QXFYAQIQ2UMY34CFWUWJWWG\",\"remark\":\"\",\"type\":1,\"toAddress\":\"FJPJKQ6DK7IT7Z7QSTZM6L4BJBYEM3QF\",\"timestamp\":1553224878408,\"pubkey\":\"Avg327cX3EtpqOZTqU6RWChQBcjJ3WMDsOWCIB0EBgN6\"}",
+			"{\"nrgPrice\":\"1000000000\",\"amount\":\"78496427000000000000000000\",\"signature\":\"32Bnc6+GDk0UPlhXUfV73dLvLm34HODy++7WAdd7Mt8QF7HoPguZjbO29ntRgTFuDVwKpyZaQxXZFG28Q86L8Dxg==\",\"fee\":\"500000\",\"vers\":\"2.0\",\"fromAddress\":\"MIYC75ZL5QXFYAQIQ2UMY34CFWUWJWWG\",\"remark\":\"\",\"type\":1,\"toAddress\":\"ASWD2MRMIEYR27PMUXGOOZYCBOXLOXPK\",\"timestamp\":1553224878489,\"pubkey\":\"Avg327cX3EtpqOZTqU6RWChQBcjJ3WMDsOWCIB0EBgN6\"}");
 
-	public static final List<String> WHITE_LIST = Arrays.asList(
-			"172.17.2.62",
-			"172.17.2.118",
-			"172.17.2.119",
-			"172.17.2.117",
-			"172.17.2.120",
-			"172.17.2.123",
-			"172.17.2.126",
-			"172.17.2.127",
-			"172.17.2.128"
-	);
+	public static final List<String> WHITE_LIST = Arrays.asList("192.168.207.129", "172.17.2.118", "172.17.2.119",
+			"172.17.2.117", "172.17.2.120", "172.17.2.123", "172.17.2.126", "172.17.2.127", "172.17.2.128");
 
 	public static final List<String> BLACK_LIST = Arrays.asList("192.168.0.1");
 
