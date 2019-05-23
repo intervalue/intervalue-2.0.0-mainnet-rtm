@@ -102,9 +102,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 				System.exit(0);
 			}
 
-			// contract module should have awareness of of them
-			one.inve.contract.conf.Config.setCreationAddress(Config.CREATION_ADDRESSES);
-			one.inve.contract.conf.Config.setGodAddress(Config.GOD_ADDRESS);
+			initOlympus();
 
 			// 初始化节点信息
 			setAdapter(this.generateAdapter(getCommunicator(), "LocalFullNodeAdapter",
@@ -267,6 +265,13 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			}
 
 		}
+	}
+
+	protected void initOlympus() {
+		// contract module should have awareness of of them
+		one.inve.contract.conf.Config.setCreationAddress(Config.CREATION_ADDRESSES);
+		one.inve.contract.conf.Config.setGodAddress(Config.GOD_ADDRESS);
+		one.inve.contract.conf.Config.setFoundationAddress(Config.FOUNDATION_ADDRESS);
 	}
 
 	abstract protected Hashneter initHashneter();
