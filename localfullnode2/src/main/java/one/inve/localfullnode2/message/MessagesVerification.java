@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.utilities.QueuePoller;
 import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.utils.SignUtil;
 
@@ -48,18 +49,20 @@ public class MessagesVerification {
 			t0 = Instant.now();
 			t1 = Instant.now();
 
-			// 时间间隔和交易数量2个维度来控制共识message签名验证数量和频率
-			while (Duration.between(t0, t1).toMillis() < Config.TXS_VEFRIFY_TIMEOUT) {
-				// 取共识message
-				JSONObject msgObject = dep.getConsMessageVerifyQueue().poll();
-				if (msgObject != null) {
-					messages.add(msgObject);
-				}
-				if (messages.size() >= Config.MAX_TXS_VEFRIFY_COUNT) {
-					break;
-				}
-				t1 = Instant.now();
-			}
+//			// 时间间隔和交易数量2个维度来控制共识message签名验证数量和频率
+//			while (Duration.between(t0, t1).toMillis() < Config.TXS_VEFRIFY_TIMEOUT) {
+//				// 取共识message
+//				JSONObject msgObject = dep.getConsMessageVerifyQueue().poll();
+//				if (msgObject != null) {
+//					messages.add(msgObject);
+//				}
+//				if (messages.size() >= Config.MAX_TXS_VEFRIFY_COUNT) {
+//					break;
+//				}
+//				t1 = Instant.now();
+//			}
+			messages = QueuePoller.poll(dep.getConsMessageVerifyQueue(), Config.TXS_VEFRIFY_TIMEOUT,
+					Config.MAX_TXS_VEFRIFY_COUNT);
 
 			long msgCount = messages.size();
 			if (msgCount > 0) {

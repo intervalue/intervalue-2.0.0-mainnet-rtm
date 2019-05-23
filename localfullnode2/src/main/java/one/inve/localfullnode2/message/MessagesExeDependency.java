@@ -93,8 +93,7 @@ public class MessagesExeDependency implements MessagesExeDependent, DependentIte
 
 	@Override
 	public BigInteger getTotalFeeBetween2Snapshots() {
-		// TODO Auto-generated method stub
-		return null;
+		return BigInteger.ZERO;
 	}
 
 	@Override
