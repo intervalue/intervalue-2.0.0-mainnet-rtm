@@ -104,6 +104,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 			// contract module should have awareness of of them
 			one.inve.contract.conf.Config.setCreationAddress(Config.CREATION_ADDRESSES);
+			one.inve.contract.conf.Config.setGodAddress(Config.GOD_ADDRESS);
 
 			// 初始化节点信息
 			setAdapter(this.generateAdapter(getCommunicator(), "LocalFullNodeAdapter",
