@@ -28,7 +28,7 @@ public class Config {
     /**
      * 基金会钱包
      */
-    public static final String FOUNDATION_ADDRESS   = "NUOX47THDUFUT7Z6XPNN75YJYRJK2LVC";
+    public static String FOUNDATION_ADDRESS   = "NUOX47THDUFUT7Z6XPNN75YJYRJK2LVC";
 
     public static void setCreationAddress(List<String> _CREATION_ADDRESSES) {
         CREATION_ADDRESSES = _CREATION_ADDRESSES;
@@ -36,5 +36,9 @@ public class Config {
 
     public static void setGodAddress(String _GOD_ADDRESS) {
         GOD_ADDRESS = _GOD_ADDRESS;
+    }
+
+    public static void setFoundationAddress(String _FOUNDATION_ADDRESS) {
+        FOUNDATION_ADDRESS = _FOUNDATION_ADDRESS;
     }
 }
