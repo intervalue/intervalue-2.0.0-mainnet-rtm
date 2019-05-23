@@ -20,6 +20,7 @@ import one.inve.localfullnode2.store.mysql.NewTableCreate;
 import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.localfullnode2.store.rocks.TransactionMsg;
 import one.inve.localfullnode2.store.rocks.TransactionSplit;
+import one.inve.localfullnode2.utilities.QueuePoller;
 
 /**
  * 
@@ -54,21 +55,23 @@ public class MessagePersistence {
 		t0 = Instant.now();
 		t1 = Instant.now();
 
-		// 时间间隔和交易数量2个维度来控制交易的入库
-		while (Duration.between(t0, t1).toMillis() < Config.TXS_COMMIT_TIMEOUT) {
-			// 取共识事件
-			for (int i = 0; i < 200; i++) {
-				if (!dep.getConsMessageSaveQueue().isEmpty()) {
-					list.add(dep.getConsMessageSaveQueue().poll());
-				} else {
-					break;
-				}
-			}
-			if (list.size() >= Config.MAX_TXS_COMMIT_COUNT) {
-				break;
-			}
-			t1 = Instant.now();
-		}
+//		// 时间间隔和交易数量2个维度来控制交易的入库
+//		while (Duration.between(t0, t1).toMillis() < Config.TXS_COMMIT_TIMEOUT) {
+//			// 取共识事件
+//			for (int i = 0; i < 200; i++) {
+//				if (!dep.getConsMessageSaveQueue().isEmpty()) {
+//					list.add(dep.getConsMessageSaveQueue().poll());
+//				} else {
+//					break;
+//				}
+//			}
+//			if (list.size() >= Config.MAX_TXS_COMMIT_COUNT) {
+//				break;
+//			}
+//			t1 = Instant.now();
+//		}
+		list = QueuePoller.poll(dep.getConsMessageSaveQueue(), Config.TXS_COMMIT_TIMEOUT, Config.MAX_TXS_COMMIT_COUNT);
+
 		messageCount = list.size();
 		if (messageCount > 0) {
 			// 交易入库
