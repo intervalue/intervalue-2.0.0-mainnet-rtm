@@ -9,7 +9,7 @@ import java.util.List;
  * @date   2018/7/22 0022.
  */
 public class Config {
-    public static final String GOD_ADDRESS     = "CMUORK2YLSE4UA6C6DSFVMRPGWKWH3QH";
+    public static String GOD_ADDRESS     = "CMUORK2YLSE4UA6C6DSFVMRPGWKWH3QH";
 
     // 线上
     public static List<String> CREATION_ADDRESSES = Arrays.asList(
@@ -32,5 +32,9 @@ public class Config {
 
     public static void setCreationAddress(List<String> _CREATION_ADDRESSES) {
         CREATION_ADDRESSES = _CREATION_ADDRESSES;
+    }
+
+    public static void setGodAddress(String _GOD_ADDRESS) {
+        GOD_ADDRESS = _GOD_ADDRESS;
     }
 }
