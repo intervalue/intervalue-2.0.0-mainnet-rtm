@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -225,6 +226,62 @@ public class ReflectionUtils {
 		} catch (IllegalAccessException ex) {
 			throw new IllegalStateException(
 					"Unexpected reflection exception - " + ex.getClass().getName() + ": " + ex.getMessage());
+		}
+	}
+
+	public static Class<?> clazz(String name) throws ClassNotFoundException {
+		return Class.forName(name);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T tryInvoke(final Object target, final String methodName, final Class<?>[] types,
+			final Object[] args) {
+		return (T) tryInvoke(target, null, null, methodName, types, args);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T tryInvoke(final String className, final String methodName, final Class<?>[] types,
+			final Object[] args) {
+		return (T) tryInvoke(null, null, className, methodName, types, args);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> T tryInvoke(final Object target, final Class<?> classObject, final String className,
+			final String methodName, final Class<?>[] argTypes, final Object[] args) {
+		try {
+			Class<?> cls;
+			if (classObject != null) {
+				cls = classObject;
+			} else if (target != null) {
+				cls = target.getClass();
+			} else {
+				cls = Class.forName(className);
+			}
+
+			return (T) cls.getMethod(methodName, argTypes).invoke(target, args);
+		} catch (final NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		} catch (final IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} catch (final InvocationTargetException e) {
+			throw new RuntimeException(e);
+		} catch (final ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T getInstanceByClassName(String clazzName) {
+		try {
+			Class<T> clazz = (Class<T>) ReflectionUtils.class.getClassLoader().loadClass(clazzName);
+			try {
+				return clazz.newInstance();
+			} catch (IllegalAccessException e) {
+				Method method = clazz.getMethod("get");
+				return (T) method.invoke(null);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Unable to get instance for " + clazzName, e);
 		}
 	}
 
