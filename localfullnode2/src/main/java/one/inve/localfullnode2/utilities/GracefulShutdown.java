@@ -2,6 +2,10 @@ package one.inve.localfullnode2.utilities;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import one.inve.localfullnode2.lc.ILifecycle;
 import sun.misc.Signal;
@@ -22,6 +26,8 @@ import sun.misc.SignalHandler;
  */
 public class GracefulShutdown implements SignalHandler {
 
+	private static final Logger logger = LoggerFactory.getLogger(GracefulShutdown.class);
+
 	private Collection<ILifecycle> lcs = new ArrayDeque<>();
 
 	private SignalHandler oldHandler;
@@ -39,8 +45,16 @@ public class GracefulShutdown implements SignalHandler {
 
 			lcs.parallelStream().forEach((e) -> {
 				e.stop();
+
 				while (e.isRunning()) {
 					// empty loop until shutdown is completed.
+					// logger.warn("waiting for {} shutdown", e);
+					try {
+						TimeUnit.MICROSECONDS.sleep(1000);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			});
 

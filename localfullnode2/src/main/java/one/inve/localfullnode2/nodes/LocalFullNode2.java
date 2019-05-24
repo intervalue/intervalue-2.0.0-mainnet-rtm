@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.lc.ILifecycle;
+import one.inve.localfullnode2.lc.LazyLifecycle;
 import one.inve.localfullnode2.membership.GossipNodeThread;
 import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.rpc.RegisterPrx;
@@ -160,10 +161,30 @@ public class LocalFullNode2 extends HashneterInitializer {
 	}
 
 	@Override
-	protected void startMembership() {
-		// 加入gossip网络
-		new GossipNodeThread(this, HnKeyUtils.getString4PublicKey(publicKey())).start();
+	protected ILifecycle startMembership(LocalFullNode1GeneralNode node) {
+		LazyLifecycle llc = new LazyLifecycle() {
+			private Thread gossipTh;
 
+			@Override
+			public void start() {
+				super.start();
+
+				// 加入gossip网络
+				gossipTh = new GossipNodeThread(node, HnKeyUtils.getString4PublicKey(publicKey()));
+				gossipTh.start();
+			}
+
+			@Override
+			public void stop() {
+				gossipTh.interrupt();
+				super.stop();
+
+				logger.info("<<membership>> is stopped......");
+			}
+		};
+		llc.start();
+
+		return llc;
 	}
 
 }

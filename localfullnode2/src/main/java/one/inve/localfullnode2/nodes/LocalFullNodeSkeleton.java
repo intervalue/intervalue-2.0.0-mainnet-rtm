@@ -2,6 +2,7 @@ package one.inve.localfullnode2.nodes;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
+import com.zeroc.Ice.Object;
 import com.zeroc.Ice.Util;
 
 import one.inve.localfullnode2.conf.Config;
@@ -22,6 +24,7 @@ import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.http.HttpServiceDependency;
 import one.inve.localfullnode2.lc.ILifecycle;
+import one.inve.localfullnode2.lc.LazyLifecycle;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.DbUtils;
 import one.inve.localfullnode2.store.EventBody;
@@ -74,7 +77,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 	 */
 	protected void start(String[] args) {
 		loadDeps();
-		GracefulShutdown gs = GracefulShutdown.with("TERM");
+		GracefulShutdown gs = GracefulShutdown.with("TERM");// kill -15 process-id
 
 		try {
 			setCommunicator(Util.initialize(args));
@@ -150,18 +153,18 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			if (hashneter == null)
 				System.exit(-1);
 
-			startMembership();
+			ILifecycle membersTask = startMembership(this);
+			membersTask.start();
+			gs.addLcs(membersTask);
 
-			// 启动http接口
-			HttpServiceDependency httpServiceDependency = new HttpServiceDependency();
-			httpServiceDependency.setNode(this);
+			// start up http server
+			ILifecycle httpServer = startHttpServer(this);
+			gs.addLcs(httpServer);
 
-			int port = this.nodeParameters().selfGossipAddress.httpPort;
-			logger.info("Http server is listening to {}", port);
-			NettyHttpServer.boostrapHttpService(httpServiceDependency, port);
-
-			// 启动rpc接口
-			loadRPC(this);
+			// start up rpc server
+			// loadRPC(this);
+			ILifecycle rpcServer = startRPCServer(this);
+			gs.addLcs(rpcServer);
 
 			ILifecycle coreTask = performCoreTasks(hashneter);
 			gs.addLcs(coreTask);
@@ -274,10 +277,84 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		one.inve.contract.conf.Config.setFoundationAddress(Config.FOUNDATION_ADDRESS);
 	}
 
+	protected ILifecycle startHttpServer(LocalFullNode1GeneralNode node) {
+		LazyLifecycle llc = new LazyLifecycle() {
+			private NettyHttpServer httpServer;
+
+			@Override
+			public void start() {
+				super.start();
+
+				// 启动http接口
+				HttpServiceDependency httpServiceDependency = new HttpServiceDependency();
+				httpServiceDependency.setNode(node);
+
+				int port = node.nodeParameters().selfGossipAddress.httpPort;
+				logger.info("Http server is listening to {}", port);
+				httpServer = NettyHttpServer.boostrap(httpServiceDependency, port);
+			}
+
+			@Override
+			public void stop() {
+				httpServer.shutdown();
+				super.stop();
+
+				logger.info("<<http server>> is stopped......");
+			}
+
+		};
+		llc.start();
+
+		return llc;
+	}
+
+	protected ILifecycle startRPCServer(LocalFullNode1GeneralNode node) {
+		LazyLifecycle llc = new LazyLifecycle() {
+
+			@Override
+			public void start() {
+				super.start();
+
+				logger.info("start rpc service...");
+				try {
+					// add rpc
+					for (int i = 0; i < Config.SERVICE_ARRAY.length; i++) {
+						Class<?> t = Class.forName(Config.SERVICE_ARRAY[i]);
+						Constructor<Object> cons = (Constructor<Object>) t
+								.getConstructor(LocalFullNode1GeneralNode.class);
+						Object object = cons.newInstance(node);
+
+						String identity = Config.SERVICE_ARRAY[i]
+								.substring(Config.SERVICE_ARRAY[i].lastIndexOf('.') + 1);
+						if (identity.toLowerCase().endsWith("impl")) {
+							identity = identity.substring(0, identity.length() - 4);
+						}
+						getAdapter().add(object, Util.stringToIdentity(identity));
+					}
+					getAdapter().activate();
+				} catch (Exception e) {
+					logger.error("load rpc error: {}", e);
+				}
+			}
+
+			@Override
+			public void stop() {
+				getAdapter().deactivate();
+				super.stop();
+
+				logger.info("<<rpc server>> is stopped......");
+			}
+
+		};
+		llc.start();
+
+		return llc;
+	}
+
 	abstract protected Hashneter initHashneter();
 
-	abstract protected ILifecycle performCoreTasks(Hashneter hashneter);
+	abstract protected ILifecycle startMembership(LocalFullNode1GeneralNode node);
 
-	abstract protected void startMembership();
+	abstract protected ILifecycle performCoreTasks(Hashneter hashneter);
 
 }

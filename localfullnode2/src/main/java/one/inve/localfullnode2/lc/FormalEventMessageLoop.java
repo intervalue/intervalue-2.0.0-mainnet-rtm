@@ -1,5 +1,8 @@
 package one.inve.localfullnode2.lc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.GossipDependent;
@@ -27,17 +30,22 @@ import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
  * @Description: build a loop to execute(nine steps together) over and over
- *               again and take a sleep at the end of tasks.
+ *               again and take a sleep every round.
  * @author: Francis.Deng
  * @date: May 21, 2019 12:17:08 AM
  * @version: V1.0
  */
 public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle {
+	private static final Logger logger = LoggerFactory.getLogger(FormalEventMessageLoop.class);
 
 	private boolean stopMe = true;// control the loop
 
 	@Override
 	public void start() {
+		new Thread(() -> startCore()).start();
+	}
+
+	public void startCore() {
 
 		if (!isRunning()) {
 			super.start();
@@ -116,12 +124,18 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 			}
 
 			super.stop();
+
+			logger.info("<<formal event and message loop>> is stopped......");
 		}
 	}
 
 	@Override
 	public void stop() {
 		stopMe = true;
+//
+//		while (isRunning()) {
+//
+//		}
 
 	}
 
