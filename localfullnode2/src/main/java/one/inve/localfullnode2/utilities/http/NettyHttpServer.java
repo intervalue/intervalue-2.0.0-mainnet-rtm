@@ -36,7 +36,7 @@ public class NettyHttpServer {
 	}
 
 	public void start(ChannelInitializer channelInitializer) {
-		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+		// Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 
 		try {
 			final ServerBootstrap bootstrap = new ServerBootstrap().group(masterGroup, slaveGroup)
@@ -49,7 +49,7 @@ public class NettyHttpServer {
 		}
 	}
 
-	private void shutdown() {
+	public void shutdown() {
 		slaveGroup.shutdownGracefully();
 		masterGroup.shutdownGracefully();
 
@@ -60,11 +60,13 @@ public class NettyHttpServer {
 		}
 	}
 
-	public static void boostrapHttpService(HttpServiceImplsDependent dep, int port) {
+	public static NettyHttpServer boostrap(HttpServiceImplsDependent dep, int port) {
 		NettyHttpServer httpServer = new NettyHttpServer();
 		httpServer.setPort(port);
 
 		new Thread(() -> httpServer.start(new HttpChannelInitializer(dep))).start();
+
+		return httpServer;
 	}
 
 	@Test
