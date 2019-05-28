@@ -694,7 +694,8 @@ public class DbUtils {
 			}
 		}
 		if (null != list && list.size() > 0) {
-			node.setConsMessageMaxId(list.get(0));
+			// node.setConsMessageMaxId(list.get(0));
+			node.addConsMessageMaxId(list.get(0).longValue());
 			node.setConsMessageCount(node.getConsMessageMaxId());
 
 			byte[] consMessageMaxId = rocksJavaUtil.get(Config.CONS_MSG_COUNT_KEY);
@@ -805,7 +806,8 @@ public class DbUtils {
 		rocksJavaUtil.put(signature, JSON.toJSONString(msg));
 
 		// 更新总message数
-		node.setConsMessageMaxId(node.getConsMessageMaxId().add(BigInteger.ONE));
+		// node.setConsMessageMaxId(node.getConsMessageMaxId().add(BigInteger.ONE));
+		node.addConsMessageMaxId(1);
 		rocksJavaUtil.put(Config.CONS_MSG_COUNT_KEY, node.getConsMessageMaxId().toString());
 
 //		// 更新世界状态
