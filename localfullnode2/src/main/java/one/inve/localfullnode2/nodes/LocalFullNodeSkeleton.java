@@ -291,7 +291,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 				int port = node.nodeParameters().selfGossipAddress.httpPort;
 				logger.info("Http server is listening to {}", port);
-				httpServer = NettyHttpServer.boostrap(httpServiceDependency, port);
+				httpServer = NettyHttpServer.boostrap(httpServiceDependency, port, 1);
 			}
 
 			@Override

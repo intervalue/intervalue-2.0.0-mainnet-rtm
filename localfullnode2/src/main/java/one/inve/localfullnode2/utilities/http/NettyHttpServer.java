@@ -36,12 +36,18 @@ public class NettyHttpServer {
 	}
 
 	public void start(ChannelInitializer channelInitializer) {
+		start(channelInitializer, -1);
+	}
+
+	public void start(ChannelInitializer channelInitializer, int howManyNettyThreads) {
 		// Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+		if (howManyNettyThreads > 0)
+			System.setProperty("io.netty.eventLoopThreads", String.valueOf(howManyNettyThreads));
 
 		try {
 			final ServerBootstrap bootstrap = new ServerBootstrap().group(masterGroup, slaveGroup)
 					.channel(NioServerSocketChannel.class).option(ChannelOption.SO_BACKLOG, 128)
-					.childOption(ChannelOption.SO_KEEPALIVE, true).childHandler(channelInitializer);
+					.childOption(ChannelOption.SO_KEEPALIVE, false).childHandler(channelInitializer);
 
 			channel = bootstrap.bind(port).sync();
 		} catch (final InterruptedException e) {
@@ -61,10 +67,14 @@ public class NettyHttpServer {
 	}
 
 	public static NettyHttpServer boostrap(HttpServiceImplsDependent dep, int port) {
+		return boostrap(dep, port, -1);
+	}
+
+	public static NettyHttpServer boostrap(HttpServiceImplsDependent dep, int port, int threadSize) {
 		NettyHttpServer httpServer = new NettyHttpServer();
 		httpServer.setPort(port);
 
-		new Thread(() -> httpServer.start(new HttpChannelInitializer(dep))).start();
+		new Thread(() -> httpServer.start(new HttpChannelInitializer(dep), threadSize)).start();
 
 		return httpServer;
 	}
