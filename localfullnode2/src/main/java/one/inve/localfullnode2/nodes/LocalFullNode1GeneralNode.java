@@ -249,7 +249,7 @@ public class LocalFullNode1GeneralNode {
 //		this.consMessageMaxId = consMessageMaxId;
 //	}
 	public void addConsMessageMaxId(long delta) {
-		this.consMessageMaxId.add(BigInteger.valueOf(delta));
+		consMessageMaxId = consMessageMaxId.add(BigInteger.valueOf(delta));
 	}
 
 	public BigInteger getConsMessageCount() {
