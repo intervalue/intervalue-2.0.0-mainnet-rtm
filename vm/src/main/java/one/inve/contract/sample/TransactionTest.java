@@ -20,7 +20,7 @@ public class TransactionTest {
     public TransactionTest(String dbId) {
         RepositoryProvider.getTrack(dbId);
         senderAddress = "VZLSZWP6ASHOYEXWC3VIIR4JOXYN32HH".getBytes();
-    } 
+    }
 
     public static void main(String[] args) throws IOException {
         // =================================================================
@@ -49,19 +49,25 @@ public class TransactionTest {
         String erc20TransferAbi = "a9059cbb0000000000000000000000000000000000000d9dfd6e8ad4daf2ada04061db7b0000000000000000000000000000000000000000000000000000000000001324";
         String erc20BalanceOfAbi = "70a082310000000000000000000000000000000000000d9dfd6e8ad4daf2ada04061db7b";
 
+        // F: 测试 block.number 合约
+        String blockNumContract = "6080604052348015600f57600080fd5b50608c8061001e6000396000f300608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631b955a65146044575b600080fd5b348015604f57600080fd5b5060566058565b005b6000439050505600a165627a7a7230582078d9701ce559a7041395555fa8d1b52851e0f74bb8003c1a1c92340d2f9385380029";
+        String testBlockNumAbi = "1b955a65";
+
         TransactionTest test = new TransactionTest("0_0");
+
 
         // =================================================================
         // 测试方法：部署合约 => 调用函数
         // =================================================================
 
-        // 创建合约: 
+        // 创建合约:
         // \-- A. 固定参数合约：(fixedContract, fixedArgs)
         // \-- B. 变长参数合约：(variableContract, variableArgs)
         // \-- C. 回滚合约：(revertContract, "")
         // \-- D. 函数直接 revert：(directRevertContract, "")
         // \-- E. ERC20：(erc20Contract, "")
-        byte[] contractAddr = test.createContract(erc20Contract, "");
+        // \-- F. block number: (blockNumContract, "")
+        byte[] contractAddr = test.createContract(blockNumContract, "");
         System.out.println("contract address is: " + new String(contractAddr));
 
         // A & B: 调用`getNum()`函数获取构造函数的输入值
@@ -75,13 +81,15 @@ public class TransactionTest {
 
         // E: 调用`transfer(address, uint256)`函数测试转代币给 QEL7I56HOSPIWQVAZ4PFRZUTN5O2G3LT
         // \--调用`balanceOf(address)`函数测试代币是否转入
-        test.callFunc(contractAddr, "transfer", "3b9aca00", "0186a0", "00", erc20TransferAbi);
-        test.callFunc(contractAddr, "balanceOf", "3b9aca00", "0186a0", "00", erc20BalanceOfAbi);
+
+        // F: 调用`testBlockNum()`函数测试 block.number 是否造成崩溃
+        test.callFunc(contractAddr, "testBlockNum", "3b9aca00", "0186a0", "00", testBlockNumAbi);
+//        test.callFunc(contractAddr, "balanceOf", "3b9aca00", "0186a0", "00", erc20BalanceOfAbi);
     }
 
     /**
      * 测试部署合约，需要传入部署用的 bytecode
-     * 
+     *
      * @param _bytecode
      * @return 生成的合约地址
      * @throws IOException
@@ -91,8 +99,8 @@ public class TransactionTest {
         //1.生成一个账户，并将其添加到repository中
         RepositoryProvider.getTrack("").createAccount(senderAddress);
         RepositoryProvider.getTrack("").addBalance(senderAddress, new BigInteger("55000000000000000000"));
-        
-        System.out.println("*** senderAddr:" + Hex.toHexString(senderAddress) + 
+
+        System.out.println("*** senderAddr:" + Hex.toHexString(senderAddress) +
             "\n*** senderBalance:" + RepositoryProvider.getTrack("").getAccountState(senderAddress).getBalance());
 
 
@@ -101,12 +109,12 @@ public class TransactionTest {
         byte[] recieveAddress = null;
         byte[] endowment = Hex.decode("00"); //0
         byte[] gasLimit= Hex.decode("1e8480");  //033450 => 210000; 061a80 => 400000; 1e8480 => 2000000
-        
+
         byte[] bytecodeData = Hex.decode(_bytecode);
-        
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write(bytecodeData);
-        
+
         // 若构造函数不带参数
         if(!_args.equals("")){
             // 构造函数带有固定参数
@@ -120,13 +128,13 @@ public class TransactionTest {
         // System.out.println("data.length is: " + data.length);
         // System.arraycopy(bytecode, 0, data, 0, bytecodeData.length);
         // System.arraycopy(arg, 0, data, bytecodeData.length, arg.length);
-        
+
         Transaction tx = new Transaction(
-            nonce, 
+            nonce,
             gasPrice,
-            gasLimit, 
-            recieveAddress, 
-            endowment, 
+            gasLimit,
+            recieveAddress,
+            endowment,
             data);
 
         tx.setSender(senderAddress);
@@ -134,11 +142,11 @@ public class TransactionTest {
         //******Create the contract
         System.out.println("\n\n\n");
         System.out.println("==================== Starting creating contract! ==================");
-        System.out.println("Sender Balance before execution: " + 
+        System.out.println("Sender Balance before execution: " +
             RepositoryProvider.getTrack("").getAccountState(senderAddress).getBalance());
 
         INVETransactionExecutor executor = doExec(tx);
-        
+
         // 交易执行的收据信息
         if(executor.getReceipt().isSuccessful()) {
             // Save contract code
@@ -165,29 +173,29 @@ public class TransactionTest {
     public void callFunc(byte[] recieveAddr, String funName, String _gasPrice, String _gasLimit, String _endowment, String abi) {
         System.out.println("\n\n\n");
         System.out.println("==================== Starting calling contract method '" + funName + "'! ==================");
-        
+
         byte[] nonce = RepositoryProvider.getTrack("").getNonce(senderAddress).toByteArray();
         byte[] gasPrice = Hex.decode(_gasPrice);
         byte[] gasLimit= Hex.decode(_gasLimit);
-        byte[] endowment = Hex.decode(_endowment); 
+        byte[] endowment = Hex.decode(_endowment);
         byte[] data = Hex.decode(abi);
 
         Transaction tx = new Transaction(
-            nonce, 
+            nonce,
             gasPrice,
-            gasLimit, 
-            recieveAddr, 
-            endowment, 
+            gasLimit,
+            recieveAddr,
+            endowment,
             data);
-        
+
         tx.setSender(senderAddress);
 
         INVETransactionExecutor executor = doExec(tx);
         System.out.println("Is tx reverted? |-- " + executor.getResult().isRevert());
 
-        System.out.println("*** Contract Balance after " + funName + " is: " + 
+        System.out.println("*** Contract Balance after " + funName + " is: " +
             RepositoryProvider.getTrack("").getAccountState(tx.getReceiveAddress()).getBalance());
-        System.out.println("*** Caller Balance after " + funName + "is: " + 
+        System.out.println("*** Caller Balance after " + funName + "is: " +
             RepositoryProvider.getTrack("").getAccountState(tx.getSender()).getBalance());
     }
 
@@ -198,7 +206,7 @@ public class TransactionTest {
      */
     private INVETransactionExecutor doExec(Transaction tx) {
         INVETransactionExecutor executor = new INVETransactionExecutor(
-            tx, 
+            tx,
             RepositoryProvider.getTrack(""),
             new BlockStoreDummy(),
             (INVEProgramInvokeFactory) new INVEProgramInvokeFactoryImpl(),
