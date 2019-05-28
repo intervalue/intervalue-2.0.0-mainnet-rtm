@@ -942,6 +942,16 @@ public class VM {
                     program.step();
                 }
                 break;
+                case NUMBER: {
+                    DataWord number = program.getTimestamp();
+
+                    if (logger.isInfoEnabled())
+                        hint = "number: " + number.value();
+
+                    program.stackPush(number);
+                    program.step();
+                }
+                break;
                 case GASLIMIT: {
                     DataWord gaslimit = program.getGasLimit();
 
