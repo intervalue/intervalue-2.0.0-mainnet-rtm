@@ -29,7 +29,7 @@ public class Stat extends DependentItem {
 	 * first call from {@code DbUtils::initStatistics}
 	 */
 	public void addTotalEventCount(long delta) {
-		totalEventCount.add(BigInteger.valueOf(delta));
+		totalEventCount = totalEventCount.add(BigInteger.valueOf(delta));
 		nodifyAll();
 	}
 
@@ -41,7 +41,7 @@ public class Stat extends DependentItem {
 	 * first call from {@code EventsExe::run}
 	 */
 	public void addTotalConsEventCount(long delta) {
-		totalConsEventCount.add(BigInteger.valueOf(delta));
+		totalConsEventCount = totalConsEventCount.add(BigInteger.valueOf(delta));
 		nodifyAll();
 	}
 
@@ -53,7 +53,7 @@ public class Stat extends DependentItem {
 	 * first call from {@code EventsExe::addConsMessage2VerifyQueue}
 	 */
 	public void addConsMessageMaxId(long delta) {
-		consMessageMaxId.add(BigInteger.valueOf(delta));
+		consMessageMaxId = consMessageMaxId.add(BigInteger.valueOf(delta));
 		nodifyAll();
 	}
 
@@ -62,7 +62,7 @@ public class Stat extends DependentItem {
 	}
 
 	public void addSystemAutoTxMaxId(long delta) {
-		systemAutoTxMaxId.add(BigInteger.valueOf(delta));
+		systemAutoTxMaxId = systemAutoTxMaxId.add(BigInteger.valueOf(delta));
 		nodifyAll();
 	}
 
