@@ -54,6 +54,12 @@ public class Hashneter implements IHashneter {
 		// EventBody[] ebs = dep.getAllQueuedEvents(shardId);
 		EventBody[] ebs = eventFlow.getAllQueuedEvents(shardId);
 		for (EventBody eb : ebs) {
+			if (eb.getTrans() != null) {
+				for (byte[] msg : eb.getTrans()) {
+					System.out.println(new String(msg));
+				}
+			}
+
 			hashnet.addEvent(eb);
 		}
 	}
@@ -129,8 +135,7 @@ public class Hashneter implements IHashneter {
 			hashnet = new Hashnet(dep.getShardCount(), dep.getNValue());
 		}
 
-		// temporal comment
-		// initFromScratch();
+		initFromScratch(dep);
 //		logger.warn("node-({}, {}): init Hashnet successfully. shard-0's lastSeqs: {} ", node.getShardId(),
 //				node.getCreatorId(), eventStore.getLastSeqsByShardId(0));
 	}
@@ -155,6 +160,22 @@ public class Hashneter implements IHashneter {
 			eventFlow = new EventFlow(publicKeys, dep.getPrivateKey(), eventStore);
 		}
 	}
+
+	private void initFromScratch(HashneterDependent dep) {
+		for (int i = 0; i < dep.getShardCount(); i++) {
+			if (dep.getShardId() != -1 && i == dep.getShardId()) {
+				eventFlow.newEvent(i, (int) dep.getCreatorId(), -1, null);
+			}
+			this.addToHashnet(dep, i);
+		}
+	}
+
+//	public void addToHashnet(int shardId) {
+//		EventBody[] ebs = eventFlow.getAllQueuedEvents(shardId);
+//		for (EventBody eb : ebs) {
+//			hashnet.addEvent(eb);
+//		}
+//	}	
 
 	public Hashnet getHashnet() {
 		return hashnet;
