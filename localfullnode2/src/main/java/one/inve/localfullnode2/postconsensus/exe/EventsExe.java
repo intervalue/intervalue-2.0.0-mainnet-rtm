@@ -77,7 +77,8 @@ public class EventsExe {
 //            }
 
 		try {
-			if (!dep.getConsEventHandleQueue().isEmpty()) {
+			// if (!dep.getConsEventHandleQueue().isEmpty()) {
+			while (!dep.getConsEventHandleQueue().isEmpty()) {// until consEventHandleQueue is empty
 				// 取共识Event
 				EventBody event = dep.getConsEventHandleQueue().poll();
 				// 更新共识Event数
@@ -110,9 +111,10 @@ public class EventsExe {
 //						t0 = t1;
 //						eventCount = 0L;
 //					}
-			} else {
-				// sleep(50);
 			}
+//			} else {
+//				// sleep(50);
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("error: {}", e);
