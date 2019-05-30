@@ -8,6 +8,9 @@ import one.inve.core.Config;
 import one.inve.core.EventBody;
 import one.inve.core.EventKeyPair;
 import one.inve.core.Hash;
+import one.inve.localfullnode2.snapshot.CreateSnapshotPoint;
+import one.inve.localfullnode2.snapshot.CreateSnapshotPointDependent;
+import one.inve.localfullnode2.snapshot.CreateSnapshotPointDependentImpl2;
 import one.inve.node.Main;
 import one.inve.rocksDB.RocksJavaUtil;
 import one.inve.util.StringUtils;
@@ -93,7 +96,10 @@ public class ConsensusEventHandleThread extends Thread {
                     addConsMessage2VerifyQueue(event);
 
                     // 达到生成快照点条件，则生成快照点
-                    createSnapshotPoint(event);
+//                    createSnapshotPoint(event);
+
+                    CreateSnapshotPointDependent dep = new CreateSnapshotPointDependentImpl2(node,event);
+                    new CreateSnapshotPoint().createSnapshotPoint(dep);
 
                     // 打印信息
                     eventCount++;
@@ -176,10 +182,12 @@ public class ConsensusEventHandleThread extends Thread {
 
                 // 计算更新消息hash根
                 JSONObject msgObj = JSONObject.parseObject(new String(msg));
-                if(StringUtils.isEmpty(msgHashTreeRoot)) {
-                    msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
+                if(StringUtils.isEmpty(node.msgHashTreeRoot)) {
+//                    msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
+                    node.msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
                 } else {
-                    msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
+//                    msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
+                    node.msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(node.msgHashTreeRoot, msgObj.getString("signature")));
                 }
 
                 try {

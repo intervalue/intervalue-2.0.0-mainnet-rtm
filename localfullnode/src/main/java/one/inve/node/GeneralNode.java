@@ -26,6 +26,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.alibaba.fastjson.JSON;
+import one.inve.localfullnode2.snapshot.*;
+import one.inve.localfullnode2.store.SnapshotDbService;
+import one.inve.localfullnode2.store.SnapshotDbServiceImpl2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -674,9 +678,16 @@ public class GeneralNode {
 //            // 检测共识Event相关数据一致性并修复
 //            DbUtils.detectAndRepairConsEventData(node);
 			// 根据最新快照，恢复相关快照参数： treeRootMap、snapshotPointMap等
-			DbUtils.detectAndRepairSnapshotData(node);
+//            DbUtils.detectAndRepairSnapshotData(node);
+
+			DetectAndRepairSnapshotDataDependent dep = new DetectAndRepairSnapshotDataDependentImpl2(node);
+			SnapshotDbService store = new SnapshotDbServiceImpl2();
+			new DetectAndRepairSnapshotData().detectAndRepairSnapshotData(dep,store);
+
 			// 重载hashnet
 			reloadHashnet(node);
+
+			logger.info("【END:initHashnet】\n currSnapshotVersion: {},\n msgHashTreeRoot: {},\n snapshotMessage: {},\n treeRootMap: {},\n snapshotPointMap: {}",node.getCurrSnapshotVersion(),msgHashTreeRoot, JSON.toJSONString(snapshotMessage),JSON.toJSONString(treeRootMap),JSON.toJSONString(snapshotPointMap));
 		}
 	}
 
@@ -748,7 +759,10 @@ public class GeneralNode {
 		/**
 		 * 修复准备生成最新版本快照点需要的相关信息
 		 */
-		repairCurrSnapshotPointInfo(node);
+//        repairCurrSnapshotPointInfo(node);
+
+		RepairCurrSnapshotPointInfoDependent dep = new RepairCurrSnapshotPointInfoDependentImpl2(node);
+		new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(dep);
 
 //        logger.info(">>>>>> reload Hashnet finished.");
 		logger.warn("node-({}, {}): reload Hashnet successfully. shard-0's lastSeqs: {} ", node.getShardId(),

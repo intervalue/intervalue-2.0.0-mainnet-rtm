@@ -7,6 +7,9 @@ import one.inve.contract.MVM.InternalTransferData;
 import one.inve.contract.MVM.WorldStateService;
 import one.inve.core.Config;
 import one.inve.exception.InveException;
+import one.inve.localfullnode2.snapshot.*;
+import one.inve.localfullnode2.store.SnapshotDbService;
+import one.inve.localfullnode2.store.SnapshotDbServiceImpl2;
 import one.inve.node.Main;
 import one.inve.util.DbUtils;
 import one.inve.util.StringUtils;
@@ -70,7 +73,11 @@ public class ConsensusMessageHandleThread extends Thread {
                             handleConsensusContractMessage(msgObject);
                         } else if (tm.getInteger("type") == MessageType.SNAPSHOT.getIndex()) {
                             // 快照消息处理
-                            handleConsensusSnapshotMessage(msgObject);
+//                             handleConsensusSnapshotMessage(msgObject);
+                            HandleConsensusSnapshotMessageDependent dep = new HandleConsensusSnapshotMessageDependentImpl2(node,msgObject);
+                            SnapshotDbService store = new SnapshotDbServiceImpl2();
+                            new HandleConsensusSnapshotMessage().handleConsensusSnapshotMessage(dep,store);
+
                         } else if (tm.getInteger("type") == MessageType.TEXT.getIndex()) {
                             // 文本数据消息处理
                             handleConsensusTextMessage(msgObject);
@@ -78,23 +85,27 @@ public class ConsensusMessageHandleThread extends Thread {
                             logger.error("not supposed message type.");
                         }
                     } else {
-                        SnapshotPoint sp = node.getSnapshotPointMap().get(vers);
-                        logger.warn("\nspecif msg: {}, \nvers-{} sp: {}",
-                                msgObject.toJSONString(), vers, JSON.toJSONString(sp));
-                        if (sp == null) {
-                            logger.error("node-({}, {}): snapshotPoint-{} missing\nexit...",
-                                    node.getShardId(), node.getCreatorId(), vers);
-                            System.exit(-1);
-                        } else {
-                            if (null!=lastIdx && lastIdx
-                                    && eHash.equals(DSA.encryptBASE64(sp.getEventBody().getHash()))) {
-                                // 快照点event时，判断是否基金会节点，然后生成快照
-                                handleSnapshotPoint(msgObject.getBigInteger("id"));
-                            } else {
-                                logger.warn("node-({}, {}): unknown message: {}",
-                                        node.getShardId(), node.getCreatorId(), msgObject.toJSONString());
-                            }
-                        }
+//                        SnapshotPoint sp = node.getSnapshotPointMap().get(vers);
+//                        //logger.warn("\nspecif msg: {}, \nvers-{} sp: {}",
+//                         //       msgObject.toJSONString(), vers, JSON.toJSONString(sp));
+//                        if (sp == null) {
+//                            //logger.error("node-({}, {}): snapshotPoint-{} missing\nexit...",
+//                        //            node.getShardId(), node.getCreatorId(), vers);
+//                            System.exit(-1);
+//                        } else {
+//                            if (null!=lastIdx && lastIdx
+//                                    && eHash.equals(DSA.encryptBASE64(sp.getEventBody().getHash()))) {
+//                                // 快照点event时，判断是否基金会节点，然后生成快照
+//                                handleSnapshotPoint(msgObject.getBigInteger("id"));
+//                            } else {
+//                                //logger.warn("node-({}, {}): unknown message: {}",
+//                             //           node.getShardId(), node.getCreatorId(), msgObject.toJSONString());
+//                            }
+//                        }
+
+                        HandleSnapshotPointMessageDependent dep = new HandleSnapshotPointMessageDependentImpl2(node,
+                                msgObject);
+                        new HandleSnapshotPointMessage().handleSnapshotPointMessage(dep);
                     }
 
                     handleCount++;
