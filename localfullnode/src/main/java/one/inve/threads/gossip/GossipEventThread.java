@@ -355,8 +355,9 @@ public class GossipEventThread extends Thread {
 						}
 						List<JSONObject> messages = null;
 						if (!StringUtils.isEmpty(snapObj.messages)) {
-							messages = JSONArray.parseArray(snapObj.messages, JSONObject.class);
-							logger.info(">>>>>INFO<<<<<synchronizeHigher:\n messages: {}",messages.toString());
+                            //2019.05.30 暂停快照同步message
+//							messages = JSONArray.parseArray(snapObj.messages, JSONObject.class);
+//							logger.info(">>>>>INFO<<<<<synchronizeHigher:\n messages: {}",messages.toString());
 						}
 
 						// 正在快照后
