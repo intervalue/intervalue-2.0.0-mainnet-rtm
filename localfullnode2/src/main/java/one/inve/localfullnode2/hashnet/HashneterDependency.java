@@ -80,7 +80,7 @@ public class HashneterDependency implements HashneterDependent, DependentItemCon
 
 	@Override
 	public BlockingQueue<EventBody> getShardSortQueue(int shardId) {
-		return allQueues.get().getQueue(EventBody.class, StagingArea.ShardSortQueueName);
+		return allQueues.get().getQueue(EventBody.class, StagingArea.ShardSortQueueName, shardId);
 	}
 
 	@Override

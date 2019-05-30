@@ -102,6 +102,8 @@ public class Hashneter implements IHashneter {
 				// 恢复共识Event全排序等待队列
 				Event[] evts = hashnet.getAllConsEvents(i);
 				for (Event evt : evts) {
+					// logger.info("ShardSortQueue size = ", dep.getShardSortQueue(i).size());
+
 					dep.getShardSortQueue(i).put(new EventBody.Builder().shardId(i).creatorId(evt.getCreatorId())
 							.creatorSeq(evt.getCreatorSeq()).otherId(evt.getOtherId()).otherSeq(evt.getOtherSeq())
 							.timeCreated(evt.getTimeCreated()).trans(evt.getTransactions())
