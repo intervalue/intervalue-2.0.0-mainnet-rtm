@@ -278,7 +278,8 @@ public class TransactionDbService {
     public static List<JSONObject> queryMissingTransactionsBeforeSnapshotPoint(String message, BigInteger otherTranId,
                                                                                 String dbId) {
         BigInteger selfTranId = BigInteger.ZERO;
-        if (StringUtils.isEmpty(message)) {
+        //2019.5.29 判断条件错误
+        if (StringUtils.isNotEmpty(message)) {
             SnapshotMessage sm = JSONObject.parseObject(message, SnapshotMessage.class);
             long shardId = sm.getSnapshotPoint().getEventBody().getShardId();
             long creatorId = sm.getSnapshotPoint().getEventBody().getCreatorId();
