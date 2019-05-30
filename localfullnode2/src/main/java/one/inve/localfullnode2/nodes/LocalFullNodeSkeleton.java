@@ -212,7 +212,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			synchronized (DbUtils.class) {
 				if (stagingArea.getQueue(EventBody.class, StagingArea.ShardSortQueueName, i) == null) {
 					LinkedBlockingQueue<EventBody> queueInstance = new LinkedBlockingQueue<>();
-					stagingArea.createQueue(EventBody.class, StagingArea.ShardSortQueueName, 100000, i, null);
+					stagingArea.createQueue(EventBody.class, StagingArea.ShardSortQueueName, Integer.MAX_VALUE, i,
+							null);
 				}
 			}
 		}
