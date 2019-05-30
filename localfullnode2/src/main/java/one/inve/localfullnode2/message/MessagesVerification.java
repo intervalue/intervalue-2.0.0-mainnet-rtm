@@ -37,7 +37,7 @@ public class MessagesVerification {
 	}
 
 	public void verifyMessages() {
-		logger.info(">>> start verifyMessages...");
+		logger.info(">>> start up messages verification...");
 		// 消息
 		List<JSONObject> messages = new ArrayList<>();
 		Instant t0;

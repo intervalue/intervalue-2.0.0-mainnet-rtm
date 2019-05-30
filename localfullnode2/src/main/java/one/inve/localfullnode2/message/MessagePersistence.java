@@ -44,7 +44,7 @@ public class MessagePersistence {
 	}
 
 	public void persisMessages() {
-		logger.info(">>> start ConsensusMessageSaveThread...");
+		logger.info(">>> start up message persistence...");
 
 		Instant t0 = null;
 		Instant t1 = null;
@@ -103,7 +103,7 @@ public class MessagePersistence {
 	}
 
 	public void persistSystemMessages() {
-		logger.info(">>> start ConsensusSystemAutoTxSaveThread...");
+		logger.info(">>> start up system messages persistence...");
 		try {
 			int i = 0;
 			Instant t0 = Instant.now();

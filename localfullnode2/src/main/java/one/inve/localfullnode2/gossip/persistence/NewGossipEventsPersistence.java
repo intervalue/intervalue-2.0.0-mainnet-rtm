@@ -30,7 +30,7 @@ public class NewGossipEventsPersistence {
 	private NewGossipEventsPersistenceDependent dep;
 
 	public void persistNewEvents(NewGossipEventsPersistenceDependent dep) {
-		logger.info(">>> start NewGossipEventsPersistence...");
+		logger.info(">>> start up events persistence...");
 
 		this.dep = dep;
 		rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
