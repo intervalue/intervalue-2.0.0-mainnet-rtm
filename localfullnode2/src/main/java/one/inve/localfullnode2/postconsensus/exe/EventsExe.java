@@ -163,13 +163,14 @@ public class EventsExe {
 			int j = 1;
 			int msgCount = event.getTrans().length;
 
-			logger.error(">>>>>>before event.getTrans() " + event.getTrans().length);
+			logger.info(">>>>>>before event.getTrans() " + event.getTrans().length);
 
 			for (byte[] msg : event.getTrans()) {
 				// dep.setConsMessageMaxId(dep.getConsMessageMaxId().add(BigInteger.ONE));
 				dep.addConsMessageMaxId(1);
 				JSONObject o = new JSONObject();
-				logger.error(">>>>>>before node.getConsMessageMaxId():" + dep.getConsMessageMaxId());
+				// logger.error(">>>>>>before node.getConsMessageMaxId():" +
+				// dep.getConsMessageMaxId());
 				o.put("id", dep.getConsMessageMaxId());
 				o.put("eHash", eHash);
 				o.put("eShardId", event.getShardId());
