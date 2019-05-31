@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.node.LocalFullNode;
 import one.inve.localfullnode2.hashnet.Hashneter;
+import one.inve.localfullnode2.lc.FormalEventMessageLoop;
 import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
 import one.inve.localfullnode2.membership.GossipNodeThread;
@@ -155,8 +156,10 @@ public class LocalFullNode2 extends HashneterInitializer {
 
 	@Override
 	protected ILifecycle performCoreTasks(Hashneter hashneter) {
-		// TODO Auto-generated method stub
-		return null;
+		ILifecycle lc = new FormalEventMessageLoop();
+		lc.start();
+
+		return lc;
 
 	}
 
