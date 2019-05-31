@@ -23,11 +23,11 @@ public class LostMotionModel {
 		return Math.pow(lostMotionRound / 4, exponent);
 	}
 
-	public static void main(String[] args) {
-		LostMotionModel lostMotionModel = new LostMotionModel(0.3);
-
-		for (int i = 0; i < 1000; i++)
-			System.out.println(lostMotionModel.getYVar(i));
-	}
+//	public static void main(String[] args) {
+//		LostMotionModel lostMotionModel = new LostMotionModel(0.3);
+//
+//		for (int i = 0; i < 1000; i++)
+//			System.out.println(lostMotionModel.getYVar(i));
+//	}
 
 }
