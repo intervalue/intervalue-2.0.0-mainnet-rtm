@@ -277,6 +277,12 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	}
 
 	@Override
+	public void addSystemAutoTxMaxId(long delta) {
+		depItemsManager.attachStat(null).addSystemAutoTxMaxId(delta);
+		super.addSystemAutoTxMaxId(delta);
+	}
+
+	@Override
 	public void inshardNeighborPools(List<Member> members) {
 		depItemsManager.attachMembers(null).setInSharding(members);
 		super.inshardNeighborPools(members);

@@ -742,7 +742,8 @@ public class DbUtils {
 			}
 		}
 		if (null != list1 && list1.size() > 0) {
-			node.setSystemAutoTxMaxId(list1.get(0));
+			// node.setSystemAutoTxMaxId(list1.get(0));
+			node.addSystemAutoTxMaxId(list1.get(0).longValue());
 
 			byte[] sysTxCount = rocksJavaUtil.get(Config.SYS_TX_COUNT_KEY);
 			if (null == sysTxCount || !new BigInteger(new String(sysTxCount)).equals(list1.get(0))) {
@@ -751,7 +752,7 @@ public class DbUtils {
 				rocksJavaUtil.put(Config.SYS_TX_COUNT_KEY, list1.get(0).toString());
 			}
 		} else {
-			node.setSystemAutoTxMaxId(BigInteger.ZERO);
+			// node.setSystemAutoTxMaxId(BigInteger.ZERO);
 			rocksJavaUtil.put(Config.SYS_TX_COUNT_KEY, BigInteger.ZERO.toString());
 			logger.warn("node-({},{}): initStatistics() fix Config.SYS_TX_COUNT_KEY value to {}", node.getShardId(),
 					node.getCreatorId(), list1.get(0));

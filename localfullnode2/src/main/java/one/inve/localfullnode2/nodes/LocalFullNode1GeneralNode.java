@@ -268,12 +268,20 @@ public class LocalFullNode1GeneralNode {
 		this.totalEventCount = totalEventCount;
 	}
 
+//	public BigInteger getSystemAutoTxMaxId() {
+//		return systemAutoTxMaxId;
+//	}
+//
+//	public void setSystemAutoTxMaxId(BigInteger systemAutoTxMaxId) {
+//		this.systemAutoTxMaxId = systemAutoTxMaxId;
+//	}
+
 	public BigInteger getSystemAutoTxMaxId() {
 		return systemAutoTxMaxId;
 	}
 
-	public void setSystemAutoTxMaxId(BigInteger systemAutoTxMaxId) {
-		this.systemAutoTxMaxId = systemAutoTxMaxId;
+	public void addSystemAutoTxMaxId(long delta) {
+		systemAutoTxMaxId = systemAutoTxMaxId.add(BigInteger.valueOf(delta));
 	}
 
 	public List<LocalFullNode> getLocalFullNodes() {
