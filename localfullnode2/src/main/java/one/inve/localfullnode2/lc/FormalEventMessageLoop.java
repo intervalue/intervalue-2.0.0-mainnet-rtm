@@ -52,7 +52,7 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 			super.start();
 			stopMe = false;
 
-			LostMotionModel lostMotionModel = new LostMotionModel(0.3d);
+			LostMotionModel lostMotionModel = new LostMotionModel(0.5d);
 
 			GossipDependent gossipDep = null;
 			Gossiper g = new Gossiper();
