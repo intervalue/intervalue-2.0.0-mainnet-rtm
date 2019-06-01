@@ -53,6 +53,8 @@ public class Config {
 	// 每次验证transactions最大数量
 	public static final int MAX_TXS_VEFRIFY_COUNT = 6000;
 
+	public static final int TXS_EXECUTION_BATCH_SIZE = 5000;
+
 	public static final int DEFAULT_EVENT_STATISTICS_COUNT = 5000;
 
 	// 重构时每次从数据库读取每个hashnet柱子的event数量

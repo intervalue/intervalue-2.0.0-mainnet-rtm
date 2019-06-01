@@ -48,6 +48,7 @@ public class MessagesExe {
 		Instant t0 = Instant.now();
 		Instant t1;
 		long handleCount = 0L;
+		int loopCount = 0;
 		// while (true) {
 		try {
 			if (!dep.getConsMessageHandleQueue().isEmpty()) {
@@ -56,6 +57,11 @@ public class MessagesExe {
 			}
 
 			while (!dep.getConsMessageHandleQueue().isEmpty()) {
+				// avoid queue size expanding massively
+				if (++loopCount > Config.TXS_EXECUTION_BATCH_SIZE) {
+					break;
+				}
+
 				// 取共识message
 				JSONObject msgObject = dep.getConsMessageHandleQueue().poll();
 
