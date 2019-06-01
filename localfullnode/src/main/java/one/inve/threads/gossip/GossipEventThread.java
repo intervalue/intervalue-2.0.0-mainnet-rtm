@@ -388,12 +388,12 @@ public class GossipEventThread extends Thread {
 
 								// 更新本节点当前快照信息
 //							node.msgHashTreeRoot = null;//2019.05.22 重置treeRoot
-								if(StringUtils.isEmpty(node.msgHashTreeRoot)) {
-									node.msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(snapshotMessage.getSignature()));
-								} else {
-									node.msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(node.msgHashTreeRoot,
-											snapshotMessage.getSignature()));
-								}
+//								if(StringUtils.isEmpty(node.msgHashTreeRoot)) {
+//									node.msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(snapshotMessage.getSignature()));
+//								} else {
+//									node.msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(node.msgHashTreeRoot,
+//											snapshotMessage.getSignature()));
+//								}
 								node.setSnapshotMessage(snapshotMessage);
 								node.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(),
 										snapshotMessage.getSnapshotPoint());
@@ -401,8 +401,8 @@ public class GossipEventThread extends Thread {
 										snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
 								snapVersionMap.clear();
 
-								node.getConsMessageVerifyQueue().put(snapMessage);
-							} catch (InterruptedException e) {
+//								node.getConsMessageVerifyQueue().put(snapMessage);
+							} catch (Exception e) {
 								logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
 								//logger.error("", e);
 							}
