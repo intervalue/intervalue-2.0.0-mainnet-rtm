@@ -51,6 +51,11 @@ public class MessagesExe {
 		// while (true) {
 		try {
 			if (!dep.getConsMessageHandleQueue().isEmpty()) {
+				logger.info("be ready for executing all({}) messages as much as possible",
+						dep.getConsMessageHandleQueue().size());
+			}
+
+			while (!dep.getConsMessageHandleQueue().isEmpty()) {
 				// 取共识message
 				JSONObject msgObject = dep.getConsMessageHandleQueue().poll();
 
@@ -113,9 +118,9 @@ public class MessagesExe {
 					t0 = t1;
 					handleCount = 0L;
 				}
-			} else {
-				Thread.sleep(50);
-			}
+			} // else {
+//				Thread.sleep(50);
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 //                logger.error("node-({}, {}): error: {}", node.getShardId(), node.getCreatorId(), e);

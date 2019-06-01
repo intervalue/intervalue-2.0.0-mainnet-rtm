@@ -33,6 +33,14 @@ import one.inve.localfullnode2.utilities.GracefulShutdown;
 import one.inve.localfullnode2.utilities.PathUtils;
 import one.inve.localfullnode2.utilities.http.NettyHttpServer;
 
+/**
+ * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * 
+ * @Description: Core startup class
+ * @author: Francis.Deng
+ * @date: May 31, 2018 3:06:25 AM
+ * @version: V1.0
+ */
 public abstract class LocalFullNodeSkeleton extends DepsPointcut implements NodeEnrolled {
 	private static final Logger logger = LoggerFactory.getLogger(LocalFullNodeSkeleton.class);
 	// private static Logger logger = null;

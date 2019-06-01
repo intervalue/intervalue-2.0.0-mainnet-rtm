@@ -31,4 +31,13 @@ public class LazyLifecycle implements ILifecycle {
 		}
 	}
 
+	protected void sleepMilliSeconds(long milliSeconds) {
+		try {
+			TimeUnit.MILLISECONDS.sleep(milliSeconds);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }

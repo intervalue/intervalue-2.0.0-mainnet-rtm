@@ -7,6 +7,7 @@ import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.GossipDependent;
 import one.inve.localfullnode2.gossip.Gossiper;
+import one.inve.localfullnode2.gossip.LostMotionModel;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistence;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
 import one.inve.localfullnode2.hashnet.HashneterUpstream;
@@ -50,6 +51,8 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 		if (!isRunning()) {
 			super.start();
 			stopMe = false;
+
+			LostMotionModel lostMotionModel = new LostMotionModel(0.5d);
 
 			GossipDependent gossipDep = null;
 			Gossiper g = new Gossiper();
@@ -120,7 +123,8 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 				messagePersistence.persisMessages();
 				messagePersistence.persistSystemMessages();
 
-				sleep(5);// take a break
+				long milliSeconds = (long) (lostMotionModel.getYVar(g.getLostMotionRound()) * 1000);
+				sleepMilliSeconds(milliSeconds);// take a break
 			}
 
 			super.stop();

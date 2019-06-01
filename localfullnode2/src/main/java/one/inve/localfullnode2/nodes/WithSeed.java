@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.node.LocalFullNode;
 import one.inve.localfullnode2.hashnet.Hashneter;
+import one.inve.localfullnode2.lc.FormalEventMessageLoop;
 import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
 import one.inve.localfullnode2.membership.GossipNodeThread;
@@ -32,8 +33,8 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * @date: May 14, 2019 11:34:32 PM
  * @version: V1.0
  */
-public class LocalFullNode2 extends HashneterInitializer {
-	private static final Logger logger = LoggerFactory.getLogger(LocalFullNode2.class);
+public class WithSeed extends HashneterInitializer {
+	private static final Logger logger = LoggerFactory.getLogger(WithSeed.class);
 
 	@Override
 	public void asLocalFullNode(String seedPubIP, String seedRpcPort) {
@@ -155,8 +156,10 @@ public class LocalFullNode2 extends HashneterInitializer {
 
 	@Override
 	protected ILifecycle performCoreTasks(Hashneter hashneter) {
-		// TODO Auto-generated method stub
-		return null;
+		ILifecycle lc = new FormalEventMessageLoop();
+		lc.start();
+
+		return lc;
 
 	}
 

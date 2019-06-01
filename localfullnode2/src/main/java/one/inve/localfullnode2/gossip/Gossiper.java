@@ -1,5 +1,6 @@
 package one.inve.localfullnode2.gossip;
 
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -35,15 +36,24 @@ import one.inve.utils.DSA;
  * 
  * @Description: handle gossip communication and result process regardless of in
  *               one sharding or across shardings.
- *               <p>
- *               <code>one.inve.threads.gossip.GossipEventThread</code>for
- *               reference only
+ * 
  * @author: Francis.Deng
+ * @see GossipEventThread
  * @date: April 29, 2018 2:41:49 AM
  * @version: V1.0
  */
 public class Gossiper {
 	private static final Logger logger = LoggerFactory.getLogger("gossip");
+
+	// a value indicates round of lost motion
+	private static ThreadLocal<BigInteger> lostMotionRound = new ThreadLocal<BigInteger>() {
+
+		@Override
+		protected BigInteger initialValue() {
+			return BigInteger.ZERO;
+		}
+
+	};
 
 	private GossipDependent dep;
 	public String gossipAppointEventKey;
@@ -53,6 +63,7 @@ public class Gossiper {
 	public void talkGossip(GossipDependent dep) {
 		this.dep = dep;
 
+		logger.info(">>> start up gossiping({})...", lostMotionRound.get().intValue());
 //		logger.info(">>> start {}GossipEventThread...", pre);
 //		// 等待分片信息
 //		while (node.getShardId() < 0) {
@@ -816,6 +827,14 @@ public class Gossiper {
 			int index = 0;
 			Instant time = Instant.now();
 			long size = 0L;
+
+			if (dep.getMessageQueue().isEmpty()) {
+				BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
+				lostMotionRound.set(plusOne);
+			} else {
+				lostMotionRound.set(BigInteger.ZERO);
+			}
+
 			while (!dep.getMessageQueue().isEmpty()
 					&& Duration.between(time, Instant.now()).toMillis() < Config.DEFAULT_GOSSIP_EVENT_INTERVAL) {
 				if (null != txCache) {
@@ -849,5 +868,9 @@ public class Gossiper {
 		} catch (Exception e) {
 			logger.error("--- shard-{}: in shard local consensus error: {}", shardId, e);
 		}
+	}
+
+	public int getLostMotionRound() {
+		return lostMotionRound.get().intValue();
 	}
 }
