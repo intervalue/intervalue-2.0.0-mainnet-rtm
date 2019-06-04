@@ -1,6 +1,7 @@
 package one.inve.localfullnode2.nodes;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.node.LocalFullNode;
+import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.lc.FormalEventMessageLoop;
 import one.inve.localfullnode2.lc.ILifecycle;
@@ -164,7 +166,8 @@ public class WithSeed extends HashneterInitializer {
 	}
 
 	/**
-	 * block system execution until there is enough sharding's members on board
+	 * block system execution until there is enough sharding's members on board,we
+	 * deny the thread solution because of some factors.
 	 */
 	@Override
 	protected ILifecycle startMembership(LocalFullNode1GeneralNode node) {
@@ -201,10 +204,21 @@ public class WithSeed extends HashneterInitializer {
 			public void start() {
 				super.start();
 				Membership membership = new Membership(node, HnKeyUtils.getString4PublicKey(publicKey()));
-				int[] result = { 0, 0 };
-				do {
-					result = membership.joinNetwork();
-				} while (result[0] == 0);
+				int[] partner = { 0, 0 };
+				while (partner[0] == 0) {// collect enough participant?All,a half,at least one
+					partner = membership.joinNetwork();
+
+					if (partner[0] == 0) {
+						logger.warn("not enough sharding members({}) right now,the process is blocked", partner[0]);
+						try {
+							TimeUnit.MILLISECONDS.sleep(Config.DEFAULT_GOSSIP_NODE_INTERVAL);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+				}
 			}
 		};
 		llc.start();
