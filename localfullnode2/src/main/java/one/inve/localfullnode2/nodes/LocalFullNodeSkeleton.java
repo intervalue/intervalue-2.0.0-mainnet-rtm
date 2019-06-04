@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
@@ -130,6 +131,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 			int selfId = (int) this.getCreatorId();
 			while (-1 == selfId) {
+				logger.warn("fall into a loop of asking for shard info from ({}:{})", seedPubIP, seedRpcPort);
+
 				shardInfo(seedPubIP, seedRpcPort);
 				selfId = (int) this.getCreatorId();
 			}
@@ -162,7 +165,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 				System.exit(-1);
 
 			ILifecycle membersTask = startMembership(this);
-			membersTask.start();
+			// membersTask.start();
 			gs.addLcs(membersTask);
 
 			// start up http server
@@ -173,6 +176,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			// loadRPC(this);
 			ILifecycle rpcServer = startRPCServer(this);
 			gs.addLcs(rpcServer);
+
+			TimeUnit.SECONDS.sleep(5);
 
 			ILifecycle coreTask = performCoreTasks(hashneter);
 			gs.addLcs(coreTask);
@@ -349,6 +354,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			@Override
 			public void stop() {
 				getAdapter().deactivate();
+				getAdapter().destroy();
 				super.stop();
 
 				logger.info("<<rpc server>> is stopped......");
