@@ -14,7 +14,7 @@ import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.lc.FormalEventMessageLoop;
 import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
-import one.inve.localfullnode2.membership.GossipNodeThread;
+import one.inve.localfullnode2.membership.Membership;
 import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.rpc.RegisterPrx;
 import one.inve.localfullnode2.rpc.RpcConnectionService;
@@ -163,26 +163,48 @@ public class WithSeed extends HashneterInitializer {
 
 	}
 
+	/**
+	 * block system execution until there is enough sharding's members on board
+	 */
 	@Override
 	protected ILifecycle startMembership(LocalFullNode1GeneralNode node) {
-		LazyLifecycle llc = new LazyLifecycle() {
-			private Thread gossipTh;
+//		LazyLifecycle llc = new LazyLifecycle() {
+//			private GossipNodeThread gossipTh;
+//
+//			@Override
+//			public boolean isRunning() {
+//				// TODO Auto-generated method stub
+//				return super.isRunning() || !gossipTh.getState().equals(State.TERMINATED);
+//			}
+//
+//			@Override
+//			public void start() {
+//				super.start();
+//
+//				// 加入gossip网络
+//				gossipTh = new GossipNodeThread(node, HnKeyUtils.getString4PublicKey(publicKey()));
+//				gossipTh.start();
+//			}
+//
+//			@Override
+//			public void stop() {
+//				// gossipTh.interrupt();
+//				gossipTh.interruptMe();
+//				super.stop();
+//
+//				// logger.info("<<membership>> is stopped......");
+//			}
+//		};
 
+		LazyLifecycle llc = new LazyLifecycle() {
 			@Override
 			public void start() {
 				super.start();
-
-				// 加入gossip网络
-				gossipTh = new GossipNodeThread(node, HnKeyUtils.getString4PublicKey(publicKey()));
-				gossipTh.start();
-			}
-
-			@Override
-			public void stop() {
-				gossipTh.interrupt();
-				super.stop();
-
-				logger.info("<<membership>> is stopped......");
+				Membership membership = new Membership(node, HnKeyUtils.getString4PublicKey(publicKey()));
+				int[] result = { 0, 0 };
+				do {
+					result = membership.joinNetwork();
+				} while (result[0] == 0);
 			}
 		};
 		llc.start();
