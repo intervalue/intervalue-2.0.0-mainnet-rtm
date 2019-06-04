@@ -59,11 +59,19 @@ public class NettyHttpServer {
 		slaveGroup.shutdownGracefully();
 		masterGroup.shutdownGracefully();
 
+//		try {
+//			channel.channel().closeFuture().sync();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		try {
-			channel.channel().closeFuture().sync();
+			slaveGroup.terminationFuture().sync();
+			masterGroup.terminationFuture().sync();
 		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 	public static NettyHttpServer boostrap(HttpServiceImplsDependent dep, int port) {
