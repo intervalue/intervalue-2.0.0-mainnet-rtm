@@ -30,7 +30,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
  * @Description: maintain membership of peers instead of
- *               {@link GossipNodeThread}
+ *               {@link GossipNodeThread},once for forever
  * @author: Francis.Deng
  * @date: Jun 3, 2019 8:45:22 PM
  * @version: V1.0
