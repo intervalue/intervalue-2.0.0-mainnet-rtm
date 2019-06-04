@@ -1,5 +1,6 @@
 package one.inve.localfullnode2.dep.items;
 
+import java.util.Collections;
 import java.util.List;
 
 import one.inve.cluster.Member;
@@ -15,13 +16,17 @@ public class Members extends DependentItem {
 		return inShardingOrGlobally == Config.GOSSIP_GLOBAL_SHARD ? membersGlobally : membersInSharding;
 	}
 
+	/**
+	 * introduce thread-safe list
+	 */
+
 	public void setInSharding(List<Member> members) {
-		this.membersInSharding = members;
+		this.membersInSharding = Collections.synchronizedList(members);
 		nodifyAll();
 	}
 
 	public void setGlobally(List<Member> members) {
-		this.membersGlobally = members;
+		this.membersGlobally = Collections.synchronizedList(members);
 		nodifyAll();
 	}
 
