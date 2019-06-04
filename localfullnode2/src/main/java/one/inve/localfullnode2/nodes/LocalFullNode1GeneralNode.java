@@ -102,7 +102,7 @@ public class LocalFullNode1GeneralNode {
 	/**
 	 * 分片内局部全节点邻居池
 	 */
-	private List<Member> inshardNeighborPools = new ArrayList<>();
+	private List<Member> inshardNeighborPools = Collections.synchronizedList(new ArrayList<Member>());
 
 	public List<Member> inshardNeighborPools() {
 		return inshardNeighborPools;
@@ -115,7 +115,7 @@ public class LocalFullNode1GeneralNode {
 	/**
 	 * 全局范围局部全节点邻居池
 	 */
-	private List<Member> globalNeighborPools = new ArrayList<>();
+	private List<Member> globalNeighborPools = Collections.synchronizedList(new ArrayList<Member>());
 
 	public List<Member> globalNeighborPools() {
 		return globalNeighborPools;
