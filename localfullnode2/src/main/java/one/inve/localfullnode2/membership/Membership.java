@@ -36,7 +36,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * @version: V1.0
  */
 public class Membership {
-	private static final Logger logger = LoggerFactory.getLogger(GossipNodeThread.class);
+	private static final Logger logger = LoggerFactory.getLogger(Membership.class);
 	private LocalFullNode1GeneralNode node;
 	private String pubkey;
 	private BigInteger evtCounts;
