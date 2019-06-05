@@ -18,6 +18,7 @@ import one.inve.localfullnode2.dep.items.Mnemonic;
 import one.inve.localfullnode2.dep.items.NValue;
 import one.inve.localfullnode2.dep.items.PrivateKey;
 import one.inve.localfullnode2.dep.items.PublicKey;
+import one.inve.localfullnode2.dep.items.SS;
 import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.dep.items.ShardId;
 import one.inve.localfullnode2.dep.items.Stat;
@@ -53,6 +54,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	private DirectCommunicator directCommunicator;
 	private UpdatedSnapshotMessage updatedSnapshotMessage;
 	private Stat stat;
+	private SS ss;
 
 	private Map<Class<?>, DependentItemConcerned> allDependentItemConcerned = new HashMap<>();
 
@@ -281,6 +283,16 @@ public final class DepItemsManager implements DepItemsManagerial {
 		}
 
 		return stat;
+	}
+
+	@Override
+	public SS attachSS(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			ss.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
+		}
+
+		return ss;
 	}
 
 }
