@@ -5,9 +5,17 @@ import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongycastle.util.BigIntegers;
+import org.spongycastle.util.encoders.Hex;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
+import one.inve.contract.MVM.WorldStateService;
+import one.inve.contract.ethplugin.core.Repository;
+import one.inve.contract.inve.INVERepositoryRoot;
+import one.inve.contract.inve.INVETransactionReceipt;
+import one.inve.contract.provider.RepositoryProvider;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.rocks.BlockBrowserInfo;
@@ -380,35 +388,34 @@ public class HttpApiService {
 	 * @param data 交易的Hash值 { "address":"4PS6MZX6T7ELDSD2RUOZRSYGCC5RHOS7"}
 	 * @return {"nonce":"0" , "balance":"100000"}
 	 */
-	// temporal comment
-//	@RequestMapper(value = "/v1/account/info", method = MethodEnum.POST)
-//	public String getAccountInfo(DataMap<String, Object> data) {
-//		if (null == data || data.isEmpty()) {
-//			logger.error("parameter is empty.");
-//			return ResponseUtils.paramIllegalResponse();
-//		} else {
-//			logger.debug("getAccountInfo value is: {}", JSON.toJSONString(data));
-//		}
-//
-//		String address = data.getString("address");
-//		if (StringUtils.isEmpty(address)) {
-//			logger.error("parameter is empty.");
-//			return ResponseUtils.paramIllegalResponse();
-//		}
-//		try {
-//			Repository track = RepositoryProvider.getTrack(node.nodeParameters().dbId);
-//			BigInteger nonce = track.getNonce(address.getBytes());
-//			BigInteger balance = track.getBalance(address.getBytes());
-//
-//			JSONObject jo = new JSONObject();
-//			jo.put("nonce", nonce);
-//			jo.put("balance", balance);
-//			return ResponseUtils.normalResponse((null == nonce) ? "" : jo.toJSONString());
-//		} catch (Exception e) {
-//			logger.error("getAccountInfo handle error: {}", e);
-//			return ResponseUtils.handleExceptionResponse();
-//		}
-//	}
+	@RequestMapper(value = "/v1/account/info", method = MethodEnum.POST)
+	public String getAccountInfo(DataMap<String, Object> data) {
+		if (null == data || data.isEmpty()) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		} else {
+			logger.debug("getAccountInfo value is: {}", JSON.toJSONString(data));
+		}
+
+		String address = data.getString("address");
+		if (StringUtils.isEmpty(address)) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+		try {
+			Repository track = RepositoryProvider.getTrack(node.nodeParameters().dbId);
+			BigInteger nonce = track.getNonce(address.getBytes());
+			BigInteger balance = track.getBalance(address.getBytes());
+
+			JSONObject jo = new JSONObject();
+			jo.put("nonce", nonce);
+			jo.put("balance", balance);
+			return ResponseUtils.normalResponse((null == nonce) ? "" : jo.toJSONString());
+		} catch (Exception e) {
+			logger.error("getAccountInfo handle error: {}", e);
+			return ResponseUtils.handleExceptionResponse();
+		}
+	}
 
 	/**
 	 * 根据交易哈希，查询对应交易收據
@@ -417,40 +424,39 @@ public class HttpApiService {
 	 * @return {"txStatus":true, "gasUsed":"10000", "executionResult":"HEX String",
 	 *         "error":"error String", "logs":"list of logs"}
 	 */
-	// temporal comment
-//	@RequestMapper(value = "/v1/getReceipt", method = MethodEnum.POST)
-//	public String getReceipt(DataMap<String, Object> data) {
-//		if (null == data || data.isEmpty()) {
-//			logger.error("parameter is empty.");
-//			return ResponseUtils.paramIllegalResponse();
-//		} else {
-//			logger.error("getReceipt value is: {}", JSON.toJSONString(data));
-//		}
-//
-//		String hashHex = data.getString("hash");
-//		if (StringUtils.isEmpty(hashHex)) {
-//			logger.error("parameter is empty.");
-//			return ResponseUtils.paramIllegalResponse();
-//		}
-//		try {
-//			Repository track = RepositoryProvider.getTrack(node.nodeParameters().dbId);
-//			byte[] receiptB = ((INVERepositoryRoot) track).getReceipt(hashHex.getBytes());
-//
-//			INVETransactionReceipt receipt = new INVETransactionReceipt(receiptB);
-//
-//			JSONObject jo = new JSONObject();
-//			jo.put("txStatus", receipt.isTxStatusOK() ? 1 : 0);
-//			jo.put("gasUsed", BigIntegers.fromUnsignedByteArray(receipt.getGasUsed()));
-//			jo.put("executionResult", Hex.toHexString(receipt.getExecutionResult()));
-//			jo.put("error", new String(receipt.getError()));
-////            jo.put("logs", receipt.getLogInfoList());
-//
-//			return ResponseUtils.normalResponse(jo.toJSONString());
-//		} catch (Exception e) {
-//			logger.error("getReceipt handle error: {}", e);
-//			return ResponseUtils.handleExceptionResponse();
-//		}
-//	}
+	@RequestMapper(value = "/v1/getReceipt", method = MethodEnum.POST)
+	public String getReceipt(DataMap<String, Object> data) {
+		if (null == data || data.isEmpty()) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		} else {
+			logger.error("getReceipt value is: {}", JSON.toJSONString(data));
+		}
+
+		String hashHex = data.getString("hash");
+		if (StringUtils.isEmpty(hashHex)) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+		try {
+			Repository track = RepositoryProvider.getTrack(node.nodeParameters().dbId);
+			byte[] receiptB = ((INVERepositoryRoot) track).getReceipt(hashHex.getBytes());
+
+			INVETransactionReceipt receipt = new INVETransactionReceipt(receiptB);
+
+			JSONObject jo = new JSONObject();
+			jo.put("txStatus", receipt.isTxStatusOK() ? 1 : 0);
+			jo.put("gasUsed", BigIntegers.fromUnsignedByteArray(receipt.getGasUsed()));
+			jo.put("executionResult", Hex.toHexString(receipt.getExecutionResult()));
+			jo.put("error", new String(receipt.getError()));
+//            jo.put("logs", receipt.getLogInfoList());
+
+			return ResponseUtils.normalResponse(jo.toJSONString());
+		} catch (Exception e) {
+			logger.error("getReceipt handle error: {}", e);
+			return ResponseUtils.handleExceptionResponse();
+		}
+	}
 
 	/**
 	 * 查询合约属性值（无手续费）
@@ -458,39 +464,38 @@ public class HttpApiService {
 	 * @param data
 	 * @return
 	 */
-	// temporal comment
-//	@RequestMapper(value = "/v1/sendViewMessage", method = MethodEnum.POST)
-//	public String sendViewMessage(DataMap<String, Object> data) {
-//		if (null == data || data.isEmpty()) {
-//			logger.error("parameter is empty.");
-//			return ResponseUtils.paramIllegalResponse();
-//		} else {
-//			logger.error("getReceipt value is: {}", JSON.toJSONString(data));
-//		}
-//
-//		// 读取查询参数(函数选择器+调用值)
-//		String calldata = data.getString("calldata");
-//		if (StringUtils.isEmpty(calldata)) {
-//			logger.error("parameter is empty.");
-//			return ResponseUtils.paramIllegalResponse();
-//		}
-//		// 读取目标合约地址
-//		String address = data.getString("address");
-//		if (StringUtils.isEmpty(calldata)) {
-//			logger.error("parameter is empty.");
-//			return ResponseUtils.paramIllegalResponse();
-//		}
-//
-//		try {
-//			byte[] result = WorldStateService.executeViewTransaction(node.nodeParameters().dbId, address, calldata);
-//
-//			JSONObject jo = new JSONObject();
-//			jo.put("result", Hex.toHexString(result));
-//
-//			return ResponseUtils.normalResponse(jo.toJSONString());
-//		} catch (Exception e) {
-//			logger.error("sendViewMessage handle error: {}", e);
-//			return ResponseUtils.handleExceptionResponse();
-//		}
-//	}
+	@RequestMapper(value = "/v1/sendViewMessage", method = MethodEnum.POST)
+	public String sendViewMessage(DataMap<String, Object> data) {
+		if (null == data || data.isEmpty()) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		} else {
+			logger.error("getReceipt value is: {}", JSON.toJSONString(data));
+		}
+
+		// 读取查询参数(函数选择器+调用值)
+		String calldata = data.getString("calldata");
+		if (StringUtils.isEmpty(calldata)) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+		// 读取目标合约地址
+		String address = data.getString("address");
+		if (StringUtils.isEmpty(calldata)) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+
+		try {
+			byte[] result = WorldStateService.executeViewTransaction(node.nodeParameters().dbId, address, calldata);
+
+			JSONObject jo = new JSONObject();
+			jo.put("result", Hex.toHexString(result));
+
+			return ResponseUtils.normalResponse(jo.toJSONString());
+		} catch (Exception e) {
+			logger.error("sendViewMessage handle error: {}", e);
+			return ResponseUtils.handleExceptionResponse();
+		}
+	}
 }
