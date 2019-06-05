@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import one.inve.cluster.Member;
 import one.inve.localfullnode2.conf.Config;
@@ -124,6 +125,14 @@ public class Gossiper {
 		}
 
 		StringBuilder ips = new StringBuilder();
+		logger.info("memberSize={},numNeighbors={}", memberSize, numNeighbors);
+
+		if (memberSize == 0) {
+			BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
+			lostMotionRound.set(plusOne);
+
+			return;
+		}
 		int[] neighborIdxes = rand.ints(0, memberSize).limit(numNeighbors).toArray();
 
 		CompletableFuture<?>[] evtResults = new CompletableFuture<?>[numNeighbors];
@@ -184,6 +193,7 @@ public class Gossiper {
 				connflag[ni] = false;
 			}
 		}
+
 //		if (logger.isDebugEnabled()) {
 //			long itv = Duration.between(firstTime, Instant.now()).toMillis();
 //			if (itv > 10) {
@@ -263,7 +273,7 @@ public class Gossiper {
 		// Francis.Deng 4/3/2019
 		// diagnosing system problem - tracking gossipObj(DSPTTG)
 //		logger.info("The node currSnapshotVersion={}", node.getCurrSnapshotVersion().toString());
-//		logger.info("The composition of gossipObj={}", JSONObject.toJSONString(gossipObj));
+		logger.info("The composition of gossipObj={}", JSONObject.toJSONString(gossipObj));
 
 		if (gossipObj != null) {
 			if (StringUtils.isEmpty(gossipObj.snapVersion)) {
@@ -377,6 +387,12 @@ public class Gossiper {
 //			}
 
 			Event[] evtRet = gossipObj.events;
+
+			if (evtRet != null || evtRet.length == 0) {
+				BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
+				lostMotionRound.set(plusOne);
+			}
+
 			if (evtRet.length > Config.DEFAULT_SYNC_EVENT_COUNT) {
 				// logger.warn("sync part events...");
 				logger.warn(
