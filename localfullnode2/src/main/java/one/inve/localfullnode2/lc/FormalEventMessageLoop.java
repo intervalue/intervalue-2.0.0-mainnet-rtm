@@ -39,7 +39,7 @@ import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
 public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle {
 	private static final Logger logger = LoggerFactory.getLogger(FormalEventMessageLoop.class);
 
-	private boolean stopMe = true;// control the loop
+	private volatile boolean stopMe = true;// control the loop
 
 	@Override
 	public void start() {
