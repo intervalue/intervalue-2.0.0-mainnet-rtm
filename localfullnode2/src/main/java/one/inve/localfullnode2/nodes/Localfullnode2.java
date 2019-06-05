@@ -13,6 +13,7 @@ import org.apache.log4j.PropertyConfigurator;
  * @author: Francis.Deng
  * @date: May 31, 2019 3:11:53 AM
  * @version: V1.0
+ * @version: V1.1 work with "log4j.properties",$CONF
  */
 public class Localfullnode2 {
 
