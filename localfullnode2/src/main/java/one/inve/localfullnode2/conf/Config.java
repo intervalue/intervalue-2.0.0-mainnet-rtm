@@ -172,4 +172,9 @@ public class Config {
 	 *
 	 */
 	public static boolean logStack = true;
+
+	// enable or disable snapshot
+	public static boolean ENABLE_SNAPSHOT = true;
+	// power function's exponent in lost motion model
+	public static double LostMotionModel_EXPONENT = 0.5;
 }

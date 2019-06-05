@@ -3,6 +3,7 @@ package one.inve.localfullnode2.lc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.GossipDependent;
@@ -52,7 +53,7 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 			super.start();
 			stopMe = false;
 
-			LostMotionModel lostMotionModel = new LostMotionModel(0.5d);
+			LostMotionModel lostMotionModel = new LostMotionModel(Config.LostMotionModel_EXPONENT);
 
 			GossipDependent gossipDep = null;
 			Gossiper g = new Gossiper();
