@@ -1,7 +1,7 @@
 package one.inve.localfullnode2.nodes;
 
+import java.lang.Thread.State;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +11,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.node.LocalFullNode;
-import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.lc.FormalEventMessageLoop;
 import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
-import one.inve.localfullnode2.membership.Membership;
+import one.inve.localfullnode2.membership.GossipNodeThread;
 import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.rpc.RegisterPrx;
 import one.inve.localfullnode2.rpc.RpcConnectionService;
@@ -171,56 +170,56 @@ public class WithSeed extends HashneterInitializer {
 	 */
 	@Override
 	protected ILifecycle startMembership(LocalFullNode1GeneralNode node) {
-//		LazyLifecycle llc = new LazyLifecycle() {
-//			private GossipNodeThread gossipTh;
-//
-//			@Override
-//			public boolean isRunning() {
-//				// TODO Auto-generated method stub
-//				return super.isRunning() || !gossipTh.getState().equals(State.TERMINATED);
-//			}
-//
-//			@Override
-//			public void start() {
-//				super.start();
-//
-//				// 加入gossip网络
-//				gossipTh = new GossipNodeThread(node, HnKeyUtils.getString4PublicKey(publicKey()));
-//				gossipTh.start();
-//			}
-//
-//			@Override
-//			public void stop() {
-//				// gossipTh.interrupt();
-//				gossipTh.interruptMe();
-//				super.stop();
-//
-//				// logger.info("<<membership>> is stopped......");
-//			}
-//		};
-
 		LazyLifecycle llc = new LazyLifecycle() {
+			private GossipNodeThread gossipTh;
+
+			@Override
+			public boolean isRunning() {
+				// TODO Auto-generated method stub
+				return super.isRunning() || !gossipTh.getState().equals(State.TERMINATED);
+			}
+
 			@Override
 			public void start() {
 				super.start();
-				Membership membership = new Membership(node, HnKeyUtils.getString4PublicKey(publicKey()));
-				int[] partner = { 0, 0 };
-				while (partner[0] == 0) {// collect enough participant?All,a half,at least one
-					partner = membership.joinNetwork();
 
-					if (partner[0] == 0) {
-						logger.warn("not enough sharding members({}) right now,the process is blocked", partner[0]);
-						try {
-							TimeUnit.MILLISECONDS.sleep(Config.DEFAULT_GOSSIP_NODE_INTERVAL);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+				// 加入gossip网络
+				gossipTh = new GossipNodeThread(node, HnKeyUtils.getString4PublicKey(publicKey()));
+				gossipTh.start();
+			}
 
-					}
-				}
+			@Override
+			public void stop() {
+				// gossipTh.interrupt();
+				gossipTh.interruptMe();
+				super.stop();
+
+				// logger.info("<<membership>> is stopped......");
 			}
 		};
+
+//		LazyLifecycle llc = new LazyLifecycle() {
+//			@Override
+//			public void start() {
+//				super.start();
+//				Membership membership = new Membership(node, HnKeyUtils.getString4PublicKey(publicKey()));
+//				int[] partner = { 0, 0 };
+//				while (partner[0] == 0) {// collect enough participant?All,a half,at least one
+//					partner = membership.joinNetwork();
+//
+//					if (partner[0] == 0) {
+//						logger.warn("not enough sharding members({}) right now,the process is blocked", partner[0]);
+//						try {
+//							TimeUnit.MILLISECONDS.sleep(Config.DEFAULT_GOSSIP_NODE_INTERVAL);
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//
+//					}
+//				}
+//			}
+//		};
 		llc.start();
 
 		return llc;
