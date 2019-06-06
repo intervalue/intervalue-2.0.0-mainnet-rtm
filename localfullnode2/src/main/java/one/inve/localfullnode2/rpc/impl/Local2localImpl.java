@@ -55,7 +55,7 @@ import one.inve.utils.DSA;
  */
 public class Local2localImpl implements Local2local {
 	private static final Logger logger = LoggerFactory.getLogger(Light2localImpl.class);
-	private LocalFullNode1GeneralNode node;
+	private volatile LocalFullNode1GeneralNode node;
 	List<Map<EventKeyPair, Map<String, Set<String>>>> splitReportCache;
 
 	private SnapshotDbService snapshotDbService = new SnapshotDbServiceImpl2();
