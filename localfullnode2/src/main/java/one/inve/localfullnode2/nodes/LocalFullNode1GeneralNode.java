@@ -81,8 +81,8 @@ public class LocalFullNode1GeneralNode {
 	private PrivateKey privateKey = null;
 
 	private Hashnet hashnet;
-	private EventFlow eventFlow;
-	private IEventStore eventStore;
+	private volatile EventFlow eventFlow;
+	private volatile IEventStore eventStore;
 
 	private int nValue = 1;
 	private int shardCount;
@@ -97,7 +97,7 @@ public class LocalFullNode1GeneralNode {
 	private List<String> blackList4PubKey;
 
 	// the height of events
-	private long[][] lastSeqs;
+	private volatile long[][] lastSeqs;
 
 	/**
 	 * 分片内局部全节点邻居池
