@@ -2,6 +2,7 @@ package one.inve.localfullnode2.store;
 
 import java.util.concurrent.BlockingQueue;
 
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.dep.DependentItem;
 import one.inve.localfullnode2.dep.DependentItemConcerned;
 import one.inve.localfullnode2.dep.items.AllQueues;

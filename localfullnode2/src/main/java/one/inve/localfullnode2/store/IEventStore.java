@@ -1,6 +1,7 @@
 package one.inve.localfullnode2.store;
 
 import java.util.Iterator;
+import one.inve.core.EventBody;
 
 public interface IEventStore {
   /**

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import one.inve.core.EventBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public class DbUtils {
 	}
 
 	public static List<EventBody> queryEventAfterSeq(int shardId, long creatorId, long creatorSeq,
-			LocalFullNode1GeneralNode node) {
+													 LocalFullNode1GeneralNode node) {
 		try {
 			int selfId = (int) node.getCreatorId();
 			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters().dbId);

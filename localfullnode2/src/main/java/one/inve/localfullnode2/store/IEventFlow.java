@@ -1,5 +1,7 @@
 package one.inve.localfullnode2.store;
 
+import one.inve.core.EventBody;
+
 import java.security.PublicKey;
 import java.util.List;
 import java.util.Map;

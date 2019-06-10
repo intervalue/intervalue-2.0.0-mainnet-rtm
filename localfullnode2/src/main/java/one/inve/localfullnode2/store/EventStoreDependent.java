@@ -1,5 +1,6 @@
 package one.inve.localfullnode2.store;
 
+import one.inve.core.EventBody;
 import java.util.concurrent.BlockingQueue;
 
 public interface EventStoreDependent {

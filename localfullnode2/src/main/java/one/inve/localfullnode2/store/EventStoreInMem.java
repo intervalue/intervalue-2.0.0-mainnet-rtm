@@ -1,5 +1,6 @@
 package one.inve.localfullnode2.store;
 
+import one.inve.core.EventBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
