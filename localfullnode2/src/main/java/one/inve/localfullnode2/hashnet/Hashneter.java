@@ -10,14 +10,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import one.inve.core.EventBody;
+import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.snapshot.*;
+import one.inve.localfullnode2.store.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import one.inve.localfullnode2.store.EventBody;
-import one.inve.localfullnode2.store.EventFlow;
-import one.inve.localfullnode2.store.EventStoreImpl;
-import one.inve.localfullnode2.store.IEventFlow;
-import one.inve.localfullnode2.store.IEventStore;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 
 /**
@@ -44,6 +44,12 @@ public class Hashneter implements IHashneter {
 		} else {
 			// key condition - repair snapshot if possible
 			// 根据最新快照，恢复相关快照参数： treeRootMap、snapshotPointMap等
+			if (Config.ENABLE_SNAPSHOT) {
+				DetectAndRepairSnapshotDataDependent detectAndRepairSnapshotDataDep =
+						DepItemsManager.getInstance().getItemConcerned(DetectAndRepairSnapshotDataDependency.class);
+				SnapshotDbService store = new SnapshotDbServiceImpl();
+				new DetectAndRepairSnapshotData().detectAndRepairSnapshotData(detectAndRepairSnapshotDataDep,store);
+			}
 			// DbUtils.detectAndRepairSnapshotData(node);
 			// 重载hashnet
 			reloadHashnet(dep);
@@ -120,7 +126,12 @@ public class Hashneter implements IHashneter {
 		/**
 		 * 修复准备生成最新版本快照点需要的相关信息
 		 */
-		// temporal comment
+		// key condition
+		if (Config.ENABLE_SNAPSHOT) {
+			RepairCurrSnapshotPointInfoDependent repairCurrSnapshotPointInfoDep =
+					DepItemsManager.getInstance().getItemConcerned(RepairCurrSnapshotPointInfoDependency.class);
+			new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(repairCurrSnapshotPointInfoDep);
+		}
 		// repairCurrSnapshotPointInfo(node);
 
 //        logger.info(">>>>>> reload Hashnet finished.");
