@@ -19,6 +19,7 @@ import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.dep.items.ShardId;
 import one.inve.localfullnode2.dep.items.Stat;
 import one.inve.localfullnode2.dep.items.UpdatedSnapshotMessage;
+import one.inve.localfullnode2.dep.items.Wal;
 
 /**
  * 
@@ -71,5 +72,5 @@ public interface DepItemsManagerial {
 
 	SS attachSS(DependentItemConcerned... dependentItemConcerneds);
 
-	SS attachWal(DependentItemConcerned... dependentItemConcerneds);
+	Wal attachWal(DependentItemConcerned... dependentItemConcerneds);
 }

@@ -39,6 +39,7 @@ import one.inve.cluster.Member;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.conf.NodeParameters;
 import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.dep.items.Wal;
 import one.inve.localfullnode2.hashnet.Event;
 import one.inve.localfullnode2.hashnet.Hashnet;
 import one.inve.localfullnode2.staging.StagingArea;
@@ -469,6 +470,9 @@ public class LocalFullNode1GeneralNode {
 				newWallet(fileName);
 			}
 		}
+
+		Wal wal = DepItemsManager.getInstance().attachWal(null);
+		wal.set(wallet);
 	}
 
 	/**

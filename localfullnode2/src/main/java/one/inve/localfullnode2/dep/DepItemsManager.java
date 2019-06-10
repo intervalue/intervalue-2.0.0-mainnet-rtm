@@ -299,13 +299,13 @@ public final class DepItemsManager implements DepItemsManagerial {
 	}
 
 	@Override
-	public SS attachWal(DependentItemConcerned... dependentItemConcerneds) {
+	public Wal attachWal(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			wal.attach(dependentItemConcerneds);
 			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 
-		return ss;
+		return wal;
 	}
 
 }
