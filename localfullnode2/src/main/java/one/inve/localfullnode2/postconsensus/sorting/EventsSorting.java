@@ -9,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 
 /**
  * 

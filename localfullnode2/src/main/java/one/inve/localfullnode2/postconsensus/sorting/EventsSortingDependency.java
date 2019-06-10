@@ -7,7 +7,7 @@ import one.inve.localfullnode2.dep.DependentItemConcerned;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 
 public class EventsSortingDependency implements EventsSortingDependent, DependentItemConcerned {
 
