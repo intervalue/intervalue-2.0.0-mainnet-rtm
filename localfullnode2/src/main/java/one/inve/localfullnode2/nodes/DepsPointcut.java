@@ -23,8 +23,9 @@ import one.inve.localfullnode2.message.MessagesVerificationDependency;
 import one.inve.localfullnode2.postconsensus.exe.EventsExeDependency;
 import one.inve.localfullnode2.postconsensus.readout.EventsReadoutDependency;
 import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
+import one.inve.localfullnode2.snapshot.*;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependency;
 
 /**
@@ -77,7 +78,114 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		MessagePersistenceDependency messagePersistenceDependency = new MessagePersistenceDependency();
 		of(messagePersistenceDependency);
 
+		CreateSnapshotPointDependency createSnapshotPointDependency = new CreateSnapshotPointDependency();
+		of(createSnapshotPointDependency);
+
+		DetectAndRepairSnapshotDataDependency detectAndRepairSnapshotDataDependency =
+				new DetectAndRepairSnapshotDataDependency();
+		of(detectAndRepairSnapshotDataDependency);
+
+		HandleConsensusSnapshotMessageDependency handleConsensusSnapshotMessageDependency =
+				new HandleConsensusSnapshotMessageDependency();
+		of(handleConsensusSnapshotMessageDependency);
+
+		HandleSnapshotPointDependency handleSnapshotPointDependency = new HandleSnapshotPointDependency();
+		of(handleSnapshotPointDependency);
+
+		RepairCurrSnapshotPointInfoDependency repairCurrSnapshotPointInfoDependency =
+				new RepairCurrSnapshotPointInfoDependency();
+		of(repairCurrSnapshotPointInfoDependency);
+
+		SnapshotSynchronizerDependency snapshotSynchronizerDependency = new SnapshotSynchronizerDependency();
+		of(snapshotSynchronizerDependency);
+
+		SnapshotSyncConsumer snapshotSyncConsumer =  new SnapshotSyncConsumer();
+		of(snapshotSyncConsumer);
+
 		buildStagingArea();
+	}
+
+	/**
+	 * {@code SnapshotSync(SnapshotSyncConsumable dep)}
+	 */
+	private void of(SnapshotSyncConsumer snapshotSyncConsumer) {
+		DepItemsManager.getInstance().attachDirectCommunicator(snapshotSyncConsumer);
+	}
+
+	/**
+	 * {@code SnapshotSynchronizer(SnapshotSynchronizerDependent dep)}
+	 */
+	protected void of(SnapshotSynchronizerDependency snapshotSynchronizerDependency) {
+		DepItemsManager.getInstance().attachSS(snapshotSynchronizerDependency);
+		DepItemsManager.getInstance().attachStat(snapshotSynchronizerDependency);
+		DepItemsManager.getInstance().attachShardCount(snapshotSynchronizerDependency);
+		DepItemsManager.getInstance().attachNValue(snapshotSynchronizerDependency);
+		DepItemsManager.getInstance().attachPublicKey(snapshotSynchronizerDependency);
+		DepItemsManager.getInstance().attachAllQueues(snapshotSynchronizerDependency);
+	}
+
+	/**
+	 * {@code RepairCurrSnapshotPointInfo(RepairCurrSnapshotPointInfoDependent dep)}
+	 */
+	protected void of(RepairCurrSnapshotPointInfoDependency repairCurrSnapshotPointInfoDependency) {
+		DepItemsManager.getInstance().attachSS(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachStat(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachShardCount(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachNValue(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachLocalFullNodes(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachShardId(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachCreatorId(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachDBId(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachAllQueues(repairCurrSnapshotPointInfoDependency);
+	}
+
+	/**
+	 * {@code HandleSnapshotPoint(HandleSnapshotPointDependent dep)}
+	 */
+	protected void of(HandleSnapshotPointDependency handleSnapshotPointDependency) {
+		DepItemsManager.getInstance().attachSS(handleSnapshotPointDependency);
+		DepItemsManager.getInstance().attachAllQueues(handleSnapshotPointDependency);
+		DepItemsManager.getInstance().attachMnemonic(handleSnapshotPointDependency);
+		DepItemsManager.getInstance().attachPublicKey(handleSnapshotPointDependency);
+	}
+
+	/**
+	 * {@code HandleConsensusSnapshotMessage(HandleConsensusSnapshotMessageDependent dep)}
+	 */
+	protected void of(HandleConsensusSnapshotMessageDependency handleConsensusSnapshotMessageDependency) {
+		DepItemsManager.getInstance().attachSS(handleConsensusSnapshotMessageDependency);
+		DepItemsManager.getInstance().attachStat(handleConsensusSnapshotMessageDependency);
+		DepItemsManager.getInstance().attachShardCount(handleConsensusSnapshotMessageDependency);
+		DepItemsManager.getInstance().attachNValue(handleConsensusSnapshotMessageDependency);
+		DepItemsManager.getInstance().attachDBId(handleConsensusSnapshotMessageDependency);
+		DepItemsManager.getInstance().attachAllQueues(handleConsensusSnapshotMessageDependency);
+
+	}
+
+	/**
+	 * {@code DetectAndRepairSnapshotData(DetectAndRepairSnapshotDataDependent dep)}
+	 */
+	protected void of(DetectAndRepairSnapshotDataDependency detectAndRepairSnapshotDataDependency) {
+		DepItemsManager.getInstance().attachSS(detectAndRepairSnapshotDataDependency);
+		DepItemsManager.getInstance().attachNValue(detectAndRepairSnapshotDataDependency);
+		DepItemsManager.getInstance().attachShardId(detectAndRepairSnapshotDataDependency);
+		DepItemsManager.getInstance().attachCreatorId(detectAndRepairSnapshotDataDependency);
+		DepItemsManager.getInstance().attachDBId(detectAndRepairSnapshotDataDependency);
+	}
+
+	/**
+	 * {@code CreateSnapshotPoint(CreateSnapshotPointDependent dep)}
+	 */
+	protected void of(CreateSnapshotPointDependency createSnapshotPointDependency) {
+		DepItemsManager.getInstance().attachSS(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachStat(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachShardCount(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachNValue(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachLocalFullNodes(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachShardId(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachCreatorId(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachAllQueues(createSnapshotPointDependency);
+
 	}
 
 	/**
@@ -114,6 +222,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		DepItemsManager.getInstance().attachStat(eventsExeDependency);
 		DepItemsManager.getInstance().attachDBId(eventsExeDependency);
 		DepItemsManager.getInstance().attachAllQueues(eventsExeDependency);
+		DepItemsManager.getInstance().attachSS(eventsExeDependency);
 	}
 
 	/**
