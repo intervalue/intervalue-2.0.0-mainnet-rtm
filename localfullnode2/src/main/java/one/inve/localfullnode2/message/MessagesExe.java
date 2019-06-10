@@ -4,6 +4,10 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
 
+import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.snapshot.*;
+import one.inve.localfullnode2.store.SnapshotDbService;
+import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +53,12 @@ public class MessagesExe {
 		Instant t1;
 		long handleCount = 0L;
 		int loopCount = 0;
+
+		HandleConsensusSnapshotMessageDependent handleConsensusSnapshotMessageDep = null;
+		HandleConsensusSnapshotMessage handleConsensusSnapshotMessage = new HandleConsensusSnapshotMessage();
+		HandleSnapshotPointDependent handleSnapshotPointDep = null;
+		HandleSnapshotPoint handleSnapshotPoint = new HandleSnapshotPoint();
+
 		// while (true) {
 		try {
 			if (!dep.getConsMessageHandleQueue().isEmpty()) {
@@ -81,6 +91,12 @@ public class MessagesExe {
 					} else if (tm.getInteger("type") == MessageType.SNAPSHOT.getIndex()) {
 						// key condition
 						// 快照消息处理
+						if (Config.ENABLE_SNAPSHOT) {
+							handleConsensusSnapshotMessageDep =
+									DepItemsManager.getInstance().getItemConcerned(HandleConsensusSnapshotMessageDependency.class);
+							SnapshotDbService store = new SnapshotDbServiceImpl();
+							handleConsensusSnapshotMessage.handleConsensusSnapshotMessage(handleConsensusSnapshotMessageDep, store, msgObject);
+						}
 						// handleConsensusSnapshotMessage(msgObject);
 					} else if (tm.getInteger("type") == MessageType.TEXT.getIndex()) {
 						// 文本数据消息处理
@@ -89,9 +105,12 @@ public class MessagesExe {
 						logger.error("not supposed message type.");
 					}
 				} else {
-
 					// key condition - if empty,the following is executing snapshot message
-
+					if(Config.ENABLE_SNAPSHOT){
+						handleSnapshotPointDep =
+								DepItemsManager.getInstance().getItemConcerned(HandleSnapshotPointDependency.class);
+						handleSnapshotPoint.handleSnapshotPointMessage(handleSnapshotPointDep,msgObject);
+					}
 //                        SnapshotPoint sp = node.getSnapshotPointMap().get(vers);
 //                        logger.warn("\nspecif msg: {}, \nvers-{} sp: {}",
 //                                msgObject.toJSONString(), vers, JSON.toJSONString(sp));
