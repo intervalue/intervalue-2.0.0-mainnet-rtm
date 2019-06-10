@@ -37,11 +37,11 @@ import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.rpc.Local2local;
 import one.inve.localfullnode2.snapshot.vo.SnapObj;
 import one.inve.localfullnode2.store.DbUtils;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.IEventStore;
 import one.inve.localfullnode2.store.SnapshotDbService;
-import one.inve.localfullnode2.store.SnapshotDbServiceImpl2;
+import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
 import one.inve.localfullnode2.utilities.Cryptos;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 import one.inve.localfullnode2.utilities.StringUtils;
@@ -58,7 +58,7 @@ public class Local2localImpl implements Local2local {
 	private LocalFullNode1GeneralNode node;
 	List<Map<EventKeyPair, Map<String, Set<String>>>> splitReportCache;
 
-	private SnapshotDbService snapshotDbService = new SnapshotDbServiceImpl2();
+	private SnapshotDbService snapshotDbService = new SnapshotDbServiceImpl();
 	private ITransactionDbService transactionDbService = new TransactionDbService();
 
 	public Local2localImpl(LocalFullNode1GeneralNode node) {
@@ -301,10 +301,12 @@ public class Local2localImpl implements Local2local {
 		int selfId = (int) node.getCreatorId();
 		logger.warn("hash:{}", hash);
 		String snapshotStr = snapshotDbService.querySnapshotMessageFormatStringByHash(node.nodeParameters().dbId, hash);
-		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
-		// 获取交易信息
-		List<JSONObject> trans = transactionDbService.queryMissingTransactionsBeforeSnapshotPoint(originalSnapshotStr,
-				new BigInteger(transCount), node.nodeParameters().dbId);
+		//2019.05.30 暂停快照同步message
+		List<JSONObject> trans = null;
+//		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
+//		// 获取交易信息
+//		List<JSONObject> trans = TransactionDbService.queryMissingTransactionsBeforeSnapshotPoint(originalSnapshotStr,
+//				new BigInteger(transCount), node.nodeParameters.dbId);
 
 		// 构建结果结构
 		SnapObj snapObj = new SnapObj(snapshotStr, (null == trans) ? null : JSONArray.toJSONString(trans));
