@@ -28,7 +28,7 @@ import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.DbUtils;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.utilities.FileLockUtils;
 import one.inve.localfullnode2.utilities.GracefulShutdown;
 import one.inve.localfullnode2.utilities.PathUtils;

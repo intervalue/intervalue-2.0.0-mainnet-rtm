@@ -42,7 +42,7 @@ import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.hashnet.Event;
 import one.inve.localfullnode2.hashnet.Hashnet;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventFlow;
 import one.inve.localfullnode2.store.EventStoreDependency;
 import one.inve.localfullnode2.store.EventStoreImpl;
