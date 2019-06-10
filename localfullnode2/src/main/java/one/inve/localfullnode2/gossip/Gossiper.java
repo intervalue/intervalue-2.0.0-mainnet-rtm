@@ -13,6 +13,10 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.snapshot.SnapshotSynchronizer;
+import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependency;
+import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +28,7 @@ import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
 import one.inve.localfullnode2.gossip.vo.AppointEvent;
 import one.inve.localfullnode2.gossip.vo.GossipObj;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.IEventFlow;
 import one.inve.localfullnode2.utilities.Cryptos;
 import one.inve.localfullnode2.utilities.StringUtils;
@@ -60,6 +64,9 @@ public class Gossiper {
 	public String gossipAppointEventKey;
 	private byte[] txCache;
 	public boolean gossipAppointEventFlag;
+
+	SnapshotSynchronizerDependent snapshotSynchronizerDep = null;
+	SnapshotSynchronizer snapshotSynchronizer = new SnapshotSynchronizer();
 
 	public void talkGossip(GossipDependent dep) {
 		this.dep = dep;
@@ -258,6 +265,8 @@ public class Gossiper {
 		boolean flag = false;
 		GossipObj gossipObj = null;
 		Instant first = Instant.now();
+
+
 		try {
 			// 异步获取返回结果
 			gossipObj = (GossipObj) evtResult.get(30000, TimeUnit.MILLISECONDS);
@@ -282,7 +291,14 @@ public class Gossiper {
 			}
 
 			// key condition - sync snapshot if possible
-
+			if(Config.ENABLE_SNAPSHOT){
+				snapshotSynchronizerDep =
+						DepItemsManager.getInstance().getItemConcerned(SnapshotSynchronizerDependency.class);
+				boolean b = snapshotSynchronizer.synchronizeHigher(snapshotSynchronizerDep,neighbor,gossipObj);
+				if(!b){
+					return eventSize + "_" + eventSpaces;
+				}
+			}
 //			BigInteger snapVers = new BigInteger(gossipObj.snapVersion);
 //			if (snapVers.compareTo(dep.getCurrSnapshotVersion().add(BigInteger.ONE)) > 0) {
 //				logger.warn("node-({}, {}): neighbor node snapshot version bigger than mine...", node.getShardId(),
