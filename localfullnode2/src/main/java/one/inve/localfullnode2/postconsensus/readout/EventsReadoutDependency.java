@@ -9,7 +9,7 @@ import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.hashnet.Event;
 import one.inve.localfullnode2.hashnet.IHashneter;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 
 public class EventsReadoutDependency implements EventsReadoutDependent, DependentItemConcerned {
 
