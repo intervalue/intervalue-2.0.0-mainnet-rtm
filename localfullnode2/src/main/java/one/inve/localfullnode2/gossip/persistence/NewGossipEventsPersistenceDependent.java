@@ -3,7 +3,7 @@ package one.inve.localfullnode2.gossip.persistence;
 import java.math.BigInteger;
 import java.util.concurrent.BlockingQueue;
 
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 
 /**
  * 

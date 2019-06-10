@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
