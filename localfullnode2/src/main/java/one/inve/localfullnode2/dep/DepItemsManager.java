@@ -23,6 +23,7 @@ import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.dep.items.ShardId;
 import one.inve.localfullnode2.dep.items.Stat;
 import one.inve.localfullnode2.dep.items.UpdatedSnapshotMessage;
+import one.inve.localfullnode2.dep.items.Wal;
 
 /**
  * 
@@ -55,6 +56,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	private UpdatedSnapshotMessage updatedSnapshotMessage;
 	private Stat stat;
 	private SS ss;
+	private Wal wal;
 
 	private Map<Class<?>, DependentItemConcerned> allDependentItemConcerned = new HashMap<>();
 
@@ -77,6 +79,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		directCommunicator = new DirectCommunicator();
 		updatedSnapshotMessage = new UpdatedSnapshotMessage();
 		stat = new Stat();
+		wal = new Wal();
 	}
 
 	private static class SingletonHelper {
@@ -289,6 +292,16 @@ public final class DepItemsManager implements DepItemsManagerial {
 	public SS attachSS(DependentItemConcerned... dependentItemConcerneds) {
 		if (dependentItemConcerneds != null) {
 			ss.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
+		}
+
+		return ss;
+	}
+
+	@Override
+	public SS attachWal(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			wal.attach(dependentItemConcerneds);
 			retainItemConcernedsByClass(dependentItemConcerneds);
 		}
 

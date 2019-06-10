@@ -70,4 +70,6 @@ public interface DepItemsManagerial {
 	Stat attachStat(DependentItemConcerned... dependentItemConcerneds);
 
 	SS attachSS(DependentItemConcerned... dependentItemConcerneds);
+
+	SS attachWal(DependentItemConcerned... dependentItemConcerneds);
 }
