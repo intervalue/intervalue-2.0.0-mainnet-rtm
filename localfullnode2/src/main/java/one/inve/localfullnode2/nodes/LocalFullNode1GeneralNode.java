@@ -39,6 +39,7 @@ import one.inve.cluster.Member;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.conf.NodeParameters;
 import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.dep.items.Wal;
 import one.inve.localfullnode2.hashnet.Event;
 import one.inve.localfullnode2.hashnet.Hashnet;
 import one.inve.localfullnode2.staging.StagingArea;
@@ -81,8 +82,8 @@ public class LocalFullNode1GeneralNode {
 	private PrivateKey privateKey = null;
 
 	private Hashnet hashnet;
-	private EventFlow eventFlow;
-	private IEventStore eventStore;
+	private volatile EventFlow eventFlow;
+	private volatile IEventStore eventStore;
 
 	private int nValue = 1;
 	private int shardCount;
@@ -97,7 +98,7 @@ public class LocalFullNode1GeneralNode {
 	private List<String> blackList4PubKey;
 
 	// the height of events
-	private long[][] lastSeqs;
+	private volatile long[][] lastSeqs;
 
 	/**
 	 * 分片内局部全节点邻居池
@@ -469,6 +470,9 @@ public class LocalFullNode1GeneralNode {
 				newWallet(fileName);
 			}
 		}
+
+		Wal wal = DepItemsManager.getInstance().attachWal(null);
+		wal.set(wallet);
 	}
 
 	/**

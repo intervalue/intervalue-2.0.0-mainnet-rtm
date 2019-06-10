@@ -3,6 +3,7 @@ package one.inve.localfullnode2.message;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.snapshot.*;
@@ -11,12 +12,15 @@ import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import one.inve.bean.message.ContractMessage;
 import one.inve.bean.message.MessageType;
 import one.inve.bean.message.TextMessage;
 import one.inve.bean.message.TransactionMessage;
 import one.inve.contract.MVM.WorldStateService;
+import one.inve.contract.inve.InternalTransferData;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.localfullnode2.utilities.TxVerifyUtils;
@@ -86,8 +90,7 @@ public class MessagesExe {
 						handleConsensusTransactionMessage(msgObject);
 					} else if (tm.getInteger("type") == MessageType.CONTRACT.getIndex()) {
 						// 合约消息处理
-						// temporal comment
-						// handleConsensusContractMessage(msgObject);
+						handleConsensusContractMessage(msgObject);
 					} else if (tm.getInteger("type") == MessageType.SNAPSHOT.getIndex()) {
 						// key condition
 						// 快照消息处理
@@ -479,5 +482,106 @@ public class MessagesExe {
 	 */
 	private boolean verifyDoubleCost(String fromAddress, String toAddress, BigInteger fee) {
 		return verifyDoubleCost(fromAddress, toAddress, fee, BigInteger.ZERO);
+	}
+
+	/**
+	 * 处理共识后的智能合约消息
+	 * 
+	 * @param msgObject 共识后的智能合约消息
+	 */
+	private void handleConsensusContractMessage(JSONObject msgObject) throws InterruptedException {
+//		logger.info("node-({}, {}): Handle Consensus Contract Message...", node.getShardId(), node.getCreatorId());
+		String message = msgObject.getString("msg");
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("node-({}, {}): ContractMessage: {}", node.getShardId(), node.getCreatorId(), message);
+//		}
+		ContractMessage cm = JSON.parseObject(message, ContractMessage.class);
+		String fromAddress = cm.getFromAddress();
+		boolean valid = msgObject.getBoolean("isValid");
+		List<InternalTransferData> list = null;
+		if (valid) {
+			int validState = 0;
+			try {
+				validState = TxVerifyUtils.verifyMessageWithoutSign(JSONObject.parseObject(message),
+						msgObject.getInteger("eShardId"), dep.getNosql(), dep.getMultiple(), dep.getShardCount());
+			} catch (Exception e) {
+//				logger.error("node-({}, {}): Contract Message verify error. msgObj: {}, exception: {}",
+//						node.getShardId(), node.getCreatorId(), msgObject.toJSONString(), e);
+			}
+			if (validState == 1) {
+				valid = true;
+			} else if (validState == 2) {
+//				logger.error("node-({}, {}): Contract message exist, throw away!!! msgObj: {}", node.getShardId(),
+//						node.getCreatorId(), msgObject.toJSONString());
+				return;
+			} else {
+				valid = false;
+			}
+			if (!valid) {
+//				logger.error("node-({}, {}): Contract Message verify failed. msgObj: {}", node.getShardId(),
+//						node.getCreatorId(), msgObject.toJSONString());
+			} else {
+				// 执行智能合约
+				list = WorldStateService.executeContractMessage(dep.getDbId(), cm);
+				valid = null != list && list.size() > 0;
+			}
+		}
+		// 保存智能合约消息
+		if (StringUtils.isNotEmpty(fromAddress)) {
+			msgObject.put("fromAddress", fromAddress);
+		}
+		msgObject.put("hash", cm.getSignature());
+		msgObject.put("isValid", valid);
+		dep.getConsMessageSaveQueue().add(msgObject);
+
+		if (valid) {
+			// 合约执行产生的交易入库
+			boolean needRecordFee = true;
+			for (InternalTransferData data : list) {
+				if (needRecordFee) {
+					if (data.getFee().compareTo(BigInteger.ZERO) > 0) {
+						// 扣除和收集手续费
+						// key condition
+						// node.setTotalFeeBetween2Snapshots(node.getTotalFeeBetween2Snapshots().add(data.getFee()));
+						addContractFeeTx2SaveQueue(cm.getHash(), data);
+					}
+					needRecordFee = false;
+				}
+				// 合约执行产生的交易入库
+				addContractTx2SaveQueue(cm.getHash(), data);
+			}
+		}
+	}
+
+	private void addContractFeeTx2SaveQueue(String mHash, InternalTransferData data) throws InterruptedException {
+		// node.setSystemAutoTxMaxId(node.getSystemAutoTxMaxId().add(BigInteger.ONE));
+		dep.addSystemAutoTxMaxId(1);
+		JSONObject o = new JSONObject();
+		// o.put("id", node.getSystemAutoTxMaxId());
+		o.put("id", dep.getSystemAutoTxMaxId());
+		o.put("type", "contract_fee_tx");
+		o.put("mHash", mHash);
+		o.put("fromAddress", data.getFromAddress());
+		o.put("toAddress", Config.FOUNDATION_ADDRESS);
+		o.put("amount", data.getFee());
+		o.put("updateTime", Instant.now().toEpochMilli());
+		// node.getSystemAutoTxSaveQueue().put(o);
+		dep.getSystemAutoTxSaveQueue().put(o);
+	}
+
+	private void addContractTx2SaveQueue(String mHash, InternalTransferData data) throws InterruptedException {
+		// node.setSystemAutoTxMaxId(node.getSystemAutoTxMaxId().add(BigInteger.ONE));
+		dep.addSystemAutoTxMaxId(1);
+		JSONObject o = new JSONObject();
+		// o.put("id", node.getSystemAutoTxMaxId());
+		o.put("id", dep.getSystemAutoTxMaxId());
+		o.put("type", "contract_tx");
+		o.put("mHash", mHash);
+		o.put("fromAddress", data.getFromAddress());
+		o.put("toAddress", data.getToAddress());
+		o.put("amount", data.getValue());
+		o.put("updateTime", Instant.now().toEpochMilli());
+		// node.getSystemAutoTxSaveQueue().put(o);
+		dep.getSystemAutoTxSaveQueue().put(o);
 	}
 }

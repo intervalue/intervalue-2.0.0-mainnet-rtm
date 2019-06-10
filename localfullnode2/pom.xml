@@ -303,9 +303,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>one.inve</groupId>
-			<artifactId>vm</artifactId>
-			<version>1.0-SNAPSHOT</version>
+		    <groupId>one.inve</groupId>
+		    <artifactId>vm</artifactId>
+		    <version>1.0-SNAPSHOT</version>
 		</dependency>		
 
 		<!-- for junit test -->

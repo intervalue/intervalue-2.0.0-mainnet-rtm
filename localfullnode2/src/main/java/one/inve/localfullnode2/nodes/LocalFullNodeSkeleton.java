@@ -353,8 +353,13 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 			@Override
 			public void stop() {
-				getAdapter().deactivate();
-				getAdapter().destroy();
+				// getAdapter().deactivate();
+				// getAdapter().destroy();
+				// getCommunicator().shutdown();
+				getCommunicator().destroy();
+//				while (!getCommunicator().isShutdown()) {
+//					logger.info("communicator shutdown is going on");
+//				}
 				super.stop();
 
 				logger.info("<<rpc server>> is stopped......");
