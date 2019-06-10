@@ -3,14 +3,18 @@ package one.inve.localfullnode2.postconsensus.exe;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
-
+import one.inve.bean.message.Contribution;
+import one.inve.core.EventBody;
+import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.snapshot.CreateSnapshotPoint;
+import one.inve.localfullnode2.snapshot.CreateSnapshotPointDependency;
+import one.inve.localfullnode2.snapshot.CreateSnapshotPointDependent;
+import one.inve.localfullnode2.utilities.Hash;
+import one.inve.localfullnode2.utilities.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.alibaba.fastjson.JSONObject;
-
 import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.utils.DSA;
@@ -66,6 +70,9 @@ public class EventsExe {
 		Instant t0 = Instant.now();
 		Instant t1;
 		long eventCount = 0L;
+
+		CreateSnapshotPointDependent createSnapshotPointDep = null;
+		CreateSnapshotPoint createSnapshotPoint = new CreateSnapshotPoint();
 		// while (true) {
 //            while (-1==selfId) {
 //                // 节点在片内的ID不存在，在一直等待
@@ -80,15 +87,15 @@ public class EventsExe {
 			// if (!dep.getConsEventHandleQueue().isEmpty()) {
 			while (!dep.getConsEventHandleQueue().isEmpty()) {// until consEventHandleQueue is empty
 				// 取共识Event
-				EventBody event = dep.getConsEventHandleQueue().poll();
+				one.inve.core.EventBody event = dep.getConsEventHandleQueue().poll();
 				// 更新共识Event数
 				// dep.setTotalConsEventCount(dep.getTotalConsEventCount().add(BigInteger.ONE));
 				dep.addTotalConsEventCount(1);
 				// key condition
 				// 累计各分片各节点event数
-//				dep.getContributions()
-//						.add(new Contribution.Builder().shardId(event.getShardId()).creatorId(event.getCreatorId())
-//								.otherId(event.getOtherId()).otherSeq(event.getOtherSeq()).build());
+				dep.getContributions()
+						.add(new Contribution.Builder().shardId(event.getShardId()).creatorId(event.getCreatorId())
+								.otherId(event.getOtherId()).otherSeq(event.getOtherSeq()).build());
 
 				// 保存共识Event
 				saveConsEvent(event);
@@ -97,6 +104,11 @@ public class EventsExe {
 				addConsMessage2VerifyQueue(event);
 
 				// key condition - 达到生成快照点条件，则生成快照点
+				if (Config.ENABLE_SNAPSHOT) {
+					createSnapshotPointDep =
+							DepItemsManager.getInstance().getItemConcerned(CreateSnapshotPointDependency.class);
+					createSnapshotPoint.createSnapshotPoint(createSnapshotPointDep, event);
+				}
 				// createSnapshotPoint(event);
 
 				// 打印信息
@@ -184,12 +196,12 @@ public class EventsExe {
 
 				// key condition
 				// 计算更新消息hash根
-//				JSONObject msgObj = JSONObject.parseObject(new String(msg));
-//				if (StringUtils.isEmpty(msgHashTreeRoot)) {
-//					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
-//				} else {
-//					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
-//				}
+				JSONObject msgObj = JSONObject.parseObject(new String(msg));
+				if (StringUtils.isEmpty(msgHashTreeRoot)) {
+					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
+				} else {
+					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
+				}
 
 				try {
 					dep.getConsMessageVerifyQueue().put(o);
