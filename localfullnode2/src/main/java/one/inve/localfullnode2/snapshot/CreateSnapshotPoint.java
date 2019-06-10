@@ -21,12 +21,10 @@ public class CreateSnapshotPoint {
 
     private CreateSnapshotPointDependent dep;
     private String msgHashTreeRoot = null;
-    private EventBody event;
     private BigInteger vers;
 
-    public void createSnapshotPoint(CreateSnapshotPointDependent dep) throws InterruptedException {
+    public void createSnapshotPoint(CreateSnapshotPointDependent dep, EventBody event) throws InterruptedException {
         this.dep = dep;
-        this.event = dep.getEventBody();
         this.msgHashTreeRoot = dep.getMsgHashTreeRoot();
         this.vers = dep.getCurrSnapshotVersion();
 

@@ -11,18 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 
-public class HandleSnapshotPointMessage {
-    private static final Logger logger = LoggerFactory.getLogger(HandleSnapshotPointMessage.class);
+public class HandleSnapshotPoint {
+    private static final Logger logger = LoggerFactory.getLogger(HandleSnapshotPoint.class);
 
-    private HandleSnapshotPointMessageDependent dep;
+    private HandleSnapshotPointDependent dep;
     private BigInteger vers;
-    private JSONObject msgObject;
 
-
-    public void handleSnapshotPointMessage(HandleSnapshotPointMessageDependent dep) throws Exception{
+    public void handleSnapshotPointMessage(HandleSnapshotPointDependent dep,JSONObject msgObject) throws Exception{
         this.dep = dep;
         this.vers = dep.getCurrSnapshotVersion();
-        this.msgObject = dep.getMsgObject();
 
         logger.info(">>>>>START<<<<<handleSnapshotPointMessage:\n msgObject: {}", msgObject);
 

@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public interface RepairCurrSnapshotPointInfoDependent {
@@ -36,11 +37,11 @@ public interface RepairCurrSnapshotPointInfoDependent {
 
     BigInteger getConsMessageMaxId();
 
-    LinkedBlockingQueue<JSONObject> getConsMessageVerifyQueue();
+    BlockingQueue<JSONObject> getConsMessageVerifyQueue();
 
     void setContributions(HashSet<Contribution> contributions);
 
-    LinkedBlockingQueue<EventBody> getShardSortQueue(int shardId);
+    BlockingQueue<EventBody> getShardSortQueue(int shardId);
 
     void setTotalConsEventCount(BigInteger totalConsEventCount);
 

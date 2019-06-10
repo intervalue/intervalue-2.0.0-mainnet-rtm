@@ -10,6 +10,8 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public interface CreateSnapshotPointDependent{
@@ -34,13 +36,11 @@ public interface CreateSnapshotPointDependent{
 
     BigInteger getConsMessageMaxId();
 
-    LinkedBlockingQueue<JSONObject> getConsMessageVerifyQueue();
+    BlockingQueue<JSONObject> getConsMessageVerifyQueue();
 
     long getCreatorId();
 
     int getShardId();
-
-    EventBody getEventBody();
 
     String getMsgHashTreeRoot();
 

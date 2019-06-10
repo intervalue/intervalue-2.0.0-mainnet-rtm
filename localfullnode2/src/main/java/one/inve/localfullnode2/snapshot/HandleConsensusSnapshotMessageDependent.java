@@ -5,13 +5,12 @@ import one.inve.bean.message.SnapshotMessage;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public interface HandleConsensusSnapshotMessageDependent {
 
     BigInteger getCurrSnapshotVersion();
-
-    JSONObject getMsgObject();
 
     HashMap<BigInteger, String> getTreeRootMap();
 
@@ -19,11 +18,11 @@ public interface HandleConsensusSnapshotMessageDependent {
 
     void setSystemAutoTxMaxId(BigInteger systemAutoTxMaxId);
 
-    LinkedBlockingQueue<JSONObject> getSystemAutoTxSaveQueue();
+    BlockingQueue<JSONObject> getSystemAutoTxSaveQueue();
 
     String getDbId();
 
-    LinkedBlockingQueue<JSONObject> getConsMessageSaveQueue();
+    BlockingQueue<JSONObject> getConsMessageSaveQueue();
 
     int getMultiple();
 

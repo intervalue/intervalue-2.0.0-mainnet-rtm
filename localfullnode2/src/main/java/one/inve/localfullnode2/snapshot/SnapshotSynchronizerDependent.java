@@ -3,26 +3,10 @@ package one.inve.localfullnode2.snapshot;
 import java.math.BigInteger;
 import java.security.PublicKey;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
-
 import one.inve.bean.message.SnapshotPoint;
-import one.inve.cluster.Member;
-import one.inve.localfullnode2.gossip.vo.GossipObj;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
 import one.inve.bean.message.SnapshotMessage;
-import one.inve.bean.node.LocalFullNode;
-import one.inve.localfullnode2.message.service.ITransactionDbService;
-import one.inve.localfullnode2.snapshot.vo.SnapObj;
-import one.inve.localfullnode2.store.SnapshotDbService;
-import one.inve.localfullnode2.utilities.StringUtils;
-import one.inve.utils.SignUtil;
 
 /**
  * 
@@ -34,11 +18,8 @@ import one.inve.utils.SignUtil;
  * @version: V1.0
  */
 public interface SnapshotSynchronizerDependent {
-	static final Logger logger = LoggerFactory.getLogger("SnapshotSynchronizerDependent");
 
 	BigInteger getCurrSnapshotVersion();
-
-	int getShardId();
 
 	int getShardCount();
 
@@ -52,101 +33,14 @@ public interface SnapshotSynchronizerDependent {
 
 	BlockingQueue<JSONObject> getConsMessageVerifyQueue();
 
-	// refresh the node info
-	void refresh(SnapshotMessage syncedSnapshotMessage);
-
-	default boolean execute(SnapObj snapObj) {
-		if (snapObj != null) {
-			logger.warn("snapObj:{}", JSONObject.toJSONString(snapObj));
-			String snapMessageStr = snapObj.snapMessage;
-			String originalSnapshotStr = JSON.parseObject(snapMessageStr).getString("message");
-			logger.warn("snapMessageStr:{}", snapMessageStr);
-			SnapshotMessage snapshotMessage = JSONObject.parseObject(originalSnapshotStr, SnapshotMessage.class);
-			String MsgHashTreeRoot = snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot();
-			if (StringUtils.isEmpty(MsgHashTreeRoot)) {
-				// return eventSize + "_" + eventSpaces;
-				return false;
-			}
-			List<JSONObject> messages = null;
-			if (!StringUtils.isEmpty(snapObj.messages)) {
-				messages = JSONArray.parseArray(snapObj.messages, JSONObject.class);
-			}
-
-			// 正在快照后
-			if (SignUtil.verify(originalSnapshotStr)) {
-				// transaction入库
-				if (messages != null) {
-					for (JSONObject msg : messages) {
-						try {
-							logger.error(">>>>>each of messages in GossipEventThread= " + msg);
-
-							getConsMessageVerifyQueue().put(msg);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				try {
-					logger.error("node.getConsMessageVerifyQueue().put(JSONObject.parseObject(snapMessageStr))"
-							+ snapMessageStr);
-
-					getConsMessageVerifyQueue().put(JSONObject.parseObject(snapMessageStr));
-				} catch (InterruptedException e) {
-					logger.error("", e);
-				}
-				// 更新本节点当前快照信息
-//				node.setSnapshotMessage(snapshotMessage);
-//				node.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(),
-//						snapshotMessage.getSnapshotPoint());
-//				node.getTreeRootMap().put(snapshotMessage.getSnapVersion(),
-//						snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
-				refresh(snapshotMessage);
-				return true;
-
-			} else {
-				// return eventSize + "_" + eventSpaces;
-				return false;
-			}
-		}
-
-		return false;
-	}
-
-//	GossipObj getGossipObj();	
-
-//	HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
-//
-//	void setSnapshotMessage(SnapshotMessage snapshotMessage);
-//
-//	HashMap<BigInteger, String> getTreeRootMap();
-//
-//	Map<String, HashSet<String>> getSnapVersionMap();
-
-//	Member getNeighbor();
-
-	//
-	// The following is to serve snapshot request.
-	//
-	long getCreatorId();
-
-	String getDbId();
-
-	List<LocalFullNode> getLocalFullNodes();
-
-	SnapshotDbService getSnapshotDBService();// only {@code querySnapshotMessageFormatStringByHash} is indispensable.
-
-	ITransactionDbService getTransactionDbService();
-
 	HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
 
 	HashMap<BigInteger, String> getTreeRootMap();
 
 	void setSnapshotMessage(SnapshotMessage snapshotMessage);
 
-	Member getGossipedMember();
-
-	GossipObj getGossipObj();
-
     void setMsgHashTreeRoot(String msgHashTreeRoot);
+
+	String getMsgHashTreeRoot();
 
 }
