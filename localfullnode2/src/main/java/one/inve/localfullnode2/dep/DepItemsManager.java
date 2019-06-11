@@ -79,6 +79,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		directCommunicator = new DirectCommunicator();
 		updatedSnapshotMessage = new UpdatedSnapshotMessage();
 		stat = new Stat();
+		ss = new SS();
 		wal = new Wal();
 	}
 
