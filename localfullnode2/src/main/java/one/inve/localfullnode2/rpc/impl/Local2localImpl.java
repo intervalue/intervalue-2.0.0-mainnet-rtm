@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -186,10 +187,18 @@ public class Local2localImpl implements Local2local {
 			String snapHash, long[] seqs, Current current) {
 		GossipObj gossipObj = null;
 		if (gossipFlag) {
-			L2LCore l2l = new L2LCore();
-			return l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
-					node.getCurrSnapshotVersion(), node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
-					node.nodeParameters().dbId);
+			ReadLock readLock = node.gossipAndRPCExclusiveLock().readLock();
+			readLock.lock();
+			try {
+				L2LCore l2l = new L2LCore();
+				gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
+						node.getCurrSnapshotVersion(), node.getLocalFullNodes(), node.getEventStore(),
+						node.getShardId(), node.nodeParameters().dbId);
+			} finally {
+				readLock.unlock();
+			}
+
+			return gossipObj;
 		} else { // gossipFlag is false
 			return gossipObj;
 		}
