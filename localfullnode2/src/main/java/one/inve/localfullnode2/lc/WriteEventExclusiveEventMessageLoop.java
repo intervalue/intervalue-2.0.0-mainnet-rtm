@@ -89,6 +89,8 @@ public class WriteEventExclusiveEventMessageLoop extends LazyLifecycle implement
 			while (!stopMe) {
 				writeLock.lock();
 				try {
+					logger.info("event gossip is running(mutually exclusive with gossipMyMaxSeqList4Consensus )");
+
 					// first,gossip communication
 					gossipDep = DepItemsManager.getInstance().getItemConcerned(GossipDependency.class);
 					g.talkGossip(gossipDep);

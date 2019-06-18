@@ -37,6 +37,7 @@ import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
  * @date: May 21, 2019 12:17:08 AM
  * @version: V1.0
  */
+@Deprecated
 public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle {
 	private static final Logger logger = LoggerFactory.getLogger(FormalEventMessageLoop.class);
 

@@ -190,6 +190,8 @@ public class Local2localImpl implements Local2local {
 			ReadLock readLock = node.gossipAndRPCExclusiveLock().readLock();
 			readLock.lock();
 			try {
+				logger.info("gossipMyMaxSeqList4Consensus is running(mutually exclusive with gossiping )");
+
 				L2LCore l2l = new L2LCore();
 				gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
 						node.getCurrSnapshotVersion(), node.getLocalFullNodes(), node.getEventStore(),
