@@ -169,6 +169,7 @@ public class QueryTableSplit {
 				}
 			}
 			;
+
 			rs.close();
 			preparedStatement.close();
 			List<Message> entityList = array.getList();
