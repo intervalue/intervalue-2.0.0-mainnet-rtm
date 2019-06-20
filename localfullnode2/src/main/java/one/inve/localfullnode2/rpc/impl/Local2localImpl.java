@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -187,18 +186,20 @@ public class Local2localImpl implements Local2local {
 			String snapHash, long[] seqs, Current current) {
 		GossipObj gossipObj = null;
 		if (gossipFlag) {
-			ReadLock readLock = node.gossipAndRPCExclusiveLock().readLock();
-			readLock.lock();
-			try {
-				logger.info("gossipMyMaxSeqList4Consensus is running(mutually exclusive with gossiping )");
+			// disable gossip write-read lock due to more time to complete message.
+			// 2019.2.20 by Francis.Deng
+//			ReadLock readLock = node.gossipAndRPCExclusiveLock().readLock();
+//			readLock.lock();
+//			try {
+			logger.info("gossipMyMaxSeqList4Consensus is running(mutually exclusive with gossiping )");
 
-				L2LCore l2l = new L2LCore();
-				gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
-						node.getCurrSnapshotVersion(), node.getLocalFullNodes(), node.getEventStore(),
-						node.getShardId(), node.nodeParameters().dbId);
-			} finally {
-				readLock.unlock();
-			}
+			L2LCore l2l = new L2LCore();
+			gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
+					node.getCurrSnapshotVersion(), node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
+					node.nodeParameters().dbId);
+//			} finally {
+//				readLock.unlock();
+//			}
 
 			return gossipObj;
 		} else { // gossipFlag is false
@@ -642,6 +643,15 @@ public class Local2localImpl implements Local2local {
 		} else {
 			return new AppointEvent(node.getCurrSnapshotVersion().toString(), null);
 		}
+	}
+
+	/**
+	 * allow peer to be aware of the height of other peers.
+	 */
+	@Override
+	public long[] getHeight(Current current) {
+		long[] height = node.getEventStore().getLastSeqsByShardId(node.getShardId());
+		return height;
 	}
 
 }
