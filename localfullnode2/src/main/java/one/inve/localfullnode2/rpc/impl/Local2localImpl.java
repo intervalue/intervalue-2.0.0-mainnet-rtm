@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import one.inve.localfullnode2.dep.DepItemsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,10 +186,11 @@ public class Local2localImpl implements Local2local {
 	public synchronized GossipObj gossipMyMaxSeqList4Consensus(String pubkey, String sig, String snapVersion,
 			String snapHash, long[] seqs, Current current) {
 		GossipObj gossipObj = null;
+		BigInteger vers = DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion();
 		if (gossipFlag) {
 			L2LCore l2l = new L2LCore();
 			return l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
-					node.getCurrSnapshotVersion(), node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
+					vers, node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
 					node.nodeParameters().dbId);
 		} else { // gossipFlag is false
 			return gossipObj;
