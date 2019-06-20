@@ -38,6 +38,7 @@ import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
  * @date: Jun 17, 2019 8:04:29 PM
  * @version: V1.0
  */
+@Deprecated
 public class WriteEventExclusiveEventMessageLoop extends LazyLifecycle implements ILifecycle {
 	private static final Logger logger = LoggerFactory.getLogger(WriteEventExclusiveEventMessageLoop.class);
 
