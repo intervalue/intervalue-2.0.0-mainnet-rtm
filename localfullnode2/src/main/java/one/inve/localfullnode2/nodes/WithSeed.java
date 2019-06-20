@@ -160,8 +160,11 @@ public class WithSeed extends HashneterInitializer {
 
 	@Override
 	protected ILifecycle performCoreTasks(Hashneter hashneter) {
-		// ILifecycle lc = new FormalEventMessageLoop();
-		ILifecycle lc = new WriteEventExclusiveEventMessageLoop(this.gossipAndRPCExclusiveLock().writeLock());
+		// disable gossip write-read lock due to more time to complete message.
+		// 2019.2.20 by Francis.Deng
+		ILifecycle lc = new FormalEventMessageLoop();
+		// ILifecycle lc = new
+		// WriteEventExclusiveEventMessageLoop(this.gossipAndRPCExclusiveLock().writeLock());
 		lc.start();
 
 		return lc;
