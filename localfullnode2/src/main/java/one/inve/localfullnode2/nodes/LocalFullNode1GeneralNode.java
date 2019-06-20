@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,8 +151,6 @@ public class LocalFullNode1GeneralNode {
 	 * 共识消息（已入库的消息）总数量
 	 */
 	private BigInteger consMessageCount = BigInteger.ZERO;
-
-	private ReentrantReadWriteLock gossipAndRPCExclusiveLock = new ReentrantReadWriteLock();
 
 	private static final Logger logger = LoggerFactory.getLogger(LocalFullNode1GeneralNode.class);
 
@@ -726,9 +723,4 @@ public class LocalFullNode1GeneralNode {
 			logger.error("load rpc error: {}", e);
 		}
 	}
-
-	public ReentrantReadWriteLock gossipAndRPCExclusiveLock() {
-		return gossipAndRPCExclusiveLock;
-	}
-
 }

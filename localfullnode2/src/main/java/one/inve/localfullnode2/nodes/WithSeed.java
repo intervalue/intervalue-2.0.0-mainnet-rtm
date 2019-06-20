@@ -15,7 +15,6 @@ import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.lc.FormalEventMessageLoop;
 import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
-import one.inve.localfullnode2.lc.WriteEventExclusiveEventMessageLoop;
 import one.inve.localfullnode2.membership.GossipNodeThread;
 import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.rpc.RegisterPrx;
@@ -30,9 +29,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * 
  * @Description: The class is able to communicate with seed node to complete the
  *               tasks like registering,retrieving sharding,maintaining
- *               membership. Replace {@link FormalEventMessageLoop} with
- *               {@link WriteEventExclusiveEventMessageLoop} because of split
- *               attack notification
+ *               membership.
  * @author: Francis.Deng
  * @date: May 14, 2019 11:34:32 PM
  * @version: V1.0
@@ -160,8 +157,7 @@ public class WithSeed extends HashneterInitializer {
 
 	@Override
 	protected ILifecycle performCoreTasks(Hashneter hashneter) {
-		// ILifecycle lc = new FormalEventMessageLoop();
-		ILifecycle lc = new WriteEventExclusiveEventMessageLoop(this.gossipAndRPCExclusiveLock().writeLock());
+		ILifecycle lc = new FormalEventMessageLoop();
 		lc.start();
 
 		return lc;
