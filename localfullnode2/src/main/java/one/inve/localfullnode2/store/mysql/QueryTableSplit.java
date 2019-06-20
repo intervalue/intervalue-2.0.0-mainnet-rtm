@@ -1,18 +1,25 @@
 package one.inve.localfullnode2.store.mysql;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.JSONObject;
-import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.store.rocks.*;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+
+import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.store.rocks.Message;
+import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
+import one.inve.localfullnode2.store.rocks.SystemAutoArray;
+import one.inve.localfullnode2.store.rocks.TransactionArray;
+import one.inve.localfullnode2.store.rocks.TransactionSplit;
 
 /**
  * 分表查询
@@ -42,7 +49,7 @@ public class QueryTableSplit {
 	 * @return 交易记录
 	 */
 	public TransactionArray queryTransaction(BigInteger tableIndex, Long offset, String address, String type,
-											 String dbId) {
+			String dbId) {
 		TransactionArray array = new TransactionArray();
 		MysqlHelper h = null;
 		try {
@@ -149,13 +156,20 @@ public class QueryTableSplit {
 				byte[] transationByte = new RocksJavaUtil(dbId).get(hash);
 				if (transationByte != null) {
 					String a = new String(transationByte);
-					list.add(JSONArray.parseObject(transationByte, Message.class));
+					// list.add(JSONArray.parseObject(transationByte, Message.class));
+					try {
+						list.add(JSONArray.parseObject(transationByte, Message.class));
+					} catch (Exception e) {
+						logger.error("message object format is illegal:({})", a);
+						list.add(new Message());
+					}
 				} else {
 					logger.error("this hash rocksDB not exist");
 					return null;
 				}
 			}
 			;
+
 			rs.close();
 			preparedStatement.close();
 			List<Message> entityList = array.getList();

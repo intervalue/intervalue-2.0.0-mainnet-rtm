@@ -43,4 +43,8 @@ public interface SnapshotSynchronizerDependent {
 
 	String getMsgHashTreeRoot();
 
+	void putTreeRootMap(BigInteger snapVersion, String msgHashTreeRoot);
+
+	void putSnapshotPointMap(BigInteger snapVersion, SnapshotPoint snapshotPoint);
+
 }

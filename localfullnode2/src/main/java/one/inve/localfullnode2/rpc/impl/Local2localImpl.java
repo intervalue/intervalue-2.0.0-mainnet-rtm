@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.stream.Collectors;
 
 import one.inve.localfullnode2.dep.DepItemsManager;
@@ -188,10 +189,20 @@ public class Local2localImpl implements Local2local {
 		GossipObj gossipObj = null;
 		BigInteger vers = DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion();
 		if (gossipFlag) {
-			L2LCore l2l = new L2LCore();
-			return l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
-					vers, node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
-					node.nodeParameters().dbId);
+			ReadLock readLock = node.gossipAndRPCExclusiveLock().readLock();
+			readLock.lock();
+			try {
+				logger.info("gossipMyMaxSeqList4Consensus is running(mutually exclusive with gossiping )");
+
+				L2LCore l2l = new L2LCore();
+				gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
+						vers, node.getLocalFullNodes(), node.getEventStore(),
+						node.getShardId(), node.nodeParameters().dbId);
+			} finally {
+				readLock.unlock();
+			}
+
+			return gossipObj;
 		} else { // gossipFlag is false
 			return gossipObj;
 		}

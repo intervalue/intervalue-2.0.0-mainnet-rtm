@@ -15,8 +15,7 @@ public class HandleSnapshotPointDependency implements HandleSnapshotPointDepende
 
     private SS ss;
     private AllQueues allQueues;
-    private Mnemonic mnemonic;
-    private PublicKey publicKey;
+    private Wal wal;
 
     @Override
     public void update(DependentItem item) {
@@ -50,22 +49,26 @@ public class HandleSnapshotPointDependency implements HandleSnapshotPointDepende
 
     @Override
     public String getPubKey() {
-        return publicKey.get().toString();
+        return wal.get().extKeys.getPubKey();
     }
 
     @Override
     public String getMnemonic() {
-        return mnemonic.get();
+        return wal.get().mnemonic;
     }
 
     @Override
     public String getAddress() {
-        //TODO getAddress
-        return null;
+        return wal.get().address;
     }
 
     @Override
     public BlockingQueue<byte[]> getMessageQueue() {
         return allQueues.get().getQueue(byte[].class, StagingArea.MessageQueueName);
+    }
+
+    @Override
+    public void removeSnapshotPointMap(BigInteger snapVersion) {
+        ss.removeSnapshotPointMap(snapVersion);
     }
 }

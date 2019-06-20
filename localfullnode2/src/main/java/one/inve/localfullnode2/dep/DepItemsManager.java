@@ -7,7 +7,6 @@ import java.util.Map;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.dep.items.BlackList4PubKey;
 import one.inve.localfullnode2.dep.items.CreatorId;
-import one.inve.localfullnode2.dep.items.CurrSnapshotVersion;
 import one.inve.localfullnode2.dep.items.DBId;
 import one.inve.localfullnode2.dep.items.DirectCommunicator;
 import one.inve.localfullnode2.dep.items.EventFlow;
@@ -22,7 +21,6 @@ import one.inve.localfullnode2.dep.items.SS;
 import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.dep.items.ShardId;
 import one.inve.localfullnode2.dep.items.Stat;
-import one.inve.localfullnode2.dep.items.UpdatedSnapshotMessage;
 import one.inve.localfullnode2.dep.items.Wal;
 
 /**
@@ -47,13 +45,13 @@ public final class DepItemsManager implements DepItemsManagerial {
 	private Members members;
 	private CreatorId creatorId;
 	private LastSeqs lastSeqs;
-	private CurrSnapshotVersion currSnapshotVersion;
+//	private CurrSnapshotVersion currSnapshotVersion;
 	private EventFlow eventFlow;
 	private BlackList4PubKey blackList4PubKey;
 	private PrivateKey privateKey;
 	private AllQueues allQueues;
 	private DirectCommunicator directCommunicator;
-	private UpdatedSnapshotMessage updatedSnapshotMessage;
+//	private UpdatedSnapshotMessage updatedSnapshotMessage;
 	private Stat stat;
 	private SS ss;
 	private Wal wal;
@@ -71,13 +69,13 @@ public final class DepItemsManager implements DepItemsManagerial {
 		members = new Members();
 		creatorId = new CreatorId();
 		lastSeqs = new LastSeqs();
-		currSnapshotVersion = new CurrSnapshotVersion();
+//		currSnapshotVersion = new CurrSnapshotVersion();
 		eventFlow = new EventFlow();
 		blackList4PubKey = new BlackList4PubKey();
 		privateKey = new PrivateKey();
 		allQueues = new AllQueues();
 		directCommunicator = new DirectCommunicator();
-		updatedSnapshotMessage = new UpdatedSnapshotMessage();
+//		updatedSnapshotMessage = new UpdatedSnapshotMessage();
 		stat = new Stat();
 		ss = new SS();
 		wal = new Wal();
@@ -208,16 +206,16 @@ public final class DepItemsManager implements DepItemsManagerial {
 	/**
 	 * replaced by {@code attachUpdatedSnapshotMessage}
 	 */
-	@Override
-	@Deprecated
-	public CurrSnapshotVersion attachCurrSnapshotVersion(DependentItemConcerned... dependentItemConcerneds) {
-		if (dependentItemConcerneds != null) {
-			currSnapshotVersion.attach(dependentItemConcerneds);
-			retainItemConcernedsByClass(dependentItemConcerneds);
-		}
-
-		return currSnapshotVersion;
-	}
+//	@Override
+//	@Deprecated
+//	public CurrSnapshotVersion attachCurrSnapshotVersion(DependentItemConcerned... dependentItemConcerneds) {
+//		if (dependentItemConcerneds != null) {
+//			currSnapshotVersion.attach(dependentItemConcerneds);
+//			retainItemConcernedsByClass(dependentItemConcerneds);
+//		}
+//
+//		return currSnapshotVersion;
+//	}
 
 	@Override
 	public EventFlow attachEventFlow(DependentItemConcerned... dependentItemConcerneds) {
@@ -269,15 +267,15 @@ public final class DepItemsManager implements DepItemsManagerial {
 		return directCommunicator;
 	}
 
-	@Override
-	public UpdatedSnapshotMessage attachUpdatedSnapshotMessage(DependentItemConcerned... dependentItemConcerneds) {
-		if (dependentItemConcerneds != null) {
-			updatedSnapshotMessage.attach(dependentItemConcerneds);
-			retainItemConcernedsByClass(dependentItemConcerneds);
-		}
-
-		return updatedSnapshotMessage;
-	}
+//	@Override
+//	public UpdatedSnapshotMessage attachUpdatedSnapshotMessage(DependentItemConcerned... dependentItemConcerneds) {
+//		if (dependentItemConcerneds != null) {
+//			updatedSnapshotMessage.attach(dependentItemConcerneds);
+//			retainItemConcernedsByClass(dependentItemConcerneds);
+//		}
+//
+//		return updatedSnapshotMessage;
+//	}
 
 	@Override
 	public Stat attachStat(DependentItemConcerned... dependentItemConcerneds) {

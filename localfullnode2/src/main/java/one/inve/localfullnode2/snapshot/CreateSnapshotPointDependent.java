@@ -46,4 +46,8 @@ public interface CreateSnapshotPointDependent{
 
     void setMsgHashTreeRoot(String msgHashTreeRoot);
 
+    void putTreeRootMap(BigInteger snapVersion, String msgHashTreeRoot);
+
+    void putSnapshotPointMap(BigInteger snapVersion, SnapshotPoint snapshotPoint);
+
 }

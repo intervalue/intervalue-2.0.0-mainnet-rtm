@@ -5,11 +5,15 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import one.inve.bean.message.Contribution;
+import one.inve.bean.message.SnapshotMessage;
+import one.inve.bean.message.SnapshotPoint;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,6 +162,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 			buildShardSortQueue();
 
+			initSnapshotData();
 			// 初始化hashnet数据结构
 			// initHashnet(this);
 			Hashneter hashneter = initHashneter();
@@ -376,5 +381,14 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 	abstract protected ILifecycle startMembership(LocalFullNode1GeneralNode node);
 
 	abstract protected ILifecycle performCoreTasks(Hashneter hashneter);
+
+	protected void initSnapshotData(){
+		DepItemsManager.getInstance().attachSS(null).setContributions(new HashSet<>());
+		DepItemsManager.getInstance().attachSS(null).setTreeRootMap(new HashMap<>());
+		DepItemsManager.getInstance().attachSS(null).setSnapshotPointMap(new HashMap<>());
+		DepItemsManager.getInstance().attachSS(null).setMsgHashTreeRoot(null);
+		DepItemsManager.getInstance().attachSS(null).setTotalFeeBetween2Snapshots(BigInteger.ZERO);
+		DepItemsManager.getInstance().attachSS(null).setSnapshotMessage(null);
+	}
 
 }

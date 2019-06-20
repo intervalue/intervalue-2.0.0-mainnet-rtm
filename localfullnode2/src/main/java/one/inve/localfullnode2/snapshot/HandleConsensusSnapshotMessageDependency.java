@@ -21,7 +21,6 @@ public class HandleConsensusSnapshotMessageDependency implements HandleConsensus
     private AllQueues allQueues;
     private DBId dbId;
 
-
     @Override
     public void update(DependentItem item) {
         set(this,item);

@@ -15,6 +15,8 @@ public interface EventsExeDependent {
 
 	String msgHashTreeRoot();
 
+	void setMsgHashTreeRoot(String msgHashTreeRoot);
+
 	// void setTotalConsEventCount(BigInteger totalConsEventCount);
 	void addTotalConsEventCount(long delta);
 

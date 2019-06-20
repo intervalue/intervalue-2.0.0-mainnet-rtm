@@ -108,4 +108,14 @@ public class CreateSnapshotPointDependency implements CreateSnapshotPointDepende
     public void setMsgHashTreeRoot(String msgHashTreeRoot) {
         ss.setMsgHashTreeRoot(msgHashTreeRoot);
     }
+
+    @Override
+    public void putTreeRootMap(BigInteger snapVersion, String msgHashTreeRoot) {
+        ss.putTreeRootMap(snapVersion, msgHashTreeRoot);
+    }
+
+    @Override
+    public void putSnapshotPointMap(BigInteger snapVersion, SnapshotPoint snapshotPoint) {
+        ss.putSnapshotPointMap(snapVersion, snapshotPoint);
+    }
 }

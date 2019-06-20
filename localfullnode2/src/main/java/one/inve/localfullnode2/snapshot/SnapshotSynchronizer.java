@@ -169,9 +169,9 @@ public class SnapshotSynchronizer {
 //									snapshotMessage.getSignature())));
 //						}
 						dep.setSnapshotMessage(snapshotMessage);
-						dep.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(),
+						dep.putSnapshotPointMap(snapshotMessage.getSnapVersion(),
 								snapshotMessage.getSnapshotPoint());
-						dep.getTreeRootMap().put(snapshotMessage.getSnapVersion(),
+						dep.putTreeRootMap(snapshotMessage.getSnapVersion(),
 								snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
 						snapVersionMap.clear();
 					} else {

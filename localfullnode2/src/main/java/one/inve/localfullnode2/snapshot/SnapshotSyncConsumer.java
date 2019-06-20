@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.zeroc.Ice.Communicator;
 
 import one.inve.cluster.Member;
+import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.DependentItem;
 import one.inve.localfullnode2.dep.DependentItemConcerned;
 import one.inve.localfullnode2.dep.items.DirectCommunicator;
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class SnapshotSyncConsumer implements SnapshotSyncConsumable, DependentItemConcerned {
 	static final Logger logger = LoggerFactory.getLogger(SnapshotSyncConsumer.class);
 
-	private DirectCommunicator dc;
+	private DirectCommunicator dc = DepItemsManager.getInstance().attachDirectCommunicator(null);
 
 	@Override
 	public CompletableFuture<SnapObj> gossipMySnapVersion4SnapAsync(Member neighbor, String pubkey, String sig,

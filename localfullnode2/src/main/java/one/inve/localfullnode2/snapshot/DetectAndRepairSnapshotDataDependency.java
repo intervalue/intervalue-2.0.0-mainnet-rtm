@@ -48,6 +48,11 @@ public class DetectAndRepairSnapshotDataDependency implements DetectAndRepairSna
     }
 
     @Override
+    public void removeTreeRootMap(BigInteger snapVersion) {
+        ss.removeTreeRootMap(snapVersion);
+    }
+
+    @Override
     public String getDbId() {
         return dbId.get();
     }
@@ -60,5 +65,15 @@ public class DetectAndRepairSnapshotDataDependency implements DetectAndRepairSna
     @Override
     public void setSnapshotMessage(SnapshotMessage snapshotMessage) {
         ss.setSnapshotMessage(snapshotMessage);
+    }
+
+    @Override
+    public void putTreeRootMap(BigInteger snapVersion, String msgHashTreeRoot) {
+        ss.putTreeRootMap(snapVersion, msgHashTreeRoot);
+    }
+
+    @Override
+    public void putSnapshotPointMap(BigInteger snapVersion, SnapshotPoint snapshotPoint) {
+        ss.putSnapshotPointMap(snapVersion, snapshotPoint);
     }
 }

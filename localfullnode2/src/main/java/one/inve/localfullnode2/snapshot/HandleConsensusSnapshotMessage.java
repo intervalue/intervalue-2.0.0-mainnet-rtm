@@ -26,8 +26,7 @@ public class HandleConsensusSnapshotMessage {
     private HandleConsensusSnapshotMessageDependent dep;
     private SnapshotDbService store;
 
-    public void handleConsensusSnapshotMessage(HandleConsensusSnapshotMessageDependent dep, SnapshotDbService store,
-                                               JSONObject msgObject) throws InterruptedException {
+    public void handleConsensusSnapshotMessage(HandleConsensusSnapshotMessageDependent dep, SnapshotDbService store, JSONObject msgObject) throws InterruptedException {
         this.dep = dep;
         this.store = store;
 

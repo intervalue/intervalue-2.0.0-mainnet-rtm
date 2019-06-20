@@ -19,9 +19,15 @@ public interface DetectAndRepairSnapshotDataDependent {
 
     HashMap<BigInteger, String> getTreeRootMap();
 
+    void removeTreeRootMap(BigInteger snapVersion);
+
     String getDbId();
 
     HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
 
     void setSnapshotMessage(SnapshotMessage snapshotMessage);
+
+    void putTreeRootMap(BigInteger snapVersion, String msgHashTreeRoot);
+
+    void putSnapshotPointMap(BigInteger snapVersion, SnapshotPoint snapshotPoint);
 }

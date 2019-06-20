@@ -55,7 +55,7 @@ public class HandleSnapshotPoint {
         // 快照事件，则生成快照消息并丢入队列
         createSnapshotMessage(dep.getSnapshotPointMap().get(vers), maxMessageId);
         // 恢复参数状态
-        dep.getSnapshotPointMap().remove(vers);
+        dep.removeSnapshotPointMap(vers);
         dep.setTotalFeeBetween2Snapshots(BigInteger.ZERO);
 
 //        logger.info("node-({}, {}): handle snapshotPoint-{} finished!", node.getShardId(), node.getCreatorId(), vers);

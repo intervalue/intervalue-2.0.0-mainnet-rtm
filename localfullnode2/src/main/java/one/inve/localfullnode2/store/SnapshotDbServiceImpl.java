@@ -49,7 +49,8 @@ public class SnapshotDbServiceImpl implements SnapshotDbService {
                     System.exit(-1);
                 }
             }
-            logger.info(">>>>>RETURN<<<<<queryLatestSnapshotMessage:\n maxSnapshot: {}", maxSnapshot);
+            logger.info(">>>>>RETURN<<<<<queryLatestSnapshotMessage:\n maxSnapshot: {}",
+                    JSON.toJSONString(maxSnapshot));
             return maxSnapshot;
         } catch (Exception e) {
             logger.error(">>>>>ERROR<<<<<queryLatestSnapshotMessage:\n error: {}", e);

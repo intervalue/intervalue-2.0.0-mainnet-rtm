@@ -38,14 +38,14 @@ public class EventsExe {
 
 	private int selfId = -1;
 	// 消息hash根
-	private String msgHashTreeRoot = null;
+//	private String msgHashTreeRoot = null;
 	private BigInteger transCount;
 
 	public EventsExe(EventsExeDependent dep) {
 		this.selfId = (int) dep.getCreatorId();
 		this.dep = dep;
 
-		this.msgHashTreeRoot = dep.msgHashTreeRoot();
+//		this.msgHashTreeRoot = dep.msgHashTreeRoot();
 		// key condition - SnapshotPoint
 		// SnapshotPoint sp =
 		// node.getSnapshotPointMap().get(node.getCurrSnapshotVersion());
@@ -152,6 +152,7 @@ public class EventsExe {
 
 		EventKeyPair pair = new EventKeyPair(event.getShardId(), event.getCreatorId(), event.getCreatorSeq());
 		rocksJavaUtil.put(pair.toString(), JSONObject.toJSONString(event));
+
 		rocksJavaUtil.put(Config.CONS_EVT_COUNT_KEY, dep.getTotalConsEventCount().toString());
 	}
 
@@ -197,10 +198,12 @@ public class EventsExe {
 				// key condition
 				// 计算更新消息hash根
 				JSONObject msgObj = JSONObject.parseObject(new String(msg));
-				if (StringUtils.isEmpty(msgHashTreeRoot)) {
-					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
+				if (StringUtils.isEmpty(dep.msgHashTreeRoot())) {
+//					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
+                    dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(msgObj.getString("signature"))));
 				} else {
-					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
+//					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
+                    dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(dep.msgHashTreeRoot(), msgObj.getString("signature"))));
 				}
 
 				try {

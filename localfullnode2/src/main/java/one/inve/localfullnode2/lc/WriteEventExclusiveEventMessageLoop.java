@@ -1,5 +1,7 @@
 package one.inve.localfullnode2.lc;
 
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,17 +33,22 @@ import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
  * 
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
- * @Description: build a loop to execute(nine steps together) over and over
- *               again and take a sleep every round.
+ * @Description: exclusive writing event
  * @author: Francis.Deng
- * @date: May 21, 2019 12:17:08 AM
+ * @date: Jun 17, 2019 8:04:29 PM
  * @version: V1.0
  */
-@Deprecated
-public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle {
-	private static final Logger logger = LoggerFactory.getLogger(FormalEventMessageLoop.class);
+public class WriteEventExclusiveEventMessageLoop extends LazyLifecycle implements ILifecycle {
+	private static final Logger logger = LoggerFactory.getLogger(WriteEventExclusiveEventMessageLoop.class);
 
 	private volatile boolean stopMe = true;// control the loop
+
+	private final WriteLock writeLock;
+
+	public WriteEventExclusiveEventMessageLoop(WriteLock writeLock) {
+		super();
+		this.writeLock = writeLock;
+	}
 
 	@Override
 	public void start() {
@@ -80,14 +87,21 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 			MessagePersistenceDependency messagePersistenceDependency = null;
 
 			while (!stopMe) {
-				// first,gossip communication
-				gossipDep = DepItemsManager.getInstance().getItemConcerned(GossipDependency.class);
-				g.talkGossip(gossipDep);
+				writeLock.lock();
+				try {
+					logger.info("event gossip is running(mutually exclusive with gossipMyMaxSeqList4Consensus )");
 
-				// second,save new event
-				newGossipEventsPersistenceDep = DepItemsManager.getInstance()
-						.getItemConcerned(NewGossipEventsPersistenceDependency.class);
-				newGossipEventsPersistence.persistNewEvents(newGossipEventsPersistenceDep);
+					// first,gossip communication
+					gossipDep = DepItemsManager.getInstance().getItemConcerned(GossipDependency.class);
+					g.talkGossip(gossipDep);
+
+					// second,save new event
+					newGossipEventsPersistenceDep = DepItemsManager.getInstance()
+							.getItemConcerned(NewGossipEventsPersistenceDependency.class);
+					newGossipEventsPersistence.persistNewEvents(newGossipEventsPersistenceDep);
+				} finally {
+					writeLock.unlock();
+				}
 
 				// third,send new event to Hashnet (call it Hashneter Upstream)
 				hashneterUpstreamDep = DepItemsManager.getInstance()

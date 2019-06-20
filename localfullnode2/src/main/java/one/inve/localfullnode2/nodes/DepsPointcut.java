@@ -1,13 +1,16 @@
 package one.inve.localfullnode2.nodes;
 
+import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.HashMap;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Communicator;
 
 import one.inve.bean.message.SnapshotMessage;
+import one.inve.bean.message.SnapshotPoint;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.cluster.Member;
 import one.inve.localfullnode2.dep.DepItemsManager;
@@ -145,8 +148,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	protected void of(HandleSnapshotPointDependency handleSnapshotPointDependency) {
 		DepItemsManager.getInstance().attachSS(handleSnapshotPointDependency);
 		DepItemsManager.getInstance().attachAllQueues(handleSnapshotPointDependency);
-		DepItemsManager.getInstance().attachMnemonic(handleSnapshotPointDependency);
-		DepItemsManager.getInstance().attachPublicKey(handleSnapshotPointDependency);
+		DepItemsManager.getInstance().attachWal(handleSnapshotPointDependency);
 	}
 
 	/**
@@ -205,6 +207,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		DepItemsManager.getInstance().attachShardCount(messagesExeDependency);
 		DepItemsManager.getInstance().attachDBId(messagesExeDependency);
 		DepItemsManager.getInstance().attachStat(messagesExeDependency);
+		DepItemsManager.getInstance().attachSS(messagesExeDependency);
 	}
 
 	/**
@@ -294,14 +297,15 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		DepItemsManager.getInstance().attachCreatorId(gossipDependency);
 		DepItemsManager.getInstance().attachLastSeqs(gossipDependency);
 		DepItemsManager.getInstance().attachPublicKey(gossipDependency);
-		DepItemsManager.getInstance().attachCurrSnapshotVersion(gossipDependency);
+//		DepItemsManager.getInstance().attachCurrSnapshotVersion(gossipDependency);
 		DepItemsManager.getInstance().attachEventFlow(gossipDependency);
 		DepItemsManager.getInstance().attachBlackList4PubKey(gossipDependency);
 		DepItemsManager.getInstance().attachPrivateKey(gossipDependency);
 		DepItemsManager.getInstance().attachDirectCommunicator(gossipDependency);
 		DepItemsManager.getInstance().attachAllQueues(gossipDependency);
 		DepItemsManager.getInstance().attachLastSeqs(gossipDependency);
-		DepItemsManager.getInstance().attachUpdatedSnapshotMessage(gossipDependency);
+//		DepItemsManager.getInstance().attachUpdatedSnapshotMessage(gossipDependency);
+        DepItemsManager.getInstance().attachSS(gossipDependency);
 
 	}
 
@@ -386,6 +390,12 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	}
 
 	@Override
+	public void setConsMessageCount(BigInteger consMessageCount) {
+		depItemsManager.attachStat(null).setConsMessageCount(consMessageCount);
+		super.setConsMessageCount(consMessageCount);
+	}
+
+	@Override
 	public void addSystemAutoTxMaxId(long delta) {
 		depItemsManager.attachStat(null).addSystemAutoTxMaxId(delta);
 		super.addSystemAutoTxMaxId(delta);
@@ -411,8 +421,14 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 
 	@Override
 	public void setSnapshotMessage(SnapshotMessage snapshotMessage) {
-		depItemsManager.attachUpdatedSnapshotMessage(null).set(snapshotMessage);
+		depItemsManager.attachSS(null).setSnapshotMessage(snapshotMessage);
 		super.setSnapshotMessage(snapshotMessage);
+	}
+
+	@Override
+	public void setTotalConsEventCount(BigInteger totalConsEventCount){
+		depItemsManager.attachStat(null).setTotalConsEventCount(totalConsEventCount);
+		super.setTotalConsEventCount(totalConsEventCount);
 	}
 
 }

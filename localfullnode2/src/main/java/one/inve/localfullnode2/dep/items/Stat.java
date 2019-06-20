@@ -19,7 +19,7 @@ public class Stat extends DependentItem {
 	private BigInteger totalConsEventCount = BigInteger.valueOf(0);
 	private BigInteger consMessageMaxId = BigInteger.valueOf(0);
 	private BigInteger systemAutoTxMaxId = BigInteger.valueOf(0);
-	private BigInteger consMessageCount;
+	private BigInteger consMessageCount = BigInteger.valueOf(0);
 
 	public BigInteger getTotalEventCount() {
 		return totalEventCount;
@@ -72,6 +72,26 @@ public class Stat extends DependentItem {
 
 	public void setConsMessageCount(BigInteger consMessageCount) {
 		this.consMessageCount = consMessageCount;
+		nodifyAll();
 	}
 
+	public void setSystemAutoTxMaxId(BigInteger systemAutoTxMaxId) {
+		this.systemAutoTxMaxId = systemAutoTxMaxId;
+		nodifyAll();
+	}
+
+	public void setTotalConsEventCount(BigInteger totalConsEventCount) {
+		this.totalConsEventCount = totalConsEventCount;
+		nodifyAll();
+	}
+
+	public void setConsMessageMaxId(BigInteger consMessageMaxId) {
+		this.consMessageMaxId = consMessageMaxId;
+		nodifyAll();
+	}
+
+	public void setTotalEventCount(BigInteger totalEventCount) {
+		this.totalEventCount = totalEventCount;
+		nodifyAll();
+	}
 }

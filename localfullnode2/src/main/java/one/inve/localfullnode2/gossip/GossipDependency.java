@@ -12,18 +12,7 @@ import one.inve.cluster.Member;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DependentItem;
 import one.inve.localfullnode2.dep.DependentItemConcerned;
-import one.inve.localfullnode2.dep.items.AllQueues;
-import one.inve.localfullnode2.dep.items.BlackList4PubKey;
-import one.inve.localfullnode2.dep.items.CreatorId;
-import one.inve.localfullnode2.dep.items.DirectCommunicator;
-import one.inve.localfullnode2.dep.items.EventFlow;
-import one.inve.localfullnode2.dep.items.LastSeqs;
-import one.inve.localfullnode2.dep.items.Members;
-import one.inve.localfullnode2.dep.items.PrivateKey;
-import one.inve.localfullnode2.dep.items.PublicKey;
-import one.inve.localfullnode2.dep.items.ShardCount;
-import one.inve.localfullnode2.dep.items.ShardId;
-import one.inve.localfullnode2.dep.items.UpdatedSnapshotMessage;
+import one.inve.localfullnode2.dep.items.*;
 import one.inve.localfullnode2.gossip.communicator.DefaultRpcCommunicator;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
 import one.inve.localfullnode2.staging.StagingArea;
@@ -49,7 +38,7 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 	private CreatorId creatorId;
 	private LastSeqs lastSeqs;
 	private PublicKey publicKey;
-	private UpdatedSnapshotMessage snapshotMessage;
+	private SS ss;
 //	private CurrSnapshotVersion currSnapshotVersion;
 	private EventFlow eventFlow;
 	private BlackList4PubKey blackList4PubKey;
@@ -116,9 +105,7 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 
 	@Override
 	public BigInteger getCurrSnapshotVersion() {
-		// return currSnapshotVersion.get();
-		return (null == snapshotMessage) ? BigInteger.ONE : BigInteger.ONE.add(snapshotMessage.get().getSnapVersion());
-
+		return ss.getCurrSnapshotVersion();
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package one.inve.localfullnode2.dep.items;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
-
 import one.inve.bean.message.Contribution;
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.bean.message.SnapshotPoint;
@@ -20,27 +19,15 @@ import one.inve.localfullnode2.dep.DependentItem;
  * @version: V1.0
  */
 public class SS extends DependentItem {
-	BigInteger currSnapshotVersion;
-
-	HashSet<Contribution> contributions;
-
-	HashMap<BigInteger, String> treeRootMap;
-
-	HashMap<BigInteger, SnapshotPoint> snapshotPointMap;
-
-	String msgHashTreeRoot;
-
-	BigInteger totalFeeBetween2Snapshots;
-
-	SnapshotMessage snapshotMessage;
+	private HashSet<Contribution> contributions;
+	private HashMap<BigInteger, String> treeRootMap;
+	private HashMap<BigInteger, SnapshotPoint> snapshotPointMap;
+	private String msgHashTreeRoot;
+	private BigInteger totalFeeBetween2Snapshots;
+	private SnapshotMessage snapshotMessage;
 
 	public BigInteger getCurrSnapshotVersion() {
-		return currSnapshotVersion;
-	}
-
-	public void setCurrSnapshotVersion(BigInteger currSnapshotVersion) {
-		this.currSnapshotVersion = currSnapshotVersion;
-		nodifyAll();
+		return (null == snapshotMessage) ? BigInteger.ONE : BigInteger.ONE.add(snapshotMessage.getSnapVersion());
 	}
 
 	public HashSet<Contribution> getContributions() {
@@ -52,6 +39,11 @@ public class SS extends DependentItem {
 		nodifyAll();
 	}
 
+    public void addContribution(Contribution contribution) {
+        this.contributions.add(contribution);
+        nodifyAll();
+    }
+
 	public HashMap<BigInteger, String> getTreeRootMap() {
 		return treeRootMap;
 	}
@@ -61,12 +53,32 @@ public class SS extends DependentItem {
 		nodifyAll();
 	}
 
+    public void putTreeRootMap(BigInteger snapVersion, String msgHashTreeRoot) {
+        this.treeRootMap.put(snapVersion, msgHashTreeRoot);
+        nodifyAll();
+    }
+
+	public void removeTreeRootMap(BigInteger snapVersion) {
+		this.treeRootMap.remove(snapVersion);
+		nodifyAll();
+	}
+
 	public HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap() {
 		return snapshotPointMap;
 	}
 
 	public void setSnapshotPointMap(HashMap<BigInteger, SnapshotPoint> snapshotPointMap) {
 		this.snapshotPointMap = snapshotPointMap;
+		nodifyAll();
+	}
+
+    public void putSnapshotPointMap(BigInteger snapVersion, SnapshotPoint snapshotPoint) {
+        this.snapshotPointMap.put(snapVersion, snapshotPoint);
+        nodifyAll();
+    }
+
+	public void removeSnapshotPointMap(BigInteger snapVersion) {
+		this.snapshotPointMap.remove(snapVersion);
 		nodifyAll();
 	}
 

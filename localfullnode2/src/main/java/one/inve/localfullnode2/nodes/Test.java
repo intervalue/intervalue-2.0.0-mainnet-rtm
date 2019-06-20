@@ -16,7 +16,7 @@ public class Test {
 
         final int startNum = 50;
         final int size = 1;
-        int i = 0;
+        int i = 1;
 //        for (int i=0; i<size; i++) {
             String[] args1 = new String[11];
 

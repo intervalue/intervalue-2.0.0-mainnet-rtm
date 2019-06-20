@@ -17,6 +17,8 @@ public interface RepairCurrSnapshotPointInfoDependent {
 
     HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
 
+    void putSnapshotPointMap(BigInteger snapVersion, SnapshotPoint snapshotPoint);
+
     BigInteger getCurrSnapshotVersion();
 
     BigInteger getTotalConsEventCount();
@@ -31,9 +33,13 @@ public interface RepairCurrSnapshotPointInfoDependent {
 
     HashSet<Contribution> getContributions();
 
+    void addContribution(Contribution contribution);
+
     List<LocalFullNode> getLocalFullNodes();
 
     HashMap<BigInteger, String> getTreeRootMap();
+
+    void putTreeRootMap(BigInteger snapVersion, String msgHashTreeRoot);
 
     BigInteger getConsMessageMaxId();
 

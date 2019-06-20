@@ -39,6 +39,11 @@ public class RepairCurrSnapshotPointInfoDependency implements RepairCurrSnapshot
     }
 
     @Override
+    public void putSnapshotPointMap(BigInteger snapVersion, SnapshotPoint snapshotPoint) {
+        ss.putSnapshotPointMap(snapVersion, snapshotPoint);
+    }
+
+    @Override
     public BigInteger getCurrSnapshotVersion() {
         return ss.getCurrSnapshotVersion();
     }
@@ -74,6 +79,11 @@ public class RepairCurrSnapshotPointInfoDependency implements RepairCurrSnapshot
     }
 
     @Override
+    public void addContribution(Contribution contribution) {
+        ss.addContribution(contribution);
+    }
+
+    @Override
     public List<LocalFullNode> getLocalFullNodes() {
         return localFullNodes.get();
     }
@@ -81,6 +91,11 @@ public class RepairCurrSnapshotPointInfoDependency implements RepairCurrSnapshot
     @Override
     public HashMap<BigInteger, String> getTreeRootMap() {
         return ss.getTreeRootMap();
+    }
+
+    @Override
+    public void putTreeRootMap(BigInteger snapVersion, String msgHashTreeRoot) {
+        ss.putTreeRootMap(snapVersion, msgHashTreeRoot);
     }
 
     @Override

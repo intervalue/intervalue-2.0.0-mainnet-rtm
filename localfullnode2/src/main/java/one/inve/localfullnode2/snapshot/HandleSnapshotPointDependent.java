@@ -28,4 +28,6 @@ public interface HandleSnapshotPointDependent {
 
     BlockingQueue<byte[]> getMessageQueue();
 
+    void removeSnapshotPointMap(BigInteger snapVersion);
+
 }

@@ -32,7 +32,7 @@ import one.inve.localfullnode2.store.SnapshotDbService;
  */
 public class SnapshotSynchronizerDependency implements SnapshotSynchronizerDependent, DependentItemConcerned {
 
-	private SnapshotSyncConsumable ssc;
+	private SnapshotSyncConsumable ssc = new SnapshotSyncConsumer();
 	private SS ss;
 	private Stat stat;
 	private ShardCount shardCount;
@@ -103,5 +103,15 @@ public class SnapshotSynchronizerDependency implements SnapshotSynchronizerDepen
 	@Override
 	public String getMsgHashTreeRoot() {
 		return ss.getMsgHashTreeRoot();
+	}
+
+	@Override
+	public void putTreeRootMap(BigInteger snapVersion, String msgHashTreeRoot) {
+		ss.putTreeRootMap(snapVersion, msgHashTreeRoot);
+	}
+
+	@Override
+	public void putSnapshotPointMap(BigInteger snapVersion, SnapshotPoint snapshotPoint) {
+		ss.putSnapshotPointMap(snapVersion, snapshotPoint);
 	}
 }

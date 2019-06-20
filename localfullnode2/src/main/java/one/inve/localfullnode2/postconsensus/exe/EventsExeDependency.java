@@ -48,6 +48,11 @@ public class EventsExeDependency implements EventsExeDependent, DependentItemCon
 	}
 
 	@Override
+	public void setMsgHashTreeRoot(String msgHashTreeRoot) {
+		ss.setMsgHashTreeRoot(msgHashTreeRoot);
+	}
+
+	@Override
 	public void addTotalConsEventCount(long delta) {
 		stat.addTotalConsEventCount(delta);
 	}
