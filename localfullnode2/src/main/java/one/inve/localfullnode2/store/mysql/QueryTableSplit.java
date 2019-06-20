@@ -41,8 +41,7 @@ public class QueryTableSplit {
 	 * @param type       类型：1交易 2合约 3.快照 4文本
 	 * @return 交易记录
 	 */
-	public TransactionArray queryTransaction(BigInteger tableIndex, Long offset, String address, String type,
-											 String dbId) {
+	public TransactionArray queryTransaction(BigInteger tableIndex, Long offset, String address, String type, String dbId) {
 		TransactionArray array = new TransactionArray();
 		MysqlHelper h = null;
 		try {
@@ -149,7 +148,13 @@ public class QueryTableSplit {
 				byte[] transationByte = new RocksJavaUtil(dbId).get(hash);
 				if (transationByte != null) {
 					String a = new String(transationByte);
-					list.add(JSONArray.parseObject(transationByte, Message.class));
+					// list.add(JSONArray.parseObject(transationByte, Message.class));
+					try {
+						list.add(JSONArray.parseObject(transationByte, Message.class));
+					} catch (Exception e) {
+						logger.error("message object format is illegal:({})", a);
+						list.add(new Message());
+					}
 				} else {
 					logger.error("this hash rocksDB not exist");
 					return null;

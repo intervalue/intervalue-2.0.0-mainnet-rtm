@@ -188,10 +188,22 @@ public class Local2localImpl implements Local2local {
 		GossipObj gossipObj = null;
 		BigInteger vers = DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion();
 		if (gossipFlag) {
-			L2LCore l2l = new L2LCore();
-			return l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
-					vers, node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
-					node.nodeParameters().dbId);
+            // disable gossip write-read lock due to more time to complete message.
+            // 2019.2.20 by Francis.Deng
+//			ReadLock readLock = node.gossipAndRPCExclusiveLock().readLock();
+//			readLock.lock();
+//			try {
+            logger.info("gossipMyMaxSeqList4Consensus is running(mutually exclusive with gossiping )");
+
+            L2LCore l2l = new L2LCore();
+            gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
+                    vers, node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
+                    node.nodeParameters().dbId);
+//			} finally {
+//				readLock.unlock();
+//			}
+
+            return gossipObj;
 		} else { // gossipFlag is false
 			return gossipObj;
 		}
@@ -636,5 +648,14 @@ public class Local2localImpl implements Local2local {
 			return new AppointEvent(node.getCurrSnapshotVersion().toString(), null);
 		}
 	}
+
+    /**
+     * allow peer to be aware of the height of other peers.
+     */
+//    @Override
+    public long[] getHeight(Current current) {
+        long[] height = node.getEventStore().getLastSeqsByShardId(node.getShardId());
+        return height;
+    }
 
 }
