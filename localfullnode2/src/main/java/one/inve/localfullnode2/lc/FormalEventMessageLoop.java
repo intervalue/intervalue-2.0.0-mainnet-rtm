@@ -124,7 +124,7 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 				messagePersistence.persisMessages();
 				messagePersistence.persistSystemMessages();
 
-				long milliSeconds = (long) (lostMotionModel.getYVar(g.getLostMotionRound()) * 1000);
+				long milliSeconds = (long) (lostMotionModel.getYVar(g.getLostMotionRound()));
 				sleepMilliSeconds(milliSeconds);// take a break
 			}
 

@@ -20,7 +20,7 @@ public class LostMotionModel {
 	}
 
 	public double getYVar(int lostMotionRound) {
-		return Math.pow(lostMotionRound / 4, exponent);
+		return Math.pow(lostMotionRound * 1000 / 4, exponent);
 	}
 
 //	public static void main(String[] args) {
