@@ -3,16 +3,15 @@ package one.inve.localfullnode2.nodes;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.HashMap;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Communicator;
 
 import one.inve.bean.message.SnapshotMessage;
-import one.inve.bean.message.SnapshotPoint;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.cluster.Member;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.DepItemsManagerial;
 import one.inve.localfullnode2.dep.items.AllQueues;
@@ -26,9 +25,14 @@ import one.inve.localfullnode2.message.MessagesVerificationDependency;
 import one.inve.localfullnode2.postconsensus.exe.EventsExeDependency;
 import one.inve.localfullnode2.postconsensus.readout.EventsReadoutDependency;
 import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
-import one.inve.localfullnode2.snapshot.*;
+import one.inve.localfullnode2.snapshot.CreateSnapshotPointDependency;
+import one.inve.localfullnode2.snapshot.DetectAndRepairSnapshotDataDependency;
+import one.inve.localfullnode2.snapshot.HandleConsensusSnapshotMessageDependency;
+import one.inve.localfullnode2.snapshot.HandleSnapshotPointDependency;
+import one.inve.localfullnode2.snapshot.RepairCurrSnapshotPointInfoDependency;
+import one.inve.localfullnode2.snapshot.SnapshotSyncConsumer;
+import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependency;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependency;
 
 /**
@@ -84,25 +88,22 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		CreateSnapshotPointDependency createSnapshotPointDependency = new CreateSnapshotPointDependency();
 		of(createSnapshotPointDependency);
 
-		DetectAndRepairSnapshotDataDependency detectAndRepairSnapshotDataDependency =
-				new DetectAndRepairSnapshotDataDependency();
+		DetectAndRepairSnapshotDataDependency detectAndRepairSnapshotDataDependency = new DetectAndRepairSnapshotDataDependency();
 		of(detectAndRepairSnapshotDataDependency);
 
-		HandleConsensusSnapshotMessageDependency handleConsensusSnapshotMessageDependency =
-				new HandleConsensusSnapshotMessageDependency();
+		HandleConsensusSnapshotMessageDependency handleConsensusSnapshotMessageDependency = new HandleConsensusSnapshotMessageDependency();
 		of(handleConsensusSnapshotMessageDependency);
 
 		HandleSnapshotPointDependency handleSnapshotPointDependency = new HandleSnapshotPointDependency();
 		of(handleSnapshotPointDependency);
 
-		RepairCurrSnapshotPointInfoDependency repairCurrSnapshotPointInfoDependency =
-				new RepairCurrSnapshotPointInfoDependency();
+		RepairCurrSnapshotPointInfoDependency repairCurrSnapshotPointInfoDependency = new RepairCurrSnapshotPointInfoDependency();
 		of(repairCurrSnapshotPointInfoDependency);
 
 		SnapshotSynchronizerDependency snapshotSynchronizerDependency = new SnapshotSynchronizerDependency();
 		of(snapshotSynchronizerDependency);
 
-		SnapshotSyncConsumer snapshotSyncConsumer =  new SnapshotSyncConsumer();
+		SnapshotSyncConsumer snapshotSyncConsumer = new SnapshotSyncConsumer();
 		of(snapshotSyncConsumer);
 
 		buildStagingArea();
@@ -305,7 +306,8 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		DepItemsManager.getInstance().attachAllQueues(gossipDependency);
 		DepItemsManager.getInstance().attachLastSeqs(gossipDependency);
 //		DepItemsManager.getInstance().attachUpdatedSnapshotMessage(gossipDependency);
-        DepItemsManager.getInstance().attachSS(gossipDependency);
+		DepItemsManager.getInstance().attachSS(gossipDependency);
+		DepItemsManager.getInstance().attachNValue(gossipDependency);
 
 	}
 
@@ -426,7 +428,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	}
 
 	@Override
-	public void setTotalConsEventCount(BigInteger totalConsEventCount){
+	public void setTotalConsEventCount(BigInteger totalConsEventCount) {
 		depItemsManager.attachStat(null).setTotalConsEventCount(totalConsEventCount);
 		super.setTotalConsEventCount(totalConsEventCount);
 	}
