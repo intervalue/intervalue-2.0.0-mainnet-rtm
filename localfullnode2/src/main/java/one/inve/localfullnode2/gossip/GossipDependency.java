@@ -172,8 +172,8 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 	}
 
 	@Override
-	public NValue getnValue() {
-		return nValue;
+	public int getnValue() {
+		return nValue.get();
 	}
 
 }
