@@ -12,7 +12,19 @@ import one.inve.cluster.Member;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DependentItem;
 import one.inve.localfullnode2.dep.DependentItemConcerned;
-import one.inve.localfullnode2.dep.items.*;
+import one.inve.localfullnode2.dep.items.AllQueues;
+import one.inve.localfullnode2.dep.items.BlackList4PubKey;
+import one.inve.localfullnode2.dep.items.CreatorId;
+import one.inve.localfullnode2.dep.items.DirectCommunicator;
+import one.inve.localfullnode2.dep.items.EventFlow;
+import one.inve.localfullnode2.dep.items.LastSeqs;
+import one.inve.localfullnode2.dep.items.Members;
+import one.inve.localfullnode2.dep.items.NValue;
+import one.inve.localfullnode2.dep.items.PrivateKey;
+import one.inve.localfullnode2.dep.items.PublicKey;
+import one.inve.localfullnode2.dep.items.SS;
+import one.inve.localfullnode2.dep.items.ShardCount;
+import one.inve.localfullnode2.dep.items.ShardId;
 import one.inve.localfullnode2.gossip.communicator.DefaultRpcCommunicator;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
 import one.inve.localfullnode2.staging.StagingArea;
@@ -46,6 +58,8 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 	private GossipCommunicationConsumable rpcCommunicator = new DefaultRpcCommunicator();
 	private DirectCommunicator directCommunicator;
 	private AllQueues allQueues;
+
+	private NValue nValue;
 
 	@Override
 	public List<Member> getMembers(int gossipType) {
@@ -155,6 +169,11 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 	@Override
 	public Communicator getCommunicator() {
 		return directCommunicator.get();
+	}
+
+	@Override
+	public NValue getnValue() {
+		return nValue;
 	}
 
 }
