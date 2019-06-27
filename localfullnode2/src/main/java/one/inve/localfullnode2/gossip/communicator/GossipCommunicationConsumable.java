@@ -31,4 +31,6 @@ public interface GossipCommunicationConsumable {
 
 	CompletableFuture<java.lang.Boolean> gossipReport4splitAsync(Communicator communicator, Member neighbor,
 			String pubkey, String sig, String data, int shardId, String event);
+
+	long[] getHeight(Communicator communicator, Member neighbor);
 }

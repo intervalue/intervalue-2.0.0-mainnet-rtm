@@ -54,4 +54,11 @@ public class DefaultRpcCommunicator implements GossipCommunicationConsumable {
 		return nprx.gossipReport4splitAsync(pubkey, sig, data, shardId, event);
 	}
 
+	@Override
+	public long[] getHeight(Communicator communicator, Member neighbor) {
+		Local2localPrx nprx = RpcConnectionService.buildConnection2localFullNode(communicator, neighbor);
+
+		return nprx.getHeight();
+	}
+
 }

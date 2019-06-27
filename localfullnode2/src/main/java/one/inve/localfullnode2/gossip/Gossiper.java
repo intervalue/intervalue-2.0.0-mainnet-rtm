@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,22 +14,24 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import one.inve.localfullnode2.dep.DepItemsManager;
-import one.inve.localfullnode2.snapshot.SnapshotSynchronizer;
-import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependency;
-import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.zeroc.Ice.Communicator;
 
 import one.inve.cluster.Member;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
 import one.inve.localfullnode2.gossip.vo.AppointEvent;
 import one.inve.localfullnode2.gossip.vo.GossipObj;
-import one.inve.core.EventBody;
+import one.inve.localfullnode2.snapshot.SnapshotSynchronizer;
+import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependency;
+import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependent;
 import one.inve.localfullnode2.store.IEventFlow;
 import one.inve.localfullnode2.utilities.Cryptos;
 import one.inve.localfullnode2.utilities.StringUtils;
@@ -67,6 +70,138 @@ public class Gossiper {
 
 	SnapshotSynchronizerDependent snapshotSynchronizerDep = null;
 	SnapshotSynchronizer snapshotSynchronizer = new SnapshotSynchronizer();
+
+	/**
+	 * Data recovery(one same copy in all nodes) to resume gossip,one crucial
+	 * condition should been satisfied that event height is varied.The function will
+	 * make artificial height to restore gossiping at boot time.
+	 * 
+	 */
+	public void breakStableHeight(GossipDependent dep) {
+		this.dep = dep;
+
+		int whileLoop = 0;
+		List<Member> members = dep.getMembers(dep.getGossipType());
+		int membersSize = members.size();
+		long[] myHeight = dep.getLastSeqsByShardId(dep.getShardId());
+		GossipCommunicationConsumable communication = dep.getGossipCommunication();
+		Communicator communicator = dep.getCommunicator();
+		logger.info("myHeight:{}", JSON.toJSONString(myHeight));
+
+//		if (++membersSize == dep.getShardCount()) {
+//			boolean allMembersHasSameHeight = members.parallelStream().allMatch((member) -> {
+//				CompletableFuture<long[]> f = CompletableFuture.supplyAsync(() -> {
+//					long[] height = communication.getHeight(dep.getCommunicator(), member);
+//					return height;
+//				});
+//
+//				long[] height = null;
+//				try {
+//					height = f.get();
+//				} catch (Exception e) {
+//					logger.warn("can not connect to '{}'", member.address().toString());
+//
+//					return false;
+//				}
+//
+//				logger.info("Height({}):{}", member.address().toString(), JSON.toJSONString(myHeight));
+//				return Arrays.equals(myHeight, height);
+//			});
+//
+//			if (allMembersHasSameHeight) {
+//				if (dep.getGossipType() == Config.GOSSIP_IN_SHARD) {
+//					// first element in members array as other parent
+//					newLocalEvent(Integer.parseInt(members.get(0).metadata().get("index")));
+//				}
+//			}
+//		}
+		// try 3 times to detect stable height at most
+		do {
+			if (isUnstableHeight(members, dep.getnValue(), myHeight, communication, communicator)) {
+				return;
+			}
+
+			logger.info("All nodes have a stable height,a detection mechanism will take effect.Hold on...");
+
+			try {
+				TimeUnit.SECONDS.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} while (++whileLoop > 3);
+
+		if (dep.getGossipType() == Config.GOSSIP_IN_SHARD) {
+			// first element in members array as other parent
+			int otherId = Integer.parseInt(members.get(0).metadata().get("index"));
+			logger.info("[{}] is chosen as other parent", otherId);
+			newLocalEvent(otherId);
+		}
+	}
+
+	protected boolean isUnstableHeight(List<Member> members, int nValue, long[] myHeight,
+			GossipCommunicationConsumable communication, Communicator communicator) {
+		int membersSize = members.size();
+		boolean unstableHeight;
+
+		if (++membersSize == nValue) {
+//			boolean stableHeight = members.parallelStream().allMatch((member) -> {
+//				CompletableFuture<long[]> f = CompletableFuture.supplyAsync(() -> {
+//					long[] height = communication.getHeight(communicator, member);
+//					return height;
+//				});
+//
+//				long[] height = null;
+//				try {
+//					height = f.get();
+//				} catch (Exception e) {
+//					logger.warn("can not connect to '{}'", member.address().toString());
+//
+//					return false;
+//				}
+//
+//				logger.info("Height({}) : {}", member.address().toString(), JSON.toJSONString(myHeight));
+//				return Arrays.equals(myHeight, height);
+//			});
+//
+//			return stableHeight;
+
+			unstableHeight = members.stream().anyMatch((member) -> {
+				long[] height = null;
+				try {
+					height = communication.getHeight(communicator, member);
+				} catch (Exception e) {
+					logger.warn("can not connect to '{}',quit detection", member.address().toString());
+
+					return true;
+				}
+
+				logger.info("The node({}) height is : {}", member.address().toString(), JSON.toJSONString(height));
+				return !Arrays.equals(myHeight, height);
+			});
+
+//			for (Member member : members) {
+//				long[] height = null;
+//				try {
+//					height = communication.getHeight(communicator, member);
+//				} catch (Exception e) {
+//					logger.warn("can not connect to '{}'", member.address().toString());
+//
+//					return false;
+//				}
+//
+//				logger.info("Height({}) : {}", member.address().toString(), JSON.toJSONString(myHeight));
+//				if (!Arrays.equals(myHeight, height))
+//					return false;
+//			}
+
+		} else {
+			logger.info("cannot contact all peers({}<{})", membersSize, nValue);
+			unstableHeight = true;
+		}
+
+		return unstableHeight;
+	}
 
 	public void talkGossip(GossipDependent dep) {
 		this.dep = dep;
@@ -135,8 +270,9 @@ public class Gossiper {
 		logger.info("memberSize={},numNeighbors={}", memberSize, numNeighbors);
 
 		if (memberSize == 0) {
-			BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
-			lostMotionRound.set(plusOne);
+//			BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
+//			lostMotionRound.set(plusOne);
+			inreaseByOne();
 
 			return;
 		}
@@ -197,6 +333,11 @@ public class Gossiper {
 				logger.error("gossipMyMaxSeqList ConnectionRefusedException: {}", neighbor.address());
 //				logger.warn("remove gossipAddress: {}", JSON.toJSONString(neighbor.address()));
 //				prxMap.remove(neighbor.address());
+
+//				BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
+//				lostMotionRound.set(plusOne);
+				inreaseByOne();
+
 				connflag[ni] = false;
 			}
 		}
@@ -266,7 +407,6 @@ public class Gossiper {
 		GossipObj gossipObj = null;
 		Instant first = Instant.now();
 
-
 		try {
 			// 异步获取返回结果
 			gossipObj = (GossipObj) evtResult.get(30000, TimeUnit.MILLISECONDS);
@@ -291,11 +431,11 @@ public class Gossiper {
 			}
 
 			// key condition - sync snapshot if possible
-			if(Config.ENABLE_SNAPSHOT){
-				snapshotSynchronizerDep =
-						DepItemsManager.getInstance().getItemConcerned(SnapshotSynchronizerDependency.class);
-				boolean b = snapshotSynchronizer.synchronizeHigher(snapshotSynchronizerDep,neighbor,gossipObj);
-				if(!b){
+			if (Config.ENABLE_SNAPSHOT) {
+				snapshotSynchronizerDep = DepItemsManager.getInstance()
+						.getItemConcerned(SnapshotSynchronizerDependency.class);
+				boolean b = snapshotSynchronizer.synchronizeHigher(snapshotSynchronizerDep, neighbor, gossipObj);
+				if (!b) {
 					return eventSize + "_" + eventSpaces;
 				}
 			}
@@ -405,8 +545,9 @@ public class Gossiper {
 			Event[] evtRet = gossipObj.events;
 
 			if (evtRet != null || evtRet.length == 0) {
-				BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
-				lostMotionRound.set(plusOne);
+//				BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
+//				lostMotionRound.set(plusOne);
+				inreaseByOne();
 			}
 
 			if (evtRet.length > Config.DEFAULT_SYNC_EVENT_COUNT) {
@@ -861,8 +1002,9 @@ public class Gossiper {
 			long size = 0L;
 
 			if (dep.getMessageQueue().isEmpty()) {
-				BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
-				lostMotionRound.set(plusOne);
+//				BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
+//				lostMotionRound.set(plusOne);
+				inreaseByOne();
 			} else {
 				lostMotionRound.set(BigInteger.ZERO);
 			}
@@ -904,5 +1046,10 @@ public class Gossiper {
 
 	public int getLostMotionRound() {
 		return lostMotionRound.get().intValue();
+	}
+
+	protected void inreaseByOne() {
+		BigInteger plusOne = lostMotionRound.get().add(BigInteger.ONE);
+		lostMotionRound.set(plusOne);
 	}
 }

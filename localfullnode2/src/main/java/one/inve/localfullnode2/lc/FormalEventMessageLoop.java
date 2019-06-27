@@ -78,6 +78,10 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 
 			MessagePersistenceDependency messagePersistenceDependency = null;
 
+			gossipDep = DepItemsManager.getInstance().getItemConcerned(GossipDependency.class);
+			g.breakStableHeight(gossipDep);// the last node is able to break stable height if all conditions are
+											// satisfied
+
 			while (!stopMe) {
 				// first,gossip communication
 				gossipDep = DepItemsManager.getInstance().getItemConcerned(GossipDependency.class);
