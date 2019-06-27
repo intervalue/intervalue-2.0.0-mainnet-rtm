@@ -72,7 +72,7 @@ public class INVEConfig implements BlockchainConfig, BlockchainNetConfig {
 
     @Override
     public DataWord getCallGas(OpCode op, DataWord requestedGas, DataWord availableGas) throws OutOfGasException {
-        return null;
+        return availableGas.sub(availableGas.div(DataWord.of(64)));
     }
 
     @Override
