@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -279,7 +280,9 @@ public class TransactionDbService implements ITransactionDbService {
 	public List<JSONObject> queryMissingTransactionsBeforeSnapshotPoint(String message,
 			BigInteger requestConsMessageMaxId, String dbId) {
 		BigInteger selfTranId = BigInteger.ZERO;
-		if (StringUtils.isEmpty(message)) {
+		//2019.5.29 判断条件错误
+//		if (StringUtils.isEmpty(message)) {
+		if (StringUtils.isNotEmpty(message)) {
 			SnapshotMessage sm = JSONObject.parseObject(message, SnapshotMessage.class);
 			long shardId = sm.getSnapshotPoint().getEventBody().getShardId();
 			long creatorId = sm.getSnapshotPoint().getEventBody().getCreatorId();
@@ -334,6 +337,7 @@ public class TransactionDbService implements ITransactionDbService {
 					}
 				}
 			}
+			logger.info(">>>>>INFO<<<<<queryTransactionsByRange:\n transactions: {}", JSON.toJSONString(transactions));
 			return transactions;
 		} catch (Exception e) {
 			logger.error("error: {}", e);

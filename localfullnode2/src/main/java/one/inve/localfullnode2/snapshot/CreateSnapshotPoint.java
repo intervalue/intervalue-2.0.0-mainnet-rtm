@@ -20,18 +20,25 @@ public class CreateSnapshotPoint {
     private static final Logger logger = LoggerFactory.getLogger(CreateSnapshotPoint.class);
 
     private CreateSnapshotPointDependent dep;
-    private String msgHashTreeRoot = null;
-    private EventBody event;
+//    private String msgHashTreeRoot = null;
     private BigInteger vers;
 
-    public void createSnapshotPoint(CreateSnapshotPointDependent dep) throws InterruptedException {
+    public void createSnapshotPoint(CreateSnapshotPointDependent dep, EventBody event) throws InterruptedException {
         this.dep = dep;
-        this.event = dep.getEventBody();
-        this.msgHashTreeRoot = dep.getMsgHashTreeRoot();
-        this.vers = dep.getCurrSnapshotVersion();
+//        this.msgHashTreeRoot = dep.getMsgHashTreeRoot();
+
+//        this.vers = dep.getCurrSnapshotVersion();
 
         if (dep.getTotalConsEventCount().mod(BigInteger.valueOf(Config.EVENT_NUM_PER_SNAPSHOT))
                 .equals(BigInteger.ZERO)) {
+
+            SnapshotPoint sp = dep.getSnapshotPointMap().get(dep.getCurrSnapshotVersion());
+            if (null != sp) {
+                this.vers = dep.getCurrSnapshotVersion().add(BigInteger.ONE);
+            } else {
+                this.vers = dep.getCurrSnapshotVersion();
+            }
+
             logger.info(">>>>>START<<<<<createSnapshotPoint:\n eventBody: {}", JSON.toJSONString(event));
             EventKeyPair pair = new EventKeyPair(event.getShardId(), event.getCreatorId(), event.getCreatorSeq());
 //            logger.info("node-({}, {}): snapshotpoint evt-{}, statistics contributions...",
@@ -56,16 +63,18 @@ public class CreateSnapshotPoint {
 
             // 生成快照点
             final String eHash = DSA.encryptBASE64(event.getHash());
-            if (StringUtils.isEmpty(msgHashTreeRoot)) {
-                msgHashTreeRoot = eHash;
+            if (StringUtils.isEmpty(dep.getMsgHashTreeRoot())) {
+//                msgHashTreeRoot = eHash;
+                dep.setMsgHashTreeRoot(eHash);
 //                logger.info("\n=========== dep-({}, {}): vers:{}, msgHashTreeRoot=eHash: {}",
 //                        dep.getShardId(), dep.getCreatorId(), vers, msgHashTreeRoot);
             }
-            dep.getSnapshotPointMap().put(vers, new SnapshotPoint.Builder()
-                    .eventBody(event).msgHashTreeRoot(msgHashTreeRoot)
+            dep.putSnapshotPointMap(vers, new SnapshotPoint.Builder()
+                    .eventBody(event).msgHashTreeRoot(dep.getMsgHashTreeRoot())
                     .contributions((null != statistics && statistics.size() <= 0) ? null : statistics)
                     .build());
-            dep.getTreeRootMap().put(vers, msgHashTreeRoot);
+            dep.putTreeRootMap(vers, dep.getMsgHashTreeRoot());
+
 //            logger.info("\n=========== dep-({}, {}):  vers: {}, msgHashTreeRoot: {}",
 //                    dep.getShardId(), dep.getCreatorId(), vers, msgHashTreeRoot);
             logger.info(">>>>>INFO<<<<<createSnapshotPoint:\n snapshotPointMap: {},\n treeRootMap: {}",
@@ -73,7 +82,8 @@ public class CreateSnapshotPoint {
 
             // 重置消息hash根
             dep.setContributions(new HashSet<>());
-            msgHashTreeRoot = null;
+//            msgHashTreeRoot = null;
+            dep.setMsgHashTreeRoot(null);
             vers = vers.add(BigInteger.ONE);
 
             // 增加创建快照触发器

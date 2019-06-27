@@ -19,7 +19,7 @@ public class Stat extends DependentItem {
 	private BigInteger totalConsEventCount = BigInteger.valueOf(0);
 	private BigInteger consMessageMaxId = BigInteger.valueOf(0);
 	private BigInteger systemAutoTxMaxId = BigInteger.valueOf(0);
-	private BigInteger consMessageCount;
+	private BigInteger consMessageCount = BigInteger.valueOf(0);
 
 	public BigInteger getTotalEventCount() {
 		return totalEventCount;
@@ -29,7 +29,7 @@ public class Stat extends DependentItem {
 	 * first call from {@code DbUtils::initStatistics}
 	 */
 	public void addTotalEventCount(long delta) {
-		totalEventCount.add(BigInteger.valueOf(delta));
+		totalEventCount = totalEventCount.add(BigInteger.valueOf(delta));
 		nodifyAll();
 	}
 
@@ -41,7 +41,7 @@ public class Stat extends DependentItem {
 	 * first call from {@code EventsExe::run}
 	 */
 	public void addTotalConsEventCount(long delta) {
-		totalConsEventCount.add(BigInteger.valueOf(delta));
+		totalConsEventCount = totalConsEventCount.add(BigInteger.valueOf(delta));
 		nodifyAll();
 	}
 
@@ -53,7 +53,7 @@ public class Stat extends DependentItem {
 	 * first call from {@code EventsExe::addConsMessage2VerifyQueue}
 	 */
 	public void addConsMessageMaxId(long delta) {
-		consMessageMaxId.add(BigInteger.valueOf(delta));
+		consMessageMaxId = consMessageMaxId.add(BigInteger.valueOf(delta));
 		nodifyAll();
 	}
 
@@ -62,7 +62,7 @@ public class Stat extends DependentItem {
 	}
 
 	public void addSystemAutoTxMaxId(long delta) {
-		systemAutoTxMaxId.add(BigInteger.valueOf(delta));
+		systemAutoTxMaxId = systemAutoTxMaxId.add(BigInteger.valueOf(delta));
 		nodifyAll();
 	}
 
@@ -72,6 +72,26 @@ public class Stat extends DependentItem {
 
 	public void setConsMessageCount(BigInteger consMessageCount) {
 		this.consMessageCount = consMessageCount;
+		nodifyAll();
 	}
 
+	public void setSystemAutoTxMaxId(BigInteger systemAutoTxMaxId) {
+		this.systemAutoTxMaxId = systemAutoTxMaxId;
+		nodifyAll();
+	}
+
+	public void setTotalConsEventCount(BigInteger totalConsEventCount) {
+		this.totalConsEventCount = totalConsEventCount;
+		nodifyAll();
+	}
+
+	public void setConsMessageMaxId(BigInteger consMessageMaxId) {
+		this.consMessageMaxId = consMessageMaxId;
+		nodifyAll();
+	}
+
+	public void setTotalEventCount(BigInteger totalEventCount) {
+		this.totalEventCount = totalEventCount;
+		nodifyAll();
+	}
 }

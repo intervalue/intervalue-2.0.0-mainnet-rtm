@@ -1,5 +1,6 @@
 package one.inve.localfullnode2.nodes;
 
+import java.lang.Thread.State;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,8 +12,10 @@ import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.node.LocalFullNode;
 import one.inve.localfullnode2.hashnet.Hashneter;
+import one.inve.localfullnode2.lc.FormalEventMessageLoop;
 import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
+import one.inve.localfullnode2.lc.WriteEventExclusiveEventMessageLoop;
 import one.inve.localfullnode2.membership.GossipNodeThread;
 import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.rpc.RegisterPrx;
@@ -27,13 +30,15 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * 
  * @Description: The class is able to communicate with seed node to complete the
  *               tasks like registering,retrieving sharding,maintaining
- *               membership.
+ *               membership. Replace {@link FormalEventMessageLoop} with
+ *               {@link WriteEventExclusiveEventMessageLoop} because of split
+ *               attack notification
  * @author: Francis.Deng
  * @date: May 14, 2019 11:34:32 PM
  * @version: V1.0
  */
-public class LocalFullNode2 extends HashneterInitializer {
-	private static final Logger logger = LoggerFactory.getLogger(LocalFullNode2.class);
+public class WithSeed extends HashneterInitializer {
+	private static final Logger logger = LoggerFactory.getLogger(WithSeed.class);
 
 	@Override
 	public void asLocalFullNode(String seedPubIP, String seedRpcPort) {
@@ -155,15 +160,31 @@ public class LocalFullNode2 extends HashneterInitializer {
 
 	@Override
 	protected ILifecycle performCoreTasks(Hashneter hashneter) {
-		// TODO Auto-generated method stub
-		return null;
+        // disable gossip write-read lock due to more time to complete message.
+        // 2019.2.20 by Francis.Deng
+		ILifecycle lc = new FormalEventMessageLoop();
+        // ILifecycle lc = new
+        // WriteEventExclusiveEventMessageLoop(this.gossipAndRPCExclusiveLock().writeLock());
+		lc.start();
+
+		return lc;
 
 	}
 
+	/**
+	 * block system execution until there is enough sharding's members on board,we
+	 * deny the thread solution because of some factors.
+	 */
 	@Override
 	protected ILifecycle startMembership(LocalFullNode1GeneralNode node) {
 		LazyLifecycle llc = new LazyLifecycle() {
-			private Thread gossipTh;
+			private GossipNodeThread gossipTh;
+
+			@Override
+			public boolean isRunning() {
+				// TODO Auto-generated method stub
+				return super.isRunning() || !gossipTh.getState().equals(State.TERMINATED);
+			}
 
 			@Override
 			public void start() {
@@ -176,12 +197,36 @@ public class LocalFullNode2 extends HashneterInitializer {
 
 			@Override
 			public void stop() {
-				gossipTh.interrupt();
+				// gossipTh.interrupt();
+				gossipTh.interruptMe();
 				super.stop();
 
-				logger.info("<<membership>> is stopped......");
+				// logger.info("<<membership>> is stopped......");
 			}
 		};
+
+//		LazyLifecycle llc = new LazyLifecycle() {
+//			@Override
+//			public void start() {
+//				super.start();
+//				Membership membership = new Membership(node, HnKeyUtils.getString4PublicKey(publicKey()));
+//				int[] partner = { 0, 0 };
+//				while (partner[0] == 0) {// collect enough participant?All,a half,at least one
+//					partner = membership.joinNetwork();
+//
+//					if (partner[0] == 0) {
+//						logger.warn("not enough sharding members({}) right now,the process is blocked", partner[0]);
+//						try {
+//							TimeUnit.MILLISECONDS.sleep(Config.DEFAULT_GOSSIP_NODE_INTERVAL);
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//
+//					}
+//				}
+//			}
+//		};
 		llc.start();
 
 		return llc;

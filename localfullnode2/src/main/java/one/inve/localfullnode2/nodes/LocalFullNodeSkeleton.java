@@ -5,10 +5,15 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
+import one.inve.bean.message.Contribution;
+import one.inve.bean.message.SnapshotMessage;
+import one.inve.bean.message.SnapshotPoint;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +32,20 @@ import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.DbUtils;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.utilities.FileLockUtils;
 import one.inve.localfullnode2.utilities.GracefulShutdown;
 import one.inve.localfullnode2.utilities.PathUtils;
 import one.inve.localfullnode2.utilities.http.NettyHttpServer;
 
+/**
+ * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * 
+ * @Description: Core startup class
+ * @author: Francis.Deng
+ * @date: May 31, 2018 3:06:25 AM
+ * @version: V1.0
+ */
 public abstract class LocalFullNodeSkeleton extends DepsPointcut implements NodeEnrolled {
 	private static final Logger logger = LoggerFactory.getLogger(LocalFullNodeSkeleton.class);
 	// private static Logger logger = null;
@@ -122,6 +135,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 			int selfId = (int) this.getCreatorId();
 			while (-1 == selfId) {
+				logger.warn("fall into a loop of asking for shard info from ({}:{})", seedPubIP, seedRpcPort);
+
 				shardInfo(seedPubIP, seedRpcPort);
 				selfId = (int) this.getCreatorId();
 			}
@@ -147,6 +162,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 			buildShardSortQueue();
 
+			initSnapshotData();
 			// 初始化hashnet数据结构
 			// initHashnet(this);
 			Hashneter hashneter = initHashneter();
@@ -154,7 +170,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 				System.exit(-1);
 
 			ILifecycle membersTask = startMembership(this);
-			membersTask.start();
+			// membersTask.start();
 			gs.addLcs(membersTask);
 
 			// start up http server
@@ -165,6 +181,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			// loadRPC(this);
 			ILifecycle rpcServer = startRPCServer(this);
 			gs.addLcs(rpcServer);
+
+			TimeUnit.SECONDS.sleep(5);
 
 			ILifecycle coreTask = performCoreTasks(hashneter);
 			gs.addLcs(coreTask);
@@ -212,7 +230,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			synchronized (DbUtils.class) {
 				if (stagingArea.getQueue(EventBody.class, StagingArea.ShardSortQueueName, i) == null) {
 					LinkedBlockingQueue<EventBody> queueInstance = new LinkedBlockingQueue<>();
-					stagingArea.createQueue(EventBody.class, StagingArea.ShardSortQueueName, 100000, i, null);
+					stagingArea.createQueue(EventBody.class, StagingArea.ShardSortQueueName, Integer.MAX_VALUE, i,
+							null);
 				}
 			}
 		}
@@ -291,7 +310,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 				int port = node.nodeParameters().selfGossipAddress.httpPort;
 				logger.info("Http server is listening to {}", port);
-				httpServer = NettyHttpServer.boostrap(httpServiceDependency, port);
+				httpServer = NettyHttpServer.boostrap(httpServiceDependency, port, 1);
 			}
 
 			@Override
@@ -339,7 +358,13 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 			@Override
 			public void stop() {
-				getAdapter().deactivate();
+				// getAdapter().deactivate();
+				// getAdapter().destroy();
+				// getCommunicator().shutdown();
+				getCommunicator().destroy();
+//				while (!getCommunicator().isShutdown()) {
+//					logger.info("communicator shutdown is going on");
+//				}
 				super.stop();
 
 				logger.info("<<rpc server>> is stopped......");
@@ -356,5 +381,14 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 	abstract protected ILifecycle startMembership(LocalFullNode1GeneralNode node);
 
 	abstract protected ILifecycle performCoreTasks(Hashneter hashneter);
+
+	protected void initSnapshotData(){
+		DepItemsManager.getInstance().attachSS(null).setContributions(new HashSet<>());
+		DepItemsManager.getInstance().attachSS(null).setTreeRootMap(new HashMap<>());
+		DepItemsManager.getInstance().attachSS(null).setSnapshotPointMap(new HashMap<>());
+		DepItemsManager.getInstance().attachSS(null).setMsgHashTreeRoot(null);
+		DepItemsManager.getInstance().attachSS(null).setTotalFeeBetween2Snapshots(BigInteger.ZERO);
+		DepItemsManager.getInstance().attachSS(null).setSnapshotMessage(null);
+	}
 
 }

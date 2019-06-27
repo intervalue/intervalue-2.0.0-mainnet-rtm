@@ -68,4 +68,6 @@ public interface GossipDependent {
 	PrivateKey getPrivateKey();
 
 	Communicator getCommunicator();
+
+	int getnValue();
 }

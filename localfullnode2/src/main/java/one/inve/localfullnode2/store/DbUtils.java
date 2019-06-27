@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import one.inve.core.EventBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public class DbUtils {
 	}
 
 	public static List<EventBody> queryEventAfterSeq(int shardId, long creatorId, long creatorSeq,
-			LocalFullNode1GeneralNode node) {
+													 LocalFullNode1GeneralNode node) {
 		try {
 			int selfId = (int) node.getCreatorId();
 			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters().dbId);
@@ -694,7 +695,8 @@ public class DbUtils {
 			}
 		}
 		if (null != list && list.size() > 0) {
-			node.setConsMessageMaxId(list.get(0));
+			// node.setConsMessageMaxId(list.get(0));
+			node.addConsMessageMaxId(list.get(0).longValue());
 			node.setConsMessageCount(node.getConsMessageMaxId());
 
 			byte[] consMessageMaxId = rocksJavaUtil.get(Config.CONS_MSG_COUNT_KEY);
@@ -741,7 +743,8 @@ public class DbUtils {
 			}
 		}
 		if (null != list1 && list1.size() > 0) {
-			node.setSystemAutoTxMaxId(list1.get(0));
+			// node.setSystemAutoTxMaxId(list1.get(0));
+			node.addSystemAutoTxMaxId(list1.get(0).longValue());
 
 			byte[] sysTxCount = rocksJavaUtil.get(Config.SYS_TX_COUNT_KEY);
 			if (null == sysTxCount || !new BigInteger(new String(sysTxCount)).equals(list1.get(0))) {
@@ -750,7 +753,7 @@ public class DbUtils {
 				rocksJavaUtil.put(Config.SYS_TX_COUNT_KEY, list1.get(0).toString());
 			}
 		} else {
-			node.setSystemAutoTxMaxId(BigInteger.ZERO);
+			// node.setSystemAutoTxMaxId(BigInteger.ZERO);
 			rocksJavaUtil.put(Config.SYS_TX_COUNT_KEY, BigInteger.ZERO.toString());
 			logger.warn("node-({},{}): initStatistics() fix Config.SYS_TX_COUNT_KEY value to {}", node.getShardId(),
 					node.getCreatorId(), list1.get(0));
@@ -805,7 +808,8 @@ public class DbUtils {
 		rocksJavaUtil.put(signature, JSON.toJSONString(msg));
 
 		// 更新总message数
-		node.setConsMessageMaxId(node.getConsMessageMaxId().add(BigInteger.ONE));
+		// node.setConsMessageMaxId(node.getConsMessageMaxId().add(BigInteger.ONE));
+		node.addConsMessageMaxId(1);
 		rocksJavaUtil.put(Config.CONS_MSG_COUNT_KEY, node.getConsMessageMaxId().toString());
 
 //		// 更新世界状态

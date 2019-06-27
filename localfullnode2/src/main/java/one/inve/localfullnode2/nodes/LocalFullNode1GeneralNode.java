@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +40,11 @@ import one.inve.cluster.Member;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.conf.NodeParameters;
 import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.dep.items.Wal;
 import one.inve.localfullnode2.hashnet.Event;
 import one.inve.localfullnode2.hashnet.Hashnet;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventFlow;
 import one.inve.localfullnode2.store.EventStoreDependency;
 import one.inve.localfullnode2.store.EventStoreImpl;
@@ -81,8 +83,8 @@ public class LocalFullNode1GeneralNode {
 	private PrivateKey privateKey = null;
 
 	private Hashnet hashnet;
-	private EventFlow eventFlow;
-	private IEventStore eventStore;
+	private volatile EventFlow eventFlow;
+	private volatile IEventStore eventStore;
 
 	private int nValue = 1;
 	private int shardCount;
@@ -97,12 +99,12 @@ public class LocalFullNode1GeneralNode {
 	private List<String> blackList4PubKey;
 
 	// the height of events
-	private long[][] lastSeqs;
+	private volatile long[][] lastSeqs;
 
 	/**
 	 * 分片内局部全节点邻居池
 	 */
-	private List<Member> inshardNeighborPools = new ArrayList<>();
+	private List<Member> inshardNeighborPools = Collections.synchronizedList(new ArrayList<Member>());
 
 	public List<Member> inshardNeighborPools() {
 		return inshardNeighborPools;
@@ -115,7 +117,7 @@ public class LocalFullNode1GeneralNode {
 	/**
 	 * 全局范围局部全节点邻居池
 	 */
-	private List<Member> globalNeighborPools = new ArrayList<>();
+	private List<Member> globalNeighborPools = Collections.synchronizedList(new ArrayList<Member>());
 
 	public List<Member> globalNeighborPools() {
 		return globalNeighborPools;
@@ -150,6 +152,8 @@ public class LocalFullNode1GeneralNode {
 	 * 共识消息（已入库的消息）总数量
 	 */
 	private BigInteger consMessageCount = BigInteger.ZERO;
+
+	private ReentrantReadWriteLock gossipAndRPCExclusiveLock = new ReentrantReadWriteLock();
 
 	private static final Logger logger = LoggerFactory.getLogger(LocalFullNode1GeneralNode.class);
 
@@ -245,8 +249,11 @@ public class LocalFullNode1GeneralNode {
 		return consMessageMaxId;
 	}
 
-	public void setConsMessageMaxId(BigInteger consMessageMaxId) {
-		this.consMessageMaxId = consMessageMaxId;
+//	public void setConsMessageMaxId(BigInteger consMessageMaxId) {
+//		this.consMessageMaxId = consMessageMaxId;
+//	}
+	public void addConsMessageMaxId(long delta) {
+		consMessageMaxId = consMessageMaxId.add(BigInteger.valueOf(delta));
 	}
 
 	public BigInteger getConsMessageCount() {
@@ -265,12 +272,20 @@ public class LocalFullNode1GeneralNode {
 		this.totalEventCount = totalEventCount;
 	}
 
+//	public BigInteger getSystemAutoTxMaxId() {
+//		return systemAutoTxMaxId;
+//	}
+//
+//	public void setSystemAutoTxMaxId(BigInteger systemAutoTxMaxId) {
+//		this.systemAutoTxMaxId = systemAutoTxMaxId;
+//	}
+
 	public BigInteger getSystemAutoTxMaxId() {
 		return systemAutoTxMaxId;
 	}
 
-	public void setSystemAutoTxMaxId(BigInteger systemAutoTxMaxId) {
-		this.systemAutoTxMaxId = systemAutoTxMaxId;
+	public void addSystemAutoTxMaxId(long delta) {
+		systemAutoTxMaxId = systemAutoTxMaxId.add(BigInteger.valueOf(delta));
 	}
 
 	public List<LocalFullNode> getLocalFullNodes() {
@@ -458,6 +473,9 @@ public class LocalFullNode1GeneralNode {
 				newWallet(fileName);
 			}
 		}
+
+		Wal wal = DepItemsManager.getInstance().attachWal(null);
+		wal.set(wallet);
 	}
 
 	/**
@@ -708,4 +726,9 @@ public class LocalFullNode1GeneralNode {
 			logger.error("load rpc error: {}", e);
 		}
 	}
+
+	public ReentrantReadWriteLock gossipAndRPCExclusiveLock() {
+		return gossipAndRPCExclusiveLock;
+	}
+
 }

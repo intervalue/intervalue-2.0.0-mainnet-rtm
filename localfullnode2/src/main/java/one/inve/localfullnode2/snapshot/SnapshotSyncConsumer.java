@@ -6,6 +6,10 @@ import com.alibaba.fastjson.JSON;
 import com.zeroc.Ice.Communicator;
 
 import one.inve.cluster.Member;
+import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.dep.DependentItem;
+import one.inve.localfullnode2.dep.DependentItemConcerned;
+import one.inve.localfullnode2.dep.items.DirectCommunicator;
 import one.inve.localfullnode2.rpc.Local2localPrx;
 import one.inve.localfullnode2.rpc.RpcConnectionService;
 import one.inve.localfullnode2.snapshot.vo.SnapObj;
@@ -23,20 +27,16 @@ import org.slf4j.LoggerFactory;
  * @date: May 7, 2019 1:42:45 AM
  * @version: V1.0
  */
-public class SnapshotSyncConsumer implements SnapshotSyncConsumable {
+public class SnapshotSyncConsumer implements SnapshotSyncConsumable, DependentItemConcerned {
 	static final Logger logger = LoggerFactory.getLogger(SnapshotSyncConsumer.class);
 
-	final private Communicator communicator;
-
-	public SnapshotSyncConsumer(Communicator communicator) {
-		this.communicator = communicator;
-	}
+	private DirectCommunicator dc = DepItemsManager.getInstance().attachDirectCommunicator(null);
 
 	@Override
 	public CompletableFuture<SnapObj> gossipMySnapVersion4SnapAsync(Member neighbor, String pubkey, String sig,
 			String hash, String messageMaxId) {
 
-		Local2localPrx nprx = RpcConnectionService.buildConnection2localFullNode(communicator, neighbor);
+		Local2localPrx nprx = RpcConnectionService.buildConnection2localFullNode(dc.get(), neighbor);
 
 		CompletableFuture<SnapObj> snapResult = nprx.gossipMySnapVersion4SnapAsync(pubkey, sig, hash, messageMaxId);
 
@@ -44,4 +44,8 @@ public class SnapshotSyncConsumer implements SnapshotSyncConsumable {
 		return snapResult;
 	}
 
+	@Override
+	public void update(DependentItem item) {
+		set(this,item);
+	}
 }

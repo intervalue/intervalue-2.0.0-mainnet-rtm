@@ -44,7 +44,7 @@ public class MessagePersistence {
 	}
 
 	public void persisMessages() {
-		logger.info(">>> start ConsensusMessageSaveThread...");
+		logger.info(">>> start up message persistence...");
 
 		Instant t0 = null;
 		Instant t1 = null;
@@ -70,7 +70,9 @@ public class MessagePersistence {
 //			}
 //			t1 = Instant.now();
 //		}
-		list = QueuePoller.poll(dep.getConsMessageSaveQueue(), Config.TXS_COMMIT_TIMEOUT, Config.MAX_TXS_COMMIT_COUNT);
+		// list = QueuePoller.poll(dep.getConsMessageSaveQueue(),
+		// Config.TXS_COMMIT_TIMEOUT, Config.MAX_TXS_COMMIT_COUNT);
+		list = QueuePoller.poll(dep.getConsMessageSaveQueue());
 
 		messageCount = list.size();
 		if (messageCount > 0) {
@@ -101,13 +103,14 @@ public class MessagePersistence {
 	}
 
 	public void persistSystemMessages() {
-		logger.info(">>> start ConsensusSystemAutoTxSaveThread...");
+		logger.info(">>> start up system messages persistence...");
 		try {
 			int i = 0;
 			Instant t0 = Instant.now();
 			// while (true) {
 			if (!dep.getSystemAutoTxSaveQueue().isEmpty()) {
-				saveSystemAutoTx(dep.getSystemAutoTxSaveQueue().poll());
+				// saveSystemAutoTx(dep.getSystemAutoTxSaveQueue().poll());
+				saveSystemAutoTxes(QueuePoller.poll(dep.getSystemAutoTxSaveQueue()));
 				i++;
 			} else {
 				// sleep(100);
@@ -124,6 +127,12 @@ public class MessagePersistence {
 		} catch (Exception e) {
 			logger.error("EventSaveThread error: {}\nexit...", e);
 			System.exit(-1);
+		}
+	}
+
+	private void saveSystemAutoTxes(List<JSONObject> sysAutoTxes) {
+		for (JSONObject sysAutoTx : sysAutoTxes) {
+			saveSystemAutoTx(sysAutoTx);
 		}
 	}
 

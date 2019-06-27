@@ -100,4 +100,20 @@ public class QueuePoller {
 
 		return l;
 	}
+
+	/**
+	 * Retrieves and removes all elements
+	 */
+	public static <T> List<T> poll(Queue<T> queue) {
+		T e;
+		List<T> l = new ArrayList<>();
+		if (queue.size() == 0)
+			return Collections.emptyList();
+
+		while ((e = queue.poll()) != null) {
+			l.add(e);
+		}
+
+		return l;
+	}
 }

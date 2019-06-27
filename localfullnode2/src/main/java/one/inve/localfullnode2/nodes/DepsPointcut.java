@@ -1,5 +1,6 @@
 package one.inve.localfullnode2.nodes;
 
+import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
@@ -10,6 +11,7 @@ import com.zeroc.Ice.Communicator;
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.bean.node.LocalFullNode;
 import one.inve.cluster.Member;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.DepItemsManagerial;
 import one.inve.localfullnode2.dep.items.AllQueues;
@@ -23,8 +25,14 @@ import one.inve.localfullnode2.message.MessagesVerificationDependency;
 import one.inve.localfullnode2.postconsensus.exe.EventsExeDependency;
 import one.inve.localfullnode2.postconsensus.readout.EventsReadoutDependency;
 import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
+import one.inve.localfullnode2.snapshot.CreateSnapshotPointDependency;
+import one.inve.localfullnode2.snapshot.DetectAndRepairSnapshotDataDependency;
+import one.inve.localfullnode2.snapshot.HandleConsensusSnapshotMessageDependency;
+import one.inve.localfullnode2.snapshot.HandleSnapshotPointDependency;
+import one.inve.localfullnode2.snapshot.RepairCurrSnapshotPointInfoDependency;
+import one.inve.localfullnode2.snapshot.SnapshotSyncConsumer;
+import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependency;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependency;
 
 /**
@@ -77,7 +85,110 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		MessagePersistenceDependency messagePersistenceDependency = new MessagePersistenceDependency();
 		of(messagePersistenceDependency);
 
+		CreateSnapshotPointDependency createSnapshotPointDependency = new CreateSnapshotPointDependency();
+		of(createSnapshotPointDependency);
+
+		DetectAndRepairSnapshotDataDependency detectAndRepairSnapshotDataDependency = new DetectAndRepairSnapshotDataDependency();
+		of(detectAndRepairSnapshotDataDependency);
+
+		HandleConsensusSnapshotMessageDependency handleConsensusSnapshotMessageDependency = new HandleConsensusSnapshotMessageDependency();
+		of(handleConsensusSnapshotMessageDependency);
+
+		HandleSnapshotPointDependency handleSnapshotPointDependency = new HandleSnapshotPointDependency();
+		of(handleSnapshotPointDependency);
+
+		RepairCurrSnapshotPointInfoDependency repairCurrSnapshotPointInfoDependency = new RepairCurrSnapshotPointInfoDependency();
+		of(repairCurrSnapshotPointInfoDependency);
+
+		SnapshotSynchronizerDependency snapshotSynchronizerDependency = new SnapshotSynchronizerDependency();
+		of(snapshotSynchronizerDependency);
+
+		SnapshotSyncConsumer snapshotSyncConsumer = new SnapshotSyncConsumer();
+		of(snapshotSyncConsumer);
+
 		buildStagingArea();
+	}
+
+	/**
+	 * {@code SnapshotSync(SnapshotSyncConsumable dep)}
+	 */
+	private void of(SnapshotSyncConsumer snapshotSyncConsumer) {
+		DepItemsManager.getInstance().attachDirectCommunicator(snapshotSyncConsumer);
+	}
+
+	/**
+	 * {@code SnapshotSynchronizer(SnapshotSynchronizerDependent dep)}
+	 */
+	protected void of(SnapshotSynchronizerDependency snapshotSynchronizerDependency) {
+		DepItemsManager.getInstance().attachSS(snapshotSynchronizerDependency);
+		DepItemsManager.getInstance().attachStat(snapshotSynchronizerDependency);
+		DepItemsManager.getInstance().attachShardCount(snapshotSynchronizerDependency);
+		DepItemsManager.getInstance().attachNValue(snapshotSynchronizerDependency);
+		DepItemsManager.getInstance().attachPublicKey(snapshotSynchronizerDependency);
+		DepItemsManager.getInstance().attachAllQueues(snapshotSynchronizerDependency);
+	}
+
+	/**
+	 * {@code RepairCurrSnapshotPointInfo(RepairCurrSnapshotPointInfoDependent dep)}
+	 */
+	protected void of(RepairCurrSnapshotPointInfoDependency repairCurrSnapshotPointInfoDependency) {
+		DepItemsManager.getInstance().attachSS(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachStat(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachShardCount(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachNValue(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachLocalFullNodes(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachShardId(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachCreatorId(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachDBId(repairCurrSnapshotPointInfoDependency);
+		DepItemsManager.getInstance().attachAllQueues(repairCurrSnapshotPointInfoDependency);
+	}
+
+	/**
+	 * {@code HandleSnapshotPoint(HandleSnapshotPointDependent dep)}
+	 */
+	protected void of(HandleSnapshotPointDependency handleSnapshotPointDependency) {
+		DepItemsManager.getInstance().attachSS(handleSnapshotPointDependency);
+		DepItemsManager.getInstance().attachAllQueues(handleSnapshotPointDependency);
+		DepItemsManager.getInstance().attachWal(handleSnapshotPointDependency);
+	}
+
+	/**
+	 * {@code HandleConsensusSnapshotMessage(HandleConsensusSnapshotMessageDependent dep)}
+	 */
+	protected void of(HandleConsensusSnapshotMessageDependency handleConsensusSnapshotMessageDependency) {
+		DepItemsManager.getInstance().attachSS(handleConsensusSnapshotMessageDependency);
+		DepItemsManager.getInstance().attachStat(handleConsensusSnapshotMessageDependency);
+		DepItemsManager.getInstance().attachShardCount(handleConsensusSnapshotMessageDependency);
+		DepItemsManager.getInstance().attachNValue(handleConsensusSnapshotMessageDependency);
+		DepItemsManager.getInstance().attachDBId(handleConsensusSnapshotMessageDependency);
+		DepItemsManager.getInstance().attachAllQueues(handleConsensusSnapshotMessageDependency);
+
+	}
+
+	/**
+	 * {@code DetectAndRepairSnapshotData(DetectAndRepairSnapshotDataDependent dep)}
+	 */
+	protected void of(DetectAndRepairSnapshotDataDependency detectAndRepairSnapshotDataDependency) {
+		DepItemsManager.getInstance().attachSS(detectAndRepairSnapshotDataDependency);
+		DepItemsManager.getInstance().attachNValue(detectAndRepairSnapshotDataDependency);
+		DepItemsManager.getInstance().attachShardId(detectAndRepairSnapshotDataDependency);
+		DepItemsManager.getInstance().attachCreatorId(detectAndRepairSnapshotDataDependency);
+		DepItemsManager.getInstance().attachDBId(detectAndRepairSnapshotDataDependency);
+	}
+
+	/**
+	 * {@code CreateSnapshotPoint(CreateSnapshotPointDependent dep)}
+	 */
+	protected void of(CreateSnapshotPointDependency createSnapshotPointDependency) {
+		DepItemsManager.getInstance().attachSS(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachStat(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachShardCount(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachNValue(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachLocalFullNodes(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachShardId(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachCreatorId(createSnapshotPointDependency);
+		DepItemsManager.getInstance().attachAllQueues(createSnapshotPointDependency);
+
 	}
 
 	/**
@@ -97,6 +208,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		DepItemsManager.getInstance().attachShardCount(messagesExeDependency);
 		DepItemsManager.getInstance().attachDBId(messagesExeDependency);
 		DepItemsManager.getInstance().attachStat(messagesExeDependency);
+		DepItemsManager.getInstance().attachSS(messagesExeDependency);
 	}
 
 	/**
@@ -114,6 +226,7 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		DepItemsManager.getInstance().attachStat(eventsExeDependency);
 		DepItemsManager.getInstance().attachDBId(eventsExeDependency);
 		DepItemsManager.getInstance().attachAllQueues(eventsExeDependency);
+		DepItemsManager.getInstance().attachSS(eventsExeDependency);
 	}
 
 	/**
@@ -185,14 +298,16 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		DepItemsManager.getInstance().attachCreatorId(gossipDependency);
 		DepItemsManager.getInstance().attachLastSeqs(gossipDependency);
 		DepItemsManager.getInstance().attachPublicKey(gossipDependency);
-		DepItemsManager.getInstance().attachCurrSnapshotVersion(gossipDependency);
+//		DepItemsManager.getInstance().attachCurrSnapshotVersion(gossipDependency);
 		DepItemsManager.getInstance().attachEventFlow(gossipDependency);
 		DepItemsManager.getInstance().attachBlackList4PubKey(gossipDependency);
 		DepItemsManager.getInstance().attachPrivateKey(gossipDependency);
 		DepItemsManager.getInstance().attachDirectCommunicator(gossipDependency);
 		DepItemsManager.getInstance().attachAllQueues(gossipDependency);
 		DepItemsManager.getInstance().attachLastSeqs(gossipDependency);
-		DepItemsManager.getInstance().attachUpdatedSnapshotMessage(gossipDependency);
+//		DepItemsManager.getInstance().attachUpdatedSnapshotMessage(gossipDependency);
+		DepItemsManager.getInstance().attachSS(gossipDependency);
+		DepItemsManager.getInstance().attachNValue(gossipDependency);
 
 	}
 
@@ -271,6 +386,24 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	}
 
 	@Override
+	public void addConsMessageMaxId(long delta) {
+		depItemsManager.attachStat(null).addConsMessageMaxId(delta);
+		super.addConsMessageMaxId(delta);
+	}
+
+	@Override
+	public void setConsMessageCount(BigInteger consMessageCount) {
+		depItemsManager.attachStat(null).setConsMessageCount(consMessageCount);
+		super.setConsMessageCount(consMessageCount);
+	}
+
+	@Override
+	public void addSystemAutoTxMaxId(long delta) {
+		depItemsManager.attachStat(null).addSystemAutoTxMaxId(delta);
+		super.addSystemAutoTxMaxId(delta);
+	}
+
+	@Override
 	public void inshardNeighborPools(List<Member> members) {
 		depItemsManager.attachMembers(null).setInSharding(members);
 		super.inshardNeighborPools(members);
@@ -290,8 +423,14 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 
 	@Override
 	public void setSnapshotMessage(SnapshotMessage snapshotMessage) {
-		depItemsManager.attachUpdatedSnapshotMessage(null).set(snapshotMessage);
+		depItemsManager.attachSS(null).setSnapshotMessage(snapshotMessage);
 		super.setSnapshotMessage(snapshotMessage);
+	}
+
+	@Override
+	public void setTotalConsEventCount(BigInteger totalConsEventCount) {
+		depItemsManager.attachStat(null).setTotalConsEventCount(totalConsEventCount);
+		super.setTotalConsEventCount(totalConsEventCount);
 	}
 
 }

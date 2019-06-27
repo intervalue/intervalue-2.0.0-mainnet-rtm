@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
@@ -18,7 +18,8 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
  * 
  * Copyright © CHXX Co.,Ltd. All rights reserved.
  * 
- * @Description: The new event after gossip should been persisted immediately.
+ * @Description: The new event after gossip should been persisted
+ *               immediately.Persist them as much as possible
  * @author: Francis.Deng {@link EventSaveThread}
  * @date: Oct 17, 2018 8:17:02 PM
  * @version: V1.0
@@ -29,7 +30,7 @@ public class NewGossipEventsPersistence {
 	private NewGossipEventsPersistenceDependent dep;
 
 	public void persistNewEvents(NewGossipEventsPersistenceDependent dep) {
-		logger.info(">>> start NewGossipEventsPersistence...");
+		logger.info(">>> start up events persistence...");
 
 		this.dep = dep;
 		rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
@@ -40,7 +41,8 @@ public class NewGossipEventsPersistence {
 			int i = 0;
 			Instant t0 = Instant.now();
 			// while (true) {
-			if (!dep.getEventSaveQueue().isEmpty()) {
+			// if (!dep.getEventSaveQueue().isEmpty()) {
+			while (!dep.getEventSaveQueue().isEmpty()) {
 				// desfcp
 				// saveEvent(Objects.requireNonNull(node.getEventSaveQueue().poll()));
 				saveEvent0(Objects.requireNonNull(dep.getEventSaveQueue().poll()));

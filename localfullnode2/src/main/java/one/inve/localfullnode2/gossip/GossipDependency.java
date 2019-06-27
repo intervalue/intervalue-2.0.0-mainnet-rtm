@@ -19,11 +19,12 @@ import one.inve.localfullnode2.dep.items.DirectCommunicator;
 import one.inve.localfullnode2.dep.items.EventFlow;
 import one.inve.localfullnode2.dep.items.LastSeqs;
 import one.inve.localfullnode2.dep.items.Members;
+import one.inve.localfullnode2.dep.items.NValue;
 import one.inve.localfullnode2.dep.items.PrivateKey;
 import one.inve.localfullnode2.dep.items.PublicKey;
+import one.inve.localfullnode2.dep.items.SS;
 import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.dep.items.ShardId;
-import one.inve.localfullnode2.dep.items.UpdatedSnapshotMessage;
 import one.inve.localfullnode2.gossip.communicator.DefaultRpcCommunicator;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
 import one.inve.localfullnode2.staging.StagingArea;
@@ -49,7 +50,7 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 	private CreatorId creatorId;
 	private LastSeqs lastSeqs;
 	private PublicKey publicKey;
-	private UpdatedSnapshotMessage snapshotMessage;
+	private SS ss;
 //	private CurrSnapshotVersion currSnapshotVersion;
 	private EventFlow eventFlow;
 	private BlackList4PubKey blackList4PubKey;
@@ -57,6 +58,8 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 	private GossipCommunicationConsumable rpcCommunicator = new DefaultRpcCommunicator();
 	private DirectCommunicator directCommunicator;
 	private AllQueues allQueues;
+
+	private NValue nValue;
 
 	@Override
 	public List<Member> getMembers(int gossipType) {
@@ -116,9 +119,7 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 
 	@Override
 	public BigInteger getCurrSnapshotVersion() {
-		// return currSnapshotVersion.get();
-		return (null == snapshotMessage) ? BigInteger.ONE : BigInteger.ONE.add(snapshotMessage.get().getSnapVersion());
-
+		return ss.getCurrSnapshotVersion();
 	}
 
 	@Override
@@ -168,6 +169,11 @@ public class GossipDependency implements GossipDependent, DependentItemConcerned
 	@Override
 	public Communicator getCommunicator() {
 		return directCommunicator.get();
+	}
+
+	@Override
+	public int getnValue() {
+		return nValue.get();
 	}
 
 }

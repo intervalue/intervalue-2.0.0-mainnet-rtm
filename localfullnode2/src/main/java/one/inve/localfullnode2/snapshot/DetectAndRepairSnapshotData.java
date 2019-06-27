@@ -25,9 +25,10 @@ public class DetectAndRepairSnapshotData {
         SnapshotMessage snapshotMessage = store.queryLatestSnapshotMessage(dep.getDbId());
         if( snapshotMessage != null ) {
             dep.setSnapshotMessage(snapshotMessage);
-            dep.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(), snapshotMessage.getSnapshotPoint());
-            dep.getTreeRootMap().put(snapshotMessage.getSnapVersion(),
+            dep.putSnapshotPointMap(snapshotMessage.getSnapVersion(), snapshotMessage.getSnapshotPoint());
+            dep.putTreeRootMap(snapshotMessage.getSnapVersion(),
                     snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
+
             EventKeyPair pair = new EventKeyPair(snapshotMessage.getSnapshotPoint().getEventBody().getShardId(),
                     snapshotMessage.getSnapshotPoint().getEventBody().getCreatorId(),
                     snapshotMessage.getSnapshotPoint().getEventBody().getCreatorSeq());
@@ -44,9 +45,9 @@ public class DetectAndRepairSnapshotData {
             if( snapshotMessage!=null && StringUtils.isNotEmpty(snapshotMessage.getPreHash()) ) {
                 snapshotMessage = store.querySnapshotMessageByHash(
                         dep.getDbId(), snapshotMessage.getPreHash() );
-                dep.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(),
+                dep.putSnapshotPointMap(snapshotMessage.getSnapVersion(),
                         snapshotMessage.getSnapshotPoint());
-                dep.getTreeRootMap().put(snapshotMessage.getSnapVersion(),
+                dep.putTreeRootMap(snapshotMessage.getSnapVersion(),
                         snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
 
                 logger.info(">>>>>INFO<<<<<detectAndRepairSnapshotData:\n snapshotMessage: {},\n snapshotPointMap: {},\n treeRootMap: {}",
@@ -81,8 +82,7 @@ public class DetectAndRepairSnapshotData {
                         store.deleteEventsBeforeSnapshotPointEvent(
                                 dep.getDbId(), sm.getSnapshotPoint().getEventBody(), dep.getnValue());
                         // 清除之前版本的treeRootMap
-                        dep.getTreeRootMap().remove(
-                                vers.subtract(BigInteger.valueOf(Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION)) );
+                        dep.removeTreeRootMap(vers.subtract(BigInteger.valueOf(Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION)));
                     }
                 }
             }

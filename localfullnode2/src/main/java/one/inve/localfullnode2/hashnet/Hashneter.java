@@ -10,14 +10,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import one.inve.core.EventBody;
+import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.snapshot.*;
+import one.inve.localfullnode2.store.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import one.inve.localfullnode2.store.EventBody;
-import one.inve.localfullnode2.store.EventFlow;
-import one.inve.localfullnode2.store.EventStoreImpl;
-import one.inve.localfullnode2.store.IEventFlow;
-import one.inve.localfullnode2.store.IEventStore;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 
 /**
@@ -44,6 +44,12 @@ public class Hashneter implements IHashneter {
 		} else {
 			// key condition - repair snapshot if possible
 			// 根据最新快照，恢复相关快照参数： treeRootMap、snapshotPointMap等
+			if (Config.ENABLE_SNAPSHOT) {
+				DetectAndRepairSnapshotDataDependent detectAndRepairSnapshotDataDep =
+						DepItemsManager.getInstance().getItemConcerned(DetectAndRepairSnapshotDataDependency.class);
+				SnapshotDbService store = new SnapshotDbServiceImpl();
+				new DetectAndRepairSnapshotData().detectAndRepairSnapshotData(detectAndRepairSnapshotDataDep,store);
+			}
 			// DbUtils.detectAndRepairSnapshotData(node);
 			// 重载hashnet
 			reloadHashnet(dep);
@@ -54,6 +60,12 @@ public class Hashneter implements IHashneter {
 		// EventBody[] ebs = dep.getAllQueuedEvents(shardId);
 		EventBody[] ebs = eventFlow.getAllQueuedEvents(shardId);
 		for (EventBody eb : ebs) {
+			if (eb.getTrans() != null) {
+				for (byte[] msg : eb.getTrans()) {
+					System.out.println(new String(msg));
+				}
+			}
+
 			hashnet.addEvent(eb);
 		}
 	}
@@ -96,6 +108,8 @@ public class Hashneter implements IHashneter {
 				// 恢复共识Event全排序等待队列
 				Event[] evts = hashnet.getAllConsEvents(i);
 				for (Event evt : evts) {
+					// logger.info("ShardSortQueue size = ", dep.getShardSortQueue(i).size());
+
 					dep.getShardSortQueue(i).put(new EventBody.Builder().shardId(i).creatorId(evt.getCreatorId())
 							.creatorSeq(evt.getCreatorSeq()).otherId(evt.getOtherId()).otherSeq(evt.getOtherSeq())
 							.timeCreated(evt.getTimeCreated()).trans(evt.getTransactions())
@@ -112,7 +126,12 @@ public class Hashneter implements IHashneter {
 		/**
 		 * 修复准备生成最新版本快照点需要的相关信息
 		 */
-		// temporal comment
+		// key condition
+		if (Config.ENABLE_SNAPSHOT) {
+			RepairCurrSnapshotPointInfoDependent repairCurrSnapshotPointInfoDep =
+					DepItemsManager.getInstance().getItemConcerned(RepairCurrSnapshotPointInfoDependency.class);
+			new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(repairCurrSnapshotPointInfoDep);
+		}
 		// repairCurrSnapshotPointInfo(node);
 
 //        logger.info(">>>>>> reload Hashnet finished.");
@@ -129,8 +148,7 @@ public class Hashneter implements IHashneter {
 			hashnet = new Hashnet(dep.getShardCount(), dep.getNValue());
 		}
 
-		// temporal comment
-		// initFromScratch();
+		initFromScratch(dep);
 //		logger.warn("node-({}, {}): init Hashnet successfully. shard-0's lastSeqs: {} ", node.getShardId(),
 //				node.getCreatorId(), eventStore.getLastSeqsByShardId(0));
 	}
@@ -155,6 +173,22 @@ public class Hashneter implements IHashneter {
 			eventFlow = new EventFlow(publicKeys, dep.getPrivateKey(), eventStore);
 		}
 	}
+
+	private void initFromScratch(HashneterDependent dep) {
+		for (int i = 0; i < dep.getShardCount(); i++) {
+			if (dep.getShardId() != -1 && i == dep.getShardId()) {
+				eventFlow.newEvent(i, (int) dep.getCreatorId(), -1, null);
+			}
+			this.addToHashnet(dep, i);
+		}
+	}
+
+//	public void addToHashnet(int shardId) {
+//		EventBody[] ebs = eventFlow.getAllQueuedEvents(shardId);
+//		for (EventBody eb : ebs) {
+//			hashnet.addEvent(eb);
+//		}
+//	}	
 
 	public Hashnet getHashnet() {
 		return hashnet;

@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import one.inve.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +27,6 @@ import one.inve.backups.ValuableDataOutputters;
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.beans.splitAttack.SplitResult;
 import one.inve.cluster.Member;
-import one.inve.core.Config;
-import one.inve.core.Cryptos;
-import one.inve.core.EventBody;
-import one.inve.core.EventFlow;
 import one.inve.node.GeneralNode;
 import one.inve.node.Main;
 import one.inve.node.RpcConnectionService;
@@ -291,11 +288,11 @@ public class GossipEventThread extends Thread {
 			}
 			BigInteger snapVers = new BigInteger(gossipObj.snapVersion);
 			if (snapVers.compareTo(node.getCurrSnapshotVersion().add(BigInteger.ONE)) > 0) {
-				logger.warn("node-({}, {}): neighbor node snapshot version bigger than mine...", node.getShardId(),
-						node.getCreatorId());
+				//logger.warn("node-({}, {}): neighbor node snapshot version bigger than mine...", node.getShardId(),
+//						node.getCreatorId());
 				// 记录比自己快照版本高过1个版本的节点数
 				if (gossipObj.snapHash == null || gossipObj.snapHash.length == 0) {
-					logger.error("gossipObj.snapHash is null");
+					//logger.error("gossipObj.snapHash is null");
 					return eventSize + "_" + eventSpaces;
 				}
 				if (snapVersionMap.get(new String(gossipObj.snapHash)) == null) {
@@ -307,82 +304,115 @@ public class GossipEventThread extends Thread {
 					pubKeySet.add(neighbor.metadata().get("pubkey"));
 					snapVersionMap.put(new String(gossipObj.snapHash), pubKeySet);
 				}
+//				logger.info(">>>>>INFO<<<<<synchronizeHigher:\n snapVersionMap: {}",JSON.toJSONString(snapVersionMap));
 				// 当收集到超过f+1个节点的快照版本比我高过1个时,直接同步快照
-				logger.warn("1:{}", new String(gossipObj.snapHash));
-				logger.warn("2:{}", JSONObject.toJSONString(snapVersionMap.get(new String(gossipObj.snapHash))));
-				logger.warn("3:{}", gossipObj.snapHash.length);
+				//logger.warn("1:{}", new String(gossipObj.snapHash));
+				//logger.warn("2:{}", JSONObject.toJSONString(snapVersionMap.get(new String(gossipObj.snapHash))));
+				//logger.warn("3:{}", gossipObj.snapHash.length);
 				if (snapVersionMap.get(new String(gossipObj.snapHash)) != null
 						&& snapVersionMap.get(new String(gossipObj.snapHash))
-								.size() > (node.getShardCount() * node.getnValue()) / 3 + 1) {
-					logger.warn("node-({}, {}): more than f+1 neighbor node's snapshot version bigger than mine, "
-							+ "neighbor synchronize snapshot...", node.getShardId(), node.getCreatorId());
-					logger.warn("node-({}, {}): new String(gossipObj.snapHash):{}", node.getShardId(),
-							node.getCreatorId(), new String(gossipObj.snapHash));
+						.size() > (node.getShardCount() * node.getnValue()) / 3 + 1) {
+
+					logger.info(">>>>>START<<<<<synchronizeHigher:\n gossipedMember: {},\n gossipObj:{}",
+							JSON.toJSONString(neighbor),JSON.toJSONString(gossipObj));
+
+					//logger.warn("node-({}, {}): more than f+1 neighbor node's snapshot version bigger than mine, "
+//							+ "neighbor synchronize snapshot...", node.getShardId(), node.getCreatorId());
+					//logger.warn("node-({}, {}): new String(gossipObj.snapHash):{}", node.getShardId(),
+//							node.getCreatorId(), new String(gossipObj.snapHash));
 					CompletableFuture<?> snapResult = prxMap.get(neighbor.address()).gossipMySnapVersion4SnapAsync(
 							HnKeyUtils.getString4PublicKey(node.publicKey), "", new String(gossipObj.snapHash),
 							node.getConsMessageMaxId().toString());
 					SnapObj snapObj = null;
 					try {
 						snapObj = (SnapObj) snapResult.get(30000, TimeUnit.MILLISECONDS);
+						logger.info(">>>>>INFO<<<<<synchronizeHigher:\n snapObj: {}",JSON.toJSONString(snapObj));
 					} catch (Exception e) {
-						// logger.error("gossip2Local for snapshot {} completableFuture.get() Exception:
+						// //logger.error("gossip2Local for snapshot {} completableFuture.get() Exception:
 						// {}-{} ", pre, neighbor.address().host(), e);
-						logger.error(
-								"gossip2Local for snapshot {} completableFuture.get() Exception: host={},rpcPort={},e={} ",
-								pre, neighbor.address().host(), neighbor.metadata().get("rpcPort"), e);
-
+						//logger.error(
+//								"gossip2Local for snapshot {} completableFuture.get() Exception: host={},rpcPort={}," +
+//								"e={} ",
+//								pre, neighbor.address().host(), neighbor.metadata().get("rpcPort"), e);
+						logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
 						return eventSize + "_" + eventSpaces;
 					}
 					if (snapObj != null) {
-						logger.warn("snapObj:{}", JSONObject.toJSONString(snapObj));
+						//logger.warn("snapObj:{}", JSONObject.toJSONString(snapObj));
 						String snapMessageStr = snapObj.snapMessage;
 						String originalSnapshotStr = JSON.parseObject(snapMessageStr).getString("message");
-						logger.warn("snapMessageStr:{}", snapMessageStr);
+						//logger.warn("snapMessageStr:{}", snapMessageStr);
 						SnapshotMessage snapshotMessage = JSONObject.parseObject(originalSnapshotStr,
 								SnapshotMessage.class);
+
+						logger.info(">>>>>INFO<<<<<synchronizeHigher:\n snapshotMessage: {}",
+								JSON.toJSONString(snapshotMessage));
+
 						String MsgHashTreeRoot = snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot();
 						if (StringUtils.isEmpty(MsgHashTreeRoot)) {
+							logger.error(">>>>>RETURN<<<<<synchronizeHigher:\n MsgHashTreeRoot is empty");
 							return eventSize + "_" + eventSpaces;
 						}
 						List<JSONObject> messages = null;
 						if (!StringUtils.isEmpty(snapObj.messages)) {
-							messages = JSONArray.parseArray(snapObj.messages, JSONObject.class);
+                            //2019.05.30 暂停快照同步message
+//							messages = JSONArray.parseArray(snapObj.messages, JSONObject.class);
+//							logger.info(">>>>>INFO<<<<<synchronizeHigher:\n messages: {}",messages.toString());
 						}
 
 						// 正在快照后
 						if (SignUtil.verify(originalSnapshotStr)) {
+							JSONObject snapMessage = JSONObject.parseObject(snapMessageStr);
 							// transaction入库
 							if (messages != null) {
 								for (JSONObject msg : messages) {
 									try {
-										logger.error(">>>>>each of messages in GossipEventThread= " + msg);
-
+										//logger.error(">>>>>each of messages in GossipEventThread= " + msg);
+										//2019.5.30 修复数据结构不对应，ConsensusMessageVerifyThread解析错误
+										msg.put("msg",msg.get("message"));
+										msg.put("eShardId",snapshotMessage.getSnapshotPoint().getEventBody().getShardId());
 										node.getConsMessageVerifyQueue().put(msg);
 									} catch (InterruptedException e) {
+										logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
 										e.printStackTrace();
 									}
 								}
 							}
 							try {
-								logger.error(
-										"node.getConsMessageVerifyQueue().put(JSONObject.parseObject(snapMessageStr))"
-												+ snapMessageStr);
+								//logger.error(
+//							//2019.5.30 修复数据结构不对应，ConsensusMessageVerifyThread解析错误			"node.getConsMessageVerifyQueue().put(JSONObject.parseObject(snapMessageStr))"
+//												+ snapMessageStr);
+								//2019.5.21 修复数据结构不对应，ConsensusMessageHandleThread无法解析
+								snapMessage.put("msg",originalSnapshotStr);
+								snapMessage.put("eShardId",snapshotMessage.getSnapshotPoint().getEventBody().getShardId());
 
-								node.getConsMessageVerifyQueue().put(JSONObject.parseObject(snapMessageStr));
-							} catch (InterruptedException e) {
-								logger.error("", e);
+								// 更新本节点当前快照信息
+//							node.msgHashTreeRoot = null;//2019.05.22 重置treeRoot
+//								if(StringUtils.isEmpty(node.msgHashTreeRoot)) {
+//									node.msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(snapshotMessage.getSignature()));
+//								} else {
+//									node.msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(node.msgHashTreeRoot,
+//											snapshotMessage.getSignature()));
+//								}
+								node.setSnapshotMessage(snapshotMessage);
+								node.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(),
+										snapshotMessage.getSnapshotPoint());
+								node.getTreeRootMap().put(snapshotMessage.getSnapVersion(),
+										snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
+								snapVersionMap.clear();
+
+//								node.getConsMessageVerifyQueue().put(snapMessage);
+							} catch (Exception e) {
+								logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
+								//logger.error("", e);
 							}
-							// 更新本节点当前快照信息
-							node.setSnapshotMessage(snapshotMessage);
-							node.getSnapshotPointMap().put(snapshotMessage.getSnapVersion(),
-									snapshotMessage.getSnapshotPoint());
-							node.getTreeRootMap().put(snapshotMessage.getSnapVersion(),
-									snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
-							snapVersionMap.clear();
+
 						} else {
+							logger.error(">>>>>RETURN<<<<<synchronizeHigher:\n originalSnapshotStr verification failed");
 							return eventSize + "_" + eventSpaces;
 						}
 					}
+					logger.info(">>>>>END<<<<<synchronizeHigher");
 				}
 			}
 

@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ import one.inve.localfullnode2.utilities.StringUtils;
 
 /**
  * 局部全节点启动gossip网络线程
+ * <p>
+ * allow {@code isInterrupted} to stop loop.
  * 
  * @author Clare
  * @date 2018/6/13 0013.
@@ -38,6 +41,8 @@ public class GossipNodeThread extends Thread {
 	private BigInteger evtCounts;
 	private BigInteger consEvtCounts;
 	private BigInteger messageCounts;
+
+	private volatile boolean interrupted = false;
 
 	StringBuilder statisticInfo = new StringBuilder()
 			.append("\n*************** node-({},{}): {}-th statistics ***************")
@@ -55,7 +60,7 @@ public class GossipNodeThread extends Thread {
 
 	@Override
 	public void run() {
-		logger.info(">>>>>> start gossip network...");
+		logger.info(">>>>>> start membership network...");
 
 		// logger.info("gossip,rpc =
 		// {},{}",node.nodeParameters.selfGossipAddress.gossipPort,node.nodeParameters.selfGossipAddress.rpcPort);
@@ -77,7 +82,8 @@ public class GossipNodeThread extends Thread {
 
 		boolean shardFlag = (this.node.getShardId() < 0 && this.node.getCreatorId() < 0);
 		long index = 0;
-		while (true) {
+		// while (true) {
+		while (!this.interrupted) {
 			index++;
 			Instant first = Instant.now();
 			int shardCount = this.node.getShardCount();
@@ -91,8 +97,9 @@ public class GossipNodeThread extends Thread {
 					cluster.updateMetadataProperty("index", "" + this.node.getCreatorId());
 					shardFlag = true;
 				}
-				logger.warn("node size: {}", cluster.members().size());
-				logger.warn("shard node size: {}", cluster.findMembersByShardId("" + node.getShardId()).size() + 1);
+				logger.warn("node size(in localfullnode point of view): {}", cluster.members().size());
+				logger.warn("shard node size(in localfullnode point of view): {}",
+						cluster.findMembersByShardId("" + node.getShardId()).size() + 1);
 				// 片内邻居池（不含自己）
 //				node.inshardNeighborPools = cluster.findMembersByShardId("" + node.getShardId()).stream()
 //						.filter(member -> "2".equals("" + member.metadata().get("level"))
@@ -180,13 +187,46 @@ public class GossipNodeThread extends Thread {
 							});
 				}
 			}
+
 			// 清理过期的消息hash缓存
 			clearExpiredMessageHash(node, Instant.now().toEpochMilli());
 			// 等待轮循
 			waitInterval(first);
 			// 统计tps
 			statisticsAndShowTpsInfo(index);
+
+//			// Force membership to take a long break
+//			try {
+//				TimeUnit.MINUTES.sleep(1);
+//				// this.getClass().wait(1000 * 60);
+//			} catch (InterruptedException e) {
+//				// e.printStackTrace();
+//				break;
+//			}
 		}
+
+		CompletableFuture<Void> shutdown = null;
+		try {
+			shutdown = cluster.shutdown();
+			shutdown.get();
+		} catch (Exception e) {
+			// e.printStackTrace();
+
+			// ignore "Exception in thread "RxScheduledExecutorPool-2"
+			// java.lang.IllegalStateException: Fatal Exception thrown on Scheduler.Worker
+			// thread"
+
+		} finally {
+			while (!cluster.isShutdown()) {
+				logger.info("shutdowning membership");
+			}
+
+		}
+
+		logger.warn("interrupted={}", this.interrupted);
+		logger.warn("<<localfullnode's membership>> is stopped......");
+		return;
+
 	}
 
 	/**
@@ -298,5 +338,9 @@ public class GossipNodeThread extends Thread {
 
 		return node.getLocalFullNodes().parallelStream().filter(n -> n.getStatus() == NodeStatus.HAS_SHARDED)
 				.anyMatch(p -> p.getPubkey().equals(pubkeyStr));
+	}
+
+	public void interruptMe() {
+		this.interrupted = true;
 	}
 }

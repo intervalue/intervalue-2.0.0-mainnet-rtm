@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLongArray;
 
+import one.inve.core.EventBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

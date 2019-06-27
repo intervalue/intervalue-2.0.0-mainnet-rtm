@@ -9,7 +9,7 @@ import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.dep.items.DBId;
 import one.inve.localfullnode2.dep.items.Stat;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 
 public class NewGossipEventsPersistenceDependency
 		implements NewGossipEventsPersistenceDependent, DependentItemConcerned {

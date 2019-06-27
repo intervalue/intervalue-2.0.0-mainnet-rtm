@@ -25,11 +25,9 @@ public class HandleConsensusSnapshotMessage {
 
     private HandleConsensusSnapshotMessageDependent dep;
     private SnapshotDbService store;
-    private JSONObject msgObject;
 
-    public void handleConsensusSnapshotMessage(HandleConsensusSnapshotMessageDependent dep, SnapshotDbService store) throws InterruptedException {
+    public void handleConsensusSnapshotMessage(HandleConsensusSnapshotMessageDependent dep, SnapshotDbService store, JSONObject msgObject) throws InterruptedException {
         this.dep = dep;
-        this.msgObject = dep.getMsgObject();
         this.store = store;
 
         logger.info(">>>>>START<<<<<handleConsensusSnapshotMessage:\n msgObject: {}", msgObject);

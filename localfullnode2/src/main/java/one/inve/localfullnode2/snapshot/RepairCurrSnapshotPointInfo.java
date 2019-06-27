@@ -131,7 +131,7 @@ public class RepairCurrSnapshotPointInfo {
                                     .shardId(temp.getShardId()).creatorId(temp.getCreatorId())
                                     .otherId(temp.getOtherId()).otherSeq(temp.getOtherSeq())
                                     .build();
-                            dep.getContributions().add(c);
+                            dep.addContribution(c);
                             // 修复msgHashTreeRoot
                             calculateMsgHashTreeRoot(temp);
 
@@ -245,11 +245,11 @@ public class RepairCurrSnapshotPointInfo {
             if (StringUtils.isEmpty(dep.getMsgHashTreeRoot())) {
                 dep.setMsgHashTreeRoot(eHash);
             }
-            dep.getSnapshotPointMap().put(dep.getCurrSnapshotVersion(), new SnapshotPoint.Builder()
+            dep.putSnapshotPointMap(dep.getCurrSnapshotVersion(), new SnapshotPoint.Builder()
                     .eventBody(event).msgHashTreeRoot(dep.getMsgHashTreeRoot())
                     .contributions((null!=statistics && statistics.size()<=0) ? null: statistics)
                     .build());
-            dep.getTreeRootMap().put(dep.getCurrSnapshotVersion(), dep.getMsgHashTreeRoot());
+            dep.putTreeRootMap(dep.getCurrSnapshotVersion(), dep.getMsgHashTreeRoot());
             logger.info(">>>>>INFO<<<<<createSnapshotPoint:\n snapshotPointMap: {},\n treeRootMap: {}",
                     JSON.toJSONString(dep.getSnapshotPointMap()), JSON.toJSONString(dep.getTreeRootMap()));
 

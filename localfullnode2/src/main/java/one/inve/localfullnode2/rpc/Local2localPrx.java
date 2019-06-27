@@ -277,6 +277,34 @@ public interface Local2localPrx extends com.zeroc.Ice.ObjectPrx {
 		return f;
 	}
 
+	default long[] getHeight() {
+		return getHeight(com.zeroc.Ice.ObjectPrx.noExplicitContext);
+	}
+
+	default long[] getHeight(java.util.Map<String, String> context) {
+		return _iceI_getHeightAsync(context, true).waitForResponse();
+	}
+
+	default java.util.concurrent.CompletableFuture<long[]> getHeightAsync() {
+		return _iceI_getHeightAsync(com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+	}
+
+	default java.util.concurrent.CompletableFuture<long[]> getHeightAsync(java.util.Map<String, String> context) {
+		return _iceI_getHeightAsync(context, false);
+	}
+
+	default com.zeroc.IceInternal.OutgoingAsync<long[]> _iceI_getHeightAsync(java.util.Map<String, String> context,
+			boolean sync) {
+		com.zeroc.IceInternal.OutgoingAsync<long[]> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "getHeight",
+				null, sync, null);
+		f.invoke(true, context, null, null, istr -> {
+			long[] ret;
+			ret = istr.readLongSeq();
+			return ret;
+		});
+		return f;
+	}
+
 	/**
 	 * Contacts the remote server to verify that the object implements this type.
 	 * Raises a local exception if a communication error occurs.
@@ -616,6 +644,6 @@ public interface Local2localPrx extends com.zeroc.Ice.ObjectPrx {
 	}
 
 	static String ice_staticId() {
-		return "::one::inve::rpc::localfullnode::Local2local";
+		return "::one::inve::localfullnode2::rpc::Local2local";
 	}
 }

@@ -11,18 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 
-public class HandleSnapshotPointMessage {
-    private static final Logger logger = LoggerFactory.getLogger(HandleSnapshotPointMessage.class);
+public class HandleSnapshotPoint {
+    private static final Logger logger = LoggerFactory.getLogger(HandleSnapshotPoint.class);
 
-    private HandleSnapshotPointMessageDependent dep;
+    private HandleSnapshotPointDependent dep;
     private BigInteger vers;
-    private JSONObject msgObject;
 
-
-    public void handleSnapshotPointMessage(HandleSnapshotPointMessageDependent dep) throws Exception{
+    public void handleSnapshotPointMessage(HandleSnapshotPointDependent dep,JSONObject msgObject) throws Exception{
         this.dep = dep;
         this.vers = dep.getCurrSnapshotVersion();
-        this.msgObject = dep.getMsgObject();
 
         logger.info(">>>>>START<<<<<handleSnapshotPointMessage:\n msgObject: {}", msgObject);
 
@@ -58,7 +55,7 @@ public class HandleSnapshotPointMessage {
         // 快照事件，则生成快照消息并丢入队列
         createSnapshotMessage(dep.getSnapshotPointMap().get(vers), maxMessageId);
         // 恢复参数状态
-        dep.getSnapshotPointMap().remove(vers);
+        dep.removeSnapshotPointMap(vers);
         dep.setTotalFeeBetween2Snapshots(BigInteger.ZERO);
 
 //        logger.info("node-({}, {}): handle snapshotPoint-{} finished!", node.getShardId(), node.getCreatorId(), vers);

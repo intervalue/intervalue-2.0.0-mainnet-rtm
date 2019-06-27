@@ -10,11 +10,14 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public interface RepairCurrSnapshotPointInfoDependent {
 
     HashMap<BigInteger, SnapshotPoint> getSnapshotPointMap();
+
+    void putSnapshotPointMap(BigInteger snapVersion, SnapshotPoint snapshotPoint);
 
     BigInteger getCurrSnapshotVersion();
 
@@ -30,17 +33,21 @@ public interface RepairCurrSnapshotPointInfoDependent {
 
     HashSet<Contribution> getContributions();
 
+    void addContribution(Contribution contribution);
+
     List<LocalFullNode> getLocalFullNodes();
 
     HashMap<BigInteger, String> getTreeRootMap();
 
+    void putTreeRootMap(BigInteger snapVersion, String msgHashTreeRoot);
+
     BigInteger getConsMessageMaxId();
 
-    LinkedBlockingQueue<JSONObject> getConsMessageVerifyQueue();
+    BlockingQueue<JSONObject> getConsMessageVerifyQueue();
 
     void setContributions(HashSet<Contribution> contributions);
 
-    LinkedBlockingQueue<EventBody> getShardSortQueue(int shardId);
+    BlockingQueue<EventBody> getShardSortQueue(int shardId);
 
     void setTotalConsEventCount(BigInteger totalConsEventCount);
 

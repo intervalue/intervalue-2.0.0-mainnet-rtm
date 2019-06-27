@@ -3,10 +3,12 @@ package one.inve.localfullnode2.lc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.GossipDependent;
 import one.inve.localfullnode2.gossip.Gossiper;
+import one.inve.localfullnode2.gossip.LostMotionModel;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistence;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
 import one.inve.localfullnode2.hashnet.HashneterUpstream;
@@ -38,7 +40,7 @@ import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
 public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle {
 	private static final Logger logger = LoggerFactory.getLogger(FormalEventMessageLoop.class);
 
-	private boolean stopMe = true;// control the loop
+	private volatile boolean stopMe = true;// control the loop
 
 	@Override
 	public void start() {
@@ -50,6 +52,8 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 		if (!isRunning()) {
 			super.start();
 			stopMe = false;
+
+			LostMotionModel lostMotionModel = new LostMotionModel(Config.LostMotionModel_EXPONENT);
 
 			GossipDependent gossipDep = null;
 			Gossiper g = new Gossiper();
@@ -73,6 +77,10 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 			MessagesExeDependency messagesExeDependency = null;
 
 			MessagePersistenceDependency messagePersistenceDependency = null;
+
+			gossipDep = DepItemsManager.getInstance().getItemConcerned(GossipDependency.class);
+			g.breakStableHeight(gossipDep);// the last node is able to break stable height if all conditions are
+											// satisfied
 
 			while (!stopMe) {
 				// first,gossip communication
@@ -120,7 +128,8 @@ public class FormalEventMessageLoop extends LazyLifecycle implements ILifecycle 
 				messagePersistence.persisMessages();
 				messagePersistence.persistSystemMessages();
 
-				sleep(5);// take a break
+				long milliSeconds = (long) (lostMotionModel.getYVar(g.getLostMotionRound()));
+				sleepMilliSeconds(milliSeconds);// take a break
 			}
 
 			super.stop();

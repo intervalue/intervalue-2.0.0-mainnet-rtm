@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import one.inve.localfullnode2.hashnet.Event;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 
 /**
  * 
@@ -41,6 +41,12 @@ public class EventsReadout {
 			// 将收到的未知events加入到全排序待入库队列
 			evts = dep.getAllConsEvents(shardId);
 			for (Event evt : evts) {
+//				if (evt.getTransactions() != null) {
+//					for (byte[] msg : evt.getTransactions()) {
+//						System.out.println("for acceptance test");
+//					}
+//				}
+
 				try {
 					dep.getShardSortQueue(shardId).put(new EventBody.Builder().shardId(shardId)
 							.creatorId(evt.getCreatorId()).creatorSeq(evt.getCreatorSeq()).otherId(evt.getOtherId())

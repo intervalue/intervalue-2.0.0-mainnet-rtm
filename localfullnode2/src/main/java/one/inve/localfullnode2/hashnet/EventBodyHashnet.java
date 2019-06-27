@@ -1,6 +1,6 @@
 package one.inve.localfullnode2.hashnet;
 
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventKeyPair;
 
 /**

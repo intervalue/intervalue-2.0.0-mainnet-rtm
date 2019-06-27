@@ -3,7 +3,7 @@ package one.inve.localfullnode2.postconsensus.readout;
 import java.util.concurrent.BlockingQueue;
 
 import one.inve.localfullnode2.hashnet.Event;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 
 public interface EventsReadoutDependent {
 	int getShardCount();

@@ -25,8 +25,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Current;
 
 import one.inve.bean.node.NodeStatus;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.gossip.HandleSplitReportThread;
+import one.inve.localfullnode2.gossip.l2l.L2LCore;
 import one.inve.localfullnode2.gossip.vo.AppointEvent;
 import one.inve.localfullnode2.gossip.vo.GossipObj;
 import one.inve.localfullnode2.gossip.vo.SplitResult;
@@ -36,11 +38,10 @@ import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.rpc.Local2local;
 import one.inve.localfullnode2.snapshot.vo.SnapObj;
 import one.inve.localfullnode2.store.DbUtils;
-import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.IEventStore;
 import one.inve.localfullnode2.store.SnapshotDbService;
-import one.inve.localfullnode2.store.SnapshotDbServiceImpl2;
+import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
 import one.inve.localfullnode2.utilities.Cryptos;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 import one.inve.localfullnode2.utilities.StringUtils;
@@ -54,10 +55,10 @@ import one.inve.utils.DSA;
  */
 public class Local2localImpl implements Local2local {
 	private static final Logger logger = LoggerFactory.getLogger(Light2localImpl.class);
-	private LocalFullNode1GeneralNode node;
+	private volatile LocalFullNode1GeneralNode node;
 	List<Map<EventKeyPair, Map<String, Set<String>>>> splitReportCache;
 
-	private SnapshotDbService snapshotDbService = new SnapshotDbServiceImpl2();
+	private SnapshotDbService snapshotDbService = new SnapshotDbServiceImpl();
 	private ITransactionDbService transactionDbService = new TransactionDbService();
 
 	public Local2localImpl(LocalFullNode1GeneralNode node) {
@@ -104,75 +105,103 @@ public class Local2localImpl implements Local2local {
 	 *                    contains a creatorId and a sequenceId.
 	 * @param current     rpc connection info
 	 */
+//	@Override
+//	public synchronized GossipObj gossipMyMaxSeqList4Consensus(String pubkey, String sig, String snapVersion,
+//			String snapHash, long[] seqs, Current current) {
+//		GossipObj gossipObj = null;
+//		if (gossipFlag) {
+//			Instant first = Instant.now();
+//			if (!validate(pubkey)) {
+//				return null;
+//			}
+//
+//			// Francis.Deng 4/4/2019
+//			// There was an accident that x.xx.202.66:35791(who had higher snapVersion
+//			// "273")
+//			// retained lower seqs watermark than other's(who had snapVersion "272"
+//			// meanwhile),
+//			// which caused serious gossip problem.
+//
+//			// Each thing is fine if the gap between requester's snapVersion and
+//			// responder‘snapVersion is 0 or 1
+//			BigInteger currSnapshotVersion = node.getCurrSnapshotVersion();
+//			if (currSnapshotVersion.equals(new BigInteger(snapVersion))
+//					|| currSnapshotVersion.subtract(BigInteger.ONE).equals(new BigInteger(snapVersion))
+//					|| currSnapshotVersion.add(BigInteger.ONE).equals(new BigInteger(snapVersion))) {
+//				// 请求者地址信息
+//				String addressInfo = (null == current.con) ? null : current.con.toString();
+//				logger.info("requestor's pubkey = {}", pubkey);
+//				List<Event> rpcEvents = getUnknownEvents(seqs, addressInfo).stream()
+//						.map(eventBody -> new Event(eventBody.getShardId(), eventBody.getCreatorId(),
+//								eventBody.getCreatorSeq(), eventBody.getOtherId(), eventBody.getOtherSeq(),
+//								eventBody.getTrans(), eventBody.getTimeCreated().getEpochSecond(),
+//								eventBody.getTimeCreated().getNano(), eventBody.getSignature(), eventBody.isFamous(),
+//								eventBody.getHash(), eventBody.getGeneration(),
+//								(null == eventBody.getConsTimestamp()) ? -1
+//										: eventBody.getConsTimestamp().getEpochSecond(),
+//								(null == eventBody.getConsTimestamp()) ? -1 : eventBody.getConsTimestamp().getNano(),
+//								eventBody.getOtherHash(), eventBody.getParentHash()))
+//						.collect(Collectors.toList());
+//
+//				gossipObj = (rpcEvents.size() > 0)
+//						? new GossipObj(currSnapshotVersion.toString(), rpcEvents.toArray(new Event[0]), null)
+//						: new GossipObj(currSnapshotVersion.toString(), null, null);
+//
+//				long handleInterval = Duration.between(first, Instant.now()).toMillis();
+//				if (handleInterval > Config.DEFAULT_GOSSIP_EVENT_INTERVAL) {
+//					logger.warn(
+//							"Warning:gossipMyMaxSeqList4Consensus in server-side costs {} ms.  Additional connection(remote address-->local address) is <<{}>>",
+//							handleInterval, addressInfo);
+//				}
+//				return gossipObj;
+//
+//			} else if (currSnapshotVersion.compareTo(new BigInteger(snapVersion)) > 0) {
+//				/*
+//				 * logger.warn("hash:{}",SnapshotDbService.querySnapshotMessageHashByVersion(
+//				 * node.nodeParameters.dbId,snapVersion)==null?
+//				 * null:SnapshotDbService.querySnapshotMessageHashByVersion(node.nodeParameters.
+//				 * dbId,snapVersion));
+//				 * logger.warn("{}",SnapshotDbService.querySnapshotMessageHashByVersion(node.
+//				 * nodeParameters.dbId,snapVersion)==null?
+//				 * null:SnapshotDbService.querySnapshotMessageHashByVersion(node.nodeParameters.
+//				 * dbId,snapVersion).getBytes());
+//				 */
+//				return new GossipObj(currSnapshotVersion.toString(), null,
+//						snapshotDbService.querySnapshotMessageHashByVersion(node.nodeParameters().dbId,
+//								snapVersion) == null ? null
+//										: snapshotDbService.querySnapshotMessageHashByVersion(
+//												node.nodeParameters().dbId, snapVersion).getBytes());
+//			} else {
+//				return new GossipObj(currSnapshotVersion.toString(), null, null);
+//			}
+//		} else { // gossipFlag is false
+//			return gossipObj;
+//		}
+//	}
+	/**
+	 * delegate core task to {@link L2LCore}
+	 */
 	@Override
 	public synchronized GossipObj gossipMyMaxSeqList4Consensus(String pubkey, String sig, String snapVersion,
 			String snapHash, long[] seqs, Current current) {
 		GossipObj gossipObj = null;
 		if (gossipFlag) {
-			Instant first = Instant.now();
-			if (!validate(pubkey)) {
-				return null;
-			}
+			// disable gossip write-read lock due to more time to complete message.
+			// 2019.2.20 by Francis.Deng
+//			ReadLock readLock = node.gossipAndRPCExclusiveLock().readLock();
+//			readLock.lock();
+//			try {
+			logger.info("gossipMyMaxSeqList4Consensus is running(answering the gossip)");
 
-			// Francis.Deng 4/4/2019
-			// There was an accident that x.xx.202.66:35791(who had higher snapVersion
-			// "273")
-			// retained lower seqs watermark than other's(who had snapVersion "272"
-			// meanwhile),
-			// which caused serious gossip problem.
+			L2LCore l2l = new L2LCore();
+			gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
+					node.getCurrSnapshotVersion(), node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
+					node.nodeParameters().dbId);
+//			} finally {
+//				readLock.unlock();
+//			}
 
-			// Each thing is fine if the gap between requester's snapVersion and
-			// responder‘snapVersion is 0 or 1
-			BigInteger currSnapshotVersion = node.getCurrSnapshotVersion();
-			if (currSnapshotVersion.equals(new BigInteger(snapVersion))
-					|| currSnapshotVersion.subtract(BigInteger.ONE).equals(new BigInteger(snapVersion))
-					|| currSnapshotVersion.add(BigInteger.ONE).equals(new BigInteger(snapVersion))) {
-				// 请求者地址信息
-				String addressInfo = (null == current.con) ? null : current.con.toString();
-				logger.info("requestor's pubkey = {}", pubkey);
-				List<Event> rpcEvents = getUnknownEvents(seqs, addressInfo).stream()
-						.map(eventBody -> new Event(eventBody.getShardId(), eventBody.getCreatorId(),
-								eventBody.getCreatorSeq(), eventBody.getOtherId(), eventBody.getOtherSeq(),
-								eventBody.getTrans(), eventBody.getTimeCreated().getEpochSecond(),
-								eventBody.getTimeCreated().getNano(), eventBody.getSignature(), eventBody.isFamous(),
-								eventBody.getHash(), eventBody.getGeneration(),
-								(null == eventBody.getConsTimestamp()) ? -1
-										: eventBody.getConsTimestamp().getEpochSecond(),
-								(null == eventBody.getConsTimestamp()) ? -1 : eventBody.getConsTimestamp().getNano(),
-								eventBody.getOtherHash(), eventBody.getParentHash()))
-						.collect(Collectors.toList());
-
-				gossipObj = (rpcEvents.size() > 0)
-						? new GossipObj(currSnapshotVersion.toString(), rpcEvents.toArray(new Event[0]), null)
-						: new GossipObj(currSnapshotVersion.toString(), null, null);
-
-				long handleInterval = Duration.between(first, Instant.now()).toMillis();
-				if (handleInterval > Config.DEFAULT_GOSSIP_EVENT_INTERVAL) {
-					logger.warn(
-							"Warning:gossipMyMaxSeqList4Consensus in server-side costs {} ms.  Additional connection(remote address-->local address) is <<{}>>",
-							handleInterval, addressInfo);
-				}
-				return gossipObj;
-
-			} else if (currSnapshotVersion.compareTo(new BigInteger(snapVersion)) > 0) {
-				/*
-				 * logger.warn("hash:{}",SnapshotDbService.querySnapshotMessageHashByVersion(
-				 * node.nodeParameters.dbId,snapVersion)==null?
-				 * null:SnapshotDbService.querySnapshotMessageHashByVersion(node.nodeParameters.
-				 * dbId,snapVersion));
-				 * logger.warn("{}",SnapshotDbService.querySnapshotMessageHashByVersion(node.
-				 * nodeParameters.dbId,snapVersion)==null?
-				 * null:SnapshotDbService.querySnapshotMessageHashByVersion(node.nodeParameters.
-				 * dbId,snapVersion).getBytes());
-				 */
-				return new GossipObj(currSnapshotVersion.toString(), null,
-						snapshotDbService.querySnapshotMessageHashByVersion(node.nodeParameters().dbId,
-								snapVersion) == null ? null
-										: snapshotDbService.querySnapshotMessageHashByVersion(
-												node.nodeParameters().dbId, snapVersion).getBytes());
-			} else {
-				return new GossipObj(currSnapshotVersion.toString(), null, null);
-			}
+			return gossipObj;
 		} else { // gossipFlag is false
 			return gossipObj;
 		}
@@ -614,6 +643,15 @@ public class Local2localImpl implements Local2local {
 		} else {
 			return new AppointEvent(node.getCurrSnapshotVersion().toString(), null);
 		}
+	}
+
+	/**
+	 * allow peer to be aware of the height of other peers.
+	 */
+	@Override
+	public long[] getHeight(Current current) {
+		long[] height = node.getEventStore().getLastSeqsByShardId(node.getShardId());
+		return height;
 	}
 
 }

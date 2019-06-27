@@ -17,7 +17,7 @@ import one.inve.localfullnode2.dep.items.ShardCount;
 import one.inve.localfullnode2.dep.items.ShardId;
 import one.inve.localfullnode2.dep.items.Stat;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.store.EventBody;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependent;
 
 /**
@@ -80,7 +80,7 @@ public class HashneterDependency implements HashneterDependent, DependentItemCon
 
 	@Override
 	public BlockingQueue<EventBody> getShardSortQueue(int shardId) {
-		return allQueues.get().getQueue(EventBody.class, StagingArea.ShardSortQueueName);
+		return allQueues.get().getQueue(EventBody.class, StagingArea.ShardSortQueueName, shardId);
 	}
 
 	@Override

@@ -7,14 +7,11 @@ import java.util.concurrent.BlockingQueue;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.Contribution;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.dep.DependentItem;
 import one.inve.localfullnode2.dep.DependentItemConcerned;
-import one.inve.localfullnode2.dep.items.AllQueues;
-import one.inve.localfullnode2.dep.items.CreatorId;
-import one.inve.localfullnode2.dep.items.DBId;
-import one.inve.localfullnode2.dep.items.Stat;
+import one.inve.localfullnode2.dep.items.*;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.store.EventBody;
 import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
@@ -33,6 +30,7 @@ public class EventsExeDependency implements EventsExeDependent, DependentItemCon
 	private Stat stat;
 	private DBId dbId;
 	private AllQueues allQueues;
+	private SS ss;
 
 	@Override
 	public void update(DependentItem item) {
@@ -46,8 +44,12 @@ public class EventsExeDependency implements EventsExeDependent, DependentItemCon
 
 	@Override
 	public String msgHashTreeRoot() {
-		// TODO Auto-generated method stub
-		return null;
+		return ss.getMsgHashTreeRoot();
+	}
+
+	@Override
+	public void setMsgHashTreeRoot(String msgHashTreeRoot) {
+		ss.setMsgHashTreeRoot(msgHashTreeRoot);
 	}
 
 	@Override
@@ -62,8 +64,7 @@ public class EventsExeDependency implements EventsExeDependent, DependentItemCon
 
 	@Override
 	public HashSet<Contribution> getContributions() {
-		// TODO Auto-generated method stub
-		return null;
+		return ss.getContributions();
 	}
 
 	@Override

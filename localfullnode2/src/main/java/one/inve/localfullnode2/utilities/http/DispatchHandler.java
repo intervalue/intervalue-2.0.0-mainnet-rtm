@@ -29,7 +29,7 @@ import one.inve.localfullnode2.utilities.http.annotation.RequestMatchable;
  */
 @Sharable
 public class DispatchHandler extends ChannelInboundHandlerAdapter {
-	private static final String HTTP_API_HANDLER_PACKAGE = "one.inve.http.service";
+	private static final String HTTP_API_HANDLER_PACKAGE = "one.inve.localfullnode2.http";
 
 	private HttpServiceImplsDependent dep;
 

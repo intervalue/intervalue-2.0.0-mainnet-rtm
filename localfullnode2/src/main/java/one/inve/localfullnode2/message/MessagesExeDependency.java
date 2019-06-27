@@ -8,10 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import one.inve.contract.MVM.WorldStateService;
 import one.inve.localfullnode2.dep.DependentItem;
 import one.inve.localfullnode2.dep.DependentItemConcerned;
-import one.inve.localfullnode2.dep.items.AllQueues;
-import one.inve.localfullnode2.dep.items.DBId;
-import one.inve.localfullnode2.dep.items.ShardCount;
-import one.inve.localfullnode2.dep.items.Stat;
+import one.inve.localfullnode2.dep.items.*;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
@@ -33,6 +30,7 @@ public class MessagesExeDependency implements MessagesExeDependent, DependentIte
 	private ShardCount shardCount;
 	private DBId dbId;
 	private Stat stat;
+	private SS ss;
 
 	@Override
 	public void update(DependentItem item) {
@@ -87,8 +85,10 @@ public class MessagesExeDependency implements MessagesExeDependent, DependentIte
 
 	@Override
 	public void setTotalFeeBetween2Snapshots(BigInteger totalFeeBetween2Snapshots) {
-		// TODO Auto-generated method stub
-
+		if(ss == null){
+			ss = new SS();
+		}
+		ss.setTotalFeeBetween2Snapshots(totalFeeBetween2Snapshots);
 	}
 
 	@Override
