@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import one.inve.localfullnode2.dep.DepItemsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +25,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Current;
 
 import one.inve.bean.node.NodeStatus;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.gossip.HandleSplitReportThread;
 import one.inve.localfullnode2.gossip.l2l.L2LCore;
@@ -38,7 +38,6 @@ import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.rpc.Local2local;
 import one.inve.localfullnode2.snapshot.vo.SnapObj;
 import one.inve.localfullnode2.store.DbUtils;
-import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.IEventStore;
 import one.inve.localfullnode2.store.SnapshotDbService;
@@ -186,24 +185,23 @@ public class Local2localImpl implements Local2local {
 	public synchronized GossipObj gossipMyMaxSeqList4Consensus(String pubkey, String sig, String snapVersion,
 			String snapHash, long[] seqs, Current current) {
 		GossipObj gossipObj = null;
-		BigInteger vers = DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion();
 		if (gossipFlag) {
-            // disable gossip write-read lock due to more time to complete message.
-            // 2019.2.20 by Francis.Deng
+			// disable gossip write-read lock due to more time to complete message.
+			// 2019.2.20 by Francis.Deng
 //			ReadLock readLock = node.gossipAndRPCExclusiveLock().readLock();
 //			readLock.lock();
 //			try {
-            logger.info("gossipMyMaxSeqList4Consensus is running(mutually exclusive with gossiping )");
+			logger.info("gossipMyMaxSeqList4Consensus is running(answering the gossip)");
 
-            L2LCore l2l = new L2LCore();
-            gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
-                    vers, node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
-                    node.nodeParameters().dbId);
+			L2LCore l2l = new L2LCore();
+			gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
+					node.getCurrSnapshotVersion(), node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
+					node.nodeParameters().dbId);
 //			} finally {
 //				readLock.unlock();
 //			}
 
-            return gossipObj;
+			return gossipObj;
 		} else { // gossipFlag is false
 			return gossipObj;
 		}
@@ -315,12 +313,10 @@ public class Local2localImpl implements Local2local {
 		int selfId = (int) node.getCreatorId();
 		logger.warn("hash:{}", hash);
 		String snapshotStr = snapshotDbService.querySnapshotMessageFormatStringByHash(node.nodeParameters().dbId, hash);
-		//2019.05.30 暂停快照同步message
-		List<JSONObject> trans = null;
-//		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
-//		// 获取交易信息
-//		List<JSONObject> trans = TransactionDbService.queryMissingTransactionsBeforeSnapshotPoint(originalSnapshotStr,
-//				new BigInteger(transCount), node.nodeParameters.dbId);
+		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
+		// 获取交易信息
+		List<JSONObject> trans = transactionDbService.queryMissingTransactionsBeforeSnapshotPoint(originalSnapshotStr,
+				new BigInteger(transCount), node.nodeParameters().dbId);
 
 		// 构建结果结构
 		SnapObj snapObj = new SnapObj(snapshotStr, (null == trans) ? null : JSONArray.toJSONString(trans));
@@ -649,13 +645,13 @@ public class Local2localImpl implements Local2local {
 		}
 	}
 
-    /**
-     * allow peer to be aware of the height of other peers.
-     */
-//    @Override
-    public long[] getHeight(Current current) {
-        long[] height = node.getEventStore().getLastSeqsByShardId(node.getShardId());
-        return height;
-    }
+	/**
+	 * allow peer to be aware of the height of other peers.
+	 */
+	@Override
+	public long[] getHeight(Current current) {
+		long[] height = node.getEventStore().getLastSeqsByShardId(node.getShardId());
+		return height;
+	}
 
 }

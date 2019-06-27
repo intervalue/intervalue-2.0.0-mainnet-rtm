@@ -43,7 +43,9 @@ public interface Local2local extends com.zeroc.Ice.Object {
 	boolean gossip4SplitDel(String pubkey, String sig, String data, int shardId, long creatorId, long creatorSeq,
 			String eventHash, boolean isNeedGossip2Center, com.zeroc.Ice.Current current);
 
-	static final String[] _iceIds = { "::Ice::Object", "::one::inve::rpc::localfullnode::Local2local" };
+	long[] getHeight(com.zeroc.Ice.Current current);
+
+	static final String[] _iceIds = { "::Ice::Object", "::one::inve::localfullnode2::rpc::Local2local" };
 
 	@Override
 	default String[] ice_ids(com.zeroc.Ice.Current current) {
@@ -56,7 +58,7 @@ public interface Local2local extends com.zeroc.Ice.Object {
 	}
 
 	static String ice_staticId() {
-		return "::one::inve::rpc::localfullnode::Local2local";
+		return "::one::inve::localfullnode2::rpc::Local2local";
 	}
 
 	static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_gossipMyMaxSeqList4Consensus(
@@ -201,9 +203,20 @@ public interface Local2local extends com.zeroc.Ice.Object {
 		return inS.setResult(ostr);
 	}
 
-	final static String[] _iceOps = { "gossip4AppointEvent", "gossip4SplitDel", "gossipMyMaxSeqList4Consensus",
-			"gossipMyMaxSeqList4Sync", "gossipMySnapVersion4Snap", "gossipReport4split", "ice_id", "ice_ids", "ice_isA",
-			"ice_ping" };
+	static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_getHeight(Local2local obj,
+			final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current) {
+		com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+		inS.readEmptyParams();
+		long[] ret = obj.getHeight(current);
+		com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+		ostr.writeLongSeq(ret);
+		inS.endWriteParams(ostr);
+		return inS.setResult(ostr);
+	}
+
+	final static String[] _iceOps = { "getHeight", "gossip4AppointEvent", "gossip4SplitDel",
+			"gossipMyMaxSeqList4Consensus", "gossipMyMaxSeqList4Sync", "gossipMySnapVersion4Snap", "gossipReport4split",
+			"ice_id", "ice_ids", "ice_isA", "ice_ping" };
 
 	@Override
 	default java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceDispatch(
@@ -215,33 +228,36 @@ public interface Local2local extends com.zeroc.Ice.Object {
 
 		switch (pos) {
 		case 0: {
-			return _iceD_gossip4AppointEvent(this, in, current);
+			return _iceD_getHeight(this, in, current);
 		}
 		case 1: {
-			return _iceD_gossip4SplitDel(this, in, current);
+			return _iceD_gossip4AppointEvent(this, in, current);
 		}
 		case 2: {
-			return _iceD_gossipMyMaxSeqList4Consensus(this, in, current);
+			return _iceD_gossip4SplitDel(this, in, current);
 		}
 		case 3: {
-			return _iceD_gossipMyMaxSeqList4Sync(this, in, current);
+			return _iceD_gossipMyMaxSeqList4Consensus(this, in, current);
 		}
 		case 4: {
-			return _iceD_gossipMySnapVersion4Snap(this, in, current);
+			return _iceD_gossipMyMaxSeqList4Sync(this, in, current);
 		}
 		case 5: {
-			return _iceD_gossipReport4split(this, in, current);
+			return _iceD_gossipMySnapVersion4Snap(this, in, current);
 		}
 		case 6: {
-			return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
+			return _iceD_gossipReport4split(this, in, current);
 		}
 		case 7: {
-			return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
+			return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
 		}
 		case 8: {
-			return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+			return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
 		}
 		case 9: {
+			return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+		}
+		case 10: {
 			return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
 		}
 		}
