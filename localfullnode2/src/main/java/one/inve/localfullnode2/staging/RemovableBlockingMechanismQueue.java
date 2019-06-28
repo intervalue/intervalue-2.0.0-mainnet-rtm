@@ -19,8 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RemovableBlockingMechanismQueue<E> extends AbstractQueue<E> implements BlockingQueue<E> {
 
-	public static interface ElementModifiable<F> {
-		void notify(F e);
+	public static interface ElementModifiable<E> {
+		void notify(E e, String id, String op);
 	}
 
 	/**
@@ -60,6 +60,11 @@ public class RemovableBlockingMechanismQueue<E> extends AbstractQueue<E> impleme
 	 * notify external module as long as changing element.
 	 */
 	private ElementModifiable<E> modifier;
+
+	/**
+	 * external program defines it
+	 */
+	private String identifier = "undefined";
 
 	public RemovableBlockingMechanismQueue(int capacity, ElementModifiable<E> modifier) {
 		this(capacity);
@@ -118,7 +123,7 @@ public class RemovableBlockingMechanismQueue<E> extends AbstractQueue<E> impleme
 		}
 
 		if (c >= 0)
-			notify(e);
+			notify(e, "offer");
 
 		return c >= 0;
 	}
@@ -127,8 +132,8 @@ public class RemovableBlockingMechanismQueue<E> extends AbstractQueue<E> impleme
 	public boolean add(E e) {
 		// TODO Auto-generated method stub
 		boolean b = super.add(e);
-		if (b)
-			notify(e);
+//		if (b)
+//			notify(e, "add");
 
 		return b;
 	}
@@ -169,7 +174,7 @@ public class RemovableBlockingMechanismQueue<E> extends AbstractQueue<E> impleme
 			if (o.equals(p.item)) {
 				unlink(p, trail);
 
-				notify(null);
+				notify((E) o, "remove");
 				return true;
 			}
 		}
@@ -256,7 +261,7 @@ public class RemovableBlockingMechanismQueue<E> extends AbstractQueue<E> impleme
 		}
 
 		if (x != null)
-			notify(x);
+			notify(x, "poll");
 
 		return x;
 	}
@@ -285,9 +290,13 @@ public class RemovableBlockingMechanismQueue<E> extends AbstractQueue<E> impleme
 		return count.get();
 	}
 
-	protected void notify(E e) {
+	protected void notify(E e, String op) {
 		if (modifier != null)
-			modifier.notify(e);
+			modifier.notify(e, this.identifier, op);
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 
 }
