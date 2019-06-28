@@ -317,9 +317,9 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	}
 
 	protected void info(String id, String e, String op) {
-		logger.info("MessageTracker     - queue   : {}", id);
-		logger.info("  MessageTracker   - op      : {}", op);
-		logger.info("    MessageTracker - element : {}", e);
+		logger.info("DSPTVM - MessageTracker     - queue   : {}", id);
+		logger.info("DSPTVM -   MessageTracker   - op      : {}", op);
+		logger.info("DSPTVM -     MessageTracker - element : {}", e);
 
 		int i = 1;
 	}
