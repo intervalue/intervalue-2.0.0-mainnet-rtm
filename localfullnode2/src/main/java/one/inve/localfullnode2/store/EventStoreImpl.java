@@ -246,6 +246,8 @@ public class EventStoreImpl implements IEventStore {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Too many event body in memory, delete the first");
 			}
+			logger.error("remove first EventKeyPair(>={}) in cache,which is fatal.", Config.DEFAULT_EVENTS_MAP_SIZE);
+
 			EventKeyPair pair = existEventKeys.poll();
 			if (pair != null) {
 				existEvents.remove(pair);
