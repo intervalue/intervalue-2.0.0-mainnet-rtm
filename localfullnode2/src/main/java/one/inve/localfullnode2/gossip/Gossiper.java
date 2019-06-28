@@ -1020,7 +1020,10 @@ public class Gossiper {
 					if (null != unit) {
 						size += unit.length;
 						if (size > Config.DEFAULT_EVENT_MAX_PAYLOAD) {
-							txCache = unit;
+							// reinsert exceeding message into message queue.
+							// txCache = unit;
+							logger.warn("{}=reinsert into message queue because of exceeding max payload of an event",
+									dep.getMessageQueue().offer(unit));
 							break;
 						} else {
 							transactionlist.add(unit);
