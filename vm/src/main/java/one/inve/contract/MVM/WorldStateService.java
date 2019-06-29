@@ -200,7 +200,9 @@ public class WorldStateService {
 
 		// 交易执行的收据信息
 		INVETransactionReceipt receipt = executor.getReceipt();
-		logger.info("TX {} execution result: {}", tx.hashCode(), receipt.isTxStatusOK());
+		logger.info("TX {} execution result: {}", tx.hashCode(), receipt.isSuccessful());
+		logger.debug("============== Receipt of TX ==============");
+		logger.debug(receipt.toString());
 		logger.debug("Sender nonce after exec is: {}", track.getNonce(fromAddr).longValue());
 
 		// 程序执行结果
