@@ -8,13 +8,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLongArray;
 
-import one.inve.core.EventBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.LastSeqs;
@@ -246,6 +246,8 @@ public class EventStoreImpl implements IEventStore {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Too many event body in memory, delete the first");
 			}
+			logger.error("remove first EventKeyPair(>={}) in cache,which is fatal.", Config.DEFAULT_EVENTS_MAP_SIZE);
+
 			EventKeyPair pair = existEventKeys.poll();
 			if (pair != null) {
 				existEvents.remove(pair);
@@ -260,8 +262,7 @@ public class EventStoreImpl implements IEventStore {
 			// Francis.Deng 4/2/2019
 			// diagnosing system problem - tracking vivid messages(DSPTVM)
 			if (eb.getTrans() != null) {
-				logger.info(
-						"DSPTVM - eb ({}) with txs is gonna to been put into EventSaveQueue using by eventSaveThread ",
+				logger.info("DSPTVM - eb ({}) with txs ===> EventSaveQueue using by (addEvent) ",
 						JSONObject.toJSONString(eb));
 			}
 

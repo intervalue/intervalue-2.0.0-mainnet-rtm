@@ -5,6 +5,9 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Communicator;
 
@@ -46,6 +49,8 @@ import one.inve.localfullnode2.store.EventStoreDependency;
  * @version: V1.0
  */
 public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
+	private static final Logger logger = LoggerFactory.getLogger(DepsPointcut.class);
+
 	private DepItemsManagerial depItemsManager = DepItemsManager.getInstance();
 
 	// making ensure that event being triggered happened after registration.
@@ -311,18 +316,31 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 
 	}
 
+	protected void info(String id, String e, String op) {
+		logger.info("DSPTVM - MessageTracker     - queue   : {}", id);
+		logger.info("DSPTVM -   MessageTracker   - op      : {}", op);
+		logger.info("DSPTVM -     MessageTracker - element : {}", e);
+
+		int i = 1;
+	}
+
 	// replace queues in {@link GeneralNode}
 	protected void buildStagingArea() {
 		AllQueues allQueues = DepItemsManager.getInstance().attachAllQueues(null);
 		StagingArea stagingArea = new StagingArea();
 
-		stagingArea.createQueue(byte[].class, StagingArea.MessageQueueName, 10000000, null);
+		stagingArea.createQueue(byte[].class, StagingArea.MessageQueueName, 10000000,
+				(e, id, op) -> info(id, new String((byte[]) e), op));
 		stagingArea.createQueue(EventBody.class, StagingArea.EventSaveQueueName, 10000000, null);
 		stagingArea.createQueue(EventBody.class, StagingArea.ConsEventHandleQueueName, 10000000, null);
-		stagingArea.createQueue(JSONObject.class, StagingArea.ConsMessageVerifyQueueName, 10000000, null);
-		stagingArea.createQueue(JSONObject.class, StagingArea.ConsMessageHandleQueueName, 10000000, null);
-		stagingArea.createQueue(JSONObject.class, StagingArea.ConsMessageSaveQueueName, 10000000, null);
-		stagingArea.createQueue(JSONObject.class, StagingArea.SystemAutoTxSaveQueueName, 10000000, null);
+		stagingArea.createQueue(JSONObject.class, StagingArea.ConsMessageVerifyQueueName, 10000000,
+				(e, id, op) -> info(id, ((JSONObject) e).toJSONString(), op));
+		stagingArea.createQueue(JSONObject.class, StagingArea.ConsMessageHandleQueueName, 10000000,
+				(e, id, op) -> info(id, ((JSONObject) e).toJSONString(), op));
+		stagingArea.createQueue(JSONObject.class, StagingArea.ConsMessageSaveQueueName, 10000000,
+				(e, id, op) -> info(id, ((JSONObject) e).toJSONString(), op));
+		stagingArea.createQueue(JSONObject.class, StagingArea.SystemAutoTxSaveQueueName, 10000000,
+				(e, id, op) -> info(id, ((JSONObject) e).toJSONString(), op));
 
 		allQueues.set(stagingArea);
 	}

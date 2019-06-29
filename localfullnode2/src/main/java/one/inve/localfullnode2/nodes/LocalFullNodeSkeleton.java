@@ -11,9 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import one.inve.bean.message.Contribution;
-import one.inve.bean.message.SnapshotMessage;
-import one.inve.bean.message.SnapshotPoint;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +19,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.zeroc.Ice.Object;
 import com.zeroc.Ice.Util;
 
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.conf.NodeParameters;
 import one.inve.localfullnode2.dep.DepItemsManager;
@@ -32,7 +30,6 @@ import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.DbUtils;
-import one.inve.core.EventBody;
 import one.inve.localfullnode2.utilities.FileLockUtils;
 import one.inve.localfullnode2.utilities.GracefulShutdown;
 import one.inve.localfullnode2.utilities.PathUtils;
@@ -172,6 +169,19 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			ILifecycle membersTask = startMembership(this);
 			// membersTask.start();
 			gs.addLcs(membersTask);
+
+			while (inshardNeighborPools() == null || inshardNeighborPools().isEmpty()) {
+				logger.warn("#####    #####  ###### ###### #####  ");
+				logger.warn("    #     #    # #      #      #    # ");
+				logger.warn("   #      #    # #####  #####  #    # ");
+				logger.warn("  #       #####  #      #      #####  ");
+				logger.warn(" #        #      #      #      #   #  ");
+				logger.warn("######    #      ###### ###### #    # ");
+				logger.warn("z peer");
+				logger.warn("");
+
+				Thread.sleep(5000);
+			}
 
 			// start up http server
 			ILifecycle httpServer = startHttpServer(this);
@@ -382,7 +392,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 	abstract protected ILifecycle performCoreTasks(Hashneter hashneter);
 
-	protected void initSnapshotData(){
+	protected void initSnapshotData() {
 		DepItemsManager.getInstance().attachSS(null).setContributions(new HashSet<>());
 		DepItemsManager.getInstance().attachSS(null).setTreeRootMap(new HashMap<>());
 		DepItemsManager.getInstance().attachSS(null).setSnapshotPointMap(new HashMap<>());

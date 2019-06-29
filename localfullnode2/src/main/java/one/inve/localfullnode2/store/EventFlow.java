@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import one.inve.core.EventBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.utilities.Cryptos;
 import one.inve.localfullnode2.utilities.Hash;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
@@ -104,8 +104,7 @@ public class EventFlow implements IEventFlow {
 			// Francis.Deng 4/2/2019
 			// diagnosing system problem - tracking vivid messages(DSPTVM)
 			if (eb.getTrans() != null) {
-				logger.info("DSPTVM - eb ({}) with txs is gonna to been put into eventFlowQueue using by hashnet ",
-						JSONObject.toJSONString(eb));
+				logger.info("DSPTVM - eb ({}) ====> eventFlowQueue using by (newEvent)", JSONObject.toJSONString(eb));
 			}
 
 			this.eventFlowQueues.get(shardId).put(eb);

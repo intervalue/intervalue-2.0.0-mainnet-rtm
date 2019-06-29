@@ -68,8 +68,9 @@ public class StagingArea {
 		try {
 			queue = queues.get(toName(clazz, tp, index));
 			if (queue == null) {
-				queue = new RemovableBlockingMechanismQueue<T>(size, modifier);
-				queues.put(toName(clazz, tp, index), queue);
+				RemovableBlockingMechanismQueue rbmQueue = new RemovableBlockingMechanismQueue<T>(size, modifier);
+				rbmQueue.setIdentifier(toName(clazz, tp, index));
+				queues.put(toName(clazz, tp, index), rbmQueue);
 			}
 
 		} finally {
