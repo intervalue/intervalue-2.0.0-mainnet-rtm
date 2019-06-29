@@ -37,6 +37,7 @@ import one.inve.bean.wallet.Keys;
 import one.inve.bean.wallet.Wallet;
 import one.inve.bean.wallet.WalletBuilder;
 import one.inve.cluster.Member;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.conf.NodeParameters;
 import one.inve.localfullnode2.dep.DepItemsManager;
@@ -44,7 +45,6 @@ import one.inve.localfullnode2.dep.items.Wal;
 import one.inve.localfullnode2.hashnet.Event;
 import one.inve.localfullnode2.hashnet.Hashnet;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventFlow;
 import one.inve.localfullnode2.store.EventStoreDependency;
 import one.inve.localfullnode2.store.EventStoreImpl;
@@ -111,7 +111,9 @@ public class LocalFullNode1GeneralNode {
 	}
 
 	public void inshardNeighborPools(List<Member> members) {
-		this.inshardNeighborPools = members;
+		if (members != null && members.size() > 0) {
+			this.inshardNeighborPools = members;
+		}
 	}
 
 	/**

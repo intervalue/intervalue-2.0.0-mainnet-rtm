@@ -58,6 +58,15 @@ public class GossipNodeThread extends Thread {
 		this.messageCounts = node.getConsMessageCount();
 	}
 
+	protected ClusterConfig.Builder defaultWanConfig() {
+		return ClusterConfig.builder().suspicionMult(ClusterConfig.DEFAULT_WAN_SUSPICION_MULT)
+				.syncInterval(ClusterConfig.DEFAULT_WAN_SYNC_INTERVAL)
+				.pingTimeout(ClusterConfig.DEFAULT_WAN_PING_TIMEOUT)
+				.pingInterval(ClusterConfig.DEFAULT_WAN_PING_INTERVAL)
+				.gossipFanout(ClusterConfig.DEFAULT_WAN_GOSSIP_FANOUT)
+				.connectTimeout(ClusterConfig.DEFAULT_WAN_CONNECT_TIMEOUT);
+	}
+
 	@Override
 	public void run() {
 		logger.info(">>>>>> start membership network...");
@@ -66,7 +75,7 @@ public class GossipNodeThread extends Thread {
 		// {},{}",node.nodeParameters.selfGossipAddress.gossipPort,node.nodeParameters.selfGossipAddress.rpcPort);
 
 		ClusterConfig nodeConfig;
-		nodeConfig = ClusterConfig.builder()
+		nodeConfig = /* ClusterConfig.builder() */defaultWanConfig()
 				.seedMembers(one.inve.transport.Address.create(node.nodeParameters().seedGossipAddress.getPubIP(),
 						node.nodeParameters().seedGossipAddress.getGossipPort()))
 				.memberHost(node.nodeParameters().selfGossipAddress.getPubIP())
@@ -195,14 +204,14 @@ public class GossipNodeThread extends Thread {
 			// 统计tps
 			statisticsAndShowTpsInfo(index);
 
-//			// Force membership to take a long break
-//			try {
-//				TimeUnit.MINUTES.sleep(1);
-//				// this.getClass().wait(1000 * 60);
-//			} catch (InterruptedException e) {
-//				// e.printStackTrace();
-//				break;
-//			}
+			// Force membership to take a long break
+			try {
+				Thread.sleep(2 * 60 * 1000);
+				// this.getClass().wait(2 * 1000 * 60);
+			} catch (InterruptedException e) {
+				// e.printStackTrace();
+				break;
+			}
 		}
 
 		CompletableFuture<Void> shutdown = null;
