@@ -135,6 +135,13 @@ public class WorldStateService {
 		ContractTransactionData ct = null;
 		try {
 			ct = MarshalAndUnMarshal.unmarshal(contractMsg.getData(), ContractTransactionData.class);
+			logger.debug("====== Unmarshaled contract transaction info ======");
+			logger.debug("nonce: {}", new String(Hex.decode(ct.getNonce())));
+			logger.debug("gas price: {}", new String(Hex.decode(ct.getGasPrice())));
+			logger.debug("gas limit: {}", new String(Hex.decode(ct.getGasLimit())));
+			logger.debug("value: {}", new String(Hex.decode(ct.getValue())));
+			logger.debug("call data: {}", new String(Hex.decode(ct.getCalldata())));
+			logger.debug("====== 				end 				   ======");
 		} catch (Exception e) {
 			logger.error("Unmarshal contract message failed.");
 			throw new RuntimeException("Unmarshal contract message failed.", e);
