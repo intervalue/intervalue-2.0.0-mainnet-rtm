@@ -144,12 +144,10 @@ public class WorldStateService {
 
             byte[] calldata = ct.getCalldata();
             logger.debug("call data: {}", new String(calldata));
-
             logger.debug("打印正常 byte 数组:");
             for(byte b:calldata) {
-                System.out.print(b + "\t");
+                logger.debug("\t {}", String.valueOf(b));
             }
-            System.out.println("");
             logger.debug("====== end ======");
         } catch (Exception e) {
             logger.error("Unmarshal contract message failed.", e);
