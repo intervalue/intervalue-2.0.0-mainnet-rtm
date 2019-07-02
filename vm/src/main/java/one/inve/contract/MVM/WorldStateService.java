@@ -134,11 +134,26 @@ public class WorldStateService {
 
 		ContractTransactionData ct = null;
 		try {
+		    logger.debug("message is: {}", new String(contractMsg.getData()));
 			ct = MarshalAndUnMarshal.unmarshal(contractMsg.getData(), ContractTransactionData.class);
-		} catch (Exception e) {
-			logger.error("Unmarshal contract message failed.");
-			throw new RuntimeException("Unmarshal contract message failed.", e);
-		}
+            logger.debug("====== Unmarshaled contract transaction info ======");
+            logger.debug("nonce: {}", new BigInteger(1, ct.getNonce()));
+            logger.debug("gas price: {}", new BigInteger(1, ct.getGasPrice()));
+            logger.debug("gas limit: {}", new BigInteger(1, ct.getGasLimit()));
+            logger.debug("value: {}", new BigInteger(1, ct.getValue()));
+
+            byte[] calldata = ct.getCalldata();
+            logger.debug("call data: {}", new String(calldata));
+            logger.debug("打印正常 byte 数组:");
+            for(byte b:calldata) {
+                logger.debug("\t {}", String.valueOf(b));
+            }
+            logger.debug("====== end ======");
+        } catch (Exception e) {
+            logger.error("Unmarshal contract message failed.", e);
+            logger.error("Contract message to be unmarshalled is: {}", contractMsg.getData());
+            throw new RuntimeException("Unmarshal contract message failed.", e);
+        }
 
 		List<InternalTransferData> internalTransferDataList = executeTransaction(dbId, ct,
 				contractMsg.getFromAddress().getBytes(), contractMsg.getSignature().getBytes());
@@ -200,7 +215,9 @@ public class WorldStateService {
 
 		// 交易执行的收据信息
 		INVETransactionReceipt receipt = executor.getReceipt();
-		logger.info("TX {} execution result: {}", tx.hashCode(), receipt.isTxStatusOK());
+		logger.info("TX {} execution result: {}", tx.hashCode(), receipt.isSuccessful());
+		logger.debug("============== Receipt of TX ==============");
+		logger.debug(receipt.toString());
 		logger.debug("Sender nonce after exec is: {}", track.getNonce(fromAddr).longValue());
 
 		// 程序执行结果
