@@ -248,6 +248,11 @@ public class TxVerifyUtils {
 			if (StringUtils.isEmpty(toAdress)) {
 				throw new RuntimeException("toAdress is illegal.");
 			}
+			// conform with the convention of "32 characters for address" in wallet by
+			// Francis.Deng
+			if (toAdress.length() != 32) {
+				throw new IllegalArgumentException("toAddress length is limited to 32");
+			}
 			if (null == amount || amount.equals(BigInteger.ZERO)) {
 				throw new RuntimeException("amount is illegal.");
 			}

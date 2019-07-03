@@ -205,13 +205,13 @@ public class GossipNodeThread extends Thread {
 			statisticsAndShowTpsInfo(index);
 
 			// Force membership to take a long break
-			try {
-				Thread.sleep(2 * 60 * 1000);
-				// this.getClass().wait(2 * 1000 * 60);
-			} catch (InterruptedException e) {
-				// e.printStackTrace();
-				break;
-			}
+//			try {
+//				Thread.sleep(2 * 60 * 1000);
+//				// this.getClass().wait(2 * 1000 * 60);
+//			} catch (InterruptedException e) {
+//				// e.printStackTrace();
+//				break;
+//			}
 		}
 
 		CompletableFuture<Void> shutdown = null;
