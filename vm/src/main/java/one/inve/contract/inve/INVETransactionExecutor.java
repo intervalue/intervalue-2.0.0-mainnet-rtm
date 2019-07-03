@@ -384,7 +384,7 @@ public class INVETransactionExecutor {
             // 生成余额变动 list
             BigInteger fee = toBI(result.getGasUsed()).multiply(toBI(tx.getGasPrice()));
             List<InternalTransferData> internalTransferList = new ArrayList<>();
-            if (result.getException() == null) { // 合约执行无异常
+            if (execError == null || execError.equals("")) { // 合约执行无异常
                 InternalTransferData iTransfer = new InternalTransferData(
                     new String(tx.getSender()), 
                     tx.getReceiveAddress() == null? "" : new String(tx.getReceiveAddress()), 
