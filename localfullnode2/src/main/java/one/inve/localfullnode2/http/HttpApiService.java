@@ -157,6 +157,8 @@ public class HttpApiService {
 				if (new String(transationByte).contains("isStable")) {
 					message = JSON.parseObject(transationByte, Message.class);
 				}
+			}else {
+				message = CommonApiService.querySystemAutoToMessage(node,hash);
 			}
 			return ResponseUtils.normalResponse((null == message) ? "" : JSON.toJSONString(message));
 		} catch (Exception e) {

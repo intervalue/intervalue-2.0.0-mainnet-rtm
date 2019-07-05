@@ -537,18 +537,19 @@ public class MessagesExe {
 		if (valid) {
 			// 合约执行产生的交易入库
 			boolean needRecordFee = true;
-			for (InternalTransferData data : list) {
+			for (int i = 0; i < list.size(); i++) {
+				InternalTransferData data = list.get(i);
 				if (needRecordFee) {
 					if (data.getFee().compareTo(BigInteger.ZERO) > 0) {
 						// 扣除和收集手续费
 						// key condition
 						// node.setTotalFeeBetween2Snapshots(node.getTotalFeeBetween2Snapshots().add(data.getFee()));
-						addContractFeeTx2SaveQueue(cm.getHash(), data);
+						addContractFeeTx2SaveQueue(cm.getSignature()+"-fee"+i, data);
 					}
 					needRecordFee = false;
 				}
 				// 合约执行产生的交易入库
-				addContractTx2SaveQueue(cm.getHash(), data);
+				addContractTx2SaveQueue(cm.getSignature()+"-"+i, data);
 			}
 		}
 	}
