@@ -2,6 +2,7 @@ package one.inve.localfullnode2.http;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +123,8 @@ public class HttpApiService {
 		try {
 			TransactionArray trans = CommonApiService.queryTransaction(tableIndex, offset, address, type.toString(),
 					node);
-
+			List<Message> contractTx = CommonApiService.querySystemAutoToMessageList(tableIndex,offset,node,address);
+			trans.getList().addAll(contractTx);
 			return ResponseUtils.normalResponse(null == trans ? "" : JSON.toJSONString(trans));
 		} catch (Exception e) {
 			logger.error("gettransactionlist handle error: {}", e);

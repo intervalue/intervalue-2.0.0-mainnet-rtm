@@ -2,6 +2,7 @@ package one.inve.localfullnode2.http;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
@@ -119,6 +120,42 @@ public class CommonApiService {
                                                                LocalFullNode1GeneralNode node) {
         QueryTableSplit queryTableSplit = new QueryTableSplit();
         return queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId);
+    }
+
+    public synchronized static List<Message> querySystemAutoToMessageList(BigInteger tableIndex, long offset, LocalFullNode1GeneralNode node, String address) {
+        QueryTableSplit queryTableSplit = new QueryTableSplit();
+        SystemAutoArray systemAutoArray = queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId,address,"contract_fee_tx");
+        List<Message> list = new ArrayList<Message>();
+        for(int i = 0;i < systemAutoArray.getList().size();i++){
+            JSONObject feeTx = systemAutoArray.getList().get(i);
+            String txHash = feeTx.getString("mHash").split("-")[0]+"-1";
+            JSONObject tx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, txHash);
+            Message msg = new Message();
+            if (tx != null) {
+                JSONObject message = new JSONObject();
+                message.put("nrgPrice", "1000000000");
+                message.put("amount", tx.getBigDecimal("amount").stripTrailingZeros().toPlainString());
+                message.put("signature", tx.getString("mHash"));
+                message.put("fee", (feeTx.getBigDecimal("amount").divide(new BigDecimal("1000000000"))).stripTrailingZeros().toPlainString());
+                message.put("vers", "2.0");
+                message.put("fromAddress", tx.getString("fromAddress"));
+                message.put("remark", "");
+                message.put("type", 2);
+                message.put("toAddress", tx.getString("toAddress"));
+                message.put("timestamp", tx.getLong("updateTime"));
+                message.put("pubkey", "");
+                msg.seteHash("");
+                msg.setHash(tx.getString("mHash"));
+                msg.setId(tx.getBigDecimal("id").toString());
+                msg.setStable(true);
+                msg.setValid(true);
+                msg.setLastIdx(false);
+                msg.setUpdateTime(tx.getLong("updateTime"));
+                msg.setMessage(message.toString());
+                list.add(msg);
+            }
+        }
+        return list;
     }
 
     public synchronized static Message querySystemAutoToMessage(LocalFullNode1GeneralNode node, String hash) {
