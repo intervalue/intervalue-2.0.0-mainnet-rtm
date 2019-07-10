@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import com.alibaba.fastjson.JSONObject;
+import one.inve.localfullnode2.store.rocks.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,10 +17,6 @@ import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.mysql.QueryTableSplit;
-import one.inve.localfullnode2.store.rocks.Message;
-import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
-import one.inve.localfullnode2.store.rocks.SystemAutoArray;
-import one.inve.localfullnode2.store.rocks.TransactionArray;
 import one.inve.localfullnode2.utilities.TxVerifyUtils;
 
 /**
@@ -122,13 +119,19 @@ public class CommonApiService {
         return queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId);
     }
 
-    public synchronized static List<Message> querySystemAutoToMessageList(BigInteger tableIndex, long offset, LocalFullNode1GeneralNode node, String address) {
+    public synchronized static MsgArray querySystemAutoToMessageList(BigInteger tableIndex, long offset, LocalFullNode1GeneralNode node, String address) {
         QueryTableSplit queryTableSplit = new QueryTableSplit();
         SystemAutoArray systemAutoArray = queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId,address,"contract_fee_tx");
+        if (systemAutoArray == null || systemAutoArray.getList() == null || systemAutoArray.getList().size() == 0) {
+            return null;
+        }
+        MsgArray msgArray = new MsgArray();
+        msgArray.setSysTableIndex(systemAutoArray.getTableIndex());
+        msgArray.setSysOffset(systemAutoArray.getOffset());
         List<Message> list = new ArrayList<Message>();
-        for(int i = 0;i < systemAutoArray.getList().size();i++){
+        for (int i = 0; i < systemAutoArray.getList().size(); i++) {
             JSONObject feeTx = systemAutoArray.getList().get(i);
-            String txHash = feeTx.getString("mHash").split("-")[0]+"-1";
+            String txHash = feeTx.getString("mHash").split("-")[0] + "-1";
             JSONObject tx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, txHash);
             Message msg = new Message();
             if (tx != null) {
@@ -155,7 +158,8 @@ public class CommonApiService {
                 list.add(msg);
             }
         }
-        return list;
+        msgArray.setList(list);
+        return msgArray;
     }
 
     public synchronized static Message querySystemAutoToMessage(LocalFullNode1GeneralNode node, String hash) {

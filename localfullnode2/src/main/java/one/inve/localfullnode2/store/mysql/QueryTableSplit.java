@@ -256,9 +256,9 @@ public class QueryTableSplit {
                 if (offset < 0) {
                     offset = 0L;
                 }
-                if (StringUtils.isBlank(address)) {
-                    return array;
-                }
+//                if (StringUtils.isBlank(address)) {
+//                    return array;
+//                }
                 h = new MysqlHelper(dbId);
                 array = querySystemAuto(array,h,tableIndex,offset,offset,dbId,address,type);
                 List<JSONObject> list = array.getList();
@@ -558,9 +558,13 @@ public class QueryTableSplit {
         // sql.toString());
         try {
             PreparedStatement preparedStatement = h.getPreparedStatement(sql.toString());
-            preparedStatement.setString(1, type.trim());
-            preparedStatement.setString(2, address.trim());
-            preparedStatement.setString(3, address.trim());
+            if (StringUtils.isNotBlank(type)) {
+                preparedStatement.setString(1, type.trim());
+            }
+            if (StringUtils.isNotBlank(address)) {
+                preparedStatement.setString(2, address.trim());
+                preparedStatement.setString(3, address.trim());
+            }
             ResultSet rs = preparedStatement.executeQuery();
             List<JSONObject> list = new ArrayList<JSONObject>();
             while (rs.next()){
