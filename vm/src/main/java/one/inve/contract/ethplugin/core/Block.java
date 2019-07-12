@@ -68,7 +68,8 @@ public class Block {
 
     /* Constructors */
 
-    private Block() {
+    public Block() {
+        this.header = new BlockHeader();
     }
 
     public Block(byte[] rawData) {
@@ -235,13 +236,16 @@ public class Block {
         return calcDifficulty;
     }
 
+    public void setTimestamp(long _timestamp) {
+        this.header.setTimestamp(_timestamp);
+    }
+
     public long getTimestamp() {
-        parseRLP();
         return this.header.getTimestamp();
     }
 
     public long getNumber() {
-        parseRLP();
+//        parseRLP();
         return this.header.getNumber();
     }
 
