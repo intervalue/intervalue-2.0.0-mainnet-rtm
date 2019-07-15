@@ -23,7 +23,7 @@ public class INVEProgramInvokeFactoryImpl implements INVEProgramInvokeFactory {
     @Override
     public INVEProgramInvoke createProgramInvoke(Transaction tx, Block block,
                                                  Repository repository, BlockStore blockStore) {
-        return generalInvoke(tx, repository, blockStore);
+        return generalInvoke(tx, block, repository, blockStore);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class INVEProgramInvokeFactoryImpl implements INVEProgramInvokeFactory {
     }
 
 
-    private INVEProgramInvoke generalInvoke(Transaction tx, Repository repository, BlockStore blockStore) {
+    private INVEProgramInvoke generalInvoke(Transaction tx, Block block, Repository repository, BlockStore blockStore) {
 
         /***         ADDRESS op       ***/
         // YP: Get address of currently executing account.
@@ -108,7 +108,7 @@ public class INVEProgramInvokeFactoryImpl implements INVEProgramInvokeFactory {
 //        byte[] data =  tx.getData() == null ? ByteUtil.EMPTY_BYTE_ARRAY : tx.getData() ;
         
         /*** TIMESTAMP  op  ***/
-        long timestamp = System.currentTimeMillis();
+        long timestamp = block.getTimestamp();
 
         /*** GASLIMIT op ***/
         byte[] gaslimit = new byte[]{0};

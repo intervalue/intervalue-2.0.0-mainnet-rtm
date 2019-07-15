@@ -4,9 +4,7 @@ import one.inve.bean.message.ContractMessage;
 import one.inve.contract.ContractTransactionData;
 import one.inve.contract.encoding.MarshalAndUnMarshal;
 import one.inve.contract.ethplugin.config.SystemProperties;
-import one.inve.contract.ethplugin.core.Repository;
-import one.inve.contract.ethplugin.core.Transaction;
-import one.inve.contract.ethplugin.core.TransactionExecutionSummary;
+import one.inve.contract.ethplugin.core.*;
 import one.inve.contract.ethplugin.db.BlockStoreDummy;
 import one.inve.contract.ethplugin.vm.program.ProgramResult;
 import one.inve.contract.inve.INVERepositoryRoot;
@@ -155,8 +153,13 @@ public class WorldStateService {
             throw new RuntimeException("Unmarshal contract message failed.", e);
         }
 
-		List<InternalTransferData> internalTransferDataList = executeTransaction(dbId, ct,
-				contractMsg.getFromAddress().getBytes(), contractMsg.getSignature().getBytes());
+		List<InternalTransferData> internalTransferDataList = executeTransaction(
+		        dbId,
+                ct,
+				contractMsg.getFromAddress().getBytes(),
+                contractMsg.getSignature().getBytes(),
+                contractMsg.getTimestamp()/1000
+        );
 
 		long end = System.currentTimeMillis();
 		logger.debug("Smart contract transaction execution time: {} ms.", end - start);
@@ -187,15 +190,17 @@ public class WorldStateService {
 	 * 根据传入的 ContractTransaction 构造交易
 	 */
 	protected static List<InternalTransferData> executeTransaction(String dbId, ContractTransactionData ct,
-			byte[] fromAddr, byte[] signatrue) {
+			byte[] fromAddr, byte[] signatrue, long timestamp) {
 		Transaction tx = new Transaction(ct.getNonce(), ct.getGasPrice(), ct.getGasLimit(), ct.getToAddress(),
 				ct.getValue(), ct.getCalldata());
 		tx.setSender(fromAddr);
 
 		Repository track = getTrack(dbId);
 
+        Block block = new Block();
+        block.setTimestamp(timestamp);
 		INVETransactionExecutor executor = new INVETransactionExecutor(tx, track, new BlockStoreDummy(),
-				new INVEProgramInvokeFactoryImpl(), SystemProperties.getDefault().getGenesis());
+				new INVEProgramInvokeFactoryImpl(), block);
 
 		logger.debug("*** New TX arrived:");
 		logger.debug("\\==== Sender Balance before exec is: {}", track.getBalance(fromAddr));
