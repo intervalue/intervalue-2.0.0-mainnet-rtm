@@ -5,6 +5,10 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
+import one.inve.contract.ethplugin.core.Repository;
+import one.inve.contract.inve.INVERepositoryRoot;
+import one.inve.contract.inve.INVETransactionReceipt;
+import one.inve.contract.provider.RepositoryProvider;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.snapshot.*;
 import one.inve.localfullnode2.store.SnapshotDbService;
@@ -26,9 +30,9 @@ import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.localfullnode2.utilities.TxVerifyUtils;
 
 /**
- * 
+ *
  * Copyright © CHXX Co.,Ltd. All rights reserved.
- * 
+ *
  * @Description: execute messages that has own type-handler
  * @author: Francis.Deng
  * @see ConsensusMessageHandleThread
@@ -158,7 +162,7 @@ public class MessagesExe {
 
 	/**
 	 * 处理共识后的普通交易消息
-	 * 
+	 *
 	 * @param msgObject 共识后的普通交易消息
 	 */
 	private void handleConsensusTransactionMessage(JSONObject msgObject) throws InterruptedException {
@@ -307,7 +311,7 @@ public class MessagesExe {
 
 	/**
 	 * 处理共识后的文本数据消息
-	 * 
+	 *
 	 * @param msgObject 共识后的文本数据消息
 	 */
 	private void handleConsensusTextMessage(JSONObject msgObject) throws InterruptedException {
@@ -387,7 +391,7 @@ public class MessagesExe {
 
 	/**
 	 * 发送地址账户是否金额足够
-	 * 
+	 *
 	 * @param fromAddress 发送者地址
 	 * @param fee         手续费
 	 * @param amount      金额
@@ -442,7 +446,7 @@ public class MessagesExe {
 
 	/**
 	 * 发送地址账户是否金额足够
-	 * 
+	 *
 	 * @param fromAddress 发送者地址
 	 * @param fee         手续费
 	 * @return 是否双花
@@ -453,7 +457,7 @@ public class MessagesExe {
 
 	/**
 	 * 发送地址账户是否金额足够
-	 * 
+	 *
 	 * @param fromAddress 发送者地址
 	 * @param fee         手续费
 	 * @param amount      金额
@@ -475,7 +479,7 @@ public class MessagesExe {
 
 	/**
 	 * 发送地址账户是否金额足够
-	 * 
+	 *
 	 * @param fromAddress 发送者地址
 	 * @param fee         手续费
 	 * @return 是否双花
@@ -486,7 +490,7 @@ public class MessagesExe {
 
 	/**
 	 * 处理共识后的智能合约消息
-	 * 
+	 *
 	 * @param msgObject 共识后的智能合约消息
 	 */
 	private void handleConsensusContractMessage(JSONObject msgObject) throws InterruptedException {
@@ -526,6 +530,10 @@ public class MessagesExe {
 				valid = null != list && list.size() > 0;
 			}
 		}
+		Repository track = RepositoryProvider.getTrack(dep.getDbId());
+		byte[] receiptB = ((INVERepositoryRoot) track).getReceipt(cm.getSignature().getBytes());
+		INVETransactionReceipt receipt = new INVETransactionReceipt(receiptB);
+
 		// 保存智能合约消息
 		if (StringUtils.isNotEmpty(fromAddress)) {
 			msgObject.put("fromAddress", fromAddress);
@@ -544,12 +552,16 @@ public class MessagesExe {
 						// 扣除和收集手续费
 						// key condition
 						// node.setTotalFeeBetween2Snapshots(node.getTotalFeeBetween2Snapshots().add(data.getFee()));
-						addContractFeeTx2SaveQueue(cm.getSignature()+"-fee"+i, data);
+						addContractFeeTx2SaveQueue(cm.getSignature()+"_fee"+i, data);
 					}
 					needRecordFee = false;
 				}
 				// 合约执行产生的交易入库
-				addContractTx2SaveQueue(cm.getSignature()+"-"+i, data);
+				addContractTx2SaveQueue(cm.getSignature() + "_" + i, data);
+				if (!receipt.isTxStatusOK()) {
+					InternalTransferData backData = new InternalTransferData(data.getToAddress(), data.getFromAddress(), BigInteger.ZERO, data.getValue().subtract(data.getFee()));
+					addContractTx2SaveQueue(cm.getSignature() + "_" + (i+1), backData);
+				}
 			}
 		}
 	}

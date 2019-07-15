@@ -131,7 +131,7 @@ public class CommonApiService {
         List<Message> list = new ArrayList<Message>();
         for (int i = 0; i < systemAutoArray.getList().size(); i++) {
             JSONObject feeTx = systemAutoArray.getList().get(i);
-            String txHash = feeTx.getString("mHash").split("-")[0] + "-1";
+            String txHash = feeTx.getString("mHash").split("_")[0] + "_1";
             JSONObject tx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, txHash);
             Message msg = new Message();
             if (tx != null) {
@@ -163,7 +163,7 @@ public class CommonApiService {
     }
 
     public synchronized static Message querySystemAutoToMessage(LocalFullNode1GeneralNode node, String hash) {
-        String feeHash = hash.split("-")[0]+"-fee0";
+        String feeHash = hash.split("_")[0]+"_fee0";
         QueryTableSplit queryTableSplit = new QueryTableSplit();
         JSONObject feeTx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, feeHash);
         if (feeTx == null) {

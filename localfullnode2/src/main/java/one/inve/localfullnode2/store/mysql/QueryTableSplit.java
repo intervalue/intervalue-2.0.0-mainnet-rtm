@@ -579,7 +579,7 @@ public class QueryTableSplit {
                     }
                 } else {
                     logger.error("this hash rocksDB not exist");
-                    return null;
+                    return array;
                 }
 
             }
