@@ -1,8 +1,8 @@
 package one.inve.contract.MVM;
 
+import com.alibaba.fastjson.JSON;
 import one.inve.bean.message.ContractMessage;
 import one.inve.contract.ContractTransactionData;
-import one.inve.contract.encoding.MarshalAndUnMarshal;
 import one.inve.contract.ethplugin.config.SystemProperties;
 import one.inve.contract.ethplugin.core.*;
 import one.inve.contract.ethplugin.db.BlockStoreDummy;
@@ -133,7 +133,7 @@ public class WorldStateService {
 		ContractTransactionData ct = null;
 		try {
 		    logger.debug("message is: {}", new String(contractMsg.getData()));
-			ct = MarshalAndUnMarshal.unmarshal(contractMsg.getData(), ContractTransactionData.class);
+			ct = JSON.parseObject(contractMsg.getData(), ContractTransactionData.class);
             logger.debug("====== Unmarshaled contract transaction info ======");
             logger.debug("nonce: {}", new BigInteger(ct.getNonce()));
             logger.debug("gas price: {}", new BigInteger(ct.getGasPrice()));
@@ -142,10 +142,10 @@ public class WorldStateService {
 
             byte[] calldata = ct.getCalldata().getBytes();
             logger.debug("call data: {}", new String(calldata));
-            logger.debug("打印正常 byte 数组:");
-            for(byte b:calldata) {
-                logger.debug("\t {}", String.valueOf(b));
-            }
+//            logger.debug("打印正常 byte 数组:");
+//            for(byte b:calldata) {
+//                logger.debug("\t {}", String.valueOf(b));
+//            }
             logger.debug("====== end ======");
         } catch (Exception e) {
             logger.error("Unmarshal contract message failed.", e);
