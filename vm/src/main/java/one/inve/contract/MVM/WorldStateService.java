@@ -192,20 +192,35 @@ public class WorldStateService {
 	protected static List<InternalTransferData> executeTransaction(String dbId, ContractTransactionData ct,
 			byte[] fromAddr, byte[] signatrue, long timestamp) {
 		logger.debug("============= Starting executeTransaction");
-	    Transaction tx = new Transaction(
+        logger.debug("nonce: {}", new BigInteger(ct.getNonce()));
+        logger.debug("gas price: {}", new BigInteger(ct.getGasPrice()));
+        logger.debug("gas limit: {}", new BigInteger(ct.getGasLimit()));
+        logger.debug("value: {}", new BigInteger(ct.getValue()));
+
+        byte[] calldata = ct.getCalldata().getBytes();
+        logger.debug("call data before decode: {}", new String(calldata));
+        calldata = Hex.decode(calldata);
+        logger.debug("call data after decode: {}", new String(calldata));
+
+		Transaction tx = new Transaction(
                 new BigInteger(ct.getNonce()).toByteArray(),
                 new BigInteger(ct.getGasPrice()).toByteArray(),
                 new BigInteger(ct.getGasLimit()).toByteArray(),
                 ct.getToAddress().getBytes(),
                 new BigInteger(ct.getValue()).toByteArray(),
-                ct.getCalldata().getBytes()
+                calldata
         );
 		tx.setSender(fromAddr);
+
+		logger.debug("Transaction initialized.");
 
 		Repository track = getTrack(dbId);
 
         Block block = new Block();
         block.setTimestamp(timestamp);
+
+        logger.debug("timestamp is: {}", timestamp);
+        
 		INVETransactionExecutor executor = new INVETransactionExecutor(tx, track, new BlockStoreDummy(),
 				new INVEProgramInvokeFactoryImpl(), block);
 
