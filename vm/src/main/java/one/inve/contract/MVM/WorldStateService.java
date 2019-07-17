@@ -140,7 +140,7 @@ public class WorldStateService {
             logger.debug("gas limit: {}", new BigInteger(ct.getGasLimit()));
             logger.debug("value: {}", new BigInteger(ct.getValue()));
 
-            byte[] calldata = ct.getCalldata().getBytes();
+            byte[] calldata = Hex.decode(ct.getCalldata());
             logger.debug("call data: {}", new String(calldata));
 //            logger.debug("打印正常 byte 数组:");
 //            for(byte b:calldata) {
@@ -191,7 +191,8 @@ public class WorldStateService {
 	 */
 	protected static List<InternalTransferData> executeTransaction(String dbId, ContractTransactionData ct,
 			byte[] fromAddr, byte[] signatrue, long timestamp) {
-		Transaction tx = new Transaction(
+		logger.debug("============= Starting executeTransaction");
+	    Transaction tx = new Transaction(
                 new BigInteger(ct.getNonce()).toByteArray(),
                 new BigInteger(ct.getGasPrice()).toByteArray(),
                 new BigInteger(ct.getGasLimit()).toByteArray(),

@@ -59,7 +59,7 @@ public class OutputSigCommand implements ICommand {
         ct.setNonce(nonce);
 
 		if (ce.getUnit().getCalldata() != null && !ce.getUnit().getCalldata().equals("")) {
-            ct.setCalldata(new String(Hex.decode(ce.getUnit().getCalldata())));
+            ct.setCalldata(ce.getUnit().getCalldata());
 		}
 		if (ce.getUnit().getGasPrice() != null && !ce.getUnit().getGasPrice().equals("")) {
             ct.setGasPrice(ce.getUnit().getGasPrice());
