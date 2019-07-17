@@ -8,6 +8,15 @@ public class ContractTransactionData {
     private String value;
     private String calldata;
 
+    public ContractTransactionData() {
+        this.nonce = "0";
+        this.gasPrice = "0";
+        this.gasLimit = "0";
+        this.toAddress = "";
+        this.value = "0";
+        this.calldata = "";
+    }
+
     public void setNonce(String nonce) {
         this.nonce = nonce;
     }
