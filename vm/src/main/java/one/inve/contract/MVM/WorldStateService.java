@@ -135,12 +135,12 @@ public class WorldStateService {
 		    logger.debug("message is: {}", new String(contractMsg.getData()));
 			ct = MarshalAndUnMarshal.unmarshal(contractMsg.getData(), ContractTransactionData.class);
             logger.debug("====== Unmarshaled contract transaction info ======");
-            logger.debug("nonce: {}", new BigInteger(1, ct.getNonce()));
-            logger.debug("gas price: {}", new BigInteger(1, ct.getGasPrice()));
-            logger.debug("gas limit: {}", new BigInteger(1, ct.getGasLimit()));
-            logger.debug("value: {}", new BigInteger(1, ct.getValue()));
+            logger.debug("nonce: {}", new BigInteger(ct.getNonce()));
+            logger.debug("gas price: {}", new BigInteger(ct.getGasPrice()));
+            logger.debug("gas limit: {}", new BigInteger(ct.getGasLimit()));
+            logger.debug("value: {}", new BigInteger(ct.getValue()));
 
-            byte[] calldata = ct.getCalldata();
+            byte[] calldata = ct.getCalldata().getBytes();
             logger.debug("call data: {}", new String(calldata));
             logger.debug("打印正常 byte 数组:");
             for(byte b:calldata) {
@@ -191,8 +191,14 @@ public class WorldStateService {
 	 */
 	protected static List<InternalTransferData> executeTransaction(String dbId, ContractTransactionData ct,
 			byte[] fromAddr, byte[] signatrue, long timestamp) {
-		Transaction tx = new Transaction(ct.getNonce(), ct.getGasPrice(), ct.getGasLimit(), ct.getToAddress(),
-				ct.getValue(), ct.getCalldata());
+		Transaction tx = new Transaction(
+                new BigInteger(ct.getNonce()).toByteArray(),
+                new BigInteger(ct.getGasPrice()).toByteArray(),
+                new BigInteger(ct.getGasLimit()).toByteArray(),
+                ct.getToAddress().getBytes(),
+                new BigInteger(ct.getValue()).toByteArray(),
+                ct.getCalldata().getBytes()
+        );
 		tx.setSender(fromAddr);
 
 		Repository track = getTrack(dbId);

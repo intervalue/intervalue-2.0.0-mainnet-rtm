@@ -1,58 +1,58 @@
 package one.inve.contract;
 
 public class ContractTransactionData {
-    private byte[] nonce;
-    private byte[] gasPrice;
-    private byte[] gasLimit;
-    private byte[] toAddress;
-    private byte[] value;
-    private byte[] calldata;
+    private String nonce;
+    private String gasPrice;
+    private String gasLimit;
+    private String toAddress;
+    private String value;
+    private String calldata;
 
-    public byte[] getNonce() {
-        return nonce;
-    }
-
-    public void setNonce(byte[] nonce) {
+    public void setNonce(String nonce) {
         this.nonce = nonce;
     }
 
-    public byte[] getGasPrice() {
-        return gasPrice;
-    }
-
-    public void setGasPrice(byte[] gasPrice) {
+    public void setGasPrice(String gasPrice) {
         this.gasPrice = gasPrice;
     }
 
-    public byte[] getGasLimit() {
-        return gasLimit;
-    }
-
-    public void setGasLimit(byte[] gasLimit) {
+    public void setGasLimit(String gasLimit) {
         this.gasLimit = gasLimit;
     }
 
-    public byte[] getToAddress() {
-        return toAddress;
-    }
-
-    public void setToAddress(byte[] toAddress) {
+    public void setToAddress(String toAddress) {
         this.toAddress = toAddress;
     }
 
-    public byte[] getValue() {
-        return value;
-    }
-
-    public void setValue(byte[] value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public byte[] getCalldata() {
-        return calldata;
+    public void setCalldata(String calldata) {
+        this.calldata = calldata;
     }
 
-    public void setCalldata(byte[] calldata) {
-        this.calldata = calldata;
+    public String getNonce() {
+        return nonce;
+    }
+
+    public String getGasPrice() {
+        return gasPrice;
+    }
+
+    public String getGasLimit() {
+        return gasLimit;
+    }
+
+    public String getToAddress() {
+        return toAddress;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String getCalldata() {
+        return calldata;
     }
 }
