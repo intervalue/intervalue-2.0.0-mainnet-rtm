@@ -529,6 +529,9 @@ public class QueryTableSplit {
         array.setOffset(offset);
         array.setTableIndex(tableIndex);
         TransactionSplit split = tableSystemAutoExist(dbId);
+        if (split == null){
+            return array;
+        }
         BigInteger splitIndex = split.getTableIndex();
         logger.info("tableIndex: {}, splitIndex: {}", tableIndex, splitIndex);
         if (tableIndex != null && tableIndex.compareTo(splitIndex) > 0) {
