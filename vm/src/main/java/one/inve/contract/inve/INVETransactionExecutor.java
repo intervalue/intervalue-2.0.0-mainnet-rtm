@@ -386,8 +386,9 @@ public class INVETransactionExecutor {
             List<InternalTransferData> internalTransferList = new ArrayList<>();
             if (execError == null || execError.equals("")) { // 合约执行无异常
                 InternalTransferData iTransfer = new InternalTransferData(
-                    new String(tx.getSender()), 
-                    (tx.getReceiveAddress() == null || tx.getReceiveAddress().equals(""))? new String(tx.getContractAddress()) : new String(tx.getReceiveAddress()),
+                    new String(tx.getSender()),
+                    tx.getReceiveAddress().length == 0?
+                            new String(tx.getContractAddress()) : new String(tx.getReceiveAddress()),
                     fee, 
                     toBI(tx.getValue()));
 
