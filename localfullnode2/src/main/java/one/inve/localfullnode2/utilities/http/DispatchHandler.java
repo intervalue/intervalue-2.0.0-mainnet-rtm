@@ -52,6 +52,12 @@ public class DispatchHandler extends ChannelInboundHandlerAdapter {
 			response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain");
 			response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, responseMessage.length());
 
+			// 允许跨域访问
+			response.headers().set(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+			response.headers().set(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_HEADERS, "*");// 允许headers自定义
+			response.headers().set(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT,DELETE");
+			response.headers().set(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+
 			ctx.writeAndFlush(response);
 		} else {
 			super.channelRead(ctx, msg);
