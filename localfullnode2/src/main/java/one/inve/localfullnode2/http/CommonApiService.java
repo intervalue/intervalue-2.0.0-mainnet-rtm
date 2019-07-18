@@ -1,6 +1,5 @@
 package one.inve.localfullnode2.http;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +138,7 @@ public class CommonApiService {
                 message.put("nrgPrice", "1000000000");
                 message.put("amount", tx.getBigDecimal("amount").stripTrailingZeros().toPlainString());
                 message.put("signature", tx.getString("mHash"));
-                message.put("fee", (feeTx.getBigDecimal("amount").divide(new BigDecimal("1000000000"))).stripTrailingZeros().toPlainString());
+                message.put("fee", BigInteger.ZERO);
                 message.put("vers", "2.0");
                 message.put("fromAddress", tx.getString("fromAddress"));
                 message.put("remark", "");
@@ -163,12 +162,7 @@ public class CommonApiService {
     }
 
     public synchronized static Message querySystemAutoToMessage(LocalFullNode1GeneralNode node, String hash) {
-        String feeHash = hash.split("_")[0]+"_fee0";
         QueryTableSplit queryTableSplit = new QueryTableSplit();
-        JSONObject feeTx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, feeHash);
-        if (feeTx == null) {
-            return null;
-        }
         JSONObject tx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, hash);
         Message msg = new Message();
         if (tx != null) {
@@ -176,7 +170,7 @@ public class CommonApiService {
             message.put("nrgPrice", "1000000000");
             message.put("amount", tx.getBigDecimal("amount").stripTrailingZeros().toPlainString());
             message.put("signature", tx.getString("mHash"));
-            message.put("fee", (feeTx.getBigDecimal("amount").divide(new BigDecimal("1000000000"))).stripTrailingZeros().toPlainString());
+            message.put("fee", BigInteger.ZERO);
             message.put("vers", "2.0");
             message.put("fromAddress", tx.getString("fromAddress"));
             message.put("remark", "");
