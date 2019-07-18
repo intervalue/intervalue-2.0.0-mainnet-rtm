@@ -548,9 +548,6 @@ public class MessagesExe {
 				valid = null != list && list.size() > 0;
 			}
 		}
-		Repository track = RepositoryProvider.getTrack(dep.getDbId());
-		byte[] receiptB = ((INVERepositoryRoot) track).getReceipt(cm.getSignature().getBytes());
-		INVETransactionReceipt receipt = new INVETransactionReceipt(receiptB);
 
 		// 保存智能合约消息
 		if (StringUtils.isNotEmpty(fromAddress)) {
@@ -576,6 +573,10 @@ public class MessagesExe {
 				}
 				// 合约执行产生的交易入库
 				addContractTx2SaveQueue(cm.getSignature() + "_" + i, data);
+
+				Repository track = RepositoryProvider.getTrack(dep.getDbId());
+				byte[] receiptB = ((INVERepositoryRoot) track).getReceipt(cm.getSignature().getBytes());
+				INVETransactionReceipt receipt = new INVETransactionReceipt(receiptB);
 				if (!receipt.isTxStatusOK()) {
 					try {
 						InternalTransferData backData = new InternalTransferData(data.getToAddress(), data.getFromAddress(), BigInteger.ZERO, value);
