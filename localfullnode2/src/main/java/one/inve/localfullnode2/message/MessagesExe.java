@@ -566,7 +566,7 @@ public class MessagesExe {
 					if (data.getFee().compareTo(BigInteger.ZERO) > 0) {
 						// 扣除和收集手续费
 						// key condition
-						// node.setTotalFeeBetween2Snapshots(node.getTotalFeeBetween2Snapshots().add(data.getFee()));
+						dep.setTotalFeeBetween2Snapshots(dep.getTotalFeeBetween2Snapshots().add(data.getFee()));
 						addContractFeeTx2SaveQueue(cm.getSignature()+"_fee"+i, data);
 					}
 					needRecordFee = false;
