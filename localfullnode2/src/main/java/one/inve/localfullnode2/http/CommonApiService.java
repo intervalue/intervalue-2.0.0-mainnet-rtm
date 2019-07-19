@@ -7,6 +7,7 @@ import java.util.concurrent.BlockingQueue;
 
 import com.alibaba.fastjson.JSONObject;
 import one.inve.localfullnode2.store.rocks.*;
+import one.inve.localfullnode2.utilities.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,6 +131,9 @@ public class CommonApiService {
         List<Message> list = new ArrayList<Message>();
         for (int i = 0; i < systemAutoArray.getList().size(); i++) {
             JSONObject feeTx = systemAutoArray.getList().get(i);
+            if (StringUtils.isEmpty(feeTx.getString("mHash"))){
+                continue;
+            }
             String txHash = feeTx.getString("mHash").split("_")[0] + "_1";
             JSONObject tx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, txHash);
             Message msg = new Message();
