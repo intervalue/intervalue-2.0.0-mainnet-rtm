@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 
+import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.store.rocks.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -596,6 +597,49 @@ public class HttpApiService {
 			return ResponseUtils.normalResponse(jo.toJSONString());
 		} catch (Exception e) {
 			logger.error("sendViewMessage handle error: {}", e);
+			return ResponseUtils.handleExceptionResponse();
+		}
+	}
+
+	/**
+	 * 根据key获取快照相关
+	 *
+	 * @param data 键 例：
+	 *             {"key":"snapshotVersion"}
+	 * @return 值
+	 */
+	@RequestMapper(value = "/v1/getss", method = MethodEnum.POST)
+	public String getSs(DataMap<String, Object> data) {
+		if (null == data || data.isEmpty()) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+
+		String key = data.getString("key");
+		if (StringUtils.isEmpty(key)) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+		try {
+			if ("snapshotVersion".equals(key.trim())) {
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion());
+			}else if ("msgHashTreeRoot".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getMsgHashTreeRoot());
+			}else if ("treeRootMap".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getTreeRootMap());
+			}else if ("snapshotPointMap".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getSnapshotPointMap());
+			}else if ("snapshotMessage".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getSnapshotMessage());
+			}else if ("totalFee".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getTotalFeeBetween2Snapshots());
+			}else if ("contributions".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getContributions());
+			}else {
+				return ResponseUtils.normalResponse();
+			}
+		} catch (Exception e) {
+			logger.error("getss handle error: {}", e);
 			return ResponseUtils.handleExceptionResponse();
 		}
 	}
