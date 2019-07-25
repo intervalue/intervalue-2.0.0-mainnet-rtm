@@ -315,10 +315,12 @@ public class Local2localImpl implements Local2local {
 		int selfId = (int) node.getCreatorId();
 		logger.warn("hash:{}", hash);
 		String snapshotStr = snapshotDbService.querySnapshotMessageFormatStringByHash(node.nodeParameters().dbId, hash);
-		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
-		// 获取交易信息
-		List<JSONObject> trans = transactionDbService.queryMissingTransactionsBeforeSnapshotPoint(originalSnapshotStr,
-				new BigInteger(transCount), node.nodeParameters().dbId);
+        //2019.05.30 暂停快照同步message
+        List<JSONObject> trans = null;
+//		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
+//		// 获取交易信息
+//		List<JSONObject> trans = transactionDbService.queryMissingTransactionsBeforeSnapshotPoint(originalSnapshotStr,
+//				new BigInteger(transCount), node.nodeParameters().dbId);
 
 		// 构建结果结构
 		SnapObj snapObj = new SnapObj(snapshotStr, (null == trans) ? null : JSONArray.toJSONString(trans));
