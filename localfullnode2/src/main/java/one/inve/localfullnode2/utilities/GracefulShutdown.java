@@ -14,7 +14,7 @@ import sun.misc.SignalHandler;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: At least the system need to handle signal of
  *               {@code SIGKILL	9	Kill(can't be caught or ignored)},{@code SIGTERM	15	Termination (ANSI)}

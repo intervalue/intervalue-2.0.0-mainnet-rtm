@@ -7,7 +7,7 @@ import one.inve.localfullnode2.dep.items.ShardId;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: simulate a scenario of producer/consumer.
  * @author: Francis.Deng

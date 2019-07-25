@@ -7,7 +7,7 @@ import org.apache.log4j.PropertyConfigurator;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: startup class with a reference of {@link WithSeed}
  * @author: Francis.Deng

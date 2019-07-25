@@ -6,7 +6,7 @@ import one.inve.localfullnode2.dep.DependentItem;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The statistics is comprised of
  *               TotalEventCount,TotalConsEventCount,ConsMessageMaxId,SystemAutoTxMaxId,ConsMessageCount

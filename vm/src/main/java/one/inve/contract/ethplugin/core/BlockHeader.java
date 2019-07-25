@@ -93,6 +93,10 @@ public class BlockHeader {
 
     private byte[] hashCache;
 
+    public BlockHeader() {
+
+    }
+
     public BlockHeader(byte[] encoded) {
         this((RLPList) RLP.decode2(encoded).get(0));
     }

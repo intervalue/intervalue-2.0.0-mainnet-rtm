@@ -2,7 +2,10 @@ package one.inve.localfullnode2.http;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 
+import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.store.rocks.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.util.BigIntegers;
@@ -18,11 +21,6 @@ import one.inve.contract.inve.INVETransactionReceipt;
 import one.inve.contract.provider.RepositoryProvider;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
-import one.inve.localfullnode2.store.rocks.BlockBrowserInfo;
-import one.inve.localfullnode2.store.rocks.Message;
-import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
-import one.inve.localfullnode2.store.rocks.SystemAutoArray;
-import one.inve.localfullnode2.store.rocks.TransactionArray;
 import one.inve.localfullnode2.utilities.HttpUtils;
 import one.inve.localfullnode2.utilities.ResponseUtils;
 import one.inve.localfullnode2.utilities.StringUtils;
@@ -33,7 +31,7 @@ import one.inve.localfullnode2.utilities.http.annotation.RequestMapper;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: {@link HttpApiService} is highly coupled with
  *               {@link LocalFullNode1GeneralNode},making sure that it's pass by
@@ -122,8 +120,65 @@ public class HttpApiService {
 		try {
 			TransactionArray trans = CommonApiService.queryTransaction(tableIndex, offset, address, type.toString(),
 					node);
-
 			return ResponseUtils.normalResponse(null == trans ? "" : JSON.toJSONString(trans));
+		} catch (Exception e) {
+			logger.error("gettransactionlist handle error: {}", e);
+			return ResponseUtils.handleExceptionResponse();
+		}
+	}
+
+	@RequestMapper(value = "/v1/gettransactionlistnew", method = MethodEnum.POST)
+	public String getTransactionListNew(DataMap<String, Object> data) {
+		if (null == data || data.isEmpty()) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+		String address = data.getString("address");
+		if (StringUtils.isEmpty(address)) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+		StringBuilder type = new StringBuilder();
+		if (data.containsKey("type[0]")) {
+			type.append(data.getInteger("type[0]"));
+		}
+		if (data.containsKey("type[1]")) {
+			type.append(",").append(data.getInteger("type[1]"));
+		}
+		if (data.containsKey("type[2]")) {
+			type.append(",").append(data.getInteger("type[2]"));
+		}
+		if (data.containsKey("type[3]")) {
+			type.append(",").append(data.getInteger("type[3]"));
+		}
+		BigInteger tableIndex = (null == data.getString("tableIndex")) ? BigInteger.ZERO
+				: new BigInteger(data.getString("tableIndex"));
+		long offset = (null == data.getLong("offset")) ? 0 : data.getLong("offset");
+		BigInteger sysTableIndex = (null == data.getString("sysTableIndex")) ? BigInteger.ZERO
+				: new BigInteger(data.getString("sysTableIndex"));
+		long sysOffset = (null == data.getLong("sysOffset")) ? 0 : data.getLong("sysOffset");
+		try {
+			MsgArray msgArray = new MsgArray();
+			msgArray.setTableIndex(tableIndex);
+			msgArray.setOffset(offset);
+			msgArray.setSysTableIndex(sysTableIndex);
+			msgArray.setSysOffset(sysOffset);
+			TransactionArray trans = CommonApiService.queryTransaction(tableIndex, offset, address, type.toString(),
+					node);
+			if(trans != null && trans.getList() != null) {
+				msgArray.setList(trans.getList());
+				msgArray.setTableIndex(trans.getTableIndex());
+				msgArray.setOffset(trans.getOffset());
+				MsgArray contractTx = CommonApiService.querySystemAutoToMessageList(sysTableIndex, sysOffset, node, address);
+				if (contractTx != null) {
+					msgArray.setSysTableIndex(contractTx.getSysTableIndex());
+					msgArray.setSysOffset(contractTx.getSysOffset());
+					if(contractTx.getList() !=null && !contractTx.getList().isEmpty()){
+						msgArray.getList().addAll(contractTx.getList());
+					}
+				}
+			}
+			return ResponseUtils.normalResponse(null == msgArray ? "" : JSON.toJSONString(msgArray));
 		} catch (Exception e) {
 			logger.error("gettransactionlist handle error: {}", e);
 			return ResponseUtils.handleExceptionResponse();
@@ -157,6 +212,8 @@ public class HttpApiService {
 				if (new String(transationByte).contains("isStable")) {
 					message = JSON.parseObject(transationByte, Message.class);
 				}
+			}else {
+				message = CommonApiService.querySystemAutoToMessage(node,hash);
 			}
 			return ResponseUtils.normalResponse((null == message) ? "" : JSON.toJSONString(message));
 		} catch (Exception e) {
@@ -299,8 +356,53 @@ public class HttpApiService {
 		}
 		try {
 			TransactionArray trans = CommonApiService.queryTransaction(tableIndex, offset, type, node);
-
 			return ResponseUtils.normalResponse(null == trans ? "" : JSON.toJSONString(trans));
+		} catch (Exception e) {
+			logger.error("getmessagelist handle error: {}", e);
+			return ResponseUtils.handleExceptionResponse();
+		}
+	}
+
+	@RequestMapper(value = "/v1/getmessagelistnew", method = MethodEnum.POST)
+	public String getMessageListNew(DataMap<String, Object> data) {
+		if (null == data || data.isEmpty()) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+
+		BigInteger tableIndex = (null == data.getString("tableIndex")) ? BigInteger.ZERO
+				: new BigInteger(data.getString("tableIndex"));
+		long offset = (null == data.getLong("offset")) ? 0 : data.getLong("offset");
+		BigInteger sysTableIndex = (null == data.getString("sysTableIndex")) ? BigInteger.ZERO
+				: new BigInteger(data.getString("sysTableIndex"));
+		long sysOffset = (null == data.getLong("sysOffset")) ? 0 : data.getLong("sysOffset");
+		Integer type = null;
+		if (data.containsKey("type")) {
+			type = data.getInteger("type");
+		}
+		try {
+			MsgArray msgArray = new MsgArray();
+			msgArray.setTableIndex(tableIndex);
+			msgArray.setOffset(offset);
+			msgArray.setSysTableIndex(sysTableIndex);
+			msgArray.setSysOffset(sysOffset);
+			TransactionArray trans = CommonApiService.queryTransaction(tableIndex, offset, type, node);
+			if(trans != null && trans.getList() != null){
+				msgArray.setList(trans.getList());
+				msgArray.setTableIndex(trans.getTableIndex());
+				msgArray.setOffset(trans.getOffset());
+				if (null == type || type == 2) {
+					MsgArray contractTx = CommonApiService.querySystemAutoToMessageList(sysTableIndex, sysOffset, node, null);
+					if (contractTx != null) {
+						msgArray.setSysTableIndex(contractTx.getSysTableIndex());
+						msgArray.setSysOffset(contractTx.getSysOffset());
+						if(contractTx.getList() !=null && !contractTx.getList().isEmpty()){
+							msgArray.getList().addAll(contractTx.getList());
+						}
+					}
+				}
+			}
+			return ResponseUtils.normalResponse(null == msgArray ? "" : JSON.toJSONString(msgArray));
 		} catch (Exception e) {
 			logger.error("getmessagelist handle error: {}", e);
 			return ResponseUtils.handleExceptionResponse();
@@ -495,6 +597,49 @@ public class HttpApiService {
 			return ResponseUtils.normalResponse(jo.toJSONString());
 		} catch (Exception e) {
 			logger.error("sendViewMessage handle error: {}", e);
+			return ResponseUtils.handleExceptionResponse();
+		}
+	}
+
+	/**
+	 * 根据key获取快照相关
+	 *
+	 * @param data 键 例：
+	 *             {"key":"snapshotVersion"}
+	 * @return 值
+	 */
+	@RequestMapper(value = "/v1/getss", method = MethodEnum.POST)
+	public String getSs(DataMap<String, Object> data) {
+		if (null == data || data.isEmpty()) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+
+		String key = data.getString("key");
+		if (StringUtils.isEmpty(key)) {
+			logger.error("parameter is empty.");
+			return ResponseUtils.paramIllegalResponse();
+		}
+		try {
+			if ("snapshotVersion".equals(key.trim())) {
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion());
+			}else if ("msgHashTreeRoot".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getMsgHashTreeRoot());
+			}else if ("treeRootMap".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getTreeRootMap());
+			}else if ("snapshotPointMap".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getSnapshotPointMap());
+			}else if ("snapshotMessage".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getSnapshotMessage());
+			}else if ("totalFee".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getTotalFeeBetween2Snapshots());
+			}else if ("contributions".equals(key.trim())){
+				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getContributions());
+			}else {
+				return ResponseUtils.normalResponse();
+			}
+		} catch (Exception e) {
+			logger.error("getss handle error: {}", e);
 			return ResponseUtils.handleExceptionResponse();
 		}
 	}

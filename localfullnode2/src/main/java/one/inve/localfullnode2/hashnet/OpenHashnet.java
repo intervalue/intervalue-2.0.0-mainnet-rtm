@@ -2,7 +2,7 @@ package one.inve.localfullnode2.hashnet;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: replace addEvent::addEvent with this,which allow a caller to
  *               pass custom object definition

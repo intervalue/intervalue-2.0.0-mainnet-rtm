@@ -10,7 +10,7 @@ import one.inve.localfullnode2.store.IEventFlow;
 import one.inve.localfullnode2.store.IEventStore;
 
 /**
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: initialize hashneter
  * @author: Francis.Deng

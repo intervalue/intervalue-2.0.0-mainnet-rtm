@@ -46,7 +46,7 @@ public class OutputSigCommand implements ICommand {
 	@Override
 	public Optional<Tuple> execute(String... actions) {
 		Optional<Tuple> urlAndDataPair = Optional.empty();
-		ContractTransactionData ct = new ContractTransactionData();
+        ContractTransactionData ct = new ContractTransactionData();
 
 		ContractEnforcement ce = null;
 		if ((ce = readFromConf(actions[0], actions[1])) == null) {
@@ -56,28 +56,34 @@ public class OutputSigCommand implements ICommand {
 		logger.info("get account info from {}", actions[2]);
 		String nonce = getNonce(actions[2], ce.getUnit().getSender());
 
-		ct.setNonce(new BigInteger(nonce).toByteArray());
+        ct.setNonce(nonce);
 
 		if (ce.getUnit().getCalldata() != null && !ce.getUnit().getCalldata().equals("")) {
-			ct.setCalldata(Hex.decode(ce.getUnit().getCalldata()));
+            ct.setCalldata(ce.getUnit().getCalldata());
 		}
 		if (ce.getUnit().getGasPrice() != null && !ce.getUnit().getGasPrice().equals("")) {
-			ct.setGasPrice(new BigInteger(ce.getUnit().getGasPrice()).toByteArray());
+            ct.setGasPrice(ce.getUnit().getGasPrice());
 		}
 		if (ce.getUnit().getValue() != null && !ce.getUnit().getValue().equals("")) {
-			ct.setValue(new BigInteger(ce.getUnit().getValue()).toByteArray());
+            ct.setValue(ce.getUnit().getValue());
 		}
 		if (ce.getUnit().getGasLimit() != null && !ce.getUnit().getGasLimit().equals("")) {
-			ct.setGasLimit(new BigInteger(ce.getUnit().getGasLimit()).toByteArray());
+            ct.setGasLimit(ce.getUnit().getGasLimit());
 		}
 		// non-hex format
 		if (ce.getUnit().getToAddress() != null && !ce.getUnit().getToAddress().equals("")) {
-			ct.setToAddress(ce.getUnit().getToAddress().getBytes());
+            ct.setToAddress(ce.getUnit().getToAddress());
 		}
 
 		File tjson = new File(actions[0] + File.separator + actions[3]);
 		try (FileWriter f2 = new FileWriter(tjson, false)) {
 			byte[] d = MarshalAndUnMarshal.marshal(ct);
+
+			logger.info("编码后的数据: {}", new String(d));
+			for(byte b:d) {
+                System.out.print(b + "\t");
+            }
+			System.out.println("");
 
 			logger.info("prepare for signing invocation");
 			ContractMessage cm = new ContractMessage(ce.getUnit().getMnemonicCode(), d, ce.getUnit().getSender());

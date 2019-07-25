@@ -10,7 +10,7 @@ import one.inve.bean.message.SnapshotMessage;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: snapshot sync dependent definition
  * @author: Francis.Deng

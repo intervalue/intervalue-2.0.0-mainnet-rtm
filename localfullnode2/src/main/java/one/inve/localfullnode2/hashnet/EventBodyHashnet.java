@@ -5,7 +5,7 @@ import one.inve.localfullnode2.store.EventKeyPair;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: support one.inve.localfullnode2.store.EventBody involvement in
  *               conjunction with one.inve.localfullnode2.hashnet.OpenHashnet

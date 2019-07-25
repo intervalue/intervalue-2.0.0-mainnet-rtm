@@ -16,7 +16,7 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The new event after gossip should been persisted
  *               immediately.Persist them as much as possible

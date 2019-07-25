@@ -21,7 +21,7 @@ import one.inve.utils.DSA;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The process consists of saving event, calculate
  *               statistics(Config.EVT_TX_COUNT_KEY，Config.CONS_EVT_COUNT_KEY，msgHashTreeRoot),check

@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: access peer node to get sync snap object via zeroc
  *               <p>

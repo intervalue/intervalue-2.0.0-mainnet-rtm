@@ -40,7 +40,7 @@ public class NewTableCreate {
 			sql.append("type   varchar(100),");
 			sql.append("mHash   varchar(600),");
 			sql.append("toAddress  varchar(600),");
-			sql.append("amount   bigint(20),");
+			sql.append("amount   decimal(64,0),");
 			sql.append("updateTime   bigint(20),");
 			sql.append("PRIMARY KEY (`id`)");
 			sql.append(")ENGINE=InnoDB DEFAULT CHARSET=utf8 ");

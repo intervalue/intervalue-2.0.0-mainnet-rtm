@@ -71,7 +71,7 @@ public class Config {
 	public static String SPLIT = "_";
 
 	// 快照点选取：每多少个Event做一次快照
-	public static final int EVENT_NUM_PER_SNAPSHOT = 1000;
+	public static final int EVENT_NUM_PER_SNAPSHOT = 300000;
 	// 删除第几代祖先快照之前的Event
 	public static final int DEFAULT_SNAPSHOT_CLEAR_GENERATION = 10;
 	// 默认最大交易留言字节数

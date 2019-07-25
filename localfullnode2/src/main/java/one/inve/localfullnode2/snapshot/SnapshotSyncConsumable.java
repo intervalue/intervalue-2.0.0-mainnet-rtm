@@ -7,7 +7,7 @@ import one.inve.localfullnode2.snapshot.vo.SnapObj;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: provide snapshot sync communication utility
  * @author: Francis.Deng

@@ -41,7 +41,7 @@ import one.inve.localfullnode2.store.EventStoreDependency;
 /**
  * event listener registration.
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: maintain data convey via {@link DepItemsManager}
  * @author: Francis.Deng

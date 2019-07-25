@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The class is capable of cache some pair if keys is specified.
  *               The pair would been directly saved if key doesn't fall within

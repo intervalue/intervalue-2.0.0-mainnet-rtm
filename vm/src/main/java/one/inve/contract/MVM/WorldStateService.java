@@ -1,12 +1,10 @@
 package one.inve.contract.MVM;
 
+import com.alibaba.fastjson.JSON;
 import one.inve.bean.message.ContractMessage;
 import one.inve.contract.ContractTransactionData;
-import one.inve.contract.encoding.MarshalAndUnMarshal;
 import one.inve.contract.ethplugin.config.SystemProperties;
-import one.inve.contract.ethplugin.core.Repository;
-import one.inve.contract.ethplugin.core.Transaction;
-import one.inve.contract.ethplugin.core.TransactionExecutionSummary;
+import one.inve.contract.ethplugin.core.*;
 import one.inve.contract.ethplugin.db.BlockStoreDummy;
 import one.inve.contract.ethplugin.vm.program.ProgramResult;
 import one.inve.contract.inve.INVERepositoryRoot;
@@ -135,19 +133,19 @@ public class WorldStateService {
 		ContractTransactionData ct = null;
 		try {
 		    logger.debug("message is: {}", new String(contractMsg.getData()));
-			ct = MarshalAndUnMarshal.unmarshal(contractMsg.getData(), ContractTransactionData.class);
+			ct = JSON.parseObject(contractMsg.getData(), ContractTransactionData.class);
             logger.debug("====== Unmarshaled contract transaction info ======");
-            logger.debug("nonce: {}", new BigInteger(1, ct.getNonce()));
-            logger.debug("gas price: {}", new BigInteger(1, ct.getGasPrice()));
-            logger.debug("gas limit: {}", new BigInteger(1, ct.getGasLimit()));
-            logger.debug("value: {}", new BigInteger(1, ct.getValue()));
+            logger.debug("nonce: {}", new BigInteger(ct.getNonce()));
+            logger.debug("gas price: {}", new BigInteger(ct.getGasPrice()));
+            logger.debug("gas limit: {}", new BigInteger(ct.getGasLimit()));
+            logger.debug("value: {}", new BigInteger(ct.getValue()));
 
-            byte[] calldata = ct.getCalldata();
+            byte[] calldata = Hex.decode(ct.getCalldata());
             logger.debug("call data: {}", new String(calldata));
-            logger.debug("打印正常 byte 数组:");
-            for(byte b:calldata) {
-                logger.debug("\t {}", String.valueOf(b));
-            }
+//            logger.debug("打印正常 byte 数组:");
+//            for(byte b:calldata) {
+//                logger.debug("\t {}", String.valueOf(b));
+//            }
             logger.debug("====== end ======");
         } catch (Exception e) {
             logger.error("Unmarshal contract message failed.", e);
@@ -155,8 +153,13 @@ public class WorldStateService {
             throw new RuntimeException("Unmarshal contract message failed.", e);
         }
 
-		List<InternalTransferData> internalTransferDataList = executeTransaction(dbId, ct,
-				contractMsg.getFromAddress().getBytes(), contractMsg.getSignature().getBytes());
+		List<InternalTransferData> internalTransferDataList = executeTransaction(
+		        dbId,
+                ct,
+				contractMsg.getFromAddress().getBytes(),
+                contractMsg.getSignature().getBytes(),
+                contractMsg.getTimestamp()/1000
+        );
 
 		long end = System.currentTimeMillis();
 		logger.debug("Smart contract transaction execution time: {} ms.", end - start);
@@ -187,15 +190,39 @@ public class WorldStateService {
 	 * 根据传入的 ContractTransaction 构造交易
 	 */
 	protected static List<InternalTransferData> executeTransaction(String dbId, ContractTransactionData ct,
-			byte[] fromAddr, byte[] signatrue) {
-		Transaction tx = new Transaction(ct.getNonce(), ct.getGasPrice(), ct.getGasLimit(), ct.getToAddress(),
-				ct.getValue(), ct.getCalldata());
+			byte[] fromAddr, byte[] signatrue, long timestamp) {
+		logger.debug("============= Starting executeTransaction");
+        logger.debug("nonce: {}", new BigInteger(ct.getNonce()));
+        logger.debug("gas price: {}", new BigInteger(ct.getGasPrice()));
+        logger.debug("gas limit: {}", new BigInteger(ct.getGasLimit()));
+        logger.debug("value: {}", new BigInteger(ct.getValue()));
+
+        byte[] calldata = ct.getCalldata().getBytes();
+        logger.debug("call data before decode: {}", new String(calldata));
+        calldata = Hex.decode(calldata);
+        logger.debug("call data after decode: {}", new String(calldata));
+
+		Transaction tx = new Transaction(
+                new BigInteger(ct.getNonce()).toByteArray(),
+                new BigInteger(ct.getGasPrice()).toByteArray(),
+                new BigInteger(ct.getGasLimit()).toByteArray(),
+                ct.getToAddress().getBytes(),
+                new BigInteger(ct.getValue()).toByteArray(),
+                calldata
+        );
 		tx.setSender(fromAddr);
+
+		logger.debug("Transaction initialized.");
 
 		Repository track = getTrack(dbId);
 
+        Block block = new Block();
+        block.setTimestamp(timestamp);
+
+        logger.debug("timestamp is: {}", timestamp);
+        
 		INVETransactionExecutor executor = new INVETransactionExecutor(tx, track, new BlockStoreDummy(),
-				new INVEProgramInvokeFactoryImpl(), SystemProperties.getDefault().getGenesis());
+				new INVEProgramInvokeFactoryImpl(), block);
 
 		logger.debug("*** New TX arrived:");
 		logger.debug("\\==== Sender Balance before exec is: {}", track.getBalance(fromAddr));

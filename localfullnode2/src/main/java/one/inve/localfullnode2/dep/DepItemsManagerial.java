@@ -22,7 +22,7 @@ import one.inve.localfullnode2.dep.items.Wal;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: item/item concerned model interface
  * @author: Francis.Deng
