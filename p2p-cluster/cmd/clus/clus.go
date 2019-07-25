@@ -8,6 +8,15 @@ import (
 	"github.com/intervalue/intervalue-2.0.0-mainnet-rtm/p2p-cluster/cluster"
 )
 
+/**
+ *
+ * Copyright © INVE FOUNDATION. All rights reserved.
+ *
+ * @Description: cluster client tool
+ * @author: Francis.Deng
+ * @version: V1.0
+ */
+
 var (
 	host   string
 	port   int
@@ -15,7 +24,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&host, "h", "", "listening net address")
+	flag.StringVar(&host, "h", "", "listening net address [ipv4 format]")
 	flag.IntVar(&port, "p", -1, "listening port [0-65535]")
 	flag.StringVar(&guider, "g", "", "work as guider waiting another peer to join [ip:port]")
 }
