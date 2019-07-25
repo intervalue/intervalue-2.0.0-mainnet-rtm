@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: TODO
  * @author: Francis.Deng

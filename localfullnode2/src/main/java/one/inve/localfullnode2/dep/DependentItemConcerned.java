@@ -7,7 +7,7 @@ import one.inve.localfullnode2.utilities.ReflectionUtils;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: {@code DependentItem} and {@code DependentItemConcerned} models
  *               provide a convenient interaction among Dep object.

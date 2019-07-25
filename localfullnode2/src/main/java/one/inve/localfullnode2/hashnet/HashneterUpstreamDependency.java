@@ -6,7 +6,7 @@ import one.inve.localfullnode2.dep.items.ShardCount;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The class is depending on {@link IHashneter} and
  *               {@link HashneterDependent},all of which were pushed before.

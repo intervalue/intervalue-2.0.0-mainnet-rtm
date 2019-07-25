@@ -3,7 +3,7 @@ package one.inve.localfullnode2.nodes;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The impl encapsulates all interaction with seed/administrator
  *               node

@@ -17,7 +17,7 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: Missing snapshot-related thing.
  * @author: Francis.Deng

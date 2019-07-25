@@ -31,7 +31,7 @@ import one.inve.localfullnode2.utilities.TxVerifyUtils;
 
 /**
  *
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  *
  * @Description: execute messages that has own type-handler
  * @author: Francis.Deng

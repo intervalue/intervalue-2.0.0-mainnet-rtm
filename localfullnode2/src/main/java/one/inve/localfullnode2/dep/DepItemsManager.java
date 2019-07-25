@@ -25,7 +25,7 @@ import one.inve.localfullnode2.dep.items.Wal;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: remain a sole instance and remain all items concerned
  * @see {@code DependentItem}

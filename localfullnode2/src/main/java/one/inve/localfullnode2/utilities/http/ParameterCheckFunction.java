@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * check whether passed parameters are correlated with method
  *               parameter definition

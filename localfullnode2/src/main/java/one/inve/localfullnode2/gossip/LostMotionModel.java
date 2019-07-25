@@ -3,7 +3,7 @@ package one.inve.localfullnode2.gossip;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: a helper curve to convert last motion round into sleeping
  *               time,{@code exponent} is a key factor

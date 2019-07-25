@@ -15,7 +15,7 @@ import java.util.jar.JarFile;
 
 /**
  *
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  *
  * @Description: apply to cases that all classes in a directory and all classes
  *               in jars

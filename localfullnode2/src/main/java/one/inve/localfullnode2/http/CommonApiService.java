@@ -20,7 +20,7 @@ import one.inve.localfullnode2.store.mysql.QueryTableSplit;
 import one.inve.localfullnode2.utilities.TxVerifyUtils;
 
 /**
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  *
  * @Description: TODO
  * @author: Francis.Deng

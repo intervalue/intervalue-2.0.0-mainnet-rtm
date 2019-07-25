@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 /**
  * IO util
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: TODO
  * @author: Francis.Deng

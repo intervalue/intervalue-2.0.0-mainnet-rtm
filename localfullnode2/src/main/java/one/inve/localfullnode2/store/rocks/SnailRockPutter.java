@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: An phenomenon was found that a half of invoking methods access
  *               to rocksdb was writing-type,which is possible to cost a lot.In

@@ -24,7 +24,7 @@ import one.inve.localfullnode2.utilities.QueuePoller;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: persist messages or system messages(transaction fee)
  * @author: Francis.Deng

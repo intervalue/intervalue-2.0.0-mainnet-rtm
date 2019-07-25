@@ -27,7 +27,7 @@ import one.inve.localfullnode2.vo.Event;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: raw function without zeroc,generalnode
  * @author: Francis.Deng

@@ -31,7 +31,7 @@ import one.inve.localfullnode2.utilities.http.annotation.RequestMapper;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: {@link HttpApiService} is highly coupled with
  *               {@link LocalFullNode1GeneralNode},making sure that it's pass by

@@ -31,7 +31,7 @@ import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: exclusive writing event
  * @author: Francis.Deng

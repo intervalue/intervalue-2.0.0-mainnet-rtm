@@ -21,7 +21,7 @@ import one.inve.core.EventBody;
 import one.inve.localfullnode2.store.EventStoreDependent;
 
 /**
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: Note that the class depends on {@link EventStoreDependent}
  * @author: Francis.Deng
