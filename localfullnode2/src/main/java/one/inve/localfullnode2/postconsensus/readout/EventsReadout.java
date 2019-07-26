@@ -10,7 +10,7 @@ import one.inve.core.EventBody;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: read out events inside hashnet algorithm,push them to sorting
  *               queue.

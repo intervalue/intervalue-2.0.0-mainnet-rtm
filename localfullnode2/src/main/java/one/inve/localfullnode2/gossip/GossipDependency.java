@@ -34,7 +34,7 @@ import one.inve.localfullnode2.utilities.HnKeyUtils;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: delve into the source of {@code lastSeqs} and
  *               {@code currSnapshotVersion}

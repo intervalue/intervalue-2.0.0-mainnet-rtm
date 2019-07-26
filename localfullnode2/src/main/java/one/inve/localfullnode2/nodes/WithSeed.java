@@ -26,7 +26,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The class is able to communicate with seed node to complete the
  *               tasks like registering,retrieving sharding,maintaining

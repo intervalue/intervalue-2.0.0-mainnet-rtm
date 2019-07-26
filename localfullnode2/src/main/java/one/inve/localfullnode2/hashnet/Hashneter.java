@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 
 /**
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: From getAllQueuedEvents to getShardSortQueue,the class execute
  *               hashnet sorting algorithm,the templates comprise

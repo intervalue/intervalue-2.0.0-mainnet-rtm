@@ -16,7 +16,7 @@ import one.inve.utils.SignUtil;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: signature tools which are able to sign all kinds of messages
  *               using existed public-private key pair.

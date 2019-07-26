@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: Gossip plays an important role in peer to peer communication
  * @author: Francis.Deng

@@ -2,7 +2,7 @@ package one.inve.localfullnode2.lc;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: We see handling process,thread execution... as a life cycle
  *               which could been started,stopped,knowing running

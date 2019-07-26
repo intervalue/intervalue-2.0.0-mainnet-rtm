@@ -18,7 +18,7 @@ import one.inve.localfullnode2.utilities.http.annotation.RequestMatchable;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * dispatch request to the service which uses {@link RequestMapper} as
  * instruction

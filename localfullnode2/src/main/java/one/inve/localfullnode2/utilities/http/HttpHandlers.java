@@ -12,7 +12,7 @@ import one.inve.localfullnode2.utilities.http.annotation.RequestMapper;
 import one.inve.localfullnode2.utilities.http.annotation.RequestMatchable;
 
 /**
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  *
  * @author Francis.Deng
  * @date 2018年11月3日 下午3:29:38

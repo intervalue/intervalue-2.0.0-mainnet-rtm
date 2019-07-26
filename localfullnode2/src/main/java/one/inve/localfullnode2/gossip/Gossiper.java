@@ -40,7 +40,7 @@ import one.inve.utils.DSA;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: handle gossip communication and result process regardless of in
  *               one sharding or across shardings.

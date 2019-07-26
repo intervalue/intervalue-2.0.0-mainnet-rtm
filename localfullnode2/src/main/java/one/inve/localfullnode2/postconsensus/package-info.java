@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The postconsensus process comprises of readout(from hashnet),
  *               sorting(across all nodes),exe(cuting events)

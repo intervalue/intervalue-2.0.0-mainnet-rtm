@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: provide approaches to bottomed data
  * @author: Francis.Deng

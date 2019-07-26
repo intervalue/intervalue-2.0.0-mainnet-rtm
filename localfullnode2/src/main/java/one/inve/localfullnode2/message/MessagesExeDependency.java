@@ -16,7 +16,7 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: {@setTotalFeeBetween2Snapshots},{@getTotalFeeBetween2Snapshots} is
  *               unknown

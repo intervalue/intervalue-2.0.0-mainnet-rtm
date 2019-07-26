@@ -22,7 +22,7 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: {@code lastSeq} is a key to record lastSeqs changes.
  * @author: Francis.Deng

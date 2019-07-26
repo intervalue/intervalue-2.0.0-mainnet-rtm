@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicLongArray;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: attempt to build {@link AtomicLongArray} model(implements part
  *               of methods) and be aware of writer operations.

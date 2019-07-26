@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: There is an assumption that a time-consuming task(I/O,like disk
  *               I/O or network I/O) will account for larger proportion than the

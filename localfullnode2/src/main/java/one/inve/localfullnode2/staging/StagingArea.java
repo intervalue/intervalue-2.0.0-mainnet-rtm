@@ -12,7 +12,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: Manage all queues by which the individual process communicate
  *               with others.A drawback is {@link LinkedBlockingQueue} which is
