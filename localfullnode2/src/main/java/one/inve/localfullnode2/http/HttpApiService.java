@@ -392,7 +392,7 @@ public class HttpApiService {
 				msgArray.setTableIndex(trans.getTableIndex());
 				msgArray.setOffset(trans.getOffset());
 				if (null == type || type == 2) {
-					MsgArray contractTx = CommonApiService.querySystemAutoToMessageList(sysTableIndex, sysOffset, node, null);
+					MsgArray contractTx = CommonApiService.querySystemAutoToMessageList(sysTableIndex, sysOffset, node);
 					if (contractTx != null) {
 						msgArray.setSysTableIndex(contractTx.getSysTableIndex());
 						msgArray.setSysOffset(contractTx.getSysOffset());
