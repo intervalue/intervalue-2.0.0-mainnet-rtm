@@ -142,7 +142,7 @@ public class CommonApiService {
                 message.put("nrgPrice", "1000000000");
                 message.put("amount", tx.getBigDecimal("amount").stripTrailingZeros().toPlainString());
                 message.put("signature", tx.getString("mHash"));
-                message.put("fee", BigInteger.ZERO);
+                message.put("fee", "0");
                 message.put("vers", "2.0");
                 message.put("fromAddress", tx.getString("fromAddress"));
                 message.put("remark", "");
@@ -188,7 +188,7 @@ public class CommonApiService {
                 message.put("nrgPrice", "1000000000");
                 message.put("amount", tx.getBigDecimal("amount").stripTrailingZeros().toPlainString());
                 message.put("signature", tx.getString("mHash"));
-                message.put("fee", BigInteger.ZERO);
+                message.put("fee", "0");
                 message.put("vers", "2.0");
                 message.put("fromAddress", tx.getString("fromAddress"));
                 message.put("remark", "");
@@ -220,7 +220,7 @@ public class CommonApiService {
             message.put("nrgPrice", "1000000000");
             message.put("amount", tx.getBigDecimal("amount").stripTrailingZeros().toPlainString());
             message.put("signature", tx.getString("mHash"));
-            message.put("fee", BigInteger.ZERO);
+            message.put("fee", "0");
             message.put("vers", "2.0");
             message.put("fromAddress", tx.getString("fromAddress"));
             message.put("remark", "");
