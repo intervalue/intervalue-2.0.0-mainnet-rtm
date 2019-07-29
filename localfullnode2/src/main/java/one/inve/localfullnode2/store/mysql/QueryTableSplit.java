@@ -26,12 +26,12 @@ public class QueryTableSplit {
     /**
      * 查询默认每页条数
      */
-    private static final Integer PAGE_SIZE = 10;
+    private static final Integer PAGE_SIZE = 100;
 
     /**
      * 查询默认每页条数
      */
-    private static final Integer PAGE_SIZE_BROWSER = 100;
+    private static final Integer PAGE_SIZE_BROWSER = 1000;
 
     /**
      * 查询一次无数据，再次查询下一张表(最多查询两次)
