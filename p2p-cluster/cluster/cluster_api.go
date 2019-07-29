@@ -28,13 +28,13 @@ func (c *Cluster) Join(existed []string) {
 }
 
 // Members returns a list of all known live nodes.
-func (c *Cluster) Members() []*Node {
+func (c *Cluster) Members() []Node {
 
-	joinedNodes := joinedNodes()
-	nodes := make([]*Node, 0, len(joinedNodes))
+	joinedNodes := joinedNodes("")
+	nodes := make([]Node, 0, len(joinedNodes))
 	for _, n := range joinedNodes {
 		if n.state != stateDead {
-			nodes = append(nodes, &n.Node)
+			nodes = append(nodes, n.Node)
 		}
 	}
 

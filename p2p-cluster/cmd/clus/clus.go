@@ -54,17 +54,17 @@ func main() {
 			fmt.Printf("find peer node (%s) in a cluster\n", n.Addr)
 
 		}
+		fmt.Println("")
 
 		time.Sleep(10 * time.Second)
 	}
 }
 
 func NewCluster(name string, addr string, port int) (*cluster.Cluster, error) {
-	conf := &cluster.Config{
-		Name:     name,
-		BindAddr: addr,
-		BindPort: port,
-	}
+	conf := cluster.DefaultConfig()
+	conf.Name = name
+	conf.BindAddr = addr
+	conf.BindPort = port
 
 	return cluster.Create(conf)
 }
