@@ -44,6 +44,8 @@ type Cluster struct {
 
 	tickerLock sync.Mutex
 	tickers    []*time.Ticker
+	stopTick   chan struct{}
+	//probeIndex int
 
 	//nodes []*nodeState //known nodes
 
@@ -97,6 +99,28 @@ func newCluster(config *Config) (*Cluster, error) {
 
 //schedule is used to ensure the Tick is performed periodically
 func (c *Cluster) schedule() {
+	c.tickerLock.Lock()
+	defer c.tickerLock.Unlock()
+
+	//it is safe to call it many times
+	if len(c.tickers) > 0{
+		return
+	}
+
+	// when we should stop the tickers.
+	stopCh := make(chan struct{})
+
+	if (c.config.ProbeInterval>0){
+		t:=time.NewTicker(c.config.ProbeInterval)
+		go c.triggerFunc(c.config.ProbeInterval,t.C,stopCh,c.probe)
+		c.tickers = append(c.tickers,t)
+	}
+
+	// If we made any tickers, then record the stopTick channel for
+	// later.
+	if len(c.tickers) > 0 {
+		c.stopTick = stopCh
+	}
 
 }
 
@@ -212,12 +236,11 @@ func (c *Cluster) handlePing(buf []byte, from net.Addr) {
 	if pi.Join == true { //first join to call other nodes to ping together
 		bounce := bouncePing{fromAddr}
 
-		for _, node := range joinedNodes(fromAddr) {
+		for _, node := range nodesExclude(fromAddr) {
 			c.encodeAndSendMsg(node.Addr, bouncePingMsg, &bounce)
 		}
 	}
 
-	return
 }
 
 //merge it
@@ -268,7 +291,7 @@ func (c *Cluster) ping(node *nodeState, join bool) (time.Duration, error) {
 		}
 
 	case <-time.After(c.config.ProbeTimeout):
-		c.logger.Printf("[ERR] Failed to get Pong due to timeout: %v", c.config.ProbeTimeout)
+		c.logger.Printf("[ERR] Failed to get Pong from %v due to timeout: %v", node.Addr,c.config.ProbeTimeout)
 	}
 
 	return 0, NoPongError{node.Addr}
@@ -335,10 +358,86 @@ func (c *Cluster) Shutdown() error {
 
 	atomic.StoreInt32(&c.shutdown, 1)
 	close(c.shutdownCh)
-
+	c.deschedule()
 	return nil
 }
 
 func (c *Cluster) hasShutdown() bool {
 	return atomic.LoadInt32(&c.shutdown) == 1
+}
+
+
+//start a single round of failure detection
+func (c *Cluster) probe(){
+	//numCheck:=0
+	nodes := nodesExclude("")
+	var unPingedNodes []nodeState
+	wg := sync.WaitGroup{}
+
+	if len(nodes)>0 {
+		wg.Add(len(nodes))
+
+		//nodeLock.RLock()
+		//if numCheck >= len(nodesExclude("")){
+		//	nodeLock.RUnlock()
+		//	return
+		//}
+
+		for _,node:=range nodes{
+			//change node state from stateAlive to stateSuspect
+			if node.state == stateAlive{
+				go func (){
+					_,err := c.ping(&node,false)
+					if err != nil{
+						node.state = stateSuspect
+						node.stateChange = time.Now()
+						unPingedNodes = append(unPingedNodes,node)
+					}
+
+					wg.Done()
+
+				}()
+			}
+			//change node state from stateSuspect to stateAlive
+			if node.state == stateSuspect{
+				go func (){
+					_,err := c.ping(&node,false)
+					if err == nil{
+						node.state = stateAlive
+						node.stateChange = time.Now()
+						unPingedNodes = append(unPingedNodes,node)
+					}
+
+					wg.Done()
+
+				}()
+			}
+		}
+
+		//merge unpinged nodes
+		wg.Wait()
+		nodeSetMerge(unPingedNodes)
+	}
+
+
+}
+
+func (c *Cluster) deschedule() {
+	c.tickerLock.Lock()
+	defer c.tickerLock.Unlock()
+
+	// If we have no tickers, then we aren't scheduled.
+	if len(c.tickers) == 0 {
+		return
+	}
+
+	// Close the stop channel so all the ticker listeners stop.
+	close(c.stopTick)
+
+	// Explicitly stop all the tickers themselves so they don't take
+	// up any more resources, and get rid of the list.
+	for _, t := range c.tickers {
+		t.Stop()
+	}
+	c.tickers = nil
 }

@@ -6,6 +6,16 @@ import (
 	"time"
 )
 
+
+/**
+ *
+ * Copyright © INVE FOUNDATION. All rights reserved.
+ *
+ * @Description:define how to maintain another nodes status.
+ * @author: Francis.Deng
+ * @version: V1.0
+ */
+
 //type nodesSet []*nodeState
 type nodeStateType int
 
@@ -44,11 +54,11 @@ func node(addr string) *nodeState {
 	return n
 }
 
-func joinedNodes(exclude string) []nodeState {
+func nodesExclude(exclude string) []nodeState {
 	var nssCopy []nodeState
 
-	// nodeLock.RLock()
-	// defer nodeLock.RUnlock()
+	//nodeLock.RLock()
+	//defer nodeLock.RUnlock()
 
 	// for _, nsPtr := range nss {
 	// 	if strings.Compare(nsPtr.Addr, exclude) != 0 {
@@ -66,17 +76,20 @@ func joinedNodes(exclude string) []nodeState {
 }
 
 func nodeSetAdd(ns0 *nodeState) {
-	if nodeSetContains(ns0) {
-		nodeSetRemove(ns0)
-	}
+	//nodeLock.Lock()
+	//defer nodeLock.Unlock()
 
+	//if nodeSetContains(ns0) {
+	//	nodeSetRemove(ns0)
+	//}
+	//nodeSetRemove(ns0)
 	nodeMap[ns0.Addr] = ns0
 	//nss = append(nss, ns0)
 }
 
 func nodeSetContains(ns0 *nodeState) bool {
-	// nodeLock.RLock()
-	// defer nodeLock.RUnlock()
+	nodeLock.RLock()
+	defer nodeLock.RUnlock()
 
 	// for _, ns := range nss {
 	// 	if strings.Compare(ns.Addr, ns0.Addr) == 0 {
@@ -89,8 +102,8 @@ func nodeSetContains(ns0 *nodeState) bool {
 }
 
 func nodeSetRemove(ns0 *nodeState) {
-	// nodeLock.Lock()
-	// defer nodeLock.Unlock()
+	nodeLock.Lock()
+	defer nodeLock.Unlock()
 
 	// for index, ns := range nss {
 	// 	if strings.Compare(ns.Addr, ns0.Addr) == 0 {
@@ -101,5 +114,29 @@ func nodeSetRemove(ns0 *nodeState) {
 	// 	}
 	// }
 	delete(nodeMap, ns0.Addr)
+
+}
+
+func nodeSetMerge(nnss []nodeState){
+	if (len(nnss) >0) {
+		nodeLock.Lock()
+		defer nodeLock.Unlock()
+		var nonExistedNodes []nodeState
+
+		for _,ns := range nnss{
+			if n:=node(ns.Addr);n != nil{
+				if ns.stateChange.After(n.stateChange) {
+					n.state = ns.state
+					n.stateChange = ns.stateChange
+				}
+			}  else {
+				nonExistedNodes = append(nonExistedNodes,ns)
+			}
+		}
+
+		for _,nonExistedNode := range nonExistedNodes{
+			nodeSetAdd(&nonExistedNode)
+		}
+	}
 
 }

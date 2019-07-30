@@ -51,8 +51,13 @@ func main() {
 
 	for {
 		for _, n := range c0.Members() {
-			fmt.Printf("find peer node (%s) in a cluster\n", n.Addr)
-
+			fmt.Printf("find alive node: %s \n", n.Addr)
+		}
+		for _, n := range c0.SuspectedMembers() {
+			fmt.Printf("find suspected node: %s \n", n.Addr)
+		}
+		for _, n := range c0.DeadMembers() {
+			fmt.Printf("find dead node: %s \n", n.Addr)
 		}
 		fmt.Println("")
 

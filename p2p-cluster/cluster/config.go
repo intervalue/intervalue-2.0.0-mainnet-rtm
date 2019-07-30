@@ -20,8 +20,8 @@ type Config struct {
 func DefaultConfig() *Config {
 	conf := &Config{}
 
-	conf.ProbeTimeout = 25 * time.Second
-	conf.ProbeInterval = 80 * time.Second
+	conf.ProbeTimeout = 10 * time.Second
+	conf.ProbeInterval = 20 * time.Second
 
 	return conf
 }

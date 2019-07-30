@@ -27,16 +27,44 @@ func (c *Cluster) Join(existed []string) {
 	}
 }
 
-// Members returns a list of all known live nodes.
-func (c *Cluster) Members() []Node {
+func (c *Cluster) findTypedMembers(typed nodeStateType) []Node {
+	joinedNodes := nodesExclude("")
+	var knodes []Node
 
-	joinedNodes := joinedNodes("")
-	nodes := make([]Node, 0, len(joinedNodes))
-	for _, n := range joinedNodes {
-		if n.state != stateDead {
-			nodes = append(nodes, n.Node)
+	if (len(joinedNodes) > 0){
+		//knodes := make([]Node, 0, len(joinedNodes))
+
+		for _, n := range joinedNodes {
+			if n.state == typed {
+				knodes = append(knodes, n.Node)
+			}
 		}
 	}
 
-	return nodes
+
+	return knodes
+}
+
+// Members returns a list of all known alive nodes.
+func (c *Cluster) Members() []Node {
+	//joinedNodes := nodesExclude("")
+	//nodes := make([]Node, 0, len(joinedNodes))
+	//for _, n := range joinedNodes {
+	//	if n.state != stateAlive {
+	//		nodes = append(nodes, n.Node)
+	//	}
+	//}
+	//
+	//return nodes
+	return c.findTypedMembers(stateAlive)
+}
+
+// Members returns a list of all known suspected nodes.
+func (c *Cluster) SuspectedMembers() []Node {
+	return c.findTypedMembers(stateSuspect)
+}
+
+// Members returns a list of all known dead nodes.
+func (c *Cluster) DeadMembers() []Node {
+	return c.findTypedMembers(stateDead)
 }
