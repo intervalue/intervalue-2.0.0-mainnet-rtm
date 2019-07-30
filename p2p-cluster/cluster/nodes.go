@@ -7,6 +7,7 @@ import (
 )
 
 //type nodesSet []*nodeState
+type nodeStateType int
 
 const (
 	stateAlive nodeStateType = iota
@@ -15,12 +16,10 @@ const (
 )
 
 var (
-	nss      []*nodeState          = []*nodeState{}
+	//nss      []*nodeState          = []*nodeState{}
 	nodeMap  map[string]*nodeState = make(map[string]*nodeState)
 	nodeLock sync.RWMutex
 )
-
-type nodeStateType int
 
 //cluster node
 type Node struct {
@@ -45,14 +44,22 @@ func node(addr string) *nodeState {
 	return n
 }
 
-func joinedNodes() []nodeState {
+func joinedNodes(exclude string) []nodeState {
 	var nssCopy []nodeState
 
-	nodeLock.RLock()
-	defer nodeLock.RUnlock()
+	// nodeLock.RLock()
+	// defer nodeLock.RUnlock()
 
-	for _, nsPtr := range nss {
-		nssCopy = append(nssCopy, *nsPtr)
+	// for _, nsPtr := range nss {
+	// 	if strings.Compare(nsPtr.Addr, exclude) != 0 {
+	// 		nssCopy = append(nssCopy, *nsPtr)
+	// 	}
+
+	// }
+	for _, v := range nodeMap {
+		if strings.Compare(v.Addr, exclude) != 0 {
+			nssCopy = append(nssCopy, *v)
+		}
 	}
 
 	return nssCopy
@@ -64,34 +71,35 @@ func nodeSetAdd(ns0 *nodeState) {
 	}
 
 	nodeMap[ns0.Addr] = ns0
-	nss = append(nss, ns0)
+	//nss = append(nss, ns0)
 }
 
 func nodeSetContains(ns0 *nodeState) bool {
-	nodeLock.RLock()
-	defer nodeLock.RUnlock()
+	// nodeLock.RLock()
+	// defer nodeLock.RUnlock()
 
-	for _, ns := range nss {
-		if strings.Compare(ns.Addr, ns0.Addr) == 0 {
-			return true
-		}
-	}
+	// for _, ns := range nss {
+	// 	if strings.Compare(ns.Addr, ns0.Addr) == 0 {
+	// 		return true
+	// 	}
+	// }
+	_, ok := nodeMap[ns0.Addr]
 
-	return false
+	return ok
 }
 
-func nodeSetRemove(ns0 *nodeState) bool {
-	nodeLock.Lock()
-	defer nodeLock.Unlock()
+func nodeSetRemove(ns0 *nodeState) {
+	// nodeLock.Lock()
+	// defer nodeLock.Unlock()
 
-	for index, ns := range nss {
-		if strings.Compare(ns.Addr, ns0.Addr) == 0 {
+	// for index, ns := range nss {
+	// 	if strings.Compare(ns.Addr, ns0.Addr) == 0 {
 
-			delete(nodeMap, ns0.Addr)
-			nss = append(nss[:index], nss[index+1:]...)
-			return true
-		}
-	}
+	// 		delete(nodeMap, ns0.Addr)
+	// 		nss = append(nss[:index], nss[index+1:]...)
+	// 		return true
+	// 	}
+	// }
+	delete(nodeMap, ns0.Addr)
 
-	return false
 }

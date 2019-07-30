@@ -16,3 +16,12 @@ type Config struct {
 
 	Logger *log.Logger
 }
+
+func DefaultConfig() *Config {
+	conf := &Config{}
+
+	conf.ProbeTimeout = 25 * time.Second
+	conf.ProbeInterval = 80 * time.Second
+
+	return conf
+}

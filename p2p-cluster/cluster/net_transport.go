@@ -11,7 +11,7 @@ import (
 
 const (
 	udpPacketBufSize = 65536
-	udpRecvBufSize   = 2 * 1024 * 1024
+	udpRecvBufSize   = 5 * 1024 * 1024
 )
 
 type NetTransportConfig struct {

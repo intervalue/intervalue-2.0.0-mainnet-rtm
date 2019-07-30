@@ -21,13 +21,12 @@ import (
  */
 
 type receiptHandler struct {
-	ackFn func([]byte, time.Time)
+	ackFn func(time.Time)
 	timer *time.Timer
 }
 
 type receipt struct {
 	Complete  bool
-	Payload   []byte
 	Timestamp time.Time
 }
 
@@ -180,11 +179,12 @@ func (c *Cluster) handleBouncePing(buf []byte, from net.Addr) {
 		return
 	}
 
-	if _, err := c.pingNode(bPing.Addr, false); err != nil {
-		c.logger.Printf("[ERR] cluster: Failed to ping[ when bouncePing ] : %s %s", err, bPing.Addr)
-	}
+	//avoid the main routine to freeze
+	//if _, err := c.pingNode(bPing.Addr, false); err != nil {
+	//	c.logger.Printf("[ERR] cluster: Failed to ping (when bouncePing) : %v ", err)
+	//}
+	go c.pingNode(bPing.Addr, false)
 
-	return
 }
 
 //merge it and answer a pong response
@@ -207,11 +207,12 @@ func (c *Cluster) handlePing(buf []byte, from net.Addr) {
 
 	po.SeqNo = pi.SeqNo
 	c.encodeAndSendMsg(from.String(), pongMsg, &po)
+	fromAddr := from.String()
 
-	if pi.Join { //first join to notify other nodes to ping together
-		bounce := bouncePing{from.String()}
+	if pi.Join == true { //first join to call other nodes to ping together
+		bounce := bouncePing{fromAddr}
 
-		for _, node := range joinedNodes() {
+		for _, node := range joinedNodes(fromAddr) {
 			c.encodeAndSendMsg(node.Addr, bouncePingMsg, &bounce)
 		}
 	}
@@ -221,6 +222,14 @@ func (c *Cluster) handlePing(buf []byte, from net.Addr) {
 
 //merge it
 func (c *Cluster) handlePong(buf []byte, from net.Addr, timestamp time.Time) {
+	var po pong
+
+	if err := decode(buf, &po); err != nil {
+		c.logger.Printf("[ERR] cluster: Failed to decode pong request: %s %s", err, LogAddress(from))
+		return
+	}
+
+	c.invokeReciptHandler(po, time.Now())
 	c.mergeNode(from.String())
 }
 
@@ -244,7 +253,7 @@ func (c *Cluster) mergeNode(addr string) {
 //emitting a Ping event
 func (c *Cluster) ping(node *nodeState, join bool) (time.Duration, error) {
 	pi := ping{c.nextSeqno(), join, time.Now()}
-	receiptCh := make(chan receipt)
+	receiptCh := make(chan receipt,1)
 	c.setPingPongChannel(pi.SeqNo, receiptCh, c.config.ProbeInterval)
 
 	if err := c.encodeAndSendMsg(node.Addr, pingMsg, &pi); err != nil {
@@ -254,13 +263,30 @@ func (c *Cluster) ping(node *nodeState, join bool) (time.Duration, error) {
 	sent := time.Now()
 	select {
 	case receipt := <-receiptCh:
-		if receipt.Complete {
+		if receipt.Complete == true {
 			return receipt.Timestamp.Sub(sent), nil
 		}
+
 	case <-time.After(c.config.ProbeTimeout):
+		c.logger.Printf("[ERR] Failed to get Pong due to timeout: %v", c.config.ProbeTimeout)
 	}
 
 	return 0, NoPongError{node.Addr}
+
+
+}
+
+// Invokes an pong handler if any is associated
+func (c *Cluster) invokeReciptHandler(po pong, timestamp time.Time) {
+	c.receiptLock.Lock()
+	rh, ok := c.receiptHandlers[po.SeqNo]
+	delete(c.receiptHandlers, po.SeqNo)
+	c.receiptLock.Unlock()
+	if !ok {
+		return
+	}
+	rh.timer.Stop()
+	rh.ackFn(timestamp)
 }
 
 func (c *Cluster) pingNode(addr string, join bool) (time.Duration, error) {
@@ -271,9 +297,9 @@ func (c *Cluster) pingNode(addr string, join bool) (time.Duration, error) {
 }
 
 func (c *Cluster) setPingPongChannel(seqNo uint32, receiptCh chan receipt, timeout time.Duration) {
-	receiptFn := func(payload []byte, timestamp time.Time) {
+	receiptFn := func(timestamp time.Time) {
 		select {
-		case receiptCh <- receipt{true, payload, timestamp}:
+		case receiptCh <- receipt{true, timestamp}:
 		default:
 		}
 	}
@@ -289,7 +315,7 @@ func (c *Cluster) setPingPongChannel(seqNo uint32, receiptCh chan receipt, timeo
 		c.receiptLock.Unlock()
 
 		select {
-		case receiptCh <- receipt{false, nil, time.Now()}:
+		case receiptCh <- receipt{false, time.Now()}:
 		default:
 		}
 	})
