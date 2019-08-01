@@ -1,5 +1,7 @@
 package cluster
 
+import "sync/atomic"
+
 /**
  *
  * Copyright © INVE FOUNDATION. All rights reserved.
@@ -27,22 +29,14 @@ func (c *Cluster) Join(existed []string) {
 	}
 }
 
-func (c *Cluster) findTypedMembers(typed nodeStateType) []Node {
-	joinedNodes := nodesExclude("")
-	var knodes []Node
+var metaItems map[string]string = make(map[string]string)
 
-	if (len(joinedNodes) > 0){
-		//knodes := make([]Node, 0, len(joinedNodes))
+func (c *Cluster) Set(k string,v string){
+	metaItems[k] = v
+}
 
-		for _, n := range joinedNodes {
-			if n.state == typed {
-				knodes = append(knodes, n.Node)
-			}
-		}
-	}
-
-
-	return knodes
+func (c *Cluster) TransmitMeta(){
+	c.transmitMeta(metaItems)
 }
 
 // Members returns a list of all known alive nodes.
@@ -67,4 +61,31 @@ func (c *Cluster) SuspectedMembers() []Node {
 // Members returns a list of all known dead nodes.
 func (c *Cluster) DeadMembers() []Node {
 	return c.findTypedMembers(stateDead)
+}
+
+func (c *Cluster) Shutdown() error {
+	c.shutdownLock.Lock()
+	defer c.shutdownLock.Unlock()
+
+	if c.hasShutdown() {
+		return nil
+	}
+
+	if err := c.transport.Shutdown(); err != nil {
+		c.logger.Printf("[ERR] Failed to shutdown transport: %v", err)
+	}
+
+	atomic.StoreInt32(&c.shutdown, 1)
+	close(c.shutdownCh)
+	c.deschedule()
+	return nil
+}
+
+func NewCluster(name string, addr string, port int) (*Cluster, error) {
+	conf := DefaultConfig()
+	conf.Name = name
+	conf.BindAddr = addr
+	conf.BindPort = port
+
+	return Create(conf)
 }

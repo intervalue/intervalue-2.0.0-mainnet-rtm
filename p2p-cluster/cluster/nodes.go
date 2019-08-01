@@ -43,6 +43,8 @@ type nodeState struct {
 	Node
 	state       nodeStateType
 	stateChange time.Time
+
+
 }
 
 func node(addr string) *nodeState {
@@ -139,4 +141,22 @@ func nodeSetMerge(nnss []nodeState){
 		}
 	}
 
+}
+
+func (c *Cluster) findTypedMembers(typed nodeStateType) []Node {
+	joinedNodes := nodesExclude("")
+	var knodes []Node
+
+	if (len(joinedNodes) > 0){
+		//knodes := make([]Node, 0, len(joinedNodes))
+
+		for _, n := range joinedNodes {
+			if n.state == typed {
+				knodes = append(knodes, n.Node)
+			}
+		}
+	}
+
+
+	return knodes
 }

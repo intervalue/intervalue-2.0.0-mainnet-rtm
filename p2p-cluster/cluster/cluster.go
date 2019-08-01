@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"fmt"
+	//"github.com/hashicorp/go-msgpack/codec"
 	"log"
 	"math/rand"
 	"net"
@@ -52,6 +53,8 @@ type Cluster struct {
 	receiptLock     sync.Mutex
 	receiptHandlers map[uint32]*receiptHandler
 
+	rustedMetaIds map[string]uint32//which is used to avoid meta message flood - address:id
+
 	logger *log.Logger
 }
 
@@ -90,6 +93,7 @@ func newCluster(config *Config) (*Cluster, error) {
 		logger:     logger,
 
 		receiptHandlers: make(map[uint32]*receiptHandler),
+		rustedMetaIds:make(map[string]uint32),
 	}
 
 	go c.packetListen()
@@ -140,6 +144,40 @@ func (c *Cluster) rawSendMsgPacket(addr string, msg []byte) error {
 	return err
 }
 
+func (c *Cluster) rawSendMsgStream(conn net.Conn, sendBuf []byte) error {
+	if n, err := conn.Write(sendBuf); err != nil {
+		return err
+	} else if n != len(sendBuf) {
+		return fmt.Errorf("only %d of %d bytes written", n, len(sendBuf))
+	}
+
+	return nil
+}
+
+//func (c *Cluster) sendUserMsg(addr string, sendBuf []byte) error {
+//	conn, err := c.transport.DialTimeout(addr, c.config.TCPTimeout)
+//	if err != nil {
+//		return err
+//	}
+//	defer conn.Close()
+//
+//	bufConn := bytes.NewBuffer(nil)
+//	if err := bufConn.WriteByte(byte(userMsg)); err != nil {
+//		return err
+//	}
+//
+//	header := userMsgHeader{UserMsgLen: len(sendBuf)}
+//	hd := codec.MsgpackHandle{}
+//	enc := codec.NewEncoder(bufConn, &hd)
+//	if err := enc.Encode(&header); err != nil {
+//		return err
+//	}
+//	if _, err := bufConn.Write(sendBuf); err != nil {
+//		return err
+//	}
+//	return c.rawSendMsgStream(conn, bufConn.Bytes())
+//}
+
 func (c *Cluster) encodeAndSendMsg(addr string, mType msgType, msg interface{}) error {
 	out, err := encode(mType, msg)
 	if err != nil {
@@ -168,6 +206,8 @@ func (c *Cluster) handleCommand(buf []byte, from net.Addr, timestamp time.Time) 
 		c.handlePong(buf, from, timestamp)
 	case bouncePingMsg:
 		c.handleBouncePing(buf, from)
+	case metaMsg:
+		c.handleMeta(buf,from)
 	}
 }
 
@@ -193,6 +233,53 @@ func (c *Cluster) triggerFunc(stagger time.Duration, C <-chan time.Time, stop <-
 
 func (c *Cluster) nextSeqno() uint32 {
 	return atomic.AddUint32(&c.sequenceNum, 1)
+}
+
+
+func (c *Cluster) handleMeta(buf []byte, from net.Addr) {
+	var metaMsg meta
+
+	if err := decode(buf, &metaMsg); err != nil {
+		c.logger.Printf("[ERR] cluster: Failed to decode meta request: %s %s", err, LogAddress(from))
+		return
+	}
+
+	//supply original address because of public ip issue.
+	if len(metaMsg.Addr) == 0{
+		metaMsg.Addr = from.String()
+	}
+
+	//old,rusted meta-message id
+	if id,ok := c.rustedMetaIds[metaMsg.Addr];ok && id >= metaMsg.SeqNo{
+		return
+	}
+	c.rustedMetaIds[metaMsg.Addr] = metaMsg.SeqNo
+
+	c.mergeNodeMeta(&metaMsg)
+
+	//should not transmit msg to originator or last host who delivered to me
+	c.retransmitMeta(&metaMsg,func(n Node) bool{
+		if metaMsg.Addr == n.Addr || from.String() == n.Addr{
+			return true
+		}
+
+		return false
+	})
+
+}
+
+func (c *Cluster) mergeNodeMeta(m *meta) {
+	oldNs := node(m.Addr)
+	if oldNs != nil {
+		ns := &nodeState{
+			state:       stateAlive,
+			stateChange: time.Now(),
+		}
+		ns.Meta = m.Items
+		ns.Addr = m.Addr
+
+		nodeSetAdd(ns)
+	}
 }
 
 func (c *Cluster) handleBouncePing(buf []byte, from net.Addr) {
@@ -273,6 +360,32 @@ func (c *Cluster) mergeNode(addr string) {
 	nodeSetAdd(ns)
 }
 
+//better solution is to select random k node to retransmit,not all nodes
+func (c *Cluster) retransmitMeta(me *meta, filterFn func(Node) bool) {
+	aliveNodes := c.findTypedMembers(stateAlive)
+	for _,aliveNode:=range aliveNodes{
+		if !filterFn(aliveNode){
+			err := c.encodeAndSendMsg(aliveNode.Addr, metaMsg, &me)
+			c.logger.Printf("[ERR] Failed to send meta to %s during retransmission due to exception: %v", aliveNode.Addr,err)
+		}
+
+	}
+}
+
+func (c *Cluster) transmitMeta(metaItems map[string]string) error {
+	aliveNodes := c.findTypedMembers(stateAlive)
+
+	if len(aliveNodes) > 0 {
+		rand := int(rand.Int31()) % len(aliveNodes)
+
+		me:=meta{SeqNo:c.nextSeqno(),Items:metaItems}
+
+		return c.encodeAndSendMsg(aliveNodes[rand].Addr, metaMsg, me)
+	}
+
+	return fmt.Errorf("error in finding no node")
+}
+
 //emitting a Ping event
 func (c *Cluster) ping(node *nodeState, join bool) (time.Duration, error) {
 	pi := ping{c.nextSeqno(), join, time.Now()}
@@ -342,24 +455,6 @@ func (c *Cluster) setPingPongChannel(seqNo uint32, receiptCh chan receipt, timeo
 		default:
 		}
 	})
-}
-
-func (c *Cluster) Shutdown() error {
-	c.shutdownLock.Lock()
-	defer c.shutdownLock.Unlock()
-
-	if c.hasShutdown() {
-		return nil
-	}
-
-	if err := c.transport.Shutdown(); err != nil {
-		c.logger.Printf("[ERR] Failed to shutdown transport: %v", err)
-	}
-
-	atomic.StoreInt32(&c.shutdown, 1)
-	close(c.shutdownCh)
-	c.deschedule()
-	return nil
 }
 
 func (c *Cluster) hasShutdown() bool {
@@ -441,3 +536,5 @@ func (c *Cluster) deschedule() {
 	}
 	c.tickers = nil
 }
+
+

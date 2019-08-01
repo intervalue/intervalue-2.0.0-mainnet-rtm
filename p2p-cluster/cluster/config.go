@@ -15,6 +15,8 @@ type Config struct {
 	ProbeTimeout  time.Duration
 
 	Logger *log.Logger
+
+	TCPTimeout time.Duration
 }
 
 func DefaultConfig() *Config {
@@ -22,6 +24,8 @@ func DefaultConfig() *Config {
 
 	conf.ProbeTimeout = 10 * time.Second
 	conf.ProbeInterval = 20 * time.Second
+
+	conf.TCPTimeout = 30 * time.Second
 
 	return conf
 }
