@@ -20,9 +20,12 @@ import (
 type nodeStateType int
 
 const (
-	stateAlive nodeStateType = iota
+	stateless nodeStateType = 0//indicate no state constrain
+	stateAlive nodeStateType = iota + 10
 	stateSuspect
 	stateDead
+
+
 )
 
 var (
@@ -143,6 +146,7 @@ func nodeSetMerge(nnss []nodeState){
 
 }
 
+//if "stateless" is specified,return all nodes with no constrain
 func (c *Cluster) findTypedMembers(typed nodeStateType) []Node {
 	joinedNodes := nodesExclude("")
 	var knodes []Node
@@ -151,9 +155,14 @@ func (c *Cluster) findTypedMembers(typed nodeStateType) []Node {
 		//knodes := make([]Node, 0, len(joinedNodes))
 
 		for _, n := range joinedNodes {
-			if n.state == typed {
+			if typed != stateless {
+				if n.state == typed {
+					knodes = append(knodes, n.Node)
+				}
+			} else {
 				knodes = append(knodes, n.Node)
 			}
+
 		}
 	}
 

@@ -40,7 +40,7 @@ func (c *Cluster) TransmitMeta(){
 }
 
 // Members returns a list of all known alive nodes.
-func (c *Cluster) Members() []Node {
+func (c *Cluster) AliveMembers() []Node {
 	//joinedNodes := nodesExclude("")
 	//nodes := make([]Node, 0, len(joinedNodes))
 	//for _, n := range joinedNodes {
@@ -61,6 +61,11 @@ func (c *Cluster) SuspectedMembers() []Node {
 // Members returns a list of all known dead nodes.
 func (c *Cluster) DeadMembers() []Node {
 	return c.findTypedMembers(stateDead)
+}
+
+//all members
+func (c *Cluster) Members() []Node {
+	return c.findTypedMembers(stateless)
 }
 
 func (c *Cluster) Shutdown() error {

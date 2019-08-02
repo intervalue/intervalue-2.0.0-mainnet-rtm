@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+//protoc --go_out=plugins=grpc:. ic.proto
+
+package ic;
+option java_package = "one.inve.localfullnode2.ic";
+option java_outer_classname = "Cluster";
+
+message RequestUpdateMeta{
+	repeated MetaData meta = 1;
+}
+
+message ResponseUpdateMeta{
+}
+
+message RequestFindMembers{
+}
+
+message ResponseFindMembers{
+    repeated ResponseFindMember findMember = 1;
+}
+
+message ResponseFindMember{
+    string name = 1;
+    string addr = 2;
+    repeated MetaData meta = 3;
+}
+
+
+message MetaData{
+	string key = 1;
+	string value = 2;
+}
+
+message Member{
+	string name = 1;
+	string address = 2;
+	repeated MetaData meta = 3;
+}
+
+
+service Cluster{
+	rpc UpdateMeta(RequestUpdateMeta) returns (ResponseUpdateMeta);
+	rpc FindAliveMembers(RequestFindMembers) returns (ResponseFindMembers);
+	rpc FindSuspectedMembers(RequestFindMembers) returns (ResponseFindMembers);
+}

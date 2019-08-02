@@ -4,37 +4,39 @@ import (
 	"flag"
 	"fmt"
 	"github.com/intervalue/intervalue-2.0.0-mainnet-rtm/p2p-cluster/cluster"
-	"math/rand"
+	"github.com/intervalue/intervalue-2.0.0-mainnet-rtm/p2p-cluster/ic"
 	"time"
-	"strconv"
 )
 
 /**
  *
  * Copyright © INVE FOUNDATION. All rights reserved.
  *
- * @Description: cluster client tool,it's a good example to demonstrate how to use Cluster
+ * @Description: cluster daemon tool,it's a good example to demonstrate how to use Cluster
  * @author: Francis.Deng
  * @version: V1.0
+ * @version: v1.1 add "icport" flag to specify ic port
  */
 
 var (
 	host   string
 	port   int
 	guider string
+	icport int
 )
 
 func init() {
 	flag.StringVar(&host, "h", "", "listening net address [ipv4 format]")
 	flag.IntVar(&port, "p", -1, "listening port [0-65535]")
 	flag.StringVar(&guider, "g", "", "work as guider waiting another peer to join [ip:port]")
+	flag.IntVar(&icport, "icp", -1, "inter communication(ic) listening port [0-65535]")
 }
 
 //work as a guider peer:
-//clus -h 192.168.207.129 -p 33010
+//clus -h 192.168.207.129 -p 3308 -icp 4408
 
 //work as a follower of guider peer
-//clus -h 192.168.207.129 -p 33011 -g 192.168.207.129:33010
+//clus -h 192.168.207.129 -p 3309 -g 192.168.207.129:3308  -icp 4409
 func main() {
 	flag.Parse()
 
@@ -50,15 +52,18 @@ func main() {
 		c0.Join([]string{guider})
 	}
 
-	time.AfterFunc(20 * time.Second,func(){
-		c0.Set("name","dodge")
-		c0.Set("rand",strconv.Itoa(rand.Int()))
+	//time.AfterFunc(20 * time.Second,func(){
+	//	c0.Set("name","dodge")
+	//	c0.Set("rand",strconv.Itoa(rand.Int()))
+	//
+	//	c0.TransmitMeta()
+	//})
 
-		c0.TransmitMeta()
-	})
+	// start cluster inter-communication service
+	go ic.StartClusterIcListener(icport,c0)
 
 	for {
-		for _, n := range c0.Members() {
+		for _, n := range c0.AliveMembers() {
 			fmt.Printf("find alive node: %s %v\n", n.Addr,n.Meta)
 		}
 		for _, n := range c0.SuspectedMembers() {
