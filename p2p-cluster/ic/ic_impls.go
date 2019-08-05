@@ -37,9 +37,10 @@ func (icImpl *clusterIcImpl) UpdateMeta(ctx context.Context,requestUpdateMeta *R
 
 func (c *clusterIcImpl) FindAliveMembers(context.Context, *RequestFindMembers) (*ResponseFindMembers, error) {
 	nodes := c.cluster.AliveMembers()
-	copyNodeTo(nodes,&ResponseFindMembers{})
+	responseFindMembers := &ResponseFindMembers{}
+	copyNodeTo(nodes,responseFindMembers)
 
-	return &ResponseFindMembers{}, nil
+	return responseFindMembers, nil
 }
 
 func (c *clusterIcImpl) FindSuspectedMembers(context.Context, *RequestFindMembers) (*ResponseFindMembers, error) {

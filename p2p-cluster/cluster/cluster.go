@@ -366,7 +366,10 @@ func (c *Cluster) retransmitMeta(me *meta, filterFn func(Node) bool) {
 	for _,aliveNode:=range aliveNodes{
 		if !filterFn(aliveNode){
 			err := c.encodeAndSendMsg(aliveNode.Addr, metaMsg, &me)
-			c.logger.Printf("[ERR] Failed to send meta to %s during retransmission due to exception: %v", aliveNode.Addr,err)
+			if err != nil{
+				c.logger.Printf("[ERR] Failed to send meta to %s during retransmission due to exception: %v", aliveNode.Addr,err)
+			}
+
 		}
 
 	}
