@@ -2,9 +2,13 @@ syntax = "proto3";
 
 //protoc --go_out=plugins=grpc:. ic.proto
 
+//protoc --java_out=./ ic.proto
+//protoc --plugin=protoc-gen-grpc-java=/opt/java/jdk/bin/protoc-gen-grpc-java-1.9.1 --grpc-java_out=. ic.proto
+
 package ic;
-option java_package = "one.inve.localfullnode2.ic";
-option java_outer_classname = "Cluster";
+option java_package = "one.inve.localfullnode2.p2pcluster.ic";
+option java_outer_classname = "P2PClusterClient";
+//option objc_class_prefix = "P2PCluster";
 
 message RequestUpdateMeta{
 	repeated MetaData meta = 1;

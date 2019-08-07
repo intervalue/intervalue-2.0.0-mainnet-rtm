@@ -56,15 +56,15 @@ func copyNodeTo(nodes []cluster.Node,findMembers *ResponseFindMembers){
 		findMember := new(ResponseFindMember)
 		findMember.Name = node.Name
 		findMember.Addr = node.Addr
-		copyMetaTo(node.Meta,findMember.Meta)
+		copyMetaTo(node.Meta,findMember)
 
 		findMembers.FindMember = append(findMembers.FindMember,findMember)
 	}
 }
 
-func copyMetaTo(nodeMeta map[string]string,protoMetaData []*MetaData){
+func copyMetaTo(nodeMeta map[string]string,findMember *ResponseFindMember){
 	for k,v := range nodeMeta{
-		protoMetaData = append(protoMetaData,&MetaData{
+		findMember.Meta = append(findMember.Meta,&MetaData{
 			Key:k,
 			Value:v,
 		})
