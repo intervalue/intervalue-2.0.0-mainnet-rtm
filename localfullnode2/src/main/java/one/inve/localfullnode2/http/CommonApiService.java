@@ -119,6 +119,19 @@ public class CommonApiService {
         return queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId);
     }
 
+    /**
+     * 用于交易地址 获取SystemAuto表信息
+     *
+     * @param tableIndex 表ID
+     * @param offset     表中偏移量
+     * @param node       主对象
+     * @return 交易列表
+     */
+    public synchronized static SystemAutoArray querySystemAuto(BigInteger tableIndex, long offset,String address, String type, LocalFullNode1GeneralNode node) {
+        QueryTableSplit queryTableSplit = new QueryTableSplit();
+        return queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId,address, type);
+    }
+
     public synchronized static MsgArray querySystemAutoToMessageList(BigInteger tableIndex, long offset, LocalFullNode1GeneralNode node, String address) {
         QueryTableSplit queryTableSplit = new QueryTableSplit();
         SystemAutoArray systemAutoArray = queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId,address,"contract_fee_tx");
