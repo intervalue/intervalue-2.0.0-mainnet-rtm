@@ -316,11 +316,11 @@ public class EventStoreImpl implements IEventStore {
 //                logger.warn("node-({}, {}): num = {}, sizePerCycle-{}",
 //                        this.shardId, this.selfId, num, sizePerCycle);
 //            }
-			while (num == 0) {
-				page++;
-				eventBodys = getAllEvent4DB(page);
-				num = eventBodys.size();
-            }
+//			while (num == 0) {
+//				page++;
+//				eventBodys = getAllEvent4DB(page);
+//				num = eventBodys.size();
+//            }
 		}
 
 		@Override
