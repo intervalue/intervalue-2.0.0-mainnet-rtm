@@ -93,9 +93,7 @@ public class EventsExe {
 				dep.addTotalConsEventCount(1);
 				// key condition
 				// 累计各分片各节点event数
-				dep.getContributions()
-						.add(new Contribution.Builder().shardId(event.getShardId()).creatorId(event.getCreatorId())
-								.otherId(event.getOtherId()).otherSeq(event.getOtherSeq()).build());
+				dep.addContribution(new Contribution.Builder().shardId(event.getShardId()).creatorId(event.getCreatorId()).otherId(event.getOtherId()).otherSeq(event.getOtherSeq()).build());
 
 				// 保存共识Event
 				saveConsEvent(event);

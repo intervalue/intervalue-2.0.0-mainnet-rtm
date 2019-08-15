@@ -97,4 +97,9 @@ public class EventsExeDependency implements EventsExeDependent, DependentItemCon
 		return allQueues.get().getQueue(JSONObject.class, StagingArea.ConsMessageVerifyQueueName);
 	}
 
+	@Override
+	public void addContribution(Contribution contribution) {
+		ss.addContribution(contribution);
+	}
+
 }
