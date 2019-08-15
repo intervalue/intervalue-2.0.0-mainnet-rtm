@@ -62,8 +62,8 @@ public class RepairCurrSnapshotPointInfo {
             for (int i = 0; i < dep.getShardCount(); i++) {
                 if (null == events[i]) {
                     events[i] = dep.getShardSortQueue(i).poll();
-                    logger.info(">>>>>INFO<<<<<repairCurrSnapshotPointInfo:\n eventBody[{}]: {}",i,
-                            JSON.toJSONString(events[i]));
+//                    logger.info(">>>>>INFO<<<<<repairCurrSnapshotPointInfo:\n eventBody[{}]: {}",i,
+//                            JSON.toJSONString(events[i]));
                     l++;
                 }
 
@@ -287,7 +287,7 @@ public class RepairCurrSnapshotPointInfo {
     }
 
     private void calculateMsgHashTreeRoot(EventBody event) {
-        logger.info(">>>>>START<<<<<calculateMsgHashTreeRoot:\n eventBody: {}", JSON.toJSONString(event));
+//        logger.info(">>>>>START<<<<<calculateMsgHashTreeRoot:\n eventBody: {}", JSON.toJSONString(event));
         long eventMsgCount = (null!=event.getTrans() && event.getTrans().length > 0)
                 ? event.getTrans().length : 0;
         // 共识消息放入消息签名验证队列
@@ -301,10 +301,9 @@ public class RepairCurrSnapshotPointInfo {
                     } else {
                         dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(dep.getMsgHashTreeRoot(), msgObj.getString("signature"))));
                     }
-
+                logger.info(">>>>>INFO<<<<<calculateMsgHashTreeRoot:\n msgHashTreeRoot: {}",dep.getMsgHashTreeRoot());
             }
         }
-        logger.info(">>>>>END<<<<<calculateMsgHashTreeRoot:\n msgHashTreeRoot: {}",dep.getMsgHashTreeRoot());
     }
 
 }
