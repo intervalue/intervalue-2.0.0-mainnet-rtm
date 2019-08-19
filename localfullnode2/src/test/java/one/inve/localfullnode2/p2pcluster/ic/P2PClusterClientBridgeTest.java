@@ -9,7 +9,8 @@ import org.junit.Test;
 
 import com.alibaba.fastjson.JSON;
 
-import one.inve.localfullnode2.p2pcluster.ic.P2PClusterClientBridge.Member;
+import one.inve.localfullnode2.p2pcluster.ic.P2PClusterClientBridge.Peer;
+
 
 /**
  * 
@@ -51,8 +52,8 @@ public class P2PClusterClientBridgeTest {
 	@Test
 	public void testGetMembers() {
 
-		List<Member> aliveMembers = target.getMembers().alive();
-		List<Member> suspectedMembers = target.getMembers().suspected();
+		List<Peer> aliveMembers = target.getMembers().alive();
+		List<Peer> suspectedMembers = target.getMembers().suspected();
 
 		System.out.println(JSON.toJSONString(aliveMembers));
 		System.out.println(JSON.toJSONString(suspectedMembers));
