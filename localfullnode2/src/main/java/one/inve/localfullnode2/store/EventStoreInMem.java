@@ -4,6 +4,7 @@ import one.inve.core.EventBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -106,5 +107,10 @@ public class EventStoreInMem implements IEventStore {
     @Override
     public void delEventInCache(int shardId, long creatorId, long creatorSeq) {
 
+    }
+
+    @Override
+    public Iterator<EventBody> genOrderedIterator(int shardId, int n, BigInteger startSeq) {
+        return null;
     }
 }
