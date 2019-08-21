@@ -36,13 +36,15 @@ public class MerkleTree {
 		GenericArray<Node> leaves = new GenericArray<Node>();
 		for (INodeContent content : contents) {
 			byte[] hash = content.hash();
+			Node newNode = new Node();
 
-			leaves.append(new Node().setHash(hash).setContent(content).setLeaf(true));
+			leaves.append(newNode.setHash(hash).setContent(content).setLeaf(true));
 		}
 
 		if (leaves.length() % 2 == 1) {
-			Node duplicate = new Node().setHash(leaves.last().getHash()).setContent(leaves.last().getContent())
-					.setLeaf(true).setDup(true);
+			Node duplicate = new Node();
+			duplicate.setHash(leaves.last().getHash()).setContent(leaves.last().getContent()).setLeaf(true)
+					.setDup(true);
 			leaves.append(duplicate);
 		}
 
@@ -60,7 +62,7 @@ public class MerkleTree {
 	private static Node buildWithLeaves(GenericArray<Node> nl) {
 		GenericArray<Node> branches = new GenericArray<>();
 
-		for (int i = 0; i < branches.length(); i += 2) {
+		for (int i = 0; i < nl.length(); i += 2) {
 			int left = i;
 			int right = i + 1;
 			if (i + 1 == nl.length()) {
@@ -68,7 +70,8 @@ public class MerkleTree {
 			}
 
 			byte[] chash = ByteUtil.appendByte(nl.get(left).getHash(), nl.get(right).getHash());
-			Node node = new Node().setLeft(nl.get(left)).setRight(nl.get(right)).setHash(Hash.hash(chash));
+			Node node = new Node();
+			node.setLeft(nl.get(left)).setRight(nl.get(right)).setHash(Hash.hash(chash));
 
 			branches.append(node);
 			nl.get(left).setParent(node);
@@ -122,7 +125,6 @@ public class MerkleTree {
 				Node curParent = current.getParent();
 				GenericArray<byte[]> path = new GenericArray<>();
 				GenericArray<String> index = new GenericArray<>();
-				;
 
 				while (curParent != null) {
 					if (Arrays.equals(curParent.getLeft().getHash(), node.getHash())) {
@@ -142,6 +144,10 @@ public class MerkleTree {
 		}
 
 		return null;
+	}
+
+	public Node getRoot() {
+		return root;
 	}
 
 }
