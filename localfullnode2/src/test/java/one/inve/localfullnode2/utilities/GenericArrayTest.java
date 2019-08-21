@@ -2,6 +2,16 @@ package one.inve.localfullnode2.utilities;
 
 import org.junit.Test;
 
+/**
+ * 
+ * Copyright © INVE FOUNDATION. All rights reserved.
+ * 
+ * @ClassName: GenericArrayTest
+ * @Description: GenericArray test case
+ * @author Francis.Deng
+ * @date Aug 20, 2019
+ *
+ */
 public class GenericArrayTest {
 
 	@Test
