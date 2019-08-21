@@ -121,7 +121,8 @@ public class Hash implements Comparable<Hash> {
 		return md.digest();
 	}
 
-	static public byte[] hash(String firstHash) {
+	// do a hash calculation with a given byte array
+	public static byte[] hash(byte[] bytes) {
 		MessageDigest md = null;
 
 		try {
@@ -131,10 +132,28 @@ public class Hash implements Comparable<Hash> {
 			logger.error("error: {}", e);
 		}
 
-		if (firstHash != null) {
-			md.update(firstHash.getBytes());
+		if (bytes != null) {
+			md.update(bytes);
 		}
 		return md.digest();
+	}
+
+	static public byte[] hash(String firstHash) {
+
+		return hash(firstHash.getBytes());
+//		MessageDigest md = null;
+//
+//		try {
+////            md = MessageDigest.getInstance(Constants.SHA3_512, Constants.PROVIDER);
+//			md = MessageDigest.getInstance("SHA-384");
+//		} catch (Exception e) {
+//			logger.error("error: {}", e);
+//		}
+//
+//		if (firstHash != null) {
+//			md.update(firstHash.getBytes());
+//		}
+//		return md.digest();
 	}
 
 	static public byte[] hash(String firstHash, String secondHash) {
