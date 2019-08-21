@@ -14,7 +14,7 @@ import java.util.Iterator;
  * 
  * @param <E>
  */
-public class GenericArray<E> implements Iterable {
+public class GenericArray<E> implements Iterable<E> {
 	private Object[] elements;
 
 	public void append(E... es) {
@@ -30,7 +30,7 @@ public class GenericArray<E> implements Iterable {
 	}
 
 	public E last() {
-		return get(this.length() - 1);
+		return (E) get(this.length() - 1);
 	}
 
 	// the ease of using for.each statement
@@ -47,8 +47,9 @@ public class GenericArray<E> implements Iterable {
 
 			@Override
 			public E next() {
-				return get(position++);
+				return (E) get(position++);
 			}
+
 		};
 	}
 }
