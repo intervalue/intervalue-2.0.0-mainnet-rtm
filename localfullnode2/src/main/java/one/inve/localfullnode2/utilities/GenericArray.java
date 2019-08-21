@@ -1,5 +1,7 @@
 package one.inve.localfullnode2.utilities;
 
+import java.util.Iterator;
+
 /**
  * 
  * Copyright © INVE FOUNDATION. All rights reserved.
@@ -12,7 +14,7 @@ package one.inve.localfullnode2.utilities;
  * 
  * @param <E>
  */
-public class GenericArray<E> {
+public class GenericArray<E> implements Iterable {
 	private Object[] elements;
 
 	public void append(E... es) {
@@ -29,5 +31,24 @@ public class GenericArray<E> {
 
 	public E last() {
 		return get(this.length() - 1);
+	}
+
+	// the ease of using for.each statement
+	@Override
+	public Iterator<E> iterator() {
+		return new Iterator<E>() {
+			private int position = 0;
+			private final int limit = length();
+
+			@Override
+			public boolean hasNext() {
+				return position < limit;
+			}
+
+			@Override
+			public E next() {
+				return get(position++);
+			}
+		};
 	}
 }
