@@ -1,6 +1,10 @@
 package one.inve.localfullnode2.utilities.merkle;
 
+import java.util.Arrays;
+
+import one.inve.localfullnode2.utilities.ByteUtil;
 import one.inve.localfullnode2.utilities.GenericArray;
+import one.inve.localfullnode2.utilities.Hash;
 
 /**
  * 
@@ -9,8 +13,12 @@ import one.inve.localfullnode2.utilities.GenericArray;
  * @ClassName: MerklePath
  * @Description: is used to verify the data chunk
  * @author Francis.Deng
+ * @mailbox francis_xiiiv@163.com
  * @date Aug 20, 2019
  * @see MerkleTree
+ * 
+ * @version 1.1 - provide the method {@code validate} to compare calculated root
+ *          hash with famed root hash.
  *
  */
 public class MerklePath {
@@ -23,7 +31,15 @@ public class MerklePath {
 		this.index = index;
 	}
 
-	public byte[][] path() {
+	// core method to validate block which implements {@code INodeContent}
+	public boolean validate(INodeContent content, byte[] expectedRootHash) {
+		byte[] blockHash = content.hash();
+		byte[] calculatedRootHash = recalculateRoot(blockHash);
+
+		return Arrays.equals(calculatedRootHash, expectedRootHash);
+	}
+
+	protected byte[][] path() {
 		byte[][] result = new byte[path.length()][];
 		int i = 0;
 
@@ -35,7 +51,7 @@ public class MerklePath {
 		return result;
 	}
 
-	public String[] index() {
+	protected String[] index() {
 		String[] result = new String[index.length()];
 		int i = 0;
 
@@ -46,6 +62,26 @@ public class MerklePath {
 
 		return result;
 
+	}
+
+	protected byte[] recalculateRoot(byte[] leaf) {
+		byte[][] path = path();
+		String[] index = index();
+		int i = 0;
+		byte[] chash = leaf;
+
+		for (byte[] bytes : path) {
+			if (index[i].equals("r")) {
+				chash = ByteUtil.appendByte(chash, bytes);
+			} else {
+				chash = ByteUtil.appendByte(bytes, chash);
+			}
+
+			chash = Hash.hash(chash);
+			i++;
+		}
+
+		return chash;
 	}
 
 }

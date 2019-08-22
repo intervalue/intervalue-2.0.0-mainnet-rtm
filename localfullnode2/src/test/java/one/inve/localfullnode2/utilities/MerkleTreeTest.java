@@ -17,6 +17,7 @@ import one.inve.localfullnode2.utilities.merkle.Node;
  * @Description: carefully look at {@code validateSyncData},which is attempted
  *               to demonstrate how to validate block chunk with merkle path.
  * @author Francis.Deng
+ * @mailbox francis_xiiiv@163.com
  * @date Aug 21, 2019
  *
  */
@@ -46,43 +47,51 @@ public class MerkleTreeTest {
 		INodeContent integralBlock = blocks[2];
 
 		// ignore these processes:
-		// .....object serialization
-		// .....network
-		// .....object deserialization
+		// .......serialize (famedRootHash,mp,tamperedBlock,integralBlock)
+		// ..........................................network transmission
+		// .....deserialize (famedRootHash,mp,tamperedBlock,integralBlock)
 
-		byte[][] path = mp.path();
-
-		byte[] calculatedRoot = recalculateRoot(tamperedBlock.hash(), mp);
-		if (!Arrays.equals(famedRootHash, calculatedRoot)) {
-			System.out.println("bad news: tampered item");
+		if (!mp.validate(tamperedBlock, famedRootHash)) {
+			System.out.println("bad news 1: tampered item");// this would be displayed.
 		}
 
-		calculatedRoot = recalculateRoot(integralBlock.hash(), mp);
-		if (Arrays.equals(famedRootHash, calculatedRoot)) {
-			System.out.println("good news: integral item");
+		if (!mp.validate(integralBlock, famedRootHash)) {
+			System.out.println("bad news 2: tampered item");// this wouldn't be displayed.
 		}
+
+//		byte[][] path = mp.path();
+//
+//		byte[] calculatedRoot = recalculateRoot(tamperedBlock.hash(), mp);
+//		if (!Arrays.equals(famedRootHash, calculatedRoot)) {
+//			System.out.println("bad news: tampered item");
+//		}
+//
+//		calculatedRoot = recalculateRoot(integralBlock.hash(), mp);
+//		if (Arrays.equals(famedRootHash, calculatedRoot)) {
+//			System.out.println("good news: integral item");
+//		}
 
 	}
 
-	protected byte[] recalculateRoot(byte[] leaf, MerklePath mp) {
-		byte[][] path = mp.path();
-		String[] index = mp.index();
-		int i = 0;
-		byte[] chash = leaf;
-
-		for (byte[] bytes : path) {
-			if (index[i].equals("r")) {
-				chash = ByteUtil.appendByte(chash, bytes);
-			} else {
-				chash = ByteUtil.appendByte(bytes, chash);
-			}
-
-			chash = Hash.hash(chash);
-			i++;
-		}
-
-		return chash;
-	}
+//	protected byte[] recalculateRoot(byte[] leaf, MerklePath mp) {
+//		byte[][] path = mp.path();
+//		String[] index = mp.index();
+//		int i = 0;
+//		byte[] chash = leaf;
+//
+//		for (byte[] bytes : path) {
+//			if (index[i].equals("r")) {
+//				chash = ByteUtil.appendByte(chash, bytes);
+//			} else {
+//				chash = ByteUtil.appendByte(bytes, chash);
+//			}
+//
+//			chash = Hash.hash(chash);
+//			i++;
+//		}
+//
+//		return chash;
+//	}
 
 	protected INodeContent[] buildBlocks() {
 		INodeContent[] blocks = new INodeContent[3];
