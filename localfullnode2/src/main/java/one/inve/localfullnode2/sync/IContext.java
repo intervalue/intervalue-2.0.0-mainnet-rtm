@@ -3,7 +3,8 @@ package one.inve.localfullnode2.sync;
 import java.util.HashMap;
 import java.util.Map;
 
-import one.inve.localfullnode2.sync.SynchronizationWork.Part;
+import one.inve.localfullnode2.sync.SynchronizationWork.IterativePart;
+import one.inve.localfullnode2.sync.SynchronizationWork.Whole;
 
 /**
  * 
@@ -18,15 +19,19 @@ import one.inve.localfullnode2.sync.SynchronizationWork.Part;
  *
  */
 public interface IContext {
-	String OWN_DISTRIBUTION = "OwnDistribution";
+	String SOURCE_PROFILE = "SOURCE_PROFILE";
 
 	IConf getConf();
 
-	// Distribution getOwnDistribution();
+	void joinDistribution(Distribution newDist);
+
+	Distribution getDistribution();
 
 	ISyncSource getSyncSource();
 
-	Part[] getSynchronizationWorkParts();
+	IterativePart[] getSynchronizationWorkParts();
+
+	Whole getSynchronizationInitializer();
 
 	static DefContext context = null;
 
@@ -54,7 +59,7 @@ public interface IContext {
 		}
 
 		@Override
-		public Part[] getSynchronizationWorkParts() {
+		public IterativePart[] getSynchronizationWorkParts() {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -65,6 +70,24 @@ public interface IContext {
 
 		public <T> T of(Key<T> key) {
 			return key.type.cast(values.get(key));
+		}
+
+		@Override
+		public void joinDistribution(Distribution newDist) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public Distribution getDistribution() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Whole getSynchronizationInitializer() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	}

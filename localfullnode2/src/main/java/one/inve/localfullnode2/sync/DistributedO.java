@@ -11,7 +11,6 @@ package one.inve.localfullnode2.sync;
  * @mailbox francis_xiiiv@163.com
  * @date Aug 23, 2019
  * 
- * @param <O>
  */
 public class DistributedO<O> {
 	private Distribution dist;

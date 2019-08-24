@@ -14,23 +14,51 @@ package one.inve.localfullnode2.sync;
  */
 public class SynchronizationWork {
 
-	protected interface Part {
+	protected interface IterativePart {
 		boolean isDone();
 
 		void runOnce(IContext context);
 	}
 
+	public interface Whole {
+		boolean run(IContext context);
+	}
+
+	public static abstract class BasedIterativePart implements IterativePart {
+		private ISyncSourceProfile sourceProfile;
+
+		protected boolean done = false;
+
+		@Override
+		public boolean isDone() {
+			return done;
+		}
+
+		public ISyncSourceProfile getSourceProfile(IContext context) {
+			if (sourceProfile == null) {
+				ISyncSource synSource = context.getSyncSource();
+				sourceProfile = synSource.getSyncSourceProfile();
+			}
+
+			return sourceProfile;
+		}
+	}
+
 	// ensuring the works are executed in single thread.
 	public void run() {
 		IConf conf = null;
-		IContext context = conf.getDefaultContext();
+		IContext context = IContext.getDefault(conf);
 
-		Part[] parts = context.getSynchronizationWorkParts();
+		Whole initializer = context.getSynchronizationInitializer();
+		IterativePart[] parts = context.getSynchronizationWorkParts();
 
-		for (Part part : parts) {
-			while (!part.isDone()) {
-				part.runOnce(context);
+		if (initializer.run(context)) {// ensure that initialization is complete
+			for (IterativePart part : parts) {
+				while (!part.isDone()) {
+					part.runOnce(context);
+				}
 			}
 		}
+
 	}
 }

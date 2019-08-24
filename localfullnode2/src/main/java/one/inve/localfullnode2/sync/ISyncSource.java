@@ -9,8 +9,7 @@ import one.inve.core.EventBody;
  * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @ClassName: ISyncSource
- * @Description: the impls should take on responsibility to retrieve good blocks
- *               if tampered blocks are detected.
+ * @Description: if some bad blocks are detected,leave the blocks empty
  * @author Francis.Deng
  * @mailbox francis_xiiiv@163.com
  * @date Aug 15, 2019
