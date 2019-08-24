@@ -57,7 +57,7 @@ public class CommonApiService {
                             StagingArea.MessageQueueName);
                     messageQueue.add(message.getBytes());
                     allQueues.set(stagingArea);
-                    mlogger.info(node.nodeParameters().dbId + "|" + message);
+//                    mlogger.info(node.nodeParameters().dbId + "|" + message);
                     // Francis.Deng 04/26/2019
                     // back up messages from wallet client intentionally
                     // ValuableDataOutputters.getInstance().outputVerifiedMessage(message);

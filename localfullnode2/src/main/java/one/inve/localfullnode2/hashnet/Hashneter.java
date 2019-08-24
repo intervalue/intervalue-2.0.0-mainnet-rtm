@@ -132,7 +132,8 @@ public class Hashneter implements IHashneter {
 		if (Config.ENABLE_SNAPSHOT) {
 			RepairCurrSnapshotPointInfoDependent repairCurrSnapshotPointInfoDep =
 					DepItemsManager.getInstance().getItemConcerned(RepairCurrSnapshotPointInfoDependency.class);
-			new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(repairCurrSnapshotPointInfoDep);
+			SnapshotDbService store = new SnapshotDbServiceImpl();
+			new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(repairCurrSnapshotPointInfoDep, store);
 		}
 		// repairCurrSnapshotPointInfo(node);
 
@@ -212,8 +213,8 @@ public class Hashneter implements IHashneter {
 	private long getLatestSnapshotPointEventSeq() {
 		HashMap<BigInteger, SnapshotPoint> snapshotPointMap = DepItemsManager.getInstance().attachSS(null).getSnapshotPointMap();
 		BigInteger currSnapshotVersion = DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion();
-		if (null != snapshotPointMap && null != snapshotPointMap.get(currSnapshotVersion.subtract(BigInteger.ONE))) {
-			SnapshotPoint latestSnapshotPoint = snapshotPointMap.get(currSnapshotVersion.subtract(BigInteger.ONE));
+		if (null != snapshotPointMap && null != snapshotPointMap.get(currSnapshotVersion.subtract(BigInteger.TEN))) {
+			SnapshotPoint latestSnapshotPoint = snapshotPointMap.get(currSnapshotVersion.subtract(BigInteger.TEN));
 			if (latestSnapshotPoint != null) {
 				EventBody latestSnapshotPointEb = latestSnapshotPoint.getEventBody();
 				if (latestSnapshotPointEb != null) {

@@ -1,12 +1,14 @@
 package one.inve.localfullnode2.store;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import one.inve.bean.message.MessageType;
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;
 import one.inve.localfullnode2.store.mysql.QueryTableSplit;
+import one.inve.localfullnode2.store.rocks.Message;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.store.rocks.TransactionSplit;
 import one.inve.localfullnode2.utilities.StringUtils;
@@ -293,6 +295,47 @@ public class SnapshotDbServiceImpl implements SnapshotDbService {
             getPrevEventKeyPairsForEachNode(dbId, eb, map, nValue);
         }
         return map;
+    }
+
+    @Override
+    public Message getMessageById(String dbId, BigInteger id) {
+        TransactionSplit split = QueryTableSplit.tableExist(dbId);
+        if (null == split) {
+            logger.warn("messages_* tables not exist!!!");
+            return null;
+        }
+        String initSql = "select hash from %s where id = '%d'";
+        String sql = String.format(initSql, split.getTableName(), id);
+        Message message = null;
+        MysqlHelper h = null;
+        try {
+            h = new MysqlHelper(dbId);
+            message =  h.executeQuery(sql, rs -> {
+                Message value = null;
+                try {
+                    if (rs.next()) {
+                        byte[] transactionByte = new RocksJavaUtil(dbId).get(rs.getString("hash"));
+                        if (transactionByte != null) {
+                            value = JSONObject.parseObject(transactionByte, Message.class);
+                        } else {
+                            logger.error("this hash rocksDB not exist");
+                            value = null;
+                        }
+                    }
+                } catch (SQLException e) {
+                    logger.error("error: {}", e);
+                }
+                return value;
+            });
+        } catch (SQLException e) {
+            logger.error("getMessageById(): {}", e);
+            return null;
+        } finally {
+            if(h!=null) {
+                h.destroyed();
+            }
+        }
+        return message;
     }
 
     public static void main(String[] args) {

@@ -316,11 +316,11 @@ public class EventStoreImpl implements IEventStore {
 //                logger.warn("node-({}, {}): num = {}, sizePerCycle-{}",
 //                        this.shardId, this.selfId, num, sizePerCycle);
 //            }
-			while (num == 0) {
-				page++;
-				eventBodys = getAllEvent4DB(page);
-				num = eventBodys.size();
-            }
+//			while (num == 0) {
+//				page++;
+//				eventBodys = getAllEvent4DB(page);
+//				num = eventBodys.size();
+//            }
 		}
 
 		@Override
@@ -472,7 +472,7 @@ public class EventStoreImpl implements IEventStore {
 			this.n = n;
 			this.dbId = dbId;
 			this.firstSeq = firstSeq;
-			if(!flag && page == 0) {
+			if(page == 0) {
 				this.page = firstSeq.divide(new BigInteger("3000")).compareTo(BigInteger.ONE) <= 0 ? 0 : firstSeq.divide(new BigInteger("3000")).intValue();
 			}
 			// 获取和计算lastSeq
