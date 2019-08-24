@@ -10,6 +10,7 @@ import one.inve.localfullnode2.message.MessagePersistence;
 import one.inve.localfullnode2.message.MessagePersistenceDependent;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.rocks.INosql;
+import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.sync.DistributedO;
 import one.inve.localfullnode2.sync.Distribution;
 import one.inve.localfullnode2.sync.IContext;
@@ -51,7 +52,8 @@ public class MessageSynchronizer extends BasedIterativePart {
 				StagingArea stagingArea = new StagingArea();
 				stagingArea.createQueue(EventBody.class, StagingArea.ConsMessageSaveQueueName, 10000000, null);
 
-				BlockingQueue<JSONObject> q = stagingArea.getQueue(JSONObject.class, StagingArea.EventSaveQueueName);
+				BlockingQueue<JSONObject> q = stagingArea.getQueue(JSONObject.class,
+						StagingArea.ConsMessageSaveQueueName);
 				for (JSONObject jsonizedMessage : distributedObjects.getObjects()) {
 					q.add(jsonizedMessage);
 				}
@@ -76,8 +78,7 @@ public class MessageSynchronizer extends BasedIterativePart {
 
 			@Override
 			public INosql getNosql() {
-				// TODO Auto-generated method stub
-				return null;
+				return new RocksJavaUtil(srcProfile.getDBId());
 			}
 
 			@Override
