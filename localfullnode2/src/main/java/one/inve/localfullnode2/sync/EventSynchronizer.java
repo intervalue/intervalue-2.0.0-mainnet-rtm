@@ -50,12 +50,12 @@ public class EventSynchronizer extends BasedIterativePart {
 				StagingArea stagingArea = new StagingArea();
 				stagingArea.createQueue(EventBody.class, StagingArea.EventSaveQueueName, 10000000, null);
 
-				BlockingQueue<EventBody> queue = stagingArea.getQueue(EventBody.class, StagingArea.EventSaveQueueName);
+				BlockingQueue<EventBody> q = stagingArea.getQueue(EventBody.class, StagingArea.EventSaveQueueName);
 				for (EventBody eb : distributedObjects.getObjects()) {
-					queue.add(eb);
+					q.add(eb);
 				}
 
-				return null;
+				return q;
 			}
 
 			@Override
