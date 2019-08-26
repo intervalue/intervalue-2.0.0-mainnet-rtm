@@ -1,4 +1,4 @@
-package one.inve.localfullnode2.sync.criteria;
+package one.inve.localfullnode2.sync.measure;
 
 import java.util.LinkedList;
 import java.util.List;

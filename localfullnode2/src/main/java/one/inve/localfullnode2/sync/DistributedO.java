@@ -1,5 +1,7 @@
 package one.inve.localfullnode2.sync;
 
+import one.inve.localfullnode2.sync.measure.Distribution;
+
 /**
  * 
  * Copyright © INVE FOUNDATION. All rights reserved.

@@ -1,6 +1,5 @@
-package one.inve.localfullnode2.sync;
+package one.inve.localfullnode2.sync.measure;
 
-import one.inve.localfullnode2.sync.criteria.Range;
 import one.inve.localfullnode2.utilities.GenericArray;
 
 /**
