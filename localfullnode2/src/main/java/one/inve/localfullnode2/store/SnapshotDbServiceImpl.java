@@ -338,6 +338,20 @@ public class SnapshotDbServiceImpl implements SnapshotDbService {
         return message;
     }
 
+    @Override
+    public Map<Long, EventKeyPair> getFirstExistEventKeyPairsForEachNode(String dbId, int nValue) {
+        SnapshotMessage snapshotMessage = queryLatestSnapshotMessage(dbId);
+        if (null != snapshotMessage) {
+            SnapshotMessage sm = querySnapshotMessageByVersion(dbId,String.valueOf(snapshotMessage.getSnapVersion().intValue() - Config.DEFAULT_SNAPSHOT_CLEAR_GENERATION));
+            if(null != sm){
+                Map<Long, EventKeyPair> map = new HashMap<>();
+                map = getPrevEventKeyPairsForEachNode(dbId, sm.getSnapshotPoint().getEventBody(), map, nValue);
+                return map;
+            }
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
 //        String dbId = "0_0";
 //
