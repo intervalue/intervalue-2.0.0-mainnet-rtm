@@ -1,5 +1,8 @@
 package one.inve.localfullnode2.sync;
 
+import one.inve.localfullnode2.sync.source.ISyncSource;
+import one.inve.localfullnode2.sync.source.ISyncSourceProfile;
+
 /**
  * 
  * Copyright © INVE FOUNDATION. All rights reserved.

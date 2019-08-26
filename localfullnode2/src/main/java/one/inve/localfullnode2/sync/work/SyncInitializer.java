@@ -4,9 +4,9 @@ import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;
 import one.inve.localfullnode2.store.mysql.NewTableCreate;
 import one.inve.localfullnode2.sync.IContext;
-import one.inve.localfullnode2.sync.ISyncSourceProfile;
 import one.inve.localfullnode2.sync.SynchronizationWork;
 import one.inve.localfullnode2.sync.SynchronizationWork.Whole;
+import one.inve.localfullnode2.sync.source.ISyncSourceProfile;
 
 /**
  * 

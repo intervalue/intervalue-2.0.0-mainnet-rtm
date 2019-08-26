@@ -1,8 +1,10 @@
-package one.inve.localfullnode2.sync;
+package one.inve.localfullnode2.sync.source;
 
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.core.EventBody;
+import one.inve.localfullnode2.sync.DistributedO;
+import one.inve.localfullnode2.sync.measure.Distribution;
 
 /**
  * 

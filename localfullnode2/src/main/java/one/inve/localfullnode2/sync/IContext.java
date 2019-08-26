@@ -5,6 +5,8 @@ import java.util.Map;
 
 import one.inve.localfullnode2.sync.SynchronizationWork.IterativePart;
 import one.inve.localfullnode2.sync.SynchronizationWork.Whole;
+import one.inve.localfullnode2.sync.measure.Distribution;
+import one.inve.localfullnode2.sync.source.ISyncSource;
 
 /**
  * 

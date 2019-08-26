@@ -8,11 +8,11 @@ import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistence;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependent;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.sync.DistributedO;
-import one.inve.localfullnode2.sync.Distribution;
 import one.inve.localfullnode2.sync.IContext;
-import one.inve.localfullnode2.sync.ISyncSource;
-import one.inve.localfullnode2.sync.ISyncSourceProfile;
 import one.inve.localfullnode2.sync.SynchronizationWork.BasedIterativePart;
+import one.inve.localfullnode2.sync.measure.Distribution;
+import one.inve.localfullnode2.sync.source.ISyncSource;
+import one.inve.localfullnode2.sync.source.ISyncSourceProfile;
 
 /**
  * 
