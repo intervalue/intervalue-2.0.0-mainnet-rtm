@@ -9,14 +9,14 @@ import one.inve.localfullnode2.store.rocks.key.FirstSeqKey;
  * 
  * Copyright © INVE FOUNDATION. All rights reserved.
  * 
- * @ClassName: FirstSeqs
- * @Description: first seqs is variable level due to snapshot mechanism.
+ * @ClassName: FirstSeqsbility
+ * @Description: first seqs is a variable level due to snapshot mechanism.
  * @author Francis.Deng [francis_xiiiv@163.com]
  * @date Aug 21, 2018
  *
  */
-public class FirstSeqs {
-	private final SeqsHolder firstSeqs = new SeqsHolder();
+public class FirstSeqsbility {
+	private final FirstSeqsHolder firstSeqs = new FirstSeqsHolder();
 
 	private static BigInteger Two = new BigInteger("2");
 
@@ -31,7 +31,7 @@ public class FirstSeqs {
 //	}
 
 	// via binary search algorithm
-	public void tune(int shardCount, int nValue, EventStore eventStore) {
+	public void search(int shardCount, int nValue, EventStore eventStore) {
 
 		for (int i = 0; i < shardCount; i++) {
 			AtomicLongArray firstSeqsInShard = new AtomicLongArray(nValue);
