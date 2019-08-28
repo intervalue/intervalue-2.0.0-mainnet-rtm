@@ -92,6 +92,17 @@ public class RocksJavaUtil implements INosql {
 		}
 	}
 
+	// force rocksdb invoker to deal with key char set
+	public byte[] get(byte[] key) {
+		try {
+
+			return rocksDB.get(key);
+		} catch (Exception ex) {
+			logger.error("rocksDB.get异常", ex);
+		}
+		return null;
+	}
+
 	public byte[] get(String key) {
 		try {
 
