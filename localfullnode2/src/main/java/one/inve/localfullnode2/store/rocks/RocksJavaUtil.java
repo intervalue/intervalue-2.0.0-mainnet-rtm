@@ -83,6 +83,15 @@ public class RocksJavaUtil implements INosql {
 		}
 	}
 
+	public void put(byte[] key, byte[] value) {
+		try {
+			rocksDB.put(key, value);
+
+		} catch (Exception ex) {
+			logger.error("rocksDB.put异常", ex);
+		}
+	}
+
 	public void put(String key, byte[] value) {
 		try {
 			rocksDB.put(key.getBytes(), value);

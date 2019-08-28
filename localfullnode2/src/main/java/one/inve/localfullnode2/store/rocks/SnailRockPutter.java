@@ -42,7 +42,7 @@ public abstract class SnailRockPutter extends RocksJavaUtil {
 		this._intervalInMilli = intervalInMilli;
 	}
 
-	protected void put(final byte[] k, final byte[] v) {
+	public void put(final byte[] k, final byte[] v) {
 		RockPutEntry putEntry = new RockPutEntry(k, v);
 
 		if (noDuplicateElementsContainer.isEmpty())
