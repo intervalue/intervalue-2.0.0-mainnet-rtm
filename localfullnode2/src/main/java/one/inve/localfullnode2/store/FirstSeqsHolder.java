@@ -3,6 +3,7 @@ package one.inve.localfullnode2.store;
 import java.util.concurrent.ConcurrentHashMap;
 
 import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.dep.items.FirstSeqs;
 
 /**
  * 
@@ -18,7 +19,7 @@ public class FirstSeqsHolder extends SeqsHolder {
 
 	@Override
 	protected void notifyDeps(ConcurrentHashMap<Integer, AtomicLongArrayWrapper> firstSeq) {
-		one.inve.localfullnode2.dep.items.FirstSeqs firstSeqs = DepItemsManager.getInstance().attachFirstSeqs(null);
+		FirstSeqs firstSeqs = DepItemsManager.getInstance().attachFirstSeqs(null);
 		firstSeqs.set(firstSeq);
 	}
 
