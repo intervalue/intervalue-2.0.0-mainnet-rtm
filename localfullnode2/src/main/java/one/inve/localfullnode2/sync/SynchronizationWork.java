@@ -39,7 +39,7 @@ public class SynchronizationWork {
 
 		public ISyncSourceProfile getSourceProfile(IContext context) {
 			if (sourceProfile == null) {
-				ISyncSource synSource = context.getSyncSource();
+				ISyncSource synSource = context.getSyncSourceProxy();
 				sourceProfile = synSource.getSyncSourceProfile();
 			}
 

@@ -1,6 +1,7 @@
 package one.inve.localfullnode2.sync.measure;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -15,10 +16,10 @@ import java.util.List;
  * @date Aug 21, 2019
  *
  */
-public class Range {
+public class Range implements Iterable<Long> {
 	private long start;
 	private long stop;
-	// private long step;
+	private long step;
 
 //	public Range(long stop) {
 //		this(0l, stop);
@@ -31,6 +32,7 @@ public class Range {
 	public Range(long start, long stop) {
 		this.start = start;
 		this.stop = stop;
+		this.step = 1;
 	}
 
 	public long getStart() {
@@ -111,6 +113,27 @@ public class Range {
 		}
 
 		return ranges;
+	}
+
+	@Override
+	public Iterator<Long> iterator() {
+		return new Iterator<Long>() {
+			private long pos = start;
+			private final long limit = stop;
+
+			@Override
+			public boolean hasNext() {
+				return pos < limit;
+			}
+
+			@Override
+			public Long next() {
+				Long l = new Long(pos);
+				pos += step;
+				return l;
+			}
+
+		};
 	}
 
 }

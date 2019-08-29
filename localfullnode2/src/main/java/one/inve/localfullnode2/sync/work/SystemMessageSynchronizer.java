@@ -11,7 +11,7 @@ import one.inve.localfullnode2.message.MessagePersistenceDependent;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
-import one.inve.localfullnode2.sync.DistributedO;
+import one.inve.localfullnode2.sync.DistributedObjects;
 import one.inve.localfullnode2.sync.IContext;
 import one.inve.localfullnode2.sync.SynchronizationWork.BasedIterativePart;
 import one.inve.localfullnode2.sync.measure.Distribution;
@@ -23,11 +23,11 @@ public class SystemMessageSynchronizer extends BasedIterativePart {
 	@Override
 	public void runOnce(IContext context) {
 		Distribution myDist = context.getDistribution();
-		ISyncSource synSource = context.getSyncSource();
+		ISyncSource synSource = context.getSyncSourceProxy();
 
 		ISyncSourceProfile srcProfile = getSourceProfile(context);
 
-		DistributedO<JSONObject> distributedObjects = synSource.getNotInDistributionMessages(myDist);
+		DistributedObjects<JSONObject> distributedObjects = synSource.getNotInDistributionMessages(myDist);
 		if (distributedObjects.getObjects() == null || distributedObjects.getObjects().length == 0) {
 			done = true;
 			return;

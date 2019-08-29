@@ -3,7 +3,7 @@ package one.inve.localfullnode2.sync.source;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.core.EventBody;
-import one.inve.localfullnode2.sync.DistributedO;
+import one.inve.localfullnode2.sync.DistributedObjects;
 import one.inve.localfullnode2.sync.measure.Distribution;
 
 /**
@@ -20,7 +20,7 @@ import one.inve.localfullnode2.sync.measure.Distribution;
 public interface ISyncSource {
 	ISyncSourceProfile getSyncSourceProfile();// call it once
 
-	DistributedO<EventBody> getNotInDistributionEvents(Distribution dist);
+	DistributedObjects<EventBody> getNotInDistributionEvents(Distribution dist);
 
-	DistributedO<JSONObject> getNotInDistributionMessages(Distribution dist);
+	DistributedObjects<JSONObject> getNotInDistributionMessages(Distribution dist);
 }
