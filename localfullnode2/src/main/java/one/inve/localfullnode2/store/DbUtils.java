@@ -701,8 +701,8 @@ public class DbUtils {
 
 			byte[] consMessageMaxId = rocksJavaUtil.get(Config.CONS_MSG_COUNT_KEY);
 			if (null == consMessageMaxId || !new BigInteger(new String(consMessageMaxId)).equals(list.get(0))) {
-				logger.warn("node-({},{}): initStatistics() fix Config.CONS_MSG_COUNT_KEY value from {} to {}",
-						node.getShardId(), node.getCreatorId(), new String(consMessageMaxId), list.get(0));
+//				logger.warn("node-({},{}): initStatistics() fix Config.CONS_MSG_COUNT_KEY value from {} to {}",
+//						node.getShardId(), node.getCreatorId(), new String(consMessageMaxId), list.get(0));
 				rocksJavaUtil.put(Config.CONS_MSG_COUNT_KEY, list.get(0).toString());
 			}
 		} else {
