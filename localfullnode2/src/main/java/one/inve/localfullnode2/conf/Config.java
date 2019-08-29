@@ -158,7 +158,8 @@ public class Config {
 
 	// rpc服务
 	public static final String[] SERVICE_ARRAY = { "one.inve.localfullnode2.rpc.impl.Light2localImpl",
-			"one.inve.localfullnode2.rpc.impl.Local2localImpl" };
+			"one.inve.localfullnode2.rpc.impl.Local2localImpl",
+			"one.inve.localfullnode2.sync.rpc.DataSynchronizationImpl" };
 
 	/**
 	 * coin round发生间隔

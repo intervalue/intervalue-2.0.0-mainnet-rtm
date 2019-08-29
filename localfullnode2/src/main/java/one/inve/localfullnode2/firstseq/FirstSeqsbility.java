@@ -1,8 +1,9 @@
-package one.inve.localfullnode2.store;
+package one.inve.localfullnode2.firstseq;
 
 import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicLongArray;
 
+import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.key.FirstSeqKey;
 
 /**
@@ -31,7 +32,11 @@ public class FirstSeqsbility {
 //	}
 
 	// via binary search algorithm
-	public void search(int shardCount, int nValue, EventStore eventStore) {
+	// Note:Don't attempt to set firstSeqs in the rocksdb,on the contrary,use {@code
+	// probe}
+	public void probe(FirstSeqsDependent dep, IEventStoreBility eventStore) {
+		int shardCount = dep.getShardCount();
+		int nValue = dep.getnValue();
 
 		for (int i = 0; i < shardCount; i++) {
 			AtomicLongArray firstSeqsInShard = new AtomicLongArray(nValue);
@@ -39,6 +44,8 @@ public class FirstSeqsbility {
 			for (int j = 0; j < nValue; j++) {
 				BigInteger seq = binarySearch(i, j, BigInteger.ZERO, eventStore.getLastSeq(i, j), eventStore);
 				firstSeqsInShard.set(j, seq.longValue());
+
+				eventStore.put(new FirstSeqKey(i, j), seq);
 			}
 
 			firstSeqs.put(i, firstSeqsInShard);
@@ -47,7 +54,7 @@ public class FirstSeqsbility {
 
 	// key function to find the bottom of event sequence
 	protected BigInteger binarySearch(int shardId, int idInShard, BigInteger fromSeq, BigInteger toSeq,
-			EventStore eventStore) {
+			IEventStoreBility eventStore) {
 
 		if (isFirstSeq(shardId, idInShard, toSeq, eventStore))
 			return toSeq;
@@ -65,7 +72,7 @@ public class FirstSeqsbility {
 		}
 	}
 
-	protected boolean isFirstSeq(int shardId, int idInShard, BigInteger seq, EventStore eventStore) {
+	protected boolean isFirstSeq(int shardId, int idInShard, BigInteger seq, IEventStoreBility eventStore) {
 		EventKeyPair p = new EventKeyPair(shardId, idInShard, seq.longValue());
 		EventKeyPair pPlusOne = new EventKeyPair(shardId, idInShard, seq.longValue() + 1);
 		EventKeyPair pMinusOne = new EventKeyPair(shardId, idInShard, seq.longValue() - 1);
@@ -77,13 +84,11 @@ public class FirstSeqsbility {
 		return isFirstSeq;
 	}
 
-	public static interface EventStore {
+	public static interface IEventStoreBility {
 		boolean exist(EventKeyPair eventKey);
-
-		BigInteger getFirstSeq(int shardId, int idInShard);
 
 		BigInteger getLastSeq(int shardId, int idInShard);
 
-		void put(FirstSeqKey firstSeqKey);
+		void put(FirstSeqKey firstSeqKey, BigInteger seq);
 	}
 }
