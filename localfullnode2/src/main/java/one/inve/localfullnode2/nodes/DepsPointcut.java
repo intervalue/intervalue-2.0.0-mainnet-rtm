@@ -18,6 +18,7 @@ import one.inve.core.EventBody;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.DepItemsManagerial;
 import one.inve.localfullnode2.dep.items.AllQueues;
+import one.inve.localfullnode2.firstseq.FirstSeqsDependency;
 import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
 import one.inve.localfullnode2.hashnet.HashneterDependency;
@@ -108,6 +109,9 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		SnapshotSynchronizerDependency snapshotSynchronizerDependency = new SnapshotSynchronizerDependency();
 		of(snapshotSynchronizerDependency);
 
+		FirstSeqsDependency firstSeqsDependency = new FirstSeqsDependency();
+		of(firstSeqsDependency);
+
 		SnapshotSyncConsumer snapshotSyncConsumer = new SnapshotSyncConsumer();
 		of(snapshotSyncConsumer);
 
@@ -119,6 +123,16 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	 */
 	private void of(SnapshotSyncConsumer snapshotSyncConsumer) {
 		DepItemsManager.getInstance().attachDirectCommunicator(snapshotSyncConsumer);
+	}
+
+	/**
+	 * {@code FirstSeqsbility(FirstSeqsDependency dep)}
+	 */
+	protected void of(FirstSeqsDependency firstSeqsDependency) {
+		DepItemsManager.getInstance().attachShardCount(firstSeqsDependency);
+		DepItemsManager.getInstance().attachNValue(firstSeqsDependency);
+		DepItemsManager.getInstance().attachLastSeqs(firstSeqsDependency);
+		DepItemsManager.getInstance().attachDBId(firstSeqsDependency);
 	}
 
 	/**

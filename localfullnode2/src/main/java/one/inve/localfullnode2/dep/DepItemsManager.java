@@ -10,6 +10,7 @@ import one.inve.localfullnode2.dep.items.CreatorId;
 import one.inve.localfullnode2.dep.items.DBId;
 import one.inve.localfullnode2.dep.items.DirectCommunicator;
 import one.inve.localfullnode2.dep.items.EventFlow;
+import one.inve.localfullnode2.dep.items.FirstSeqs;
 import one.inve.localfullnode2.dep.items.LastSeqs;
 import one.inve.localfullnode2.dep.items.LocalFullNodes;
 import one.inve.localfullnode2.dep.items.Members;
@@ -45,6 +46,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 	private Members members;
 	private CreatorId creatorId;
 	private LastSeqs lastSeqs;
+	private FirstSeqs firstSeqs;
 //	private CurrSnapshotVersion currSnapshotVersion;
 	private EventFlow eventFlow;
 	private BlackList4PubKey blackList4PubKey;
@@ -201,6 +203,16 @@ public final class DepItemsManager implements DepItemsManagerial {
 		}
 
 		return lastSeqs;
+	}
+
+	@Override
+	public FirstSeqs attachFirstSeqs(DependentItemConcerned... dependentItemConcerneds) {
+		if (dependentItemConcerneds != null) {
+			firstSeqs.attach(dependentItemConcerneds);
+			retainItemConcernedsByClass(dependentItemConcerneds);
+		}
+
+		return firstSeqs;
 	}
 
 	/**

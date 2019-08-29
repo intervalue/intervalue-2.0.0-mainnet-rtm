@@ -29,7 +29,7 @@ public interface IContext {
 
 	Distribution getDistribution();
 
-	ISyncSource getSyncSource();
+	ISyncSource getSyncSourceProxy();
 
 	IterativePart[] getSynchronizationWorkParts();
 
@@ -50,12 +50,6 @@ public interface IContext {
 
 		@Override
 		public IConf getConf() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public ISyncSource getSyncSource() {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -88,6 +82,12 @@ public interface IContext {
 
 		@Override
 		public Whole getSynchronizationInitializer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ISyncSource getSyncSourceProxy() {
 			// TODO Auto-generated method stub
 			return null;
 		}

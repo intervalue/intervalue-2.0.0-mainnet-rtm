@@ -24,6 +24,9 @@ import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.conf.NodeParameters;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.AllQueues;
+import one.inve.localfullnode2.firstseq.EventStoreBility;
+import one.inve.localfullnode2.firstseq.FirstSeqsDependency;
+import one.inve.localfullnode2.firstseq.FirstSeqsbility;
 import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.http.HttpServiceDependency;
 import one.inve.localfullnode2.lc.ILifecycle;
@@ -42,6 +45,7 @@ import one.inve.localfullnode2.utilities.http.NettyHttpServer;
  * @author: Francis.Deng
  * @date: May 31, 2018 3:06:25 AM
  * @version: V1.0
+ * @version: V1.1 add a function to calculate first seqs(bottom event height)
  */
 public abstract class LocalFullNodeSkeleton extends DepsPointcut implements NodeEnrolled {
 	private static final Logger logger = LoggerFactory.getLogger(LocalFullNodeSkeleton.class);
@@ -165,6 +169,10 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			Hashneter hashneter = initHashneter();
 			if (hashneter == null)
 				System.exit(-1);
+
+			// for the sake of system stabilization,the first seqs initialization is put
+			// here.
+			probeFirstSeqs();
 
 			ILifecycle membersTask = startMembership(this);
 			// membersTask.start();
@@ -384,6 +392,14 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		llc.start();
 
 		return llc;
+	}
+
+	protected void probeFirstSeqs() {
+		FirstSeqsDependency newFirstSeqsDep = DepItemsManager.getInstance().getItemConcerned(FirstSeqsDependency.class);
+		FirstSeqsbility firstSeqsbility = new FirstSeqsbility();
+
+		firstSeqsbility.probe(newFirstSeqsDep,
+				new EventStoreBility(newFirstSeqsDep.getDbId(), newFirstSeqsDep.getLastSeqs()));
 	}
 
 	abstract protected Hashneter initHashneter();

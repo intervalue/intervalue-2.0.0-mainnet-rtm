@@ -7,7 +7,7 @@ import one.inve.core.EventBody;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistence;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependent;
 import one.inve.localfullnode2.staging.StagingArea;
-import one.inve.localfullnode2.sync.DistributedO;
+import one.inve.localfullnode2.sync.DistributedObjects;
 import one.inve.localfullnode2.sync.IContext;
 import one.inve.localfullnode2.sync.SynchronizationWork.BasedIterativePart;
 import one.inve.localfullnode2.sync.measure.Distribution;
@@ -29,11 +29,11 @@ public class EventSynchronizer extends BasedIterativePart {
 	@Override
 	public void runOnce(IContext context) {
 		Distribution myDist = context.getDistribution();
-		ISyncSource synSource = context.getSyncSource();
+		ISyncSource synSource = context.getSyncSourceProxy();
 
 		ISyncSourceProfile srcProfile = getSourceProfile(context);
 
-		DistributedO<EventBody> distributedObjects = synSource.getNotInDistributionEvents(myDist);
+		DistributedObjects<EventBody> distributedObjects = synSource.getNotInDistributionEvents(myDist);
 		if (distributedObjects.getObjects() == null || distributedObjects.getObjects().length == 0) {
 			done = true;
 			return;

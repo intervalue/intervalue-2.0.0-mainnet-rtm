@@ -83,6 +83,15 @@ public class RocksJavaUtil implements INosql {
 		}
 	}
 
+	public void put(byte[] key, byte[] value) {
+		try {
+			rocksDB.put(key, value);
+
+		} catch (Exception ex) {
+			logger.error("rocksDB.put异常", ex);
+		}
+	}
+
 	public void put(String key, byte[] value) {
 		try {
 			rocksDB.put(key.getBytes(), value);
@@ -90,6 +99,17 @@ public class RocksJavaUtil implements INosql {
 		} catch (Exception ex) {
 			logger.error("rocksDB.put异常", ex);
 		}
+	}
+
+	// force rocksdb invoker to deal with key char set
+	public byte[] get(byte[] key) {
+		try {
+
+			return rocksDB.get(key);
+		} catch (Exception ex) {
+			logger.error("rocksDB.get异常", ex);
+		}
+		return null;
 	}
 
 	public byte[] get(String key) {

@@ -1,5 +1,6 @@
 package one.inve.localfullnode2.utilities;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -51,5 +52,16 @@ public class GenericArray<E> implements Iterable<E> {
 			}
 
 		};
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T[] toArray(T[] a) {
+		if (a.length < length())
+			// Make a new array of a's runtime type, but my contents:
+			return (T[]) Arrays.copyOf(elements, length(), a.getClass());
+		System.arraycopy(elements, 0, a, 0, length());
+		if (a.length > length())
+			a[length()] = null;
+		return a;
 	}
 }

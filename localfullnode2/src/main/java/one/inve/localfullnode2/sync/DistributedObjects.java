@@ -6,7 +6,7 @@ import one.inve.localfullnode2.sync.measure.Distribution;
  * 
  * Copyright © INVE FOUNDATION. All rights reserved.
  * 
- * @ClassName: DistributedO
+ * @ClassName: DistributedObjects
  * @Description: important returned value to represent object distribution and
  *               object.
  * @author Francis.Deng
@@ -14,11 +14,12 @@ import one.inve.localfullnode2.sync.measure.Distribution;
  * @date Aug 23, 2019
  * 
  */
-public class DistributedO<O> {
+public class DistributedObjects<O> {
 	private Distribution dist;
 	private O[] objects;
+//	private byte[] rootHash;
 
-	public DistributedO(Distribution dist, O[] objects) {
+	public DistributedObjects(Distribution dist, O[] objects) {
 		super();
 		this.dist = dist;
 		this.objects = objects;
@@ -31,5 +32,13 @@ public class DistributedO<O> {
 	public O[] getObjects() {
 		return objects;
 	}
+
+//	public byte[] getRootHash() {
+//		return rootHash;
+//	}
+//
+//	public void setRootHash(byte[] rootHash) {
+//		this.rootHash = rootHash;
+//	}
 
 }

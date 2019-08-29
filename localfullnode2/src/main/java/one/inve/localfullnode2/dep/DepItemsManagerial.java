@@ -6,6 +6,7 @@ import one.inve.localfullnode2.dep.items.CreatorId;
 import one.inve.localfullnode2.dep.items.DBId;
 import one.inve.localfullnode2.dep.items.DirectCommunicator;
 import one.inve.localfullnode2.dep.items.EventFlow;
+import one.inve.localfullnode2.dep.items.FirstSeqs;
 import one.inve.localfullnode2.dep.items.LastSeqs;
 import one.inve.localfullnode2.dep.items.LocalFullNodes;
 import one.inve.localfullnode2.dep.items.Members;
@@ -71,4 +72,6 @@ public interface DepItemsManagerial {
 	SS attachSS(DependentItemConcerned... dependentItemConcerneds);
 
 	Wal attachWal(DependentItemConcerned... dependentItemConcerneds);
+
+	FirstSeqs attachFirstSeqs(DependentItemConcerned[] dependentItemConcerneds);
 }
