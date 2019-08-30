@@ -60,7 +60,7 @@ public class FirstSeqsbility {
 	// key function to find the bottom of event sequence
 	protected BigInteger binarySearch(int shardId, int idInShard, BigInteger fromSeq, BigInteger toSeq,
 			IEventStoreBility eventStore) {
-		logger.info("binary search first seq: [{},{}]", fromSeq.longValue(), toSeq.longValue());
+		logger.info("binary search first seq:  [{},{}]", fromSeq.longValue(), toSeq.longValue());
 
 		if (isFirstSeq(shardId, idInShard, toSeq, eventStore))
 			return toSeq;
