@@ -41,9 +41,16 @@ module one{
 							MerkleTreeizedSyncEventList events;
 							MerkleTreeRootHash rootHash;						
 						};
+						
+						struct Localfullnode2InstanceProfile {
+							string shardId;
+							string creatorId;
+							string nValue;						
+						};
 
 						interface DataSynchronization {
 							DistributedEventObjects getNotInDistributionEvents(string distJson);
+							Localfullnode2InstanceProfile getLocalfullnode2InstanceProfile();     //retrieve LFN2 instance profile
 						};			
 					
 					};				
