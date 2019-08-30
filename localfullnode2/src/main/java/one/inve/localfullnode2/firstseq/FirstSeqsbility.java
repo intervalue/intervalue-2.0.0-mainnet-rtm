@@ -65,7 +65,7 @@ public class FirstSeqsbility {
 		if (isFirstSeq(shardId, idInShard, toSeq, eventStore))
 			return toSeq;
 
-		BigInteger seq = toSeq.subtract(fromSeq).divide(Two).add(fromSeq);// formula : ((to - from)/2)+from
+		BigInteger seq = toSeq.subtract(fromSeq).divide(Two).add(fromSeq);// formula is "((to - from)/2)+from"
 		EventKeyPair p = new EventKeyPair(shardId, idInShard, seq.longValue());
 
 		if (isFirstSeq(shardId, idInShard, seq, eventStore))
