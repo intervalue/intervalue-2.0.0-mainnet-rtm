@@ -8,8 +8,15 @@ import one.inve.localfullnode2.store.AtomicLongArrayWrapper;
 public class FirstSeqs extends DependentItem {
 	private ConcurrentHashMap<Integer, AtomicLongArrayWrapper> firstSeqs;
 
-	public ConcurrentHashMap<Integer, AtomicLongArrayWrapper> get() {
-		return firstSeqs;
+	public long[] get(int shardId) {
+		AtomicLongArrayWrapper longArray = firstSeqs.get(new Integer(shardId));
+
+		long[] fs = new long[longArray.length()];
+		for (int index = 0; index < longArray.length(); index++) {
+			fs[index] = longArray.get(index);
+		}
+
+		return fs;
 	}
 
 	public void set(ConcurrentHashMap<Integer, AtomicLongArrayWrapper> firstSeqs) {
