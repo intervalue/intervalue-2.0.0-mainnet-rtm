@@ -23,11 +23,11 @@ import one.inve.localfullnode2.sync.rpc.gen.DistributedEventObjects;
 public class DataSynchronizationZerocImpl implements DataSynchronization {
 	private static final Logger logger = LoggerFactory.getLogger(DataSynchronizationZerocImpl.class);
 
-	private DataSynchronizationImpl dataSynchronization;
+	private IDataSynchronization dataSynchronization;
 
 	// ensuring that {@code probeFirstSeqs} is executed before.
 	public DataSynchronizationZerocImpl(LocalFullNode1GeneralNode node) {
-		dataSynchronization = new DataSynchronizationImpl(node);
+		dataSynchronization = DataSynchronizationFactory.getDataSynchronizationImpl(node);
 	}
 
 	@Override
