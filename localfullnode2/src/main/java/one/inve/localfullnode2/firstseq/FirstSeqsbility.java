@@ -3,6 +3,9 @@ package one.inve.localfullnode2.firstseq;
 import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicLongArray;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.key.FirstSeqKey;
 
@@ -17,6 +20,8 @@ import one.inve.localfullnode2.store.rocks.key.FirstSeqKey;
  *
  */
 public class FirstSeqsbility {
+	private static final Logger logger = LoggerFactory.getLogger(FirstSeqsbility.class);
+
 	private final FirstSeqsHolder firstSeqs = new FirstSeqsHolder();
 
 	private static BigInteger Two = new BigInteger("2");
@@ -55,11 +60,12 @@ public class FirstSeqsbility {
 	// key function to find the bottom of event sequence
 	protected BigInteger binarySearch(int shardId, int idInShard, BigInteger fromSeq, BigInteger toSeq,
 			IEventStoreBility eventStore) {
+		logger.info("binary search first seq:  [{},{}]", fromSeq.longValue(), toSeq.longValue());
 
 		if (isFirstSeq(shardId, idInShard, toSeq, eventStore))
 			return toSeq;
 
-		BigInteger seq = toSeq.subtract(fromSeq).divide(Two);
+		BigInteger seq = toSeq.subtract(fromSeq).divide(Two).add(fromSeq);// formula is "((to - from)/2)+from"
 		EventKeyPair p = new EventKeyPair(shardId, idInShard, seq.longValue());
 
 		if (isFirstSeq(shardId, idInShard, seq, eventStore))
