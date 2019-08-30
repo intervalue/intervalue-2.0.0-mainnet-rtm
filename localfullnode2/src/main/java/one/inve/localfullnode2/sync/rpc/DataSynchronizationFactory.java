@@ -5,7 +5,6 @@ import one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocImpl.IDataSynchr
 
 /**
  * 
- * 
  * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: assemble DataSynchronization
