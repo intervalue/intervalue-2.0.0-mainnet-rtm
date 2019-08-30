@@ -185,6 +185,7 @@ public class Local2localImpl implements Local2local {
 	@Override
 	public synchronized GossipObj gossipMyMaxSeqList4Consensus(String pubkey, String sig, String snapVersion,
 			String snapHash, long[] seqs, Current current) {
+		logger.info("gossipMyMaxSeqList4Consensus Current:{}", JSON.toJSONString(current));
 		GossipObj gossipObj = null;
 		BigInteger vers = DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion();
 		if (gossipFlag) {
