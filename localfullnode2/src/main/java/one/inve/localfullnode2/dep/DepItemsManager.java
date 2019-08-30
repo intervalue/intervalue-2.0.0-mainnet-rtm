@@ -81,6 +81,7 @@ public final class DepItemsManager implements DepItemsManagerial {
 		stat = new Stat();
 		ss = new SS();
 		wal = new Wal();
+		firstSeqs = new FirstSeqs();
 	}
 
 	private static class SingletonHelper {
