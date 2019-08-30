@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.zeroc.Ice.Current;
 
 import one.inve.core.EventBody;
+import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
@@ -15,7 +15,7 @@ import one.inve.localfullnode2.sync.Mapper;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.measure.Distribution.Column;
 import one.inve.localfullnode2.sync.measure.Range;
-import one.inve.localfullnode2.sync.rpc.gen.DataSynchronization;
+import one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocImpl.IDataSynchronization;
 import one.inve.localfullnode2.sync.rpc.gen.DistributedEventObjects;
 import one.inve.localfullnode2.sync.rpc.gen.MerkleTreeizedSyncEvent;
 import one.inve.localfullnode2.sync.rpc.gen.SyncEvent;
@@ -27,15 +27,15 @@ import one.inve.localfullnode2.utilities.merkle.Node;
 
 /**
  * 
+ * 
  * Copyright © INVE FOUNDATION. All rights reserved.
  * 
- * @ClassName: DataSynchronizationImpl
- * @Description: extract expected data from rocksdb
- * @author Francis.Deng [francis_xiiiv@163.com]
- * @date Aug 26, 2019
- *
+ * @Description: follow the principle of "Dependence Inversion" by the move
+ * @author: Francis.Deng [francis_xiiiv@163.com]
+ * @date: Aug 29, 2019 8:53:04 PM
+ * @version: V1.0
  */
-public class DataSynchronizationImpl implements DataSynchronization {
+public class DataSynchronizationImpl implements IDataSynchronization {
 	private static final Logger logger = LoggerFactory.getLogger(DataSynchronizationImpl.class);
 
 	private volatile LocalFullNode1GeneralNode node;
@@ -45,6 +45,9 @@ public class DataSynchronizationImpl implements DataSynchronization {
 	private int shardId;
 	private long creatorId;
 
+	private long[] firstSeqsThisShard;
+
+	// ensuring that {@code probeFirstSeqs} is executed before.
 	public DataSynchronizationImpl(LocalFullNode1GeneralNode node) {
 		this.node = node;
 
@@ -53,10 +56,11 @@ public class DataSynchronizationImpl implements DataSynchronization {
 		dbId = node.nodeParameters().dbId;
 		shardId = node.getShardId();
 		creatorId = node.getCreatorId();
+
+		firstSeqsThisShard = DepItemsManager.getInstance().attachFirstSeqs(null).get(shardId);
 	}
 
-	@Override
-	public DistributedEventObjects getNotInDistributionEvents(String distJson, Current current) {
+	public DistributedEventObjects getNotInDistributionEvents(String distJson) {
 		int _eventSize = 500;// hard-code it
 
 		Distribution requestSideDist = JSON.parseObject(distJson, Distribution.class);
