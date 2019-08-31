@@ -88,8 +88,8 @@ public class RpcConnectionService {
 		logger.info("buildDataSynchronizationPrx...");
 		DataSynchronizationPrx proxy = null;
 		try {
-			proxy = DataSynchronizationPrx
-					.checkedCast(communicator.stringToProxy("DataSynchronization:default -h " + ip + " -p " + port));
+			proxy = DataSynchronizationPrx.checkedCast(
+					communicator.stringToProxy("DataSynchronizationZeroc:default -h " + ip + " -p " + port));
 		} catch (Exception e) {
 			logger.error("", e);
 		}
