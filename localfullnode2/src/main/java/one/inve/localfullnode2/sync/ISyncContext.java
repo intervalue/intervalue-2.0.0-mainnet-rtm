@@ -28,7 +28,7 @@ public interface ISyncContext {
 
 	ISyncConf getConf();
 
-	void joinDistribution(Distribution newDist);
+	void join(Distribution newDist);
 
 	Distribution getDistribution();
 
@@ -83,15 +83,15 @@ public interface ISyncContext {
 		}
 
 		@Override
-		public void joinDistribution(Distribution newDist) {
-			// TODO Auto-generated method stub
-
+		public void join(Distribution newDist) {
+			dist.addDistribution(newDist);
 		}
 
 		@Override
 		public Distribution getDistribution() {
-			// TODO Auto-generated method stub
-			return null;
+			if (dist == null)
+				dist = new Distribution(profile.getNValue());
+			return dist;
 		}
 
 		@Override

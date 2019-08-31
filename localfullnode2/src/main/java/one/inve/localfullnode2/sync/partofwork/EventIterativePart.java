@@ -75,7 +75,7 @@ public class EventIterativePart extends BasedIterativePart {
 
 		});
 
-		context.joinDistribution(distributedObjects.getDist());
+		context.join(distributedObjects.getDist());
 
 	}
 

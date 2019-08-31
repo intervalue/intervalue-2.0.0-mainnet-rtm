@@ -15,8 +15,8 @@ import one.inve.localfullnode2.sync.DistributedObjects;
 import one.inve.localfullnode2.sync.ISyncContext;
 import one.inve.localfullnode2.sync.SynchronizationWork.BasedIterativePart;
 import one.inve.localfullnode2.sync.measure.Distribution;
-import one.inve.localfullnode2.sync.source.ISyncSource;
 import one.inve.localfullnode2.sync.source.ILFN2Profile;
+import one.inve.localfullnode2.sync.source.ISyncSource;
 
 /**
  * 
@@ -89,7 +89,7 @@ public class MessageIterativePart extends BasedIterativePart {
 		});
 		messagePersistence.persisMessages();
 
-		context.joinDistribution(distributedObjects.getDist());
+		context.join(distributedObjects.getDist());
 
 	}
 
