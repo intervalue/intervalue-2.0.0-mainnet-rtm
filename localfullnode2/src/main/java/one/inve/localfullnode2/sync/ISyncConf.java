@@ -14,4 +14,5 @@ public interface ISyncConf {
 	String[] getSynchronizationWorkClassNames();
 
 	String[] getLFNHostList();
+
 }

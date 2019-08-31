@@ -11,8 +11,8 @@ import one.inve.localfullnode2.sync.DistributedObjects;
 import one.inve.localfullnode2.sync.ISyncContext;
 import one.inve.localfullnode2.sync.SynchronizationWork.BasedIterativePart;
 import one.inve.localfullnode2.sync.measure.Distribution;
+import one.inve.localfullnode2.sync.source.ILFN2Profile;
 import one.inve.localfullnode2.sync.source.ISyncSource;
-import one.inve.localfullnode2.sync.source.ISyncSourceProfile;
 
 /**
  * 
@@ -31,7 +31,7 @@ public class EventIterativePart extends BasedIterativePart {
 		Distribution myDist = context.getDistribution();
 		ISyncSource synSource = context.getSyncSourceProxy();
 
-		ISyncSourceProfile srcProfile = getSourceProfile(context);
+		ILFN2Profile profile = getSourceProfile(context);
 
 		DistributedObjects<EventBody> distributedObjects = synSource.getNotInDistributionEvents(myDist);
 		if (distributedObjects.getObjects() == null || distributedObjects.getObjects().length == 0) {
@@ -59,7 +59,7 @@ public class EventIterativePart extends BasedIterativePart {
 
 			@Override
 			public String getDbId() {
-				return srcProfile.getDBId();
+				return profile.getDBId();
 			}
 
 			// ignore {@code addTotalEventCount} and {@code getTotalEventCount}

@@ -1,7 +1,6 @@
 package one.inve.localfullnode2.sync;
 
-import one.inve.localfullnode2.sync.source.ISyncSource;
-import one.inve.localfullnode2.sync.source.ISyncSourceProfile;
+import one.inve.localfullnode2.sync.source.ILFN2Profile;
 
 /**
  * 
@@ -29,7 +28,7 @@ public class SynchronizationWork {
 	}
 
 	public static abstract class BasedIterativePart implements IterativePart {
-		private ISyncSourceProfile sourceProfile;
+		// private ILFN2Profile sourceProfile;
 
 		protected boolean done = false;
 
@@ -38,19 +37,20 @@ public class SynchronizationWork {
 			return done;
 		}
 
-		public ISyncSourceProfile getSourceProfile(ISyncContext context) {
-			if (sourceProfile == null) {
-				ISyncSource synSource = context.getSyncSourceProxy();
-				sourceProfile = synSource.getSyncSourceProfile();
-			}
-
-			return sourceProfile;
+		public ILFN2Profile getSourceProfile(ISyncContext context) {
+//			if (sourceProfile == null) {
+//				// ISyncSource synSource = context.getSyncSourceProxy();
+//				sourceProfile = context.getProfile();
+//			}
+//
+//			return sourceProfile;
+			return context.getProfile();
 		}
 	}
 
 	// ensuring the works are executed in single thread.
 	public void run() {
-		ISyncConf conf = DefSyncConf.getInstance();
+		ISyncConf conf = DefSyncTemplate.getInstance();
 		ISyncContext context = ISyncContext.getDefault(conf);
 
 		SynchronizationWorkInitial initializer = context.getSynchronizationInitializer();

@@ -6,6 +6,7 @@ import java.util.Map;
 import one.inve.localfullnode2.sync.SynchronizationWork.IterativePart;
 import one.inve.localfullnode2.sync.SynchronizationWork.SynchronizationWorkInitial;
 import one.inve.localfullnode2.sync.measure.Distribution;
+import one.inve.localfullnode2.sync.source.ILFN2Profile;
 import one.inve.localfullnode2.sync.source.ISyncSource;
 import one.inve.localfullnode2.sync.source.ProxiedSyncSource;
 import one.inve.localfullnode2.utilities.ReflectionUtils;
@@ -38,6 +39,10 @@ public interface ISyncContext {
 
 	SynchronizationWorkInitial getSynchronizationInitializer();
 
+	void setProfile(ILFN2Profile profile);
+
+	ILFN2Profile getProfile();
+
 	public static ISyncContext getDefault(ISyncConf conf) {
 		return conf.getDefaultContext();
 	}
@@ -51,6 +56,8 @@ public interface ISyncContext {
 		private ISyncConf conf;
 
 		private Distribution dist;
+
+		private ILFN2Profile profile;
 
 		protected DefSyncContext(ISyncConf conf) {
 			this.conf = conf;
@@ -102,6 +109,17 @@ public interface ISyncContext {
 			syncSource.setAddresses(conf.getLFNHostList());
 
 			return syncSource;
+		}
+
+		@Override
+		public void setProfile(ILFN2Profile profile) {
+			this.profile = profile;
+
+		}
+
+		@Override
+		public ILFN2Profile getProfile() {
+			return profile;
 		}
 
 	}

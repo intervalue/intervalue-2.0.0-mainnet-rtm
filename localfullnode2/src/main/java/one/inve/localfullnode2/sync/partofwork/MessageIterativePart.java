@@ -16,7 +16,7 @@ import one.inve.localfullnode2.sync.ISyncContext;
 import one.inve.localfullnode2.sync.SynchronizationWork.BasedIterativePart;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.source.ISyncSource;
-import one.inve.localfullnode2.sync.source.ISyncSourceProfile;
+import one.inve.localfullnode2.sync.source.ILFN2Profile;
 
 /**
  * 
@@ -35,7 +35,7 @@ public class MessageIterativePart extends BasedIterativePart {
 		Distribution myDist = context.getDistribution();
 		ISyncSource synSource = context.getSyncSourceProxy();
 
-		ISyncSourceProfile srcProfile = getSourceProfile(context);
+		ILFN2Profile srcProfile = getSourceProfile(context);
 
 		DistributedObjects<JSONObject> distributedObjects = synSource.getNotInDistributionMessages(myDist);
 		if (distributedObjects.getObjects() == null || distributedObjects.getObjects().length == 0) {

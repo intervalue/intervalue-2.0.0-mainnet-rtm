@@ -11,10 +11,12 @@ import com.zeroc.Ice.Communicator;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.sync.Addr;
 import one.inve.localfullnode2.sync.DistributedObjects;
+import one.inve.localfullnode2.sync.ISyncContext;
 import one.inve.localfullnode2.sync.Mapper;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocInvoker;
 import one.inve.localfullnode2.sync.rpc.gen.DistributedEventObjects;
+import one.inve.localfullnode2.sync.rpc.gen.Localfullnode2InstanceProfile;
 import one.inve.localfullnode2.sync.rpc.gen.MerkleTreeizedSyncEvent;
 import one.inve.localfullnode2.sync.rpc.gen.SyncEvent;
 import one.inve.localfullnode2.utilities.GenericArray;
@@ -35,8 +37,50 @@ public class ProxiedSyncSource implements ISyncSource {
 	private Addr addresses[];
 
 	@Override
-	public ISyncSourceProfile getSyncSourceProfile() {
-		// TODO Auto-generated method stub
+	public ILFN2Profile getProfile(ISyncContext context) {
+		Addr preferred = addresses[0];
+		CompletableFuture<Localfullnode2InstanceProfile> f = DataSynchronizationZerocInvoker
+				.invokeGetLocalfullnode2InstanceProfileAsync(communicator, preferred.getIp(), preferred.getPort());
+
+		Localfullnode2InstanceProfile profile;
+		try {
+			profile = f.get();
+
+			ILFN2Profile nILFN2Profile = new ILFN2Profile() {
+
+				@Override
+				public String getDBId() {
+					return profile.dbId;
+				}
+
+				@Override
+				public int getShardId() {
+					return profile.shardId;
+				}
+
+				@Override
+				public int getCreatorId() {
+					return profile.creatorId;
+				}
+
+				@Override
+				public int getNValue() {
+					// TODO Auto-generated method stub
+					return profile.nValue;
+				}
+			};
+
+			context.setProfile(nILFN2Profile);
+			return nILFN2Profile;
+
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return null;
 	}
 

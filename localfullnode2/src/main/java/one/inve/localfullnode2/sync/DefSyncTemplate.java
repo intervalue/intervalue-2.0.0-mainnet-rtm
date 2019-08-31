@@ -15,19 +15,19 @@ import one.inve.localfullnode2.sync.ISyncContext.DefSyncContext;
  * @date: Aug 30, 2019 1:02:43 AM
  * @version: V1.0
  */
-public class DefSyncConf implements ISyncConf {
+public class DefSyncTemplate implements ISyncConf {
 
 	private final ISyncContext syncContext;
 
 	private static class SingletonHelper {
-		private static final DefSyncConf INSTANCE = new DefSyncConf();
+		private static final DefSyncTemplate INSTANCE = new DefSyncTemplate();
 	}
 
-	public static DefSyncConf getInstance() {
+	public static DefSyncTemplate getInstance() {
 		return SingletonHelper.INSTANCE;
 	}
 
-	private DefSyncConf() {
+	private DefSyncTemplate() {
 		syncContext = new DefSyncContext(this);
 	}
 
@@ -54,9 +54,9 @@ public class DefSyncConf implements ISyncConf {
 
 	@Override
 	public String[] getSynchronizationWorkClassNames() {
-		return new String[] { "one.inve.localfullnode2.sync.work.EventSynchronizer",
-				"one.inve.localfullnode2.sync.work.MessageSynchronizer",
-				"one.inve.localfullnode2.sync.work.SystemMessageSynchronizer" };
+		return new String[] { "one.inve.localfullnode2.sync.partofwork.EventIterativePart",
+				"one.inve.localfullnode2.sync.partofwork.MessageIterativePart",
+				"one.inve.localfullnode2.sync.partofwork.SystemMessageIterativePart" };
 	}
 
 	@Override
