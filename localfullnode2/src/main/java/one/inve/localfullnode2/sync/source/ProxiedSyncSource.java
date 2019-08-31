@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Communicator;
@@ -13,6 +16,7 @@ import one.inve.localfullnode2.sync.Addr;
 import one.inve.localfullnode2.sync.DistributedObjects;
 import one.inve.localfullnode2.sync.ISyncContext;
 import one.inve.localfullnode2.sync.Mapper;
+import one.inve.localfullnode2.sync.SyncException;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocInvoker;
 import one.inve.localfullnode2.sync.rpc.gen.DistributedEventObjects;
@@ -33,14 +37,24 @@ import one.inve.localfullnode2.utilities.merkle.MerklePath;
  *
  */
 public class ProxiedSyncSource implements ISyncSource {
+	private static final Logger logger = LoggerFactory.getLogger(ProxiedSyncSource.class);
+
 	private Communicator communicator;
 	private Addr addresses[];
 
 	@Override
 	public ILFN2Profile getProfile(ISyncContext context) {
 		Addr preferred = addresses[0];
-		CompletableFuture<Localfullnode2InstanceProfile> f = DataSynchronizationZerocInvoker
-				.invokeGetLocalfullnode2InstanceProfileAsync(communicator, preferred.getIp(), preferred.getPort());
+		CompletableFuture<Localfullnode2InstanceProfile> f;
+		try {
+			f = DataSynchronizationZerocInvoker.invokeGetLocalfullnode2InstanceProfileAsync(communicator,
+					preferred.getIp(), preferred.getPort());
+		} catch (Exception e) {
+			logger.error("error in invoking <DataSynchronizationZeroc> on {}:{}", preferred.getIp(),
+					preferred.getPort());
+			e.printStackTrace();
+			throw new SyncException(e);
+		}
 
 		Localfullnode2InstanceProfile profile;
 		try {
@@ -73,15 +87,12 @@ public class ProxiedSyncSource implements ISyncSource {
 			context.setProfile(nILFN2Profile);
 			return nILFN2Profile;
 
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
+			logger.error("failed in CompletableFuture's get");
 			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SyncException(e);
 		}
 
-		return null;
 	}
 
 	@Override

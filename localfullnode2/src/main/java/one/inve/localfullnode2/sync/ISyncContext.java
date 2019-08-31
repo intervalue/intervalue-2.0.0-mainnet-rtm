@@ -1,10 +1,11 @@
 package one.inve.localfullnode2.sync;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import one.inve.localfullnode2.sync.SynchronizationWork.IterativePart;
-import one.inve.localfullnode2.sync.SynchronizationWork.SynchronizationWorkInitial;
+import one.inve.localfullnode2.sync.SyncWorksInLab.IterativePart;
+import one.inve.localfullnode2.sync.SyncWorksInLab.SynchronizationWorkInitial;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.source.ILFN2Profile;
 import one.inve.localfullnode2.sync.source.ISyncSource;
@@ -24,7 +25,7 @@ import one.inve.localfullnode2.utilities.ReflectionUtils;
  *
  */
 public interface ISyncContext {
-	String SOURCE_PROFILE = "SOURCE_PROFILE";
+	// String SOURCE_PROFILE = "SOURCE_PROFILE";
 
 	ISyncConf getConf();
 
@@ -70,8 +71,14 @@ public interface ISyncContext {
 
 		@Override
 		public IterativePart[] getSynchronizationWorkParts() {
-			// TODO Auto-generated method stub
-			return null;
+			String[] classNames = conf.getSynchronizationWorkClassNames();
+			ArrayList<IterativePart> parts = new ArrayList<>();
+
+			for (String clazzName : classNames) {
+				parts.add((IterativePart) ReflectionUtils.getInstanceByClassName(clazzName));
+			}
+
+			return parts.toArray(new IterativePart[parts.size()]);
 		}
 
 		public <T> void with(Key<T> key, T value) {

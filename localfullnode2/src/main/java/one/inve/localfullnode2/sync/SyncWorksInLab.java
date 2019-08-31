@@ -6,7 +6,7 @@ import one.inve.localfullnode2.sync.source.ILFN2Profile;
  * 
  * Copyright © INVE FOUNDATION. All rights reserved.
  * 
- * @ClassName: SynchronizationWork
+ * @ClassName: SynchronizationWorksInLab
  * @Description: stress that {@code Part} is a device that is capable of running
  *               over and over multiple times
  * @author Francis.Deng
@@ -14,7 +14,7 @@ import one.inve.localfullnode2.sync.source.ILFN2Profile;
  * @date Aug 23, 2019
  *
  */
-public class SynchronizationWork {
+public abstract class SyncWorksInLab {
 
 	protected interface IterativePart {
 		boolean isDone();
@@ -24,7 +24,7 @@ public class SynchronizationWork {
 
 	// initialization is used to reload target host attribution
 	public interface SynchronizationWorkInitial {
-		boolean run(ISyncConf conf, ISyncContext context);
+		boolean run(ISyncContext context);
 	}
 
 	public static abstract class BasedIterativePart implements IterativePart {
@@ -48,15 +48,18 @@ public class SynchronizationWork {
 		}
 	}
 
-	// ensuring the works are executed in single thread.
-	public void run() {
-		ISyncConf conf = DefSyncTemplate.getInstance();
-		ISyncContext context = ISyncContext.getDefault(conf);
+	// In your subclasses,you are able to choose one part or a couple of parts
+	// together for unit test.
+	public void run(ISyncContext context) {
+		if (context == null) {
+			ISyncConf conf = DefSyncTemplate.getInstance();
+			context = ISyncContext.getDefault(conf);
+		}
 
 		SynchronizationWorkInitial initializer = context.getSynchronizationInitializer();
 		IterativePart[] parts = context.getSynchronizationWorkParts();
 
-		if (initializer.run(conf, context)) {// ensure that initialization is complete
+		if (initializer.run(context)) {// ensure that initialization is complete
 			for (IterativePart part : parts) {
 				while (!part.isDone()) {
 					part.runOnce(context);

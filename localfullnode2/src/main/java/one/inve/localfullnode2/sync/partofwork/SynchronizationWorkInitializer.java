@@ -3,9 +3,8 @@ package one.inve.localfullnode2.sync.partofwork;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;
 import one.inve.localfullnode2.store.mysql.NewTableCreate;
-import one.inve.localfullnode2.sync.ISyncConf;
 import one.inve.localfullnode2.sync.ISyncContext;
-import one.inve.localfullnode2.sync.SynchronizationWork.SynchronizationWorkInitial;
+import one.inve.localfullnode2.sync.SyncWorksInLab.SynchronizationWorkInitial;
 import one.inve.localfullnode2.sync.source.ILFN2Profile;
 import one.inve.localfullnode2.sync.source.ISyncSource;
 
@@ -23,7 +22,8 @@ import one.inve.localfullnode2.sync.source.ISyncSource;
 public class SynchronizationWorkInitializer implements SynchronizationWorkInitial {
 
 	@Override
-	public boolean run(ISyncConf conf, ISyncContext context) {
+	public boolean run(ISyncContext context) {
+		// ISyncConf conf = context.getConf();
 		ISyncSource synSource = context.getSyncSourceProxy();
 		ILFN2Profile profile = synSource.getProfile(context);
 

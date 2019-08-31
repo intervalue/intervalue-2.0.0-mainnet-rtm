@@ -1,8 +1,8 @@
 package one.inve.localfullnode2.sync;
 
 import com.zeroc.Ice.Communicator;
+import com.zeroc.Ice.Util;
 
-import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.sync.ISyncContext.DefSyncContext;
 
 /**
@@ -27,7 +27,7 @@ public class DefSyncTemplate implements ISyncConf {
 		return SingletonHelper.INSTANCE;
 	}
 
-	private DefSyncTemplate() {
+	protected DefSyncTemplate() {
 		syncContext = new DefSyncContext(this);
 	}
 
@@ -39,12 +39,13 @@ public class DefSyncTemplate implements ISyncConf {
 	// depending on {@code LocalFullNodeSkeleton}'s initialization
 	@Override
 	public Communicator getCommunicator() {
-		return DepItemsManager.getInstance().attachDirectCommunicator(null).get();
+		// return DepItemsManager.getInstance().attachDirectCommunicator(null).get();
+		return Util.initialize();
 	}
 
 	@Override
 	public String getSynchronizationInitializerClassName() {
-		return "one.inve.localfullnode2.sync.work.SyncInitializer";
+		return "one.inve.localfullnode2.sync.partofwork.SynchronizationWorkInitializer";
 	}
 
 	@Override
