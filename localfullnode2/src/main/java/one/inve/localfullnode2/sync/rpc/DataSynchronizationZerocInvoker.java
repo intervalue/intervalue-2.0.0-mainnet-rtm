@@ -7,13 +7,14 @@ import com.zeroc.Ice.Communicator;
 import one.inve.localfullnode2.rpc.RpcConnectionService;
 import one.inve.localfullnode2.sync.rpc.gen.DataSynchronizationPrx;
 import one.inve.localfullnode2.sync.rpc.gen.DistributedEventObjects;
+import one.inve.localfullnode2.sync.rpc.gen.Localfullnode2InstanceProfile;
 
 /**
  * 
  * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @ClassName: DataSynchronizationZerocInvoker
- * @Description: wrap up the invocation to zeroc
+ * @Description: Wrap up the invocation to zeroc,it works as zeroc client.
  * @author Francis.Deng [francis_xiiiv@163.com]
  * @date Aug 27, 2019
  *
@@ -24,6 +25,14 @@ public class DataSynchronizationZerocInvoker {
 			Communicator communicator, String ip, int port, String distJson) {
 		DataSynchronizationPrx proxy = RpcConnectionService.buildDataSynchronizationProxy(communicator, ip, port);
 		CompletableFuture<DistributedEventObjects> f = proxy.getNotInDistributionEventsAsync(distJson);
+
+		return f;
+	}
+
+	public static CompletableFuture<Localfullnode2InstanceProfile> invokeGetLocalfullnode2InstanceProfileAsync(
+			Communicator communicator, String ip, int port) {
+		DataSynchronizationPrx proxy = RpcConnectionService.buildDataSynchronizationProxy(communicator, ip, port);
+		CompletableFuture<Localfullnode2InstanceProfile> f = proxy.getLocalfullnode2InstanceProfileAsync();
 
 		return f;
 	}

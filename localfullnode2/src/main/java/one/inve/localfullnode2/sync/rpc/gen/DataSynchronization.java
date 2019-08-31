@@ -24,6 +24,8 @@ public interface DataSynchronization extends com.zeroc.Ice.Object
 {
     DistributedEventObjects getNotInDistributionEvents(String distJson, com.zeroc.Ice.Current current);
 
+    Localfullnode2InstanceProfile getLocalfullnode2InstanceProfile(com.zeroc.Ice.Current current);
+
     static final String[] _iceIds =
     {
         "::Ice::Object",
@@ -61,8 +63,20 @@ public interface DataSynchronization extends com.zeroc.Ice.Object
         return inS.setResult(ostr);
     }
 
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_getLocalfullnode2InstanceProfile(DataSynchronization obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        inS.readEmptyParams();
+        Localfullnode2InstanceProfile ret = obj.getLocalfullnode2InstanceProfile(current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        Localfullnode2InstanceProfile.ice_write(ostr, ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
+    }
+
     final static String[] _iceOps =
     {
+        "getLocalfullnode2InstanceProfile",
         "getNotInDistributionEvents",
         "ice_id",
         "ice_ids",
@@ -84,21 +98,25 @@ public interface DataSynchronization extends com.zeroc.Ice.Object
         {
             case 0:
             {
-                return _iceD_getNotInDistributionEvents(this, in, current);
+                return _iceD_getLocalfullnode2InstanceProfile(this, in, current);
             }
             case 1:
             {
-                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
+                return _iceD_getNotInDistributionEvents(this, in, current);
             }
             case 2:
             {
-                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
             }
             case 3:
             {
-                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
             }
             case 4:
+            {
+                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+            }
+            case 5:
             {
                 return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
             }

@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import one.inve.localfullnode2.sync.SynchronizationWork.IterativePart;
-import one.inve.localfullnode2.sync.SynchronizationWork.Whole;
+import one.inve.localfullnode2.sync.SynchronizationWork.SynchronizationWorkInitial;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.source.ISyncSource;
+import one.inve.localfullnode2.sync.source.ProxiedSyncSource;
+import one.inve.localfullnode2.utilities.ReflectionUtils;
 
 /**
  * 
@@ -20,38 +22,43 @@ import one.inve.localfullnode2.sync.source.ISyncSource;
  * @date Aug 23, 2019
  *
  */
-public interface IContext {
+public interface ISyncContext {
 	String SOURCE_PROFILE = "SOURCE_PROFILE";
 
-	IConf getConf();
+	ISyncConf getConf();
 
 	void joinDistribution(Distribution newDist);
 
 	Distribution getDistribution();
 
+	// the class have to extend {@cod ProxiedSyncSource}
 	ISyncSource getSyncSourceProxy();
 
 	IterativePart[] getSynchronizationWorkParts();
 
-	Whole getSynchronizationInitializer();
+	SynchronizationWorkInitial getSynchronizationInitializer();
 
-	static DefContext context = null;
-
-	public static IContext getDefault(IConf conf) {
-		return context;
+	public static ISyncContext getDefault(ISyncConf conf) {
+		return conf.getDefaultContext();
 	}
 
 	public static <T> Key<T> newKey(String identifier, Class<T> type) {
 		return new Key<T>(identifier, type);
 	}
 
-	public class DefContext implements IContext {
+	public static class DefSyncContext implements ISyncContext {
 		private final Map<Key<?>, Object> values = new HashMap<>();
+		private ISyncConf conf;
+
+		private Distribution dist;
+
+		protected DefSyncContext(ISyncConf conf) {
+			this.conf = conf;
+		}
 
 		@Override
-		public IConf getConf() {
-			// TODO Auto-generated method stub
-			return null;
+		public ISyncConf getConf() {
+			return conf;
 		}
 
 		@Override
@@ -81,15 +88,20 @@ public interface IContext {
 		}
 
 		@Override
-		public Whole getSynchronizationInitializer() {
-			// TODO Auto-generated method stub
-			return null;
+		public SynchronizationWorkInitial getSynchronizationInitializer() {
+			String clazzName = conf.getSynchronizationInitializerClassName();
+			return (SynchronizationWorkInitial) ReflectionUtils.getInstanceByClassName(clazzName);
 		}
 
 		@Override
 		public ISyncSource getSyncSourceProxy() {
-			// TODO Auto-generated method stub
-			return null;
+			String clazzName = conf.getSyncSourceProxyClassName();
+			ProxiedSyncSource syncSource = (ProxiedSyncSource) ReflectionUtils.getInstanceByClassName(clazzName);
+
+			syncSource.setCommunicator(conf.getCommunicator());
+			syncSource.setAddresses(conf.getLFNHostList());
+
+			return syncSource;
 		}
 
 	}

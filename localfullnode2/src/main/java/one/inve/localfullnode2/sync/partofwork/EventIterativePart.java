@@ -1,4 +1,4 @@
-package one.inve.localfullnode2.sync.work;
+package one.inve.localfullnode2.sync.partofwork;
 
 import java.math.BigInteger;
 import java.util.concurrent.BlockingQueue;
@@ -8,7 +8,7 @@ import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistence;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependent;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.sync.DistributedObjects;
-import one.inve.localfullnode2.sync.IContext;
+import one.inve.localfullnode2.sync.ISyncContext;
 import one.inve.localfullnode2.sync.SynchronizationWork.BasedIterativePart;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.source.ISyncSource;
@@ -24,10 +24,10 @@ import one.inve.localfullnode2.sync.source.ISyncSourceProfile;
  * @date Aug 24, 2019
  *
  */
-public class EventSynchronizer extends BasedIterativePart {
+public class EventIterativePart extends BasedIterativePart {
 
 	@Override
-	public void runOnce(IContext context) {
+	public void runOnce(ISyncContext context) {
 		Distribution myDist = context.getDistribution();
 		ISyncSource synSource = context.getSyncSourceProxy();
 

@@ -55,6 +55,37 @@ public interface DataSynchronizationPrx extends com.zeroc.Ice.ObjectPrx
         return f;
     }
 
+    default Localfullnode2InstanceProfile getLocalfullnode2InstanceProfile()
+    {
+        return getLocalfullnode2InstanceProfile(com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default Localfullnode2InstanceProfile getLocalfullnode2InstanceProfile(java.util.Map<String, String> context)
+    {
+        return _iceI_getLocalfullnode2InstanceProfileAsync(context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<Localfullnode2InstanceProfile> getLocalfullnode2InstanceProfileAsync()
+    {
+        return _iceI_getLocalfullnode2InstanceProfileAsync(com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<Localfullnode2InstanceProfile> getLocalfullnode2InstanceProfileAsync(java.util.Map<String, String> context)
+    {
+        return _iceI_getLocalfullnode2InstanceProfileAsync(context, false);
+    }
+
+    default com.zeroc.IceInternal.OutgoingAsync<Localfullnode2InstanceProfile> _iceI_getLocalfullnode2InstanceProfileAsync(java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<Localfullnode2InstanceProfile> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "getLocalfullnode2InstanceProfile", null, sync, null);
+        f.invoke(true, context, null, null, istr -> {
+                     Localfullnode2InstanceProfile ret;
+                     ret = Localfullnode2InstanceProfile.ice_read(istr);
+                     return ret;
+                 });
+        return f;
+    }
+
     /**
      * Contacts the remote server to verify that the object implements this type.
      * Raises a local exception if a communication error occurs.

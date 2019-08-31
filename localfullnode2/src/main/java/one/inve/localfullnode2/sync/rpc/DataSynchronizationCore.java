@@ -17,6 +17,7 @@ import one.inve.localfullnode2.sync.measure.Distribution.Column;
 import one.inve.localfullnode2.sync.measure.Range;
 import one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocImpl.IDataSynchronization;
 import one.inve.localfullnode2.sync.rpc.gen.DistributedEventObjects;
+import one.inve.localfullnode2.sync.rpc.gen.Localfullnode2InstanceProfile;
 import one.inve.localfullnode2.sync.rpc.gen.MerkleTreeizedSyncEvent;
 import one.inve.localfullnode2.sync.rpc.gen.SyncEvent;
 import one.inve.localfullnode2.utilities.GenericArray;
@@ -35,8 +36,8 @@ import one.inve.localfullnode2.utilities.merkle.Node;
  * @date: Aug 29, 2019 8:53:04 PM
  * @version: V1.0
  */
-public class DataSynchronizationImpl implements IDataSynchronization {
-	private static final Logger logger = LoggerFactory.getLogger(DataSynchronizationImpl.class);
+public class DataSynchronizationCore implements IDataSynchronization {
+	private static final Logger logger = LoggerFactory.getLogger(DataSynchronizationCore.class);
 
 	private volatile LocalFullNode1GeneralNode node;
 	private long[][] lastSeqs;
@@ -45,10 +46,10 @@ public class DataSynchronizationImpl implements IDataSynchronization {
 	private int shardId;
 	private long creatorId;
 
-	private long[] firstSeqsThisShard;
+	private long[] firstSeqsInThisShard;
 
 	// ensuring that {@code probeFirstSeqs} is executed before.
-	public DataSynchronizationImpl(LocalFullNode1GeneralNode node) {
+	public DataSynchronizationCore(LocalFullNode1GeneralNode node) {
 		this.node = node;
 
 		lastSeqs = node.getLastSeqs();
@@ -57,9 +58,10 @@ public class DataSynchronizationImpl implements IDataSynchronization {
 		shardId = node.getShardId();
 		creatorId = node.getCreatorId();
 
-		firstSeqsThisShard = DepItemsManager.getInstance().attachFirstSeqs(null).get(shardId);
+		firstSeqsInThisShard = DepItemsManager.getInstance().attachFirstSeqs(null).get(shardId);
 	}
 
+	@Override
 	public DistributedEventObjects getNotInDistributionEvents(String distJson) {
 		int _eventSize = 500;// hard-code it
 
@@ -118,6 +120,11 @@ public class DataSynchronizationImpl implements IDataSynchronization {
 		}
 
 		return eb;
+	}
+
+	@Override
+	public Localfullnode2InstanceProfile getLocalfullnode2InstanceProfile() {
+		return new Localfullnode2InstanceProfile(shardId, (int) creatorId, nValue, dbId);
 	}
 
 }

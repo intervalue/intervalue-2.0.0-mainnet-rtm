@@ -14,6 +14,6 @@ import one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocImpl.IDataSynchr
  */
 public class DataSynchronizationFactory {
 	public static IDataSynchronization getDataSynchronizationImpl(LocalFullNode1GeneralNode node) {
-		return new DataSynchronizationImpl(node);
+		return new DataSynchronizationCore(node);
 	}
 }

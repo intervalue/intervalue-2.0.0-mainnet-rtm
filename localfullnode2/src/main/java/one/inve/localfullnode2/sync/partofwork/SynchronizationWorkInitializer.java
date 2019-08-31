@@ -1,10 +1,11 @@
-package one.inve.localfullnode2.sync.work;
+package one.inve.localfullnode2.sync.partofwork;
 
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;
 import one.inve.localfullnode2.store.mysql.NewTableCreate;
-import one.inve.localfullnode2.sync.IContext;
-import one.inve.localfullnode2.sync.SynchronizationWork.Whole;
+import one.inve.localfullnode2.sync.ISyncConf;
+import one.inve.localfullnode2.sync.ISyncContext;
+import one.inve.localfullnode2.sync.SynchronizationWork.SynchronizationWorkInitial;
 import one.inve.localfullnode2.sync.source.ISyncSourceProfile;
 
 /**
@@ -17,10 +18,10 @@ import one.inve.localfullnode2.sync.source.ISyncSourceProfile;
  * @date Aug 24, 2019
  *
  */
-public class SyncInitializer implements Whole {
+public class SynchronizationWorkInitializer implements SynchronizationWorkInitial {
 
 	@Override
-	public boolean run(IContext context) {
+	public boolean run(ISyncConf conf, ISyncContext context) {
 		ISyncSourceProfile srcProfile = context.getSyncSourceProxy().getSyncSourceProfile();
 		MysqlHelper mysqlHelper = new MysqlHelper(srcProfile.getDBId(), 1 == 1);
 

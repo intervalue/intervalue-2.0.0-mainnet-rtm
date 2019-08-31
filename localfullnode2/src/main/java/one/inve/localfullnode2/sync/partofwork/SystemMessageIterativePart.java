@@ -1,4 +1,4 @@
-package one.inve.localfullnode2.sync.work;
+package one.inve.localfullnode2.sync.partofwork;
 
 import java.math.BigInteger;
 import java.util.concurrent.BlockingQueue;
@@ -12,26 +12,16 @@ import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.sync.DistributedObjects;
-import one.inve.localfullnode2.sync.IContext;
+import one.inve.localfullnode2.sync.ISyncContext;
 import one.inve.localfullnode2.sync.SynchronizationWork.BasedIterativePart;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.source.ISyncSource;
 import one.inve.localfullnode2.sync.source.ISyncSourceProfile;
 
-/**
- * 
- * Copyright © INVE FOUNDATION. All rights reserved.
- * 
- * @ClassName: MessageSynchronizer
- * @Description: message synchronizer
- * @author Francis.Deng [francis_xiiiv@163.com]
- * @date Aug 24, 2019
- *
- */
-public class MessageSynchronizer extends BasedIterativePart {
+public class SystemMessageIterativePart extends BasedIterativePart {
 
 	@Override
-	public void runOnce(IContext context) {
+	public void runOnce(ISyncContext context) {
 		Distribution myDist = context.getDistribution();
 		ISyncSource synSource = context.getSyncSourceProxy();
 
@@ -49,16 +39,7 @@ public class MessageSynchronizer extends BasedIterativePart {
 
 			@Override
 			public BlockingQueue<JSONObject> getConsMessageSaveQueue() {
-				StagingArea stagingArea = new StagingArea();
-				stagingArea.createQueue(EventBody.class, StagingArea.ConsMessageSaveQueueName, 10000000, null);
-
-				BlockingQueue<JSONObject> q = stagingArea.getQueue(JSONObject.class,
-						StagingArea.ConsMessageSaveQueueName);
-				for (JSONObject jsonizedMessage : distributedObjects.getObjects()) {
-					q.add(jsonizedMessage);
-				}
-
-				return q;
+				return null;
 			}
 
 			@Override
@@ -83,7 +64,16 @@ public class MessageSynchronizer extends BasedIterativePart {
 
 			@Override
 			public BlockingQueue<JSONObject> getSystemAutoTxSaveQueue() {
-				return null;
+				StagingArea stagingArea = new StagingArea();
+				stagingArea.createQueue(EventBody.class, StagingArea.SystemAutoTxSaveQueueName, 10000000, null);
+
+				BlockingQueue<JSONObject> q = stagingArea.getQueue(JSONObject.class,
+						StagingArea.SystemAutoTxSaveQueueName);
+				for (JSONObject jsonizedMessage : distributedObjects.getObjects()) {
+					q.add(jsonizedMessage);
+				}
+
+				return q;
 			}
 
 		});
