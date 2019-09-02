@@ -2,12 +2,10 @@ package one.inve.localfullnode2.sync.source;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.zeroc.Ice.Communicator;
@@ -114,23 +112,27 @@ public class ProxiedSyncSource implements ISyncSource {
 		DistributedEventObjects deo = null;
 		try {
 			deo = f.get();
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SyncException(e);
 		}
+
 		MerkleTreeizedSyncEvent[] events = deo.events;
 		byte[] rootHash = deo.rootHash;
 		String distJson = deo.distJson;
 		GenericArray<EventBody> eventBodies = new GenericArray<>();
 
-		boolean valid = Arrays.stream(events).parallel().anyMatch((t) -> {
-			String merklePathJson = t.merklePathJson;
+		boolean valid = Arrays.stream(events).anyMatch((t) -> {
+			// due to interface specification change
+			// String merklePathJson = t.merklePathJson;
+			byte[][] merklePath = t.merklePath;
+			String[] merklePathIndex = t.merklePathIndex;
+
 			SyncEvent syncEvent = t.syncEvent;
 
-			MerklePath mp = JSON.parseObject(merklePathJson, MerklePath.class);
+			// MerklePath mp = JSON.parseObject(merklePathJson, MerklePath.class);
+			MerklePath mp = new MerklePath(merklePath, merklePathIndex);
 			return mp.validate(Mapper.transformFrom(syncEvent), rootHash);
 		});
 
@@ -144,7 +146,9 @@ public class ProxiedSyncSource implements ISyncSource {
 			eventBodies.append(eb);
 		});
 
-		return new DistributedObjects<EventBody>(JSON.parseObject(distJson, Distribution.class),
+//		return new DistributedObjects<EventBody>(JSON.parseObject(distJson, Distribution.class),
+//				eventBodies.toArray(new EventBody[eventBodies.length()]));
+		return new DistributedObjects<EventBody>(gson.fromJson(distJson, Distribution.class),
 				eventBodies.toArray(new EventBody[eventBodies.length()]));
 	}
 

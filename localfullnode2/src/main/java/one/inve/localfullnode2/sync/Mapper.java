@@ -1,6 +1,7 @@
 package one.inve.localfullnode2.sync;
 
 import java.time.Instant;
+import java.util.Arrays;
 
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.sync.rpc.gen.SyncEvent;
@@ -67,8 +68,7 @@ public class Mapper {
 
 			@Override
 			public boolean equals(INodeContent content) {
-				// TODO Auto-generated method stub
-				return eb.equals(content);
+				return Arrays.equals(eb.getHash(), content.hash());
 			}
 
 		};

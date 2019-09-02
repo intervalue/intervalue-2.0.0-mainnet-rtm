@@ -3,7 +3,6 @@ package one.inve.localfullnode2.sync.rpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 
@@ -65,7 +64,7 @@ public class DataSynchronizationCore implements IDataSynchronization {
 
 	@Override
 	public DistributedEventObjects getNotInDistributionEvents(String distJson) {
-		int _eventSize = 100;// hard-code it,better solution is to take a threshold like 10k.
+		int _eventSize = 1;// hard-code it,better solution is to take a threshold like 10k.
 		Distribution nextDist;
 
 		// Distribution requestSideDist = JSON.parseObject(distJson,
@@ -85,7 +84,7 @@ public class DataSynchronizationCore implements IDataSynchronization {
 			Column c = nextDist.getColumns()[(int) creator];
 			Range r = c.getRanges().get(0);
 			for (Long l : r) {
-				EventBody eb = getEventBody(shardId, creatorId, l.longValue());
+				EventBody eb = getEventBody(shardId, creator, l.longValue());
 				if (eb != null)
 					eventBodyArray.append(eb);
 			}
@@ -115,7 +114,11 @@ public class DataSynchronizationCore implements IDataSynchronization {
 
 			SyncEvent target = new SyncEvent();
 			Mapper.copyProperties(eventBodies[index], target, false);
-			merkleTreeizedSyncEvents.append(new MerkleTreeizedSyncEvent(target, JSON.toJSONString(mp)));
+
+			// due to interface specification change
+			// merkleTreeizedSyncEvents.append(new MerkleTreeizedSyncEvent(target,
+			// gson.toJson(mp)));
+			merkleTreeizedSyncEvents.append(new MerkleTreeizedSyncEvent(target, mp.path(), mp.index()));
 		}
 
 		return merkleTreeizedSyncEvents.toArray(new MerkleTreeizedSyncEvent[merkleTreeizedSyncEvents.length()]);

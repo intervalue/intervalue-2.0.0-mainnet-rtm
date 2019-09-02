@@ -20,9 +20,9 @@
 
 package one.inve.localfullnode2.sync.rpc.gen;
 
-public final class MerkleTreeizedSyncEventListHelper
+public final class BytesArrayHelper
 {
-    public static void write(com.zeroc.Ice.OutputStream ostr, MerkleTreeizedSyncEvent[] v)
+    public static void write(com.zeroc.Ice.OutputStream ostr, byte[][] v)
     {
         if(v == null)
         {
@@ -33,24 +33,24 @@ public final class MerkleTreeizedSyncEventListHelper
             ostr.writeSize(v.length);
             for(int i0 = 0; i0 < v.length; i0++)
             {
-                MerkleTreeizedSyncEvent.ice_write(ostr, v[i0]);
+                ostr.writeByteSeq(v[i0]);
             }
         }
     }
 
-    public static MerkleTreeizedSyncEvent[] read(com.zeroc.Ice.InputStream istr)
+    public static byte[][] read(com.zeroc.Ice.InputStream istr)
     {
-        final MerkleTreeizedSyncEvent[] v;
-        final int len0 = istr.readAndCheckSeqSize(76);
-        v = new MerkleTreeizedSyncEvent[len0];
+        final byte[][] v;
+        final int len0 = istr.readAndCheckSeqSize(1);
+        v = new byte[len0][];
         for(int i0 = 0; i0 < len0; i0++)
         {
-            v[i0] = MerkleTreeizedSyncEvent.ice_read(istr);
+            v[i0] = istr.readByteSeq();
         }
         return v;
     }
 
-    public static void write(com.zeroc.Ice.OutputStream ostr, int tag, java.util.Optional<MerkleTreeizedSyncEvent[]> v)
+    public static void write(com.zeroc.Ice.OutputStream ostr, int tag, java.util.Optional<byte[][]> v)
     {
         if(v != null && v.isPresent())
         {
@@ -58,23 +58,23 @@ public final class MerkleTreeizedSyncEventListHelper
         }
     }
 
-    public static void write(com.zeroc.Ice.OutputStream ostr, int tag, MerkleTreeizedSyncEvent[] v)
+    public static void write(com.zeroc.Ice.OutputStream ostr, int tag, byte[][] v)
     {
         if(ostr.writeOptional(tag, com.zeroc.Ice.OptionalFormat.FSize))
         {
             int pos = ostr.startSize();
-            MerkleTreeizedSyncEventListHelper.write(ostr, v);
+            BytesArrayHelper.write(ostr, v);
             ostr.endSize(pos);
         }
     }
 
-    public static java.util.Optional<MerkleTreeizedSyncEvent[]> read(com.zeroc.Ice.InputStream istr, int tag)
+    public static java.util.Optional<byte[][]> read(com.zeroc.Ice.InputStream istr, int tag)
     {
         if(istr.readOptional(tag, com.zeroc.Ice.OptionalFormat.FSize))
         {
             istr.skip(4);
-            MerkleTreeizedSyncEvent[] v;
-            v = MerkleTreeizedSyncEventListHelper.read(istr);
+            byte[][] v;
+            v = BytesArrayHelper.read(istr);
             return java.util.Optional.of(v);
         }
         else

@@ -3,12 +3,16 @@ package one.inve.localfullnode2.sync.partofwork;
 import java.math.BigInteger;
 import java.util.concurrent.BlockingQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistence;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependent;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.sync.DistributedObjects;
 import one.inve.localfullnode2.sync.ISyncContext;
+import one.inve.localfullnode2.sync.SyncException;
 import one.inve.localfullnode2.sync.SyncWorksInLab.BasedIterativePart;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.source.ILFN2Profile;
@@ -25,15 +29,25 @@ import one.inve.localfullnode2.sync.source.ISyncSource;
  *
  */
 public class EventIterativePart extends BasedIterativePart {
+	private static final Logger logger = LoggerFactory.getLogger(EventIterativePart.class);
 
 	@Override
 	public void runOnce(ISyncContext context) {
 		Distribution myDist = context.getDistribution();
 		ISyncSource synSource = context.getSyncSourceProxy();
+		DistributedObjects<EventBody> distributedObjects;
 
 		ILFN2Profile profile = getSourceProfile(context);
 
-		DistributedObjects<EventBody> distributedObjects = synSource.getNotInDistributionEvents(myDist);
+		try {
+			distributedObjects = synSource.getNotInDistributionEvents(myDist);
+		} catch (Exception e) {
+			logger.error("error in retrieving {}", myDist);
+			e.printStackTrace();
+
+			throw new SyncException(e);
+		}
+
 		if (distributedObjects.getObjects() == null || distributedObjects.getObjects().length == 0) {
 			done = true;
 			return;

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import one.inve.core.EventBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +16,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.contract.MVM.WorldStateService;
+import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
@@ -49,7 +49,7 @@ public class DbUtils {
 	}
 
 	public static List<EventBody> queryEventAfterSeq(int shardId, long creatorId, long creatorSeq,
-													 LocalFullNode1GeneralNode node) {
+			LocalFullNode1GeneralNode node) {
 		try {
 			int selfId = (int) node.getCreatorId();
 			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters().dbId);
@@ -777,9 +777,11 @@ public class DbUtils {
 		// 验证
 		boolean valid = TxVerifyUtils.verifyCreationMessage(o, new RocksJavaUtil(node.nodeParameters().dbId),
 				node.nodeParameters().multiple);
-		if (!valid) {
-			throw new RuntimeException("Creation tx is illegal.");
-		}
+
+		// temporal comment
+//		if (!valid) {
+//			throw new RuntimeException("Creation tx is illegal.");
+//		}
 		String fromAddress = o.getString("fromAddress");
 		String toAddress = o.getString("toAddress");
 		String signature = o.getString("signature");

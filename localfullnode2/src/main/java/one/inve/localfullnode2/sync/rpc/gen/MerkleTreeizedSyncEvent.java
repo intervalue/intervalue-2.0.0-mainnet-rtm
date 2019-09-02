@@ -25,18 +25,20 @@ public class MerkleTreeizedSyncEvent implements java.lang.Cloneable,
 {
     public SyncEvent syncEvent;
 
-    public String merklePathJson;
+    public byte[][] merklePath;
+
+    public String[] merklePathIndex;
 
     public MerkleTreeizedSyncEvent()
     {
         this.syncEvent = new SyncEvent();
-        this.merklePathJson = "";
     }
 
-    public MerkleTreeizedSyncEvent(SyncEvent syncEvent, String merklePathJson)
+    public MerkleTreeizedSyncEvent(SyncEvent syncEvent, byte[][] merklePath, String[] merklePathIndex)
     {
         this.syncEvent = syncEvent;
-        this.merklePathJson = merklePathJson;
+        this.merklePath = merklePath;
+        this.merklePathIndex = merklePathIndex;
     }
 
     public boolean equals(java.lang.Object rhs)
@@ -60,12 +62,13 @@ public class MerkleTreeizedSyncEvent implements java.lang.Cloneable,
                     return false;
                 }
             }
-            if(this.merklePathJson != r.merklePathJson)
+            if(!java.util.Arrays.equals(this.merklePath, r.merklePath))
             {
-                if(this.merklePathJson == null || r.merklePathJson == null || !this.merklePathJson.equals(r.merklePathJson))
-                {
-                    return false;
-                }
+                return false;
+            }
+            if(!java.util.Arrays.equals(this.merklePathIndex, r.merklePathIndex))
+            {
+                return false;
             }
 
             return true;
@@ -79,7 +82,8 @@ public class MerkleTreeizedSyncEvent implements java.lang.Cloneable,
         int h_ = 5381;
         h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, "::one::inve::localfullnode2::sync::rpc::gen::MerkleTreeizedSyncEvent");
         h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, syncEvent);
-        h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, merklePathJson);
+        h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, merklePath);
+        h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, merklePathIndex);
         return h_;
     }
 
@@ -100,13 +104,15 @@ public class MerkleTreeizedSyncEvent implements java.lang.Cloneable,
     public void ice_writeMembers(com.zeroc.Ice.OutputStream ostr)
     {
         SyncEvent.ice_write(ostr, this.syncEvent);
-        ostr.writeString(this.merklePathJson);
+        BytesArrayHelper.write(ostr, this.merklePath);
+        ostr.writeStringSeq(this.merklePathIndex);
     }
 
     public void ice_readMembers(com.zeroc.Ice.InputStream istr)
     {
         this.syncEvent = SyncEvent.ice_read(istr);
-        this.merklePathJson = istr.readString();
+        this.merklePath = BytesArrayHelper.read(istr);
+        this.merklePathIndex = istr.readStringSeq();
     }
 
     static public void ice_write(com.zeroc.Ice.OutputStream ostr, MerkleTreeizedSyncEvent v)
@@ -161,5 +167,5 @@ public class MerkleTreeizedSyncEvent implements java.lang.Cloneable,
 
     private static final MerkleTreeizedSyncEvent _nullMarshalValue = new MerkleTreeizedSyncEvent();
 
-    public static final long serialVersionUID = 795991964L;
+    public static final long serialVersionUID = 1982836264L;
 }
