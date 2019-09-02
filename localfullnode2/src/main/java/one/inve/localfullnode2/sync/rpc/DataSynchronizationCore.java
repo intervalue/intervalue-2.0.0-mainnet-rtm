@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.dep.DepItemsManager;
@@ -12,8 +13,8 @@ import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.sync.Mapper;
+import one.inve.localfullnode2.sync.measure.Column;
 import one.inve.localfullnode2.sync.measure.Distribution;
-import one.inve.localfullnode2.sync.measure.Distribution.Column;
 import one.inve.localfullnode2.sync.measure.Range;
 import one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocImpl.IDataSynchronization;
 import one.inve.localfullnode2.sync.rpc.gen.DistributedEventObjects;
@@ -38,6 +39,7 @@ import one.inve.localfullnode2.utilities.merkle.Node;
  */
 public class DataSynchronizationCore implements IDataSynchronization {
 	private static final Logger logger = LoggerFactory.getLogger(DataSynchronizationCore.class);
+	private Gson gson = new Gson();
 
 	private volatile LocalFullNode1GeneralNode node;
 	private long[][] lastSeqs;
@@ -63,10 +65,19 @@ public class DataSynchronizationCore implements IDataSynchronization {
 
 	@Override
 	public DistributedEventObjects getNotInDistributionEvents(String distJson) {
-		int _eventSize = 500;// hard-code it
+		int _eventSize = 100;// hard-code it,better solution is to take a threshold like 10k.
+		Distribution nextDist;
 
-		Distribution requestSideDist = JSON.parseObject(distJson, Distribution.class);
-		Distribution nextDist = requestSideDist.next(_eventSize);
+		// Distribution requestSideDist = JSON.parseObject(distJson,
+		// Distribution.class);
+		Distribution requestSideDist = gson.fromJson(distJson, Distribution.class);
+
+		if (requestSideDist.isNull()) {
+			nextDist = Distribution.build(nValue, firstSeqsInThisShard, _eventSize);
+		} else {
+			nextDist = requestSideDist.next(_eventSize);
+		}
+
 		GenericArray<EventBody> eventBodyArray = new GenericArray<>();
 
 		// extract events from next distribution
@@ -90,7 +101,9 @@ public class DataSynchronizationCore implements IDataSynchronization {
 		MerkleTreeizedSyncEvent[] merkleTreeizedSyncEvents = buildMerkleTreeizedSyncEvents(mt, nodeContents,
 				eventBodyArray.toArray(new EventBody[eventBodyArray.length()]));
 
-		return new DistributedEventObjects(JSON.toJSONString(nextDist), merkleTreeizedSyncEvents, rootHash);
+		// return new DistributedEventObjects(JSON.toJSONString(nextDist),
+		// merkleTreeizedSyncEvents, rootHash);
+		return new DistributedEventObjects(gson.toJson(nextDist), merkleTreeizedSyncEvents, rootHash);
 	}
 
 	public MerkleTreeizedSyncEvent[] buildMerkleTreeizedSyncEvents(MerkleTree mt, INodeContent[] nodeContents,

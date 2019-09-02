@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.zeroc.Ice.Communicator;
 
 import one.inve.core.EventBody;
@@ -97,15 +98,19 @@ public class ProxiedSyncSource implements ISyncSource {
 
 	@Override
 	public DistributedObjects<EventBody> getNotInDistributionEvents(Distribution dist) {
+		Gson gson = new Gson();
 		Addr preferred = addresses[0];
 		Addr candidate = null;
 		if (addresses.length > 1) {
 			candidate = addresses[1];
 		}
 
+//		CompletableFuture<DistributedEventObjects> f = DataSynchronizationZerocInvoker
+//				.invokeGetNotInDistributionEventsAsync(communicator, preferred.getIp(), preferred.getPort(),
+//						JSON.toJSONString(dist));
 		CompletableFuture<DistributedEventObjects> f = DataSynchronizationZerocInvoker
 				.invokeGetNotInDistributionEventsAsync(communicator, preferred.getIp(), preferred.getPort(),
-						JSON.toJSONString(dist));
+						gson.toJson(dist));
 		DistributedEventObjects deo = null;
 		try {
 			deo = f.get();
