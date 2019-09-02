@@ -23,6 +23,8 @@ public class GenericArray<E> implements Iterable<E> {
 	}
 
 	public int length() {
+		if (elements == null)
+			return 0;
 		return elements.length;
 	}
 
@@ -48,7 +50,9 @@ public class GenericArray<E> implements Iterable<E> {
 
 			@Override
 			public E next() {
-				return (E) get(position++);
+				E e = get(position++);
+				// return (E) get(position++);
+				return e;
 			}
 
 		};
