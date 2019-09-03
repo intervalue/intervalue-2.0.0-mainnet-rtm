@@ -121,35 +121,41 @@ public class ProxiedSyncSource implements ISyncSource {
 		MerkleTreeizedSyncEvent[] events = deo.events;
 		byte[] rootHash = deo.rootHash;
 		String distJson = deo.distJson;
+		Distribution nextDist = gson.fromJson(distJson, Distribution.class);
 		GenericArray<EventBody> eventBodies = new GenericArray<>();
 
-		boolean valid = Arrays.stream(events).anyMatch((t) -> {
-			// due to interface specification change
-			// String merklePathJson = t.merklePathJson;
-			byte[][] merklePath = t.merklePath;
-			String[] merklePathIndex = t.merklePathIndex;
+		if (!nextDist.isNull()) {
+			boolean valid = Arrays.stream(events).anyMatch((t) -> {
+				// due to interface specification change
+				// String merklePathJson = t.merklePathJson;
+				byte[][] merklePath = t.merklePath;
+				String[] merklePathIndex = t.merklePathIndex;
 
-			SyncEvent syncEvent = t.syncEvent;
+				SyncEvent syncEvent = t.syncEvent;
 
-			// MerklePath mp = JSON.parseObject(merklePathJson, MerklePath.class);
-			MerklePath mp = new MerklePath(merklePath, merklePathIndex);
-			return mp.validate(Mapper.transformFrom(syncEvent), rootHash);
-		});
+				// MerklePath mp = JSON.parseObject(merklePathJson, MerklePath.class);
+				MerklePath mp = new MerklePath(merklePath, merklePathIndex);
+				return mp.validate(Mapper.transformFrom(syncEvent), rootHash);
+			});
 
-		if (!valid)
-			throw new RuntimeException("failed in merkle tree validation");
+			if (!valid)
+				throw new RuntimeException("failed in merkle tree validation");
 
-		Arrays.stream(events).parallel().forEach(t -> {
-			EventBody eb = new EventBody();
-			Mapper.copyProperties(eb, t.syncEvent, true);
+			Arrays.stream(events).parallel().forEach(t -> {
+				EventBody eb = new EventBody();
+				Mapper.copyProperties(eb, t.syncEvent, true);
 
-			eventBodies.append(eb);
-		});
+				eventBodies.append(eb);
+			});
 
-//		return new DistributedObjects<EventBody>(JSON.parseObject(distJson, Distribution.class),
-//				eventBodies.toArray(new EventBody[eventBodies.length()]));
-		return new DistributedObjects<EventBody>(gson.fromJson(distJson, Distribution.class),
-				eventBodies.toArray(new EventBody[eventBodies.length()]));
+//			return new DistributedObjects<EventBody>(JSON.parseObject(distJson, Distribution.class),
+//					eventBodies.toArray(new EventBody[eventBodies.length()]));
+			return new DistributedObjects<EventBody>(gson.fromJson(distJson, Distribution.class),
+					eventBodies.toArray(new EventBody[eventBodies.length()]));
+		} else {
+			return null;
+		}
+
 	}
 
 	@Override

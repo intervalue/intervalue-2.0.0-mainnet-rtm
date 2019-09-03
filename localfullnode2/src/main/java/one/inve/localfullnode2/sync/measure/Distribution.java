@@ -155,8 +155,17 @@ public class Distribution {
 		}
 	}
 
+	@Override
 	public String toString() {
-		return JSON.toJSONString(this);
+		StringBuffer sb = new StringBuffer();
+		sb.append("Distribution {");
+
+		for (Column column : columns) {
+			sb.append(column.toString() + " ");
+		}
+
+		sb.append("}");
+		return sb.toString();
 	}
 
 	public static Distribution fromString(String text) {

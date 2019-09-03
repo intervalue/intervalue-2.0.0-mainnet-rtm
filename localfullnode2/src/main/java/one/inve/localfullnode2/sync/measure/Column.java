@@ -45,4 +45,18 @@ public class Column {
 
 		return new Range(hasMaxStop.getStop(), hasMaxStop.getStop() + step);
 	}
+
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("Column <");
+
+		for (Range range : ranges) {
+			sb.append(range.toString() + " ");
+		}
+
+		sb.append(">");
+		return sb.toString();
+	}
+
 }

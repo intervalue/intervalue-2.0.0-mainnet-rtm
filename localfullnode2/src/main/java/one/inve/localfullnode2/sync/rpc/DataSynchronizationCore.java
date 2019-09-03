@@ -64,7 +64,7 @@ public class DataSynchronizationCore implements IDataSynchronization {
 
 	@Override
 	public DistributedEventObjects getNotInDistributionEvents(String distJson) {
-		int _eventSize = 1;// hard-code it,better solution is to take a threshold like 10k.
+		int _eventSize = 100;// hard-code it,better solution is to take a threshold like 10k.
 		Distribution nextDist;
 
 		// Distribution requestSideDist = JSON.parseObject(distJson,
@@ -85,24 +85,34 @@ public class DataSynchronizationCore implements IDataSynchronization {
 			Range r = c.getRanges().get(0);
 			for (Long l : r) {
 				EventBody eb = getEventBody(shardId, creator, l.longValue());
-				if (eb != null)
+				if (eb != null) {
 					eventBodyArray.append(eb);
+				} else {
+					r.setStop(l);
+					break;
+				}
+
 			}
 		}
 
-		// compute rootHash and INodeContent array
-		INodeContent[] nodeContents = Mapper.transformFromArray(eventBodyArray);
-		MerkleTree mt = MerkleTree.create(nodeContents);
-		Node root = mt.getRoot();
-		byte[] rootHash = root.getHash();
+		if (eventBodyArray.length() != 0) {
+			// compute rootHash and INodeContent array
+			INodeContent[] nodeContents = Mapper.transformFromArray(eventBodyArray);
+			MerkleTree mt = MerkleTree.create(nodeContents);
+			Node root = mt.getRoot();
+			byte[] rootHash = root.getHash();
 
-		// compute MerkleTreeizedSyncEvent array
-		MerkleTreeizedSyncEvent[] merkleTreeizedSyncEvents = buildMerkleTreeizedSyncEvents(mt, nodeContents,
-				eventBodyArray.toArray(new EventBody[eventBodyArray.length()]));
+			// compute MerkleTreeizedSyncEvent array
+			MerkleTreeizedSyncEvent[] merkleTreeizedSyncEvents = buildMerkleTreeizedSyncEvents(mt, nodeContents,
+					eventBodyArray.toArray(new EventBody[eventBodyArray.length()]));
 
-		// return new DistributedEventObjects(JSON.toJSONString(nextDist),
-		// merkleTreeizedSyncEvents, rootHash);
-		return new DistributedEventObjects(gson.toJson(nextDist), merkleTreeizedSyncEvents, rootHash);
+			// return new DistributedEventObjects(JSON.toJSONString(nextDist),
+			// merkleTreeizedSyncEvents, rootHash);
+			return new DistributedEventObjects(gson.toJson(nextDist), merkleTreeizedSyncEvents, rootHash);
+		} else {
+			return new DistributedEventObjects(gson.toJson(new Distribution(nValue)), null, null);
+		}
+
 	}
 
 	public MerkleTreeizedSyncEvent[] buildMerkleTreeizedSyncEvents(MerkleTree mt, INodeContent[] nodeContents,

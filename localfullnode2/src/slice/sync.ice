@@ -9,6 +9,10 @@ module one{
 						sequence<byte> Signature;
 						sequence<byte> HashnetHash;
 						sequence<byte> MerkleTreeRootHash;
+						
+						sequence<byte> Bytes;
+						sequence<Bytes> BytesArray;
+						sequence<string> StringArray;
 
 						struct SyncEvent {
 							int shardId;
@@ -31,7 +35,10 @@ module one{
 						
 						struct MerkleTreeizedSyncEvent {
 							SyncEvent syncEvent;
-							string merklePathJson;
+							//string merklePathJson;
+							BytesArray merklePath;
+							StringArray merklePathIndex;
+							
 						};
 						
 						sequence<MerkleTreeizedSyncEvent> MerkleTreeizedSyncEventList;	
@@ -43,9 +50,10 @@ module one{
 						};
 						
 						struct Localfullnode2InstanceProfile {
-							string shardId;
-							string creatorId;
-							string nValue;						
+							int shardId;
+							int creatorId;
+							int nValue;	
+							string dbId;					
 						};
 
 						interface DataSynchronization {

@@ -34,8 +34,10 @@ public class Mapper {
 			destination.isFamous = source.isFamous();
 			destination.hash = source.getHash();
 			destination.generation = source.getGeneration();
-			destination.consensusTimestampSecond = source.getConsTimestamp().getEpochSecond();
-			destination.consensusTimestampNano = source.getConsTimestamp().getNano();
+			destination.consensusTimestampSecond = source.getConsTimestamp() == null ? -1
+					: source.getConsTimestamp().getEpochSecond();
+			destination.consensusTimestampNano = source.getConsTimestamp() == null ? -1
+					: source.getConsTimestamp().getNano();
 			destination.otherHash = source.getOtherHash();
 			destination.parentHash = source.getParentHash();
 		} else {

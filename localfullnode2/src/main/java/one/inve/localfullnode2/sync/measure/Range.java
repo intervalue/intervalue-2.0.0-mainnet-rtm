@@ -47,19 +47,52 @@ public class Range implements Iterable<Long> {
 		return start == stop;
 	}
 
+	public void setStop(long last) {
+		this.stop = last + step;
+	}
+
 	public boolean attemptToMerge(Range r) {
 		boolean overlapped = false;
-		if (start <= r.getStop()) {
-			if (start <= r.getStart())
-				start = r.getStart();
-			overlapped = true;
+		//@formatter:off
+		/**
+		 ----------------
+		                 ++++++++++++++
+		                 
+		 ----------------
+		             ++++++++++++++++++
+		             
+	                 ----------------
+	     +++++++++++++++
+	     
+	                    ----------------
+	     +++++++++++++++	
+	     
+	          
+	                    ----------------
+	     +++++++++++++++++     
+		 */
+		//@formatter:on
+		if (stop >= r.getStart()) {
+			stop = r.getStop();
+			return true;
 		}
 
-		if (stop > r.getStart()) {
-			if (stop <= r.getStop())
-				stop = r.getStop();
-			overlapped = true;
+		if (start <= r.getStop()) {
+			start = r.getStart();
+			return true;
 		}
+
+//		if ((start + step) <= r.getStop()) {
+//			if (start >= r.getStart())
+//				start = r.getStart();
+//			overlapped = true;
+//		}
+//
+//		if (stop > r.getStart()) {
+//			if (stop <= r.getStop())
+//				stop = r.getStop();
+//			overlapped = true;
+//		}
 
 		return overlapped;
 	}
@@ -134,6 +167,11 @@ public class Range implements Iterable<Long> {
 			}
 
 		};
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Rang [%d,%d)", start, stop);
 	}
 
 }
