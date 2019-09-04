@@ -12,6 +12,7 @@ import org.rocksdb.ColumnFamilyOptions;
 import org.rocksdb.DBOptions;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
+import org.rocksdb.RocksIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,6 +129,20 @@ public class RocksJavaUtil implements INosql {
 		} catch (Exception ex) {
 			logger.error("rocksDB.delete异常", ex);
 		}
+	}
+
+	// scan for prefix key - {@code prefix}
+	public Map<byte[], byte[]> startWith(byte[] prefix) {
+		Map<byte[], byte[]> m = new HashMap<>();
+		RocksIterator iter = rocksDB.newIterator();
+		iter.seek(prefix);
+
+		while (iter.isValid()) {
+			m.put(iter.key(), iter.value());
+			iter.next();
+		}
+
+		return m;
 	}
 
 	public static void main(String[] args) {
