@@ -38,6 +38,7 @@ import one.inve.localfullnode2.snapshot.SnapshotSyncConsumer;
 import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependency;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventStoreDependency;
+import one.inve.localfullnode2.sync.msg.MsgIntrospectorDependency;
 
 /**
  * event listener registration.
@@ -115,7 +116,14 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		SnapshotSyncConsumer snapshotSyncConsumer = new SnapshotSyncConsumer();
 		of(snapshotSyncConsumer);
 
+		MsgIntrospectorDependency msgIntrospectorDependency = new MsgIntrospectorDependency();
+		of(msgIntrospectorDependency);
+
 		buildStagingArea();
+	}
+
+	private void of(MsgIntrospectorDependency msgIntrospectorDependency) {
+		DepItemsManager.getInstance().attachDBId(msgIntrospectorDependency);
 	}
 
 	/**
