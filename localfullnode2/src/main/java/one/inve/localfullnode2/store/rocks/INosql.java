@@ -1,5 +1,7 @@
 package one.inve.localfullnode2.store.rocks;
 
+import java.util.Map;
+
 public interface INosql {
 	void set(String key);
 
@@ -10,4 +12,8 @@ public interface INosql {
 	byte[] get(String key);
 
 	void delete(String key);
+
+	Map<byte[], byte[]> startWith(byte[] prefix);
+
+	boolean isPrefixKeyExisted(byte[] prefix);
 }
