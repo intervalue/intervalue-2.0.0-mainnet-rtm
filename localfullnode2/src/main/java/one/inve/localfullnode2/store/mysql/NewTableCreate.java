@@ -20,6 +20,7 @@ import one.inve.localfullnode2.store.rocks.Message;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.store.rocks.TableInfo;
 import one.inve.localfullnode2.store.rocks.TransactionSplit;
+import one.inve.localfullnode2.store.rocks.key.MessageIndexes;
 
 /**
  * 创建新表
@@ -377,6 +378,10 @@ public class NewTableCreate {
 		try {
 			for (Message msg : entityList) {
 				rocksJavaUtil.put(msg.getHash(), JSON.toJSONString(msg));
+
+				// message introspections via rocksdb
+				// by Francis.Deng Sep,4th,2019
+				rocksJavaUtil.put(MessageIndexes.getMessageHashKey(msg.getHash()).getBytes(), new byte[0]);
 			}
 		} catch (Exception ex) {
 			logger.error("addTransactionToRocksDB交易保存到rocksDB报错", ex);
