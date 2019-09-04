@@ -163,6 +163,10 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 			buildShardSortQueue();
 
+			// build indexes for old,rusty messages and system messages in mysql.see {@
+			// Indexer}
+			buildMessagesAndSysMessagesIndexOnce();
+
 			initSnapshotData();
 			// 初始化hashnet数据结构
 			// initHashnet(this);
@@ -407,6 +411,8 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 	abstract protected ILifecycle startMembership(LocalFullNode1GeneralNode node);
 
 	abstract protected ILifecycle performCoreTasks(Hashneter hashneter);
+
+	abstract protected void buildMessagesAndSysMessagesIndexOnce();
 
 	protected void initSnapshotData() {
 		DepItemsManager.getInstance().attachSS(null).setContributions(new HashSet<>());

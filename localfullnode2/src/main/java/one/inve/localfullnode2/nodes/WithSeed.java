@@ -38,7 +38,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * @version: V1.0
  * @version: V2.0 replace inve-cluster with p2p-cluster
  */
-public class WithSeed extends HashneterInitializer {
+public class WithSeed extends Indexer {
 	private static final Logger logger = LoggerFactory.getLogger(WithSeed.class);
 
 	@Override
