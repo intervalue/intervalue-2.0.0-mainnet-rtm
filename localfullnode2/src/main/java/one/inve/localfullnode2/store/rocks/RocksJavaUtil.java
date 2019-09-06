@@ -135,13 +135,17 @@ public class RocksJavaUtil implements INosql {
 	// scan for prefix key - {@code prefix}
 	public Map<byte[], byte[]> startWith(byte[] prefix) {
 		Map<byte[], byte[]> m = new HashMap<>();
+		String pfx = new String(prefix);
 		ReadOptions ro = new ReadOptions();
 		ro.setPrefixSameAsStart(true);
 		RocksIterator iter = rocksDB.newIterator(ro);
 		iter.seek(prefix);
 
 		while (iter.isValid()) {
-			m.put(iter.key(), iter.value());
+			String k = new String(iter.key());
+			if (k != null && k.startsWith(pfx)) {
+				m.put(iter.key(), iter.value());
+			}
 			iter.next();
 		}
 
@@ -163,7 +167,7 @@ public class RocksJavaUtil implements INosql {
 //
 //		return b;
 
-		for (iter.seekForPrev(prefix); iter.isValid(); iter.next()) {
+		for (iter.seek(prefix); iter.isValid(); iter.next()) {
 			String key = new String(iter.key());
 			if (key.startsWith(pfx))
 				return true;
