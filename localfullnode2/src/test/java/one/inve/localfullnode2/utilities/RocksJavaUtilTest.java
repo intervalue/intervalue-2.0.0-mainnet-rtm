@@ -51,5 +51,7 @@ public class RocksJavaUtilTest {
 			System.out.println(new String(entry.getValue()));
 		}
 
+		System.out.println("size : " + m.keySet().size());
+
 	}
 }
