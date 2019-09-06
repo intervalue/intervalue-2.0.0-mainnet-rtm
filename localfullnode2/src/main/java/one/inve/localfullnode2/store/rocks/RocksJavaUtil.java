@@ -145,11 +145,26 @@ public class RocksJavaUtil implements INosql {
 		return m;
 	}
 
+	// decide whether there is a string starting with {@code prefix}
 	public boolean isPrefixKeyExisted(byte[] prefix) {
 		RocksIterator iter = rocksDB.newIterator();
-		iter.seek(prefix);
+		String pfx = new String(prefix);
+//		iter.seek(prefix);
+//
+//		iter.next();
+//
+//		boolean b = iter.isValid();
+//		iter.close();
+//
+//		return b;
 
-		return iter.isValid();
+		for (iter.seek(prefix); iter.isValid(); iter.next()) {
+			String key = new String(iter.key());
+			if (key.startsWith(pfx))
+				return true;
+		}
+
+		return false;
 	}
 
 	public static void main(String[] args) {
