@@ -24,6 +24,10 @@ public interface DataSynchronization extends com.zeroc.Ice.Object
 {
     DistributedEventObjects getNotInDistributionEvents(String distJson, com.zeroc.Ice.Current current);
 
+    DistributedMessageObjects getNotInDistributionMessages(String distJson, com.zeroc.Ice.Current current);
+
+    DistributedSysMessageObjects getNotInDistributionSysMessages(String distJson, com.zeroc.Ice.Current current);
+
     Localfullnode2InstanceProfile getLocalfullnode2InstanceProfile(com.zeroc.Ice.Current current);
 
     static final String[] _iceIds =
@@ -63,6 +67,34 @@ public interface DataSynchronization extends com.zeroc.Ice.Object
         return inS.setResult(ostr);
     }
 
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_getNotInDistributionMessages(DataSynchronization obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_distJson;
+        iceP_distJson = istr.readString();
+        inS.endReadParams();
+        DistributedMessageObjects ret = obj.getNotInDistributionMessages(iceP_distJson, current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        DistributedMessageObjects.ice_write(ostr, ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
+    }
+
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_getNotInDistributionSysMessages(DataSynchronization obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_distJson;
+        iceP_distJson = istr.readString();
+        inS.endReadParams();
+        DistributedSysMessageObjects ret = obj.getNotInDistributionSysMessages(iceP_distJson, current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        DistributedSysMessageObjects.ice_write(ostr, ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
+    }
+
     static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_getLocalfullnode2InstanceProfile(DataSynchronization obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
     {
         com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
@@ -78,6 +110,8 @@ public interface DataSynchronization extends com.zeroc.Ice.Object
     {
         "getLocalfullnode2InstanceProfile",
         "getNotInDistributionEvents",
+        "getNotInDistributionMessages",
+        "getNotInDistributionSysMessages",
         "ice_id",
         "ice_ids",
         "ice_isA",
@@ -106,17 +140,25 @@ public interface DataSynchronization extends com.zeroc.Ice.Object
             }
             case 2:
             {
-                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
+                return _iceD_getNotInDistributionMessages(this, in, current);
             }
             case 3:
             {
-                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
+                return _iceD_getNotInDistributionSysMessages(this, in, current);
             }
             case 4:
             {
-                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
             }
             case 5:
+            {
+                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
+            }
+            case 6:
+            {
+                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+            }
+            case 7:
             {
                 return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
             }

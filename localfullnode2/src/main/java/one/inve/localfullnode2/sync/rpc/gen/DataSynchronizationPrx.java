@@ -55,6 +55,72 @@ public interface DataSynchronizationPrx extends com.zeroc.Ice.ObjectPrx
         return f;
     }
 
+    default DistributedMessageObjects getNotInDistributionMessages(String distJson)
+    {
+        return getNotInDistributionMessages(distJson, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default DistributedMessageObjects getNotInDistributionMessages(String distJson, java.util.Map<String, String> context)
+    {
+        return _iceI_getNotInDistributionMessagesAsync(distJson, context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<DistributedMessageObjects> getNotInDistributionMessagesAsync(String distJson)
+    {
+        return _iceI_getNotInDistributionMessagesAsync(distJson, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<DistributedMessageObjects> getNotInDistributionMessagesAsync(String distJson, java.util.Map<String, String> context)
+    {
+        return _iceI_getNotInDistributionMessagesAsync(distJson, context, false);
+    }
+
+    default com.zeroc.IceInternal.OutgoingAsync<DistributedMessageObjects> _iceI_getNotInDistributionMessagesAsync(String iceP_distJson, java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<DistributedMessageObjects> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "getNotInDistributionMessages", null, sync, null);
+        f.invoke(true, context, null, ostr -> {
+                     ostr.writeString(iceP_distJson);
+                 }, istr -> {
+                     DistributedMessageObjects ret;
+                     ret = DistributedMessageObjects.ice_read(istr);
+                     return ret;
+                 });
+        return f;
+    }
+
+    default DistributedSysMessageObjects getNotInDistributionSysMessages(String distJson)
+    {
+        return getNotInDistributionSysMessages(distJson, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default DistributedSysMessageObjects getNotInDistributionSysMessages(String distJson, java.util.Map<String, String> context)
+    {
+        return _iceI_getNotInDistributionSysMessagesAsync(distJson, context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<DistributedSysMessageObjects> getNotInDistributionSysMessagesAsync(String distJson)
+    {
+        return _iceI_getNotInDistributionSysMessagesAsync(distJson, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<DistributedSysMessageObjects> getNotInDistributionSysMessagesAsync(String distJson, java.util.Map<String, String> context)
+    {
+        return _iceI_getNotInDistributionSysMessagesAsync(distJson, context, false);
+    }
+
+    default com.zeroc.IceInternal.OutgoingAsync<DistributedSysMessageObjects> _iceI_getNotInDistributionSysMessagesAsync(String iceP_distJson, java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<DistributedSysMessageObjects> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "getNotInDistributionSysMessages", null, sync, null);
+        f.invoke(true, context, null, ostr -> {
+                     ostr.writeString(iceP_distJson);
+                 }, istr -> {
+                     DistributedSysMessageObjects ret;
+                     ret = DistributedSysMessageObjects.ice_read(istr);
+                     return ret;
+                 });
+        return f;
+    }
+
     default Localfullnode2InstanceProfile getLocalfullnode2InstanceProfile()
     {
         return getLocalfullnode2InstanceProfile(com.zeroc.Ice.ObjectPrx.noExplicitContext);
