@@ -14,7 +14,9 @@ public class SyncWorksAssemblerTest {
 	public static class SyncConfiguration extends DefSyncTemplate {
 		@Override
 		public String[] getLFNHostList() {
-			return new String[] { "192.168.207.129:35801" };
+			// 192.168.207.129:35801
+			// 172.17.2.120:35795
+			return new String[] { "172.17.2.120:35795" };
 		}
 
 		@Override
