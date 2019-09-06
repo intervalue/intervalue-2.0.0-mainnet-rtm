@@ -163,7 +163,7 @@ public class RocksJavaUtil implements INosql {
 //
 //		return b;
 
-		for (iter.seek(prefix); iter.isValid(); iter.next()) {
+		for (iter.seekForPrev(prefix); iter.isValid(); iter.next()) {
 			String key = new String(iter.key());
 			if (key.startsWith(pfx))
 				return true;
