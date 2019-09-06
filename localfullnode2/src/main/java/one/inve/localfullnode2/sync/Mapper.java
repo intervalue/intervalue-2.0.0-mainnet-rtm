@@ -6,6 +6,7 @@ import java.util.Arrays;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.sync.rpc.gen.SyncEvent;
 import one.inve.localfullnode2.utilities.GenericArray;
+import one.inve.localfullnode2.utilities.Hash;
 import one.inve.localfullnode2.utilities.merkle.INodeContent;
 
 /**
@@ -90,5 +91,31 @@ public class Mapper {
 		}
 
 		return nodeContentArray.toArray(new INodeContent[nodeContentArray.length()]);
+	}
+
+	public static INodeContent[] transformFromStringArray(GenericArray<String> jsons) {
+		GenericArray<INodeContent> nodeContentArray = new GenericArray<>();
+
+		for (String json : jsons) {
+			nodeContentArray.append(transformFrom(json));
+		}
+
+		return nodeContentArray.toArray(new INodeContent[nodeContentArray.length()]);
+	}
+
+	public static INodeContent transformFrom(String json) {
+		return new INodeContent() {
+
+			@Override
+			public byte[] hash() {
+				return Hash.hash(json);
+			}
+
+			@Override
+			public boolean equals(INodeContent content) {
+				return Arrays.equals(hash(), content.hash());
+			}
+
+		};
 	}
 }

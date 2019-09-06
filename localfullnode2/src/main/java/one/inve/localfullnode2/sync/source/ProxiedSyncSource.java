@@ -6,7 +6,6 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.zeroc.Ice.Communicator;
 
@@ -16,11 +15,14 @@ import one.inve.localfullnode2.sync.DistributedObjects;
 import one.inve.localfullnode2.sync.ISyncContext;
 import one.inve.localfullnode2.sync.Mapper;
 import one.inve.localfullnode2.sync.SyncException;
+import one.inve.localfullnode2.sync.measure.ChunkDistribution;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocInvoker;
 import one.inve.localfullnode2.sync.rpc.gen.DistributedEventObjects;
+import one.inve.localfullnode2.sync.rpc.gen.DistributedMessageObjects;
 import one.inve.localfullnode2.sync.rpc.gen.Localfullnode2InstanceProfile;
 import one.inve.localfullnode2.sync.rpc.gen.MerkleTreeizedSyncEvent;
+import one.inve.localfullnode2.sync.rpc.gen.MerkleTreeizedSyncMessage;
 import one.inve.localfullnode2.sync.rpc.gen.SyncEvent;
 import one.inve.localfullnode2.utilities.GenericArray;
 import one.inve.localfullnode2.utilities.merkle.MerklePath;
@@ -95,7 +97,7 @@ public class ProxiedSyncSource implements ISyncSource {
 	}
 
 	@Override
-	public DistributedObjects<EventBody> getNotInDistributionEvents(Distribution dist) {
+	public DistributedObjects<Distribution, EventBody> getNotInDistributionEvents(Distribution dist) {
 		Gson gson = new Gson();
 		Addr preferred = addresses[0];
 		Addr candidate = null;
@@ -150,7 +152,7 @@ public class ProxiedSyncSource implements ISyncSource {
 
 //			return new DistributedObjects<EventBody>(JSON.parseObject(distJson, Distribution.class),
 //					eventBodies.toArray(new EventBody[eventBodies.length()]));
-			return new DistributedObjects<EventBody>(gson.fromJson(distJson, Distribution.class),
+			return new DistributedObjects<Distribution, EventBody>(gson.fromJson(distJson, Distribution.class),
 					eventBodies.toArray(new EventBody[eventBodies.length()]));
 		} else {
 			return null;
@@ -159,7 +161,71 @@ public class ProxiedSyncSource implements ISyncSource {
 	}
 
 	@Override
-	public DistributedObjects<JSONObject> getNotInDistributionMessages(Distribution dist) {
+	public DistributedObjects<ChunkDistribution<String>, String> getNotInDistributionMessages(
+			ChunkDistribution<String> dist) {
+		Gson gson = new Gson();
+		Addr preferred = addresses[0];
+		Addr candidate = null;
+		if (addresses.length > 1) {
+			candidate = addresses[1];
+		}
+
+		CompletableFuture<DistributedMessageObjects> f = DataSynchronizationZerocInvoker
+				.invokeGetNotInDistributionMessagesAsync(communicator, preferred.getIp(), preferred.getPort(),
+						gson.toJson(dist));
+		DistributedMessageObjects deo = null;
+		try {
+			deo = f.get();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new SyncException(e);
+		}
+
+		MerkleTreeizedSyncMessage[] messages = deo.messages;
+		byte[] rootHash = deo.rootHash;
+		String distJson = deo.distJson;
+		Distribution nextDist = gson.fromJson(distJson, Distribution.class);
+		GenericArray<String> messagesJson = new GenericArray<>();
+
+		if (!nextDist.isNull()) {
+			boolean valid = Arrays.stream(messages).anyMatch((t) -> {
+				// due to interface specification change
+				// String merklePathJson = t.merklePathJson;
+				byte[][] merklePath = t.merklePath;
+				String[] merklePathIndex = t.merklePathIndex;
+
+				String messageJson = t.json;
+
+				// MerklePath mp = JSON.parseObject(merklePathJson, MerklePath.class);
+				MerklePath mp = new MerklePath(merklePath, merklePathIndex);
+				return mp.validate(Mapper.transformFrom(messageJson), rootHash);
+			});
+
+			if (!valid)
+				throw new RuntimeException("failed in merkle tree validation");
+
+			Arrays.stream(messages).parallel().forEach(t -> {
+//				EventBody eb = new EventBody();
+//				Mapper.copyProperties(eb, t.syncEvent, true);
+
+				messagesJson.append(t.json);
+			});
+
+//			return new DistributedObjects<EventBody>(JSON.parseObject(distJson, Distribution.class),
+//					eventBodies.toArray(new EventBody[eventBodies.length()]));
+			return new DistributedObjects<ChunkDistribution<String>, String>(
+					gson.fromJson(distJson, ChunkDistribution.class),
+					messagesJson.toArray(new String[messagesJson.length()]));
+		} else {
+			return null;
+		}
+
+	}
+
+	@Override
+	public DistributedObjects<ChunkDistribution<String>, String> getNotInDistributionSysMessages(
+			ChunkDistribution<String> dist) {
 		// TODO Auto-generated method stub
 		return null;
 	}

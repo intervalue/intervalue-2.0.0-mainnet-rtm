@@ -9,6 +9,9 @@ package one.inve.localfullnode2.store.rocks.key;
  * @author: Francis.Deng [francis_xiiiv@163.com]
  * @date: Sep 3, 2019 8:43:14 PM
  * @version: V1.0
+ * 
+ * @see {@code NewTableCreate addTransactionToRocksDB}
+ * @see {@code MessagePersistence saveSystemAutoTx}
  */
 public class MessageIndexes {
 	public static String getMessageHashKey(String messageHash) {
@@ -33,5 +36,31 @@ public class MessageIndexes {
 		}
 
 		return messageHash;
+	}
+
+	// <code>rocksJavaUtil.put(type + id, JSONArray.toJSONString(sysAutoTx));</code>
+	// {@code typeId} worked as sysMessage key
+	public static String getSysMessageTypeIdKey(String typeId) {
+		String key = String.format(getSysMessageTypeIdPrefix() + "%s", typeId);
+
+		return key;
+	}
+
+	public static String getSysMessageTypeIdPrefix() {
+		return "smsgs$t$";
+	}
+
+	public static String getSysMessageTypeId(String typeIdKey) {
+		String typeId = null;
+
+		if (typeIdKey != null) {
+			String parts[] = typeIdKey.split("\\$");
+
+			if (parts != null && parts.length == 3) {
+				typeId = parts[2];
+			}
+		}
+
+		return typeId;
 	}
 }

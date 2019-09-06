@@ -1,7 +1,5 @@
 package one.inve.localfullnode2.sync;
 
-import one.inve.localfullnode2.sync.measure.Distribution;
-
 /**
  * 
  * Copyright © INVE FOUNDATION. All rights reserved.
@@ -14,18 +12,18 @@ import one.inve.localfullnode2.sync.measure.Distribution;
  * @date Aug 23, 2019
  * 
  */
-public class DistributedObjects<O> {
-	private Distribution dist;
+public class DistributedObjects<D, O> {
+	private D dist;
 	private O[] objects;
 //	private byte[] rootHash;
 
-	public DistributedObjects(Distribution dist, O[] objects) {
+	public DistributedObjects(D dist, O[] objects) {
 		super();
 		this.dist = dist;
 		this.objects = objects;
 	}
 
-	public Distribution getDist() {
+	public D getDist() {
 		return dist;
 	}
 

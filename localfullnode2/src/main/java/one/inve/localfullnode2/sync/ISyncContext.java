@@ -6,6 +6,8 @@ import java.util.Map;
 
 import one.inve.localfullnode2.sync.SyncWorksInLab.IterativePart;
 import one.inve.localfullnode2.sync.SyncWorksInLab.SynchronizationWorkInitial;
+import one.inve.localfullnode2.sync.measure.ChunkDistribution;
+import one.inve.localfullnode2.sync.measure.ChunkDistribution.Session;
 import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.source.ILFN2Profile;
 import one.inve.localfullnode2.sync.source.ISyncSource;
@@ -33,6 +35,14 @@ public interface ISyncContext {
 
 	Distribution getDistribution();
 
+	boolean joinMessageDistribution(ChunkDistribution<String> newDist);
+
+	ChunkDistribution<String> getMessageDistribution();
+
+	boolean joinSysMessageDistribution(ChunkDistribution<String> newDist);
+
+	ChunkDistribution<String> getSysMessageDistribution();
+
 	// the class have to extend {@cod ProxiedSyncSource}
 	ISyncSource getSyncSourceProxy();
 
@@ -53,10 +63,14 @@ public interface ISyncContext {
 	}
 
 	public static class DefSyncContext implements ISyncContext {
+		private static ThreadLocal<Session<String>> threadLocal = new ThreadLocal<>();
+
 		private final Map<Key<?>, Object> values = new HashMap<>();
 		private ISyncConf conf;
 
 		private Distribution dist;
+
+		private ChunkDistribution<String> messageDist = null;
 
 		private ILFN2Profile profile;
 
@@ -127,6 +141,49 @@ public interface ISyncContext {
 		@Override
 		public ILFN2Profile getProfile() {
 			return profile;
+		}
+
+		@Override
+		public ChunkDistribution<String> getMessageDistribution() {
+			if (messageDist == null) {
+				messageDist = new ChunkDistribution<>();
+			}
+
+			return messageDist;
+		}
+
+		@Override
+		public ChunkDistribution<String> getSysMessageDistribution() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean joinMessageDistribution(ChunkDistribution<String> newDist) {
+			if (threadLocal.get() == null) {
+				Session<String> ss = (Session<String>) newDist.save();
+				threadLocal.set(ss);
+
+			} else {
+				newDist.restore(threadLocal.get());
+
+			}
+
+			if (!newDist.prepareNextRound(6))// no more elements at all
+				return false;
+//			ArrayList<String> ids = dist.getNextPartOfElements();
+//			System.out.println("client prepares for :" + Arrays.toString(ids.toArray(new String[ids.size()])));
+
+			newDist.cleanUp();
+			messageDist = newDist;
+
+			return true;
+		}
+
+		@Override
+		public boolean joinSysMessageDistribution(ChunkDistribution<String> newDist) {
+			return false;
+
 		}
 
 	}

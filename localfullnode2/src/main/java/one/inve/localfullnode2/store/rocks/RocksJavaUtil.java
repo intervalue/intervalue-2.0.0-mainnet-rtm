@@ -145,6 +145,13 @@ public class RocksJavaUtil implements INosql {
 		return m;
 	}
 
+	public boolean isPrefixKeyExisted(byte[] prefix) {
+		RocksIterator iter = rocksDB.newIterator();
+		iter.seek(prefix);
+
+		return iter.isValid();
+	}
+
 	public static void main(String[] args) {
 		RocksJavaUtil test = new RocksJavaUtil("50");
 		MyThread thread = test.new MyThread();

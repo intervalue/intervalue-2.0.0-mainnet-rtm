@@ -1,10 +1,9 @@
 package one.inve.localfullnode2.sync.source;
 
-import com.alibaba.fastjson.JSONObject;
-
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.sync.DistributedObjects;
 import one.inve.localfullnode2.sync.ISyncContext;
+import one.inve.localfullnode2.sync.measure.ChunkDistribution;
 import one.inve.localfullnode2.sync.measure.Distribution;
 
 /**
@@ -22,7 +21,10 @@ import one.inve.localfullnode2.sync.measure.Distribution;
 public interface ISyncSource {
 	ILFN2Profile getProfile(ISyncContext context);// get localfullnode2 metadata and keep it inside the context
 
-	DistributedObjects<EventBody> getNotInDistributionEvents(Distribution dist);
+	DistributedObjects<Distribution, EventBody> getNotInDistributionEvents(Distribution dist);
 
-	DistributedObjects<JSONObject> getNotInDistributionMessages(Distribution dist);
+	DistributedObjects<ChunkDistribution<String>, String> getNotInDistributionMessages(ChunkDistribution<String> dist);
+
+	DistributedObjects<ChunkDistribution<String>, String> getNotInDistributionSysMessages(
+			ChunkDistribution<String> dist);
 }

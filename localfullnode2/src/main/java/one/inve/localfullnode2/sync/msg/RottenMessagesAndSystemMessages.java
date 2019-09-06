@@ -28,13 +28,15 @@ public class RottenMessagesAndSystemMessages {
 		this.dbId = dbId;
 	}
 
-	public static interface IndexStore {
+	public static interface IndexMessagesStore {
 		void messageHashIndex(String hash);
+	}
 
+	public static interface IndexSystemMessagesStore {
 		void sysMessageTypeIdIndex(String typeId);
 	}
 
-	public void buildMessageHashIndex(IndexStore store) {
+	public void buildMessageHashIndex(IndexMessagesStore store) {
 		MysqlHelper h = new MysqlHelper(dbId, false);
 
 		StringBuilder sql = new StringBuilder("select hash from messages_0");
@@ -51,7 +53,7 @@ public class RottenMessagesAndSystemMessages {
 		}
 	}
 
-	public void buildSysMessageTypeIdIndex(IndexStore store) {
+	public void buildSysMessageTypeIdIndex(IndexSystemMessagesStore store) {
 		MysqlHelper h = new MysqlHelper(dbId, false);
 
 		StringBuilder sql = new StringBuilder("select id,type from system_auto_tx_0");

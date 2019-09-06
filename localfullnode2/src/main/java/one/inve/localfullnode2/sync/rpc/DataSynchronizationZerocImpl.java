@@ -8,6 +8,8 @@ import com.zeroc.Ice.Current;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.sync.rpc.gen.DataSynchronization;
 import one.inve.localfullnode2.sync.rpc.gen.DistributedEventObjects;
+import one.inve.localfullnode2.sync.rpc.gen.DistributedMessageObjects;
+import one.inve.localfullnode2.sync.rpc.gen.DistributedSysMessageObjects;
 import one.inve.localfullnode2.sync.rpc.gen.Localfullnode2InstanceProfile;
 
 /**
@@ -41,11 +43,25 @@ public class DataSynchronizationZerocImpl implements DataSynchronization {
 		DistributedEventObjects getNotInDistributionEvents(String distJson);
 
 		Localfullnode2InstanceProfile getLocalfullnode2InstanceProfile();
+
+		DistributedMessageObjects getNotInDistributionMessages(String distJson);
+
+		DistributedSysMessageObjects getNotInDistributionSysMessages(String distJson);
 	}
 
 	@Override
 	public Localfullnode2InstanceProfile getLocalfullnode2InstanceProfile(Current current) {
 		return dataSynchronizationCore.getLocalfullnode2InstanceProfile();
+	}
+
+	@Override
+	public DistributedMessageObjects getNotInDistributionMessages(String distJson, Current current) {
+		return dataSynchronizationCore.getNotInDistributionMessages(distJson);
+	}
+
+	@Override
+	public DistributedSysMessageObjects getNotInDistributionSysMessages(String distJson, Current current) {
+		return dataSynchronizationCore.getNotInDistributionSysMessages(distJson);
 	}
 
 }

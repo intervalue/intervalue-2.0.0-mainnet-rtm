@@ -36,7 +36,7 @@ public class EventIterativePart extends BasedIterativePart {
 	public void runOnce(ISyncContext context) {
 		Distribution myDist = context.getDistribution();
 		ISyncSource synSource = context.getSyncSourceProxy();
-		DistributedObjects<EventBody> distributedObjects;
+		DistributedObjects<Distribution, EventBody> distributedObjects;
 
 		ILFN2Profile profile = getSourceProfile(context);
 
@@ -111,7 +111,7 @@ public class EventIterativePart extends BasedIterativePart {
 
 		@SuppressWarnings("unused")
 		public NewGossipEventsPersistenceDependency(StagingArea stagingArea,
-				DistributedObjects<EventBody> distributedObjects, ILFN2Profile profile) {
+				DistributedObjects<Distribution, EventBody> distributedObjects, ILFN2Profile profile) {
 //			this.stagingArea = stagingArea;
 //			this.distributedObjects = distributedObjects;
 			this.profile = profile;
@@ -120,7 +120,7 @@ public class EventIterativePart extends BasedIterativePart {
 
 		@SuppressWarnings("unused")
 		private BlockingQueue<EventBody> initBlockingQueue(StagingArea stagingArea,
-				DistributedObjects<EventBody> distributedObjects) {
+				DistributedObjects<Distribution, EventBody> distributedObjects) {
 			stagingArea.createQueue(EventBody.class, StagingArea.EventSaveQueueName, 10000000, null);
 
 			BlockingQueue<EventBody> q = stagingArea.getQueue(EventBody.class, StagingArea.EventSaveQueueName);
