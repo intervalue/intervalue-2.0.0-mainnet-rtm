@@ -44,14 +44,17 @@ public class RocksJavaUtilTest {
 	public void testAllByPrefix() {
 		RocksJavaUtil rocks = new RocksJavaUtil("0_7");
 
-		Map<byte[], byte[]> m = rocks.startWith(MessageIndexes.getMessageHashPrefix().getBytes());
-		for (Entry<byte[], byte[]> entry : m.entrySet()) {
+		Map<byte[], byte[]> m0 = rocks.startWith(MessageIndexes.getMessageHashPrefix().getBytes());
+		for (Entry<byte[], byte[]> entry : m0.entrySet()) {
 			System.out.println(new String(entry.getKey()));
 			System.out.println(" - ");
 			System.out.println(new String(entry.getValue()));
 		}
 
-		System.out.println("size : " + m.keySet().size());
+		Map<byte[], byte[]> m1 = rocks.startWith(MessageIndexes.getSysMessageTypeIdPrefix().getBytes());
+
+		System.out.println("size of message : " + m0.keySet().size());
+		System.out.println("size of sysmessage : " + m1.keySet().size());
 
 	}
 }
