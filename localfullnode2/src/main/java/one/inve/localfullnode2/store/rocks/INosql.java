@@ -16,4 +16,6 @@ public interface INosql {
 	Map<byte[], byte[]> startWith(byte[] prefix);
 
 	boolean isPrefixKeyExisted(byte[] prefix);
+
+	boolean isPrefixKeyMoreThan(byte[] prefix, int isMoreThan);
 }

@@ -154,23 +154,52 @@ public class RocksJavaUtil implements INosql {
 
 	// decide whether there is a string starting with {@code prefix}
 	public boolean isPrefixKeyExisted(byte[] prefix) {
+//		ReadOptions ro = new ReadOptions();
+//		ro.setPrefixSameAsStart(true);
+//		RocksIterator iter = rocksDB.newIterator(ro);
+//		String pfx = new String(prefix);
+////		iter.seek(prefix);
+////
+////		iter.next();
+////
+////		boolean b = iter.isValid();
+////		iter.close();
+////
+////		return b;
+//
+//		for (iter.seek(prefix); iter.isValid(); iter.next()) {
+//			String key = new String(iter.key());
+//			if (key.startsWith(pfx))
+//				return true;
+//		}
+//
+//		return false;
+		return isPrefixKeyMoreThan(prefix, 1);
+	}
+
+	public boolean isPrefixKeyMoreThan(byte[] prefix, int isMoreThan) {
+
 		ReadOptions ro = new ReadOptions();
 		ro.setPrefixSameAsStart(true);
 		RocksIterator iter = rocksDB.newIterator(ro);
 		String pfx = new String(prefix);
-//		iter.seek(prefix);
-//
-//		iter.next();
-//
-//		boolean b = iter.isValid();
-//		iter.close();
-//
-//		return b;
+		int mis = 0;
 
 		for (iter.seek(prefix); iter.isValid(); iter.next()) {
 			String key = new String(iter.key());
-			if (key.startsWith(pfx))
-				return true;
+
+			if (key.startsWith(pfx)) {
+				mis++;
+				if (isMoreThan <= 1) {
+					return true;
+				} else {
+					if (mis >= isMoreThan) {
+						return true;
+					}
+				}
+
+			}
+
 		}
 
 		return false;

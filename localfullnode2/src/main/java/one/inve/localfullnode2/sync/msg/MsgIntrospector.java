@@ -25,7 +25,9 @@ public class MsgIntrospector {
 	}
 
 	public boolean isMsgIndexExisted() {
-		return dep.getNosql().isPrefixKeyExisted(MessageIndexes.getMessageHashPrefix().getBytes());
+		// return
+		// dep.getNosql().isPrefixKeyExisted(MessageIndexes.getMessageHashPrefix().getBytes());
+		return dep.getNosql().isPrefixKeyMoreThan(MessageIndexes.getMessageHashPrefix().getBytes(), 11);
 	}
 
 	public boolean isSysMsgIndexExisted() {

@@ -43,4 +43,10 @@ public class INosqlSnapshotImpl implements INosql {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public boolean isPrefixKeyMoreThan(byte[] prefix, int isMoreThan) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
