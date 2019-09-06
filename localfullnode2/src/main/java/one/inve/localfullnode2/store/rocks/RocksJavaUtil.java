@@ -190,12 +190,8 @@ public class RocksJavaUtil implements INosql {
 
 			if (key.startsWith(pfx)) {
 				mis++;
-				if (isMoreThan <= 1) {
+				if (isMoreThan <= 1 || mis >= isMoreThan) {
 					return true;
-				} else {
-					if (mis >= isMoreThan) {
-						return true;
-					}
 				}
 
 			}
