@@ -82,6 +82,8 @@ public class DataSynchronizationCore implements IDataSynchronization {
 		for (byte[] k : m.keySet()) {
 			String h = MessageIndexes.getMessageHash(new String(k));
 			array.append(h);
+
+			logger.info("parse hash : {}", h);
 		}
 
 		return array.toArray(new String[array.length()]);
