@@ -11,6 +11,7 @@ import org.rocksdb.ColumnFamilyHandle;
 import org.rocksdb.ColumnFamilyOptions;
 import org.rocksdb.DBOptions;
 import org.rocksdb.Options;
+import org.rocksdb.ReadOptions;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksIterator;
 import org.slf4j.Logger;
@@ -134,7 +135,9 @@ public class RocksJavaUtil implements INosql {
 	// scan for prefix key - {@code prefix}
 	public Map<byte[], byte[]> startWith(byte[] prefix) {
 		Map<byte[], byte[]> m = new HashMap<>();
-		RocksIterator iter = rocksDB.newIterator();
+		ReadOptions ro = new ReadOptions();
+		ro.setPrefixSameAsStart(true);
+		RocksIterator iter = rocksDB.newIterator(ro);
 		iter.seek(prefix);
 
 		while (iter.isValid()) {
@@ -147,7 +150,9 @@ public class RocksJavaUtil implements INosql {
 
 	// decide whether there is a string starting with {@code prefix}
 	public boolean isPrefixKeyExisted(byte[] prefix) {
-		RocksIterator iter = rocksDB.newIterator();
+		ReadOptions ro = new ReadOptions();
+		ro.setPrefixSameAsStart(true);
+		RocksIterator iter = rocksDB.newIterator(ro);
 		String pfx = new String(prefix);
 //		iter.seek(prefix);
 //
