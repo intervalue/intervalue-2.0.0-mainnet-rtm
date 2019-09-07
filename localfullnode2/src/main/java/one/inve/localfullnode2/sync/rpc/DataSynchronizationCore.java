@@ -83,19 +83,24 @@ public class DataSynchronizationCore implements IDataSynchronization {
 			String h = MessageIndexes.getMessageHash(new String(k));
 			array.append(h);
 
-			logger.info("parse hash : {}", h);
+			logger.info("parsed hash : {}", h);
 		}
 
 		return array.toArray(new String[array.length()]);
 	}
 
+	// no idea why there is a strange case
 	protected GenericArray<String> getEntities(String[] entityIds) {
 		GenericArray<String> array = new GenericArray<>();
 		for (String entityId : entityIds) {
 			byte[] bytes = rocksJavaUtil.get(entityId);
-			String json = new String(bytes);
+			if (bytes != null) {
+				String json = new String(bytes);
+				array.append(json);
+			} else {
+				logger.error("<{}> key points to non-existence");
+			}
 
-			array.append(json);
 		}
 
 		return array;

@@ -169,7 +169,7 @@ public interface ISyncContext {
 
 			}
 
-			if (!newDist.prepareNextRound(6))// no more elements at all
+			if (!newDist.prepareNextRound(500))// no more elements at all
 				return false;
 //			ArrayList<String> ids = dist.getNextPartOfElements();
 //			System.out.println("client prepares for :" + Arrays.toString(ids.toArray(new String[ids.size()])));

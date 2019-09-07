@@ -1,5 +1,8 @@
 package one.inve.localfullnode2.sync.partofwork;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSON;
 
 import one.inve.localfullnode2.store.rocks.Message;
@@ -23,6 +26,7 @@ import one.inve.localfullnode2.sync.source.ISyncSource;
  *
  */
 public class MessageIterativePart extends BasedIterativePart {
+	private static final Logger logger = LoggerFactory.getLogger(MessageIterativePart.class);
 
 	@Override
 	public void runOnce(ISyncContext context) {
@@ -33,10 +37,10 @@ public class MessageIterativePart extends BasedIterativePart {
 
 		DistributedObjects<ChunkDistribution<String>, String> distributedObjects = synSource
 				.getNotInDistributionMessages(myDist);
-		if (distributedObjects.getObjects() == null || distributedObjects.getObjects().length == 0) {
-			done = true;
-			return;
-		}
+//		if (distributedObjects.getObjects() == null && distributedObjects.getObjects().length == 0) {
+//			done = true;
+//			return;
+//		}
 
 		// handle the batch of Messges
 //		MessagePersistence messagePersistence = new MessagePersistence(new MessagePersistenceDependent() {
@@ -83,12 +87,16 @@ public class MessageIterativePart extends BasedIterativePart {
 //		});
 //		messagePersistence.persisMessages();
 
-		RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(context.getProfile().getDBId());
-		for (String messageJson : distributedObjects.getObjects()) {
-			Message message = JSON.parseObject(messageJson, Message.class);
+		if (distributedObjects.getObjects() != null && distributedObjects.getObjects().length >= 0) {
+			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(context.getProfile().getDBId());
+			for (String messageJson : distributedObjects.getObjects()) {
+				Message message = JSON.parseObject(messageJson, Message.class);
 
-			rocksJavaUtil.put(message.getHash(), JSON.toJSONString(messageJson));
-			rocksJavaUtil.put(MessageIndexes.getMessageHashKey(message.getHash()).getBytes(), new byte[0]);
+				rocksJavaUtil.put(message.getHash(), JSON.toJSONString(messageJson));
+				rocksJavaUtil.put(MessageIndexes.getMessageHashKey(message.getHash()).getBytes(), new byte[0]);
+
+				logger.info("persistence keys : {}", message.getHash());
+			}
 		}
 
 		if (!context.joinMessageDistribution(distributedObjects.getDist())) {

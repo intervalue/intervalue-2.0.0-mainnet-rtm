@@ -185,38 +185,43 @@ public class ProxiedSyncSource implements ISyncSource {
 		MerkleTreeizedSyncMessage[] messages = deo.messages;
 		byte[] rootHash = deo.rootHash;
 		String distJson = deo.distJson;
-		Distribution nextDist = gson.fromJson(distJson, Distribution.class);
+		ChunkDistribution<String> nextDist = gson.fromJson(distJson, ChunkDistribution.class);
 		GenericArray<String> messagesJson = new GenericArray<>();
 
 		if (!nextDist.isNull()) {
-			boolean valid = Arrays.stream(messages).anyMatch((t) -> {
-				// due to interface specification change
-				// String merklePathJson = t.merklePathJson;
-				byte[][] merklePath = t.merklePath;
-				String[] merklePathIndex = t.merklePathIndex;
 
-				String messageJson = t.json;
+			if (rootHash != null && rootHash.length > 0) {
+				boolean valid = Arrays.stream(messages).anyMatch((t) -> {
+					// due to interface specification change
+					// String merklePathJson = t.merklePathJson;
+					byte[][] merklePath = t.merklePath;
+					String[] merklePathIndex = t.merklePathIndex;
 
-				// MerklePath mp = JSON.parseObject(merklePathJson, MerklePath.class);
-				MerklePath mp = new MerklePath(merklePath, merklePathIndex);
-				return mp.validate(Mapper.transformFrom(messageJson), rootHash);
-			});
+					String messageJson = t.json;
 
-			if (!valid)
-				throw new RuntimeException("failed in merkle tree validation");
+					// MerklePath mp = JSON.parseObject(merklePathJson, MerklePath.class);
+					MerklePath mp = new MerklePath(merklePath, merklePathIndex);
+					return mp.validate(Mapper.transformFrom(messageJson), rootHash);
+				});
 
-			Arrays.stream(messages).parallel().forEach(t -> {
-//				EventBody eb = new EventBody();
-//				Mapper.copyProperties(eb, t.syncEvent, true);
+				if (!valid)
+					throw new RuntimeException("failed in merkle tree validation");
+			}
 
-				messagesJson.append(t.json);
-			});
+			if (messages != null && messages.length > 0) {
+				Arrays.stream(messages).parallel().forEach(t -> {
 
-//			return new DistributedObjects<EventBody>(JSON.parseObject(distJson, Distribution.class),
-//					eventBodies.toArray(new EventBody[eventBodies.length()]));
-			return new DistributedObjects<ChunkDistribution<String>, String>(
-					gson.fromJson(distJson, ChunkDistribution.class),
-					messagesJson.toArray(new String[messagesJson.length()]));
+					messagesJson.append(t.json);
+				});
+
+				return new DistributedObjects<ChunkDistribution<String>, String>(
+						gson.fromJson(distJson, ChunkDistribution.class),
+						messagesJson.toArray(new String[messagesJson.length()]));
+			} else {
+				return new DistributedObjects<ChunkDistribution<String>, String>(
+						gson.fromJson(distJson, ChunkDistribution.class), null);
+			}
+
 		} else {
 			return null;
 		}

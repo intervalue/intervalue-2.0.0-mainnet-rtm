@@ -24,7 +24,7 @@ public class ChunkDistribution<T> {
 	}
 
 	public boolean isNull() {
-		return nextPartOfElements == null || nextPartOfElements.size() <= 0;
+		return (allElementsInChunk == null) && (nextPartOfElements == null || nextPartOfElements.size() <= 0);
 	}
 
 	// client picked up a lot of element out of {@code allElementsInChunk},put them
