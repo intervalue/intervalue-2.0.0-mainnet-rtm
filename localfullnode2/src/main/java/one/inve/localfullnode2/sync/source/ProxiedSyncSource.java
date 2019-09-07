@@ -20,9 +20,11 @@ import one.inve.localfullnode2.sync.measure.Distribution;
 import one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocInvoker;
 import one.inve.localfullnode2.sync.rpc.gen.DistributedEventObjects;
 import one.inve.localfullnode2.sync.rpc.gen.DistributedMessageObjects;
+import one.inve.localfullnode2.sync.rpc.gen.DistributedSysMessageObjects;
 import one.inve.localfullnode2.sync.rpc.gen.Localfullnode2InstanceProfile;
 import one.inve.localfullnode2.sync.rpc.gen.MerkleTreeizedSyncEvent;
 import one.inve.localfullnode2.sync.rpc.gen.MerkleTreeizedSyncMessage;
+import one.inve.localfullnode2.sync.rpc.gen.MerkleTreeizedSyncSysMessage;
 import one.inve.localfullnode2.sync.rpc.gen.SyncEvent;
 import one.inve.localfullnode2.utilities.GenericArray;
 import one.inve.localfullnode2.utilities.merkle.MerklePath;
@@ -231,8 +233,69 @@ public class ProxiedSyncSource implements ISyncSource {
 	@Override
 	public DistributedObjects<ChunkDistribution<String>, String> getNotInDistributionSysMessages(
 			ChunkDistribution<String> dist) {
-		// TODO Auto-generated method stub
-		return null;
+		Gson gson = new Gson();
+		Addr preferred = addresses[0];
+		Addr candidate = null;
+		if (addresses.length > 1) {
+			candidate = addresses[1];
+		}
+
+		CompletableFuture<DistributedSysMessageObjects> f = DataSynchronizationZerocInvoker
+				.invokeGetNotInDistributionSysMessagesAsync(communicator, preferred.getIp(), preferred.getPort(),
+						gson.toJson(dist));
+		DistributedSysMessageObjects deo = null;
+		try {
+			deo = f.get();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new SyncException(e);
+		}
+
+		MerkleTreeizedSyncSysMessage[] sysMessages = deo.sysMessages;
+		byte[] rootHash = deo.rootHash;
+		String distJson = deo.distJson;
+		ChunkDistribution<String> nextDist = gson.fromJson(distJson, ChunkDistribution.class);
+		GenericArray<String> sysMessagesJson = new GenericArray<>();
+
+		if (!nextDist.isNull()) {
+
+			if (rootHash != null && rootHash.length > 0) {
+				boolean valid = Arrays.stream(sysMessages).anyMatch((t) -> {
+					// due to interface specification change
+					// String merklePathJson = t.merklePathJson;
+					byte[][] merklePath = t.merklePath;
+					String[] merklePathIndex = t.merklePathIndex;
+
+					String sysMessageJson = t.json;
+
+					// MerklePath mp = JSON.parseObject(merklePathJson, MerklePath.class);
+					MerklePath mp = new MerklePath(merklePath, merklePathIndex);
+					return mp.validate(Mapper.transformFrom(sysMessageJson), rootHash);
+				});
+
+				if (!valid)
+					throw new RuntimeException("failed in merkle tree validation");
+			}
+
+			if (sysMessages != null && sysMessages.length > 0) {
+				Arrays.stream(sysMessages).parallel().forEach(t -> {
+
+					sysMessagesJson.append(t.json);
+				});
+
+				return new DistributedObjects<ChunkDistribution<String>, String>(
+						gson.fromJson(distJson, ChunkDistribution.class),
+						sysMessagesJson.toArray(new String[sysMessagesJson.length()]));
+			} else {
+				return new DistributedObjects<ChunkDistribution<String>, String>(
+						gson.fromJson(distJson, ChunkDistribution.class), null);
+			}
+
+		} else {
+			return null;
+		}
+
 	}
 
 	public void setCommunicator(Communicator communicator) {

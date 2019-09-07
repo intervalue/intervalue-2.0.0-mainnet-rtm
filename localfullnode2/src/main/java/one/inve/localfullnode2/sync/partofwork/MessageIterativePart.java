@@ -95,7 +95,7 @@ public class MessageIterativePart extends BasedIterativePart {
 				rocksJavaUtil.put(message.getHash(), JSON.toJSONString(messageJson));
 				rocksJavaUtil.put(MessageIndexes.getMessageHashKey(message.getHash()).getBytes(), new byte[0]);
 
-				logger.info("persistence keys : {}", message.getHash());
+				logger.info("persistence message keys : {}", message.getHash());
 			}
 		}
 
