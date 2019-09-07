@@ -137,16 +137,20 @@ public class RocksJavaUtil implements INosql {
 		Map<byte[], byte[]> m = new HashMap<>();
 		String pfx = new String(prefix);
 		ReadOptions ro = new ReadOptions();
-		ro.setPrefixSameAsStart(true);
+//		ro.setPrefixSameAsStart(true);
 		RocksIterator iter = rocksDB.newIterator(ro);
-		iter.seek(prefix);
-
-		while (iter.isValid()) {
-			String k = new String(iter.key());
-			if (k != null && k.startsWith(pfx)) {
-				m.put(iter.key(), iter.value());
-			}
-			iter.next();
+//		iter.seek(prefix);
+//
+//		while (iter.isValid()) {
+//			String k = new String(iter.key());
+//			if (k != null && k.startsWith(pfx)) {
+//				m.put(iter.key(), iter.value());
+//			}
+//			iter.next();
+//		}		
+		// notorious issue in rocksdb
+		for (iter.seek(prefix); iter.isValid() && new String(iter.key()).startsWith(pfx); iter.next()) {
+			m.put(iter.key(), iter.value());
 		}
 
 		return m;
@@ -185,16 +189,16 @@ public class RocksJavaUtil implements INosql {
 		String pfx = new String(prefix);
 		int mis = 0;
 
-		for (iter.seek(prefix); iter.isValid(); iter.next()) {
+		for (iter.seek(prefix); iter.isValid() && new String(iter.key()).startsWith(pfx); iter.next()) {
 			String key = new String(iter.key());
 
-			if (key.startsWith(pfx)) {
-				mis++;
-				if (isMoreThan <= 1 || mis >= isMoreThan) {
-					return true;
-				}
-
+			// if (key.startsWith(pfx)) {
+			mis++;
+			if (isMoreThan <= 1 || mis >= isMoreThan) {
+				return true;
 			}
+
+			// }
 
 		}
 
