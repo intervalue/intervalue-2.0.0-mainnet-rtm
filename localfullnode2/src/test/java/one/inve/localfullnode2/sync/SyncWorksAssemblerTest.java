@@ -23,7 +23,7 @@ public class SyncWorksAssemblerTest {
 		public String[] getSynchronizationWorkClassNames() {
 			// return new String[] {
 			// "one.inve.localfullnode2.sync.partofwork.EventIterativePart" };
-			return new String[] { "one.inve.localfullnode2.sync.partofwork.MessageIterativePart" };
+			return new String[] { "one.inve.localfullnode2.sync.partofwork.SystemMessageIterativePart" };
 		}
 
 	}
