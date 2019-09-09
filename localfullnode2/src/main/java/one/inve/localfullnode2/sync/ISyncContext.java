@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import one.inve.localfullnode2.sync.SyncWorksInLab.IterativePart;
+import one.inve.localfullnode2.sync.SyncWorksInLab.SynchronizationNativeRunnable;
 import one.inve.localfullnode2.sync.SyncWorksInLab.SynchronizationWorkInitial;
 import one.inve.localfullnode2.sync.measure.ChunkDistribution;
 import one.inve.localfullnode2.sync.measure.ChunkDistribution.Session;
@@ -49,6 +50,8 @@ public interface ISyncContext {
 	IterativePart[] getSynchronizationWorkParts();
 
 	SynchronizationWorkInitial getSynchronizationInitializer();
+
+	SynchronizationNativeRunnable getSynchronizationNativeRunner();
 
 	void setProfile(ILFN2Profile profile);
 
@@ -119,6 +122,12 @@ public interface ISyncContext {
 		public SynchronizationWorkInitial getSynchronizationInitializer() {
 			String clazzName = conf.getSynchronizationInitializerClassName();
 			return (SynchronizationWorkInitial) ReflectionUtils.getInstanceByClassName(clazzName);
+		}
+
+		@Override
+		public SynchronizationNativeRunnable getSynchronizationNativeRunner() {
+			String clazzName = conf.getSynchronizationNativeRunnerClassName();
+			return (SynchronizationNativeRunnable) ReflectionUtils.getInstanceByClassName(clazzName);
 		}
 
 		@Override

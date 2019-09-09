@@ -5,7 +5,7 @@ import java.util.concurrent.BlockingQueue;
 
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.sync.ISyncContext;
-import one.inve.localfullnode2.sync.SyncWorksInLab.NativeRunnable;
+import one.inve.localfullnode2.sync.SyncWorksInLab.SynchronizationNativeRunnable;
 import one.inve.localfullnode2.sync.source.ILFN2Profile;
 
 /**
@@ -18,7 +18,7 @@ import one.inve.localfullnode2.sync.source.ILFN2Profile;
  * @date Sep 9, 2019
  *
  */
-public abstract class NativeEventsRunner extends NativeEventsLoaderConsumer implements NativeRunnable {
+public abstract class NativeEventsRunner extends NativeEventsLoaderConsumer implements SynchronizationNativeRunnable {
 
 	private BlockingQueue<EventBody> queue = new ArrayBlockingQueue<>(500);
 
@@ -26,6 +26,8 @@ public abstract class NativeEventsRunner extends NativeEventsLoaderConsumer impl
 	public boolean run(ISyncContext context) {
 		ILFN2Profile profile = context.getProfile();
 		loadEventsInto(queue, profile.getDBId());
+
+		consumeEvents(queue);
 
 		return true;
 	}

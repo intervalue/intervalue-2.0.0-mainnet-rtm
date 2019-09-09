@@ -15,4 +15,6 @@ public interface ISyncConf {
 
 	String[] getLFNHostList();
 
+	String getSynchronizationNativeRunnerClassName();
+
 }

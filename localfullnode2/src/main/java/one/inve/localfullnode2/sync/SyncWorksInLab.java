@@ -27,6 +27,10 @@ public abstract class SyncWorksInLab {
 		boolean run(ISyncContext context);
 	}
 
+	public interface SynchronizationNativeRunnable extends SynchronizationWorkInitial {
+
+	}
+
 	public static abstract class BasedIterativePart implements IterativePart {
 		// private ILFN2Profile sourceProfile;
 

@@ -65,4 +65,9 @@ public class DefSyncTemplate implements ISyncConf {
 		return new String[] { "192.168.207.129:35792", "192.168.207.129:35795" };
 	}
 
+	@Override
+	public String getSynchronizationNativeRunnerClassName() {
+		return "one.inve.localfullnode2.sync.partofwork.NativeEventsRunner";
+	}
+
 }
