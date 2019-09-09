@@ -1,6 +1,5 @@
 package one.inve.localfullnode2.gossip.persistence;
 
-import java.time.Instant;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -8,8 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 
-import one.inve.localfullnode2.conf.Config;
 import one.inve.core.EventBody;
+import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
@@ -23,46 +22,37 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
  * @author: Francis.Deng {@link EventSaveThread}
  * @date: Oct 17, 2018 8:17:02 PM
  * @version: V1.0
+ * @version: V2.0 add post-function right after each event persistence.
  */
 public class NewGossipEventsPersistence {
 	private static final Logger logger = LoggerFactory.getLogger(NewGossipEventsPersistence.class);
 	private RocksJavaUtil rocksJavaUtil;
 	private NewGossipEventsPersistenceDependent dep;
-
-	public void persistNewEvents(NewGossipEventsPersistenceDependent dep) {
-		logger.info(">>> start up events persistence...");
-
-		this.dep = dep;
-		rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
-
-		StringBuilder statisticInfo = new StringBuilder().append("\n===== node-({}, {}): event save thread =====")
-				.append("\ncost: {} ms\ntotal event count: {}").append("\nEventSaveQueue size: {}");
-		try {
-			int i = 0;
-			Instant t0 = Instant.now();
-			// while (true) {
-			// if (!dep.getEventSaveQueue().isEmpty()) {
-			while (!dep.getEventSaveQueue().isEmpty()) {
-				// desfcp
-				// saveEvent(Objects.requireNonNull(node.getEventSaveQueue().poll()));
-				saveEvent0(Objects.requireNonNull(dep.getEventSaveQueue().poll()));
-				i++;
-			}
-
-//				if (i == Config.DEFAULT_EVENT_STATISTICS_COUNT) {
-//					logger.info(statisticInfo.toString(), node.getShardId(), node.getCreatorId(),
-//							Duration.between(t0, Instant.now()).toMillis(), node.getTotalEventCount(),
-//							node.getEventSaveQueue().size());
-//					i = 0;
-//					t0 = Instant.now();
-//				}
-			// }
-		} catch (Exception e) {
-			logger.error("NewGossipEventsPersistence::persistNewEvents error: {}\nexit...", e);
-			System.exit(-1);
-		}
-
-	}
+	/*
+	 * public void persistNewEvents(NewGossipEventsPersistenceDependent dep) {
+	 * logger.info(">>> start up events persistence...");
+	 * 
+	 * this.dep = dep; rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
+	 * 
+	 * StringBuilder statisticInfo = new
+	 * StringBuilder().append("\n===== node-({}, {}): event save thread =====")
+	 * .append("\ncost: {} ms\ntotal event count: {}").
+	 * append("\nEventSaveQueue size: {}"); try { int i = 0; Instant t0 =
+	 * Instant.now(); // while (true) { // if (!dep.getEventSaveQueue().isEmpty()) {
+	 * while (!dep.getEventSaveQueue().isEmpty()) { // desfcp //
+	 * saveEvent(Objects.requireNonNull(node.getEventSaveQueue().poll()));
+	 * saveEvent0(Objects.requireNonNull(dep.getEventSaveQueue().poll())); i++; }
+	 * 
+	 * // if (i == Config.DEFAULT_EVENT_STATISTICS_COUNT) { //
+	 * logger.info(statisticInfo.toString(), node.getShardId(), node.getCreatorId(),
+	 * // Duration.between(t0, Instant.now()).toMillis(), node.getTotalEventCount(),
+	 * // node.getEventSaveQueue().size()); // i = 0; // t0 = Instant.now(); // } //
+	 * } } catch (Exception e) { logger.
+	 * error("NewGossipEventsPersistence::persistNewEvents error: {}\nexit...", e);
+	 * System.exit(-1); }
+	 * 
+	 * }
+	 */
 
 	private void saveEvent0(EventBody eb) {
 		EventKeyPair pair = new EventKeyPair(eb.getShardId(), eb.getCreatorId(), eb.getCreatorSeq());
@@ -98,6 +88,35 @@ public class NewGossipEventsPersistence {
 			logger.error("saveEvent {} error: {}", pair.toString(), e);
 			saveEvent0(eb);
 		}
+	}
+
+	// callback function
+	public static interface PostEventPersistenceFunc {
+		void buildIndexes(EventBody eb);// build eventbody indexes
+	}
+
+	public void persistNewEvents(NewGossipEventsPersistenceDependent dep) {
+		persistNewEvents(dep, null);
+	}
+
+	public void persistNewEvents(NewGossipEventsPersistenceDependent dep, PostEventPersistenceFunc pf) {
+		logger.info(">>> start up events persistence...");
+		this.dep = dep;
+		rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
+
+		try {
+			while (!dep.getEventSaveQueue().isEmpty()) {
+				EventBody eb = dep.getEventSaveQueue().poll();
+				saveEvent0(Objects.requireNonNull(dep.getEventSaveQueue().poll()));
+				if (pf != null)
+					pf.buildIndexes(eb);
+			}
+
+		} catch (Exception e) {
+			logger.error("NewGossipEventsPersistence::persistNewEvents error: {}\nexit...", e);
+			System.exit(-1);
+		}
+
 	}
 
 }
