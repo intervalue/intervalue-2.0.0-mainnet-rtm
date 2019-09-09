@@ -22,11 +22,10 @@ import one.inve.localfullnode2.store.rocks.key.EventIndexes;
  * @date Sep 9, 2019
  *
  */
-public class NativeEventsLoader extends NativeEventsRunner {
+public class NativeEventsLoader {
 	private static final Logger logger = LoggerFactory.getLogger(NativeEventsLoader.class);
 
-	@Override
-	protected void loadEvents(BlockingQueue<EventBody> queue, String dbId) {
+	protected void loadEventsInto(BlockingQueue<EventBody> queue, String dbId) {
 		Thread t = new Thread(new Runnable() {
 
 			@Override
