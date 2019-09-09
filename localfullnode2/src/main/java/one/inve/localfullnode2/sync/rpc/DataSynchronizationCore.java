@@ -211,12 +211,12 @@ public class DataSynchronizationCore implements IDataSynchronization {
 				EventBody eb = getEventBody(shardId, creator, l.longValue());
 
 				// indicate that it is a unconcensused event.
-				if (eb.getConsTimestamp() == null) {
-					r.setStop(l);
-					logger.info("an unconcensused event lead to termination of {} : {}", creator,
-							EventIndexes.getEventPair(eb));
-					break;
-				}
+//				if (eb.getConsTimestamp() == null) {
+//					r.setStop(l);
+//					logger.info("an unconcensused event lead to termination of {} : {}", creator,
+//							EventIndexes.getEventPair(eb));
+//					break;
+//				}
 
 				if (eb != null) {
 					eventBodyArray.append(eb);
