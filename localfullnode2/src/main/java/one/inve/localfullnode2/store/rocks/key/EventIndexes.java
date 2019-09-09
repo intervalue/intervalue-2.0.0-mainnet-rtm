@@ -14,7 +14,7 @@ import one.inve.localfullnode2.store.EventKeyPair;
  *
  */
 public class EventIndexes {
-	// rocksdb event sort key - "events$s${consTimestamp}${shardId}"
+	// rocksdb event sort key - "events$s${consTimestamp}${shardId}${pair}"
 	public static String getConcensusEventSortKey(EventBody eb) {
 		EventKeyPair pair = new EventKeyPair(eb.getShardId(), eb.getCreatorId(), eb.getCreatorSeq());
 		String key = String.format(getConcensusEventSortPrefix() + "%d$%d$%s", eb.getConsTimestamp().getEpochSecond(),
