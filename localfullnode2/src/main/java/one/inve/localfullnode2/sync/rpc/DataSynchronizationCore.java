@@ -14,6 +14,7 @@ import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
+import one.inve.localfullnode2.store.rocks.key.EventIndexes;
 import one.inve.localfullnode2.store.rocks.key.MessageIndexes;
 import one.inve.localfullnode2.sync.Mapper;
 import one.inve.localfullnode2.sync.measure.ChunkDistribution;
@@ -184,6 +185,7 @@ public class DataSynchronizationCore implements IDataSynchronization {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public DistributedEventObjects getNotInDistributionEvents(String distJson) {
 		int _eventSize = 100;// hard-code it,better solution is to take a threshold like 10k.
@@ -207,10 +209,20 @@ public class DataSynchronizationCore implements IDataSynchronization {
 			Range r = c.getRanges().get(0);
 			for (Long l : r) {
 				EventBody eb = getEventBody(shardId, creator, l.longValue());
+
+				// indicate that it is a unconcensused event.
+				if (eb.getConsTimestamp() == null) {
+					r.setStop(l);
+					logger.info("an unconcensused event lead to termination of {} : {}", creator,
+							EventIndexes.getEventPair(eb));
+					break;
+				}
+
 				if (eb != null) {
 					eventBodyArray.append(eb);
 				} else {
 					r.setStop(l);
+					logger.info("an null event lead to termination of {} : {}", creator, EventIndexes.getEventPair(eb));
 					break;
 				}
 

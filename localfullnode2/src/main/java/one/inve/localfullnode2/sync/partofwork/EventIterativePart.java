@@ -64,7 +64,10 @@ public class EventIterativePart extends BasedIterativePart {
 		NewGossipEventsPersistence newGossipEventsPersistence = new NewGossipEventsPersistence();
 		newGossipEventsPersistence.persistNewEvents(dep, eb -> {
 			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
-			rocksJavaUtil.put(EventIndexes.getConcensusEventSortKey(eb), new byte[0]);
+			String eventSortKey = EventIndexes.getConcensusEventSortKey(eb);
+			rocksJavaUtil.put(eventSortKey, new byte[0]);
+
+			logger.debug("event sort key : {}", eventSortKey);
 		});
 //		newGossipEventsPersistence.persistNewEvents(new NewGossipEventsPersistenceDependent() {
 //

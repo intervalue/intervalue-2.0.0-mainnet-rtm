@@ -27,11 +27,11 @@ public class EventIndexes {
 		return "events$s$";
 	}
 
-	public static String getConcensusEventPair(String messageHashKey) {
+	public static String getConcensusEventPair(String cesk) {
 		String pair = null;
 
-		if (messageHashKey != null) {
-			String parts[] = messageHashKey.split("\\$");
+		if (cesk != null) {
+			String parts[] = cesk.split("\\$");
 
 			if (parts != null && parts.length == 5) {
 				pair = parts[4];

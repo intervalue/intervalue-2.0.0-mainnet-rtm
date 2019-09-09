@@ -107,9 +107,11 @@ public class NewGossipEventsPersistence {
 		try {
 			while (!dep.getEventSaveQueue().isEmpty()) {
 				EventBody eb = dep.getEventSaveQueue().poll();
-				saveEvent0(Objects.requireNonNull(dep.getEventSaveQueue().poll()));
-				if (pf != null)
-					pf.buildIndexes(eb);
+				if (eb != null) {
+					saveEvent0(Objects.requireNonNull(eb));
+					if (pf != null)
+						pf.buildIndexes(eb);
+				}
 			}
 
 		} catch (Exception e) {
