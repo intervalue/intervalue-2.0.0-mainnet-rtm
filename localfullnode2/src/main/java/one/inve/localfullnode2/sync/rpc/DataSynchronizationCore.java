@@ -14,7 +14,6 @@ import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
-import one.inve.localfullnode2.store.rocks.key.EventIndexes;
 import one.inve.localfullnode2.store.rocks.key.MessageIndexes;
 import one.inve.localfullnode2.sync.Mapper;
 import one.inve.localfullnode2.sync.measure.ChunkDistribution;
@@ -222,7 +221,7 @@ public class DataSynchronizationCore implements IDataSynchronization {
 					eventBodyArray.append(eb);
 				} else {
 					r.setStop(l);
-					logger.info("an null event lead to termination of {} : {}", creator, EventIndexes.getEventPair(eb));
+					logger.info("an null event lead to termination of {} : {}", creator, l);
 					break;
 				}
 
