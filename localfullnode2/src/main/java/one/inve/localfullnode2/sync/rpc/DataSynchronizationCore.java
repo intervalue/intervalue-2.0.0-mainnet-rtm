@@ -55,6 +55,7 @@ public class DataSynchronizationCore implements IDataSynchronization {
 	private String dbId;
 	private int shardId;
 	private long creatorId;
+	private int shardCount;
 
 	private long[] firstSeqsInThisShard;
 
@@ -69,6 +70,7 @@ public class DataSynchronizationCore implements IDataSynchronization {
 		dbId = node.nodeParameters().dbId;
 		shardId = node.getShardId();
 		creatorId = node.getCreatorId();
+		shardCount = node.getShardCount();
 
 		firstSeqsInThisShard = DepItemsManager.getInstance().attachFirstSeqs(null).get(shardId);
 
@@ -314,7 +316,7 @@ public class DataSynchronizationCore implements IDataSynchronization {
 
 	@Override
 	public Localfullnode2InstanceProfile getLocalfullnode2InstanceProfile() {
-		return new Localfullnode2InstanceProfile(shardId, (int) creatorId, nValue, dbId);
+		return new Localfullnode2InstanceProfile(shardId, (int) creatorId, nValue, dbId, shardCount);
 	}
 
 }
