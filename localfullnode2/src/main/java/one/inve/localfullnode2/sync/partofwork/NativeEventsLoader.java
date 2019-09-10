@@ -1,5 +1,7 @@
 package one.inve.localfullnode2.sync.partofwork;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
@@ -32,10 +34,19 @@ public class NativeEventsLoader {
 			public void run() {
 				RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
 
-				Map<byte[], byte[]> m = rocksJavaUtil.startWith(EventIndexes.getConcensusEventSortPrefix().getBytes());
+				Map<String, String> m = rocksJavaUtil.startWith(EventIndexes.getConcensusEventSortPrefix());
+				String[] keys = m.keySet().toArray(new String[m.size()]);
+				Arrays.parallelSort(keys, new Comparator<String>() {
 
-				for (byte[] key : m.keySet()) {
-					String pairStr = EventIndexes.getConcensusEventPair(new String(key));
+					@Override
+					public int compare(String s1, String s2) {
+						return EventIndexes.compareConcensusEventSortKey(s1, s2);
+					}
+
+				});
+
+				for (String key : keys) {
+					String pairStr = EventIndexes.getConcensusEventPair(key);
 					byte[] evt = rocksJavaUtil.get(pairStr);
 					if (null != evt && evt.length > 0) {
 						EventBody event = JSONObject.parseObject(new String(evt), EventBody.class);

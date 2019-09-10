@@ -41,6 +41,43 @@ public class EventIndexes {
 		return pair;
 	}
 
+	private static long getConsensusTime(String key) {
+		long consensusTime = 0l;
+
+		if (key != null) {
+			String parts[] = key.split("\\$");
+
+			if (parts != null && parts.length == 5) {
+				String consensusTimeStr = parts[2];
+				consensusTime = Long.parseLong(consensusTimeStr);
+			}
+		}
+		return consensusTime;
+	}
+
+	private static long getShardId(String key) {
+		long shardId = 0l;
+
+		if (key != null) {
+			String parts[] = key.split("\\$");
+
+			if (parts != null && parts.length == 5) {
+				String consensusTimeStr = parts[3];
+				shardId = Long.parseLong(consensusTimeStr);
+			}
+		}
+		return shardId;
+	}
+
+	public static int compareConcensusEventSortKey(String concensusEventSortKey1, String concensusEventSortKey2) {
+		long consensusTime1 = getConsensusTime(concensusEventSortKey1);
+		long shardId1 = getShardId(concensusEventSortKey1);
+		long consensusTime2 = getConsensusTime(concensusEventSortKey2);
+		long shardId2 = getShardId(concensusEventSortKey2);
+
+		return (int) (consensusTime1 != consensusTime2 ? (consensusTime1 - consensusTime2) : (shardId1 - shardId2));
+	}
+
 	// shardId_creatorId_seq
 	public static String getEventPair(EventBody eb) {
 		EventKeyPair pair = new EventKeyPair(eb.getShardId(), eb.getCreatorId(), eb.getCreatorSeq());

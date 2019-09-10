@@ -18,7 +18,7 @@ import one.inve.localfullnode2.sync.source.ILFN2Profile;
  * @date Sep 9, 2019
  *
  */
-public abstract class NativeEventsRunner extends NativeEventsLoaderConsumer implements SynchronizationNativeRunnable {
+public class NativeEventsRunner extends NativeEventsLoaderConsumer implements SynchronizationNativeRunnable {
 
 	private BlockingQueue<EventBody> queue = new ArrayBlockingQueue<>(500);
 
@@ -27,7 +27,7 @@ public abstract class NativeEventsRunner extends NativeEventsLoaderConsumer impl
 		ILFN2Profile profile = context.getProfile();
 		loadEventsInto(queue, profile.getDBId());
 
-		consumeEvents(queue);
+		consumeEvents(context, queue);
 
 		return true;
 	}

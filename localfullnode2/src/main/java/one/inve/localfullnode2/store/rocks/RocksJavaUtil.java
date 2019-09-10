@@ -156,6 +156,19 @@ public class RocksJavaUtil implements INosql {
 		return m;
 	}
 
+	public Map<String, String> startWith(String prefix) {
+		Map<String, String> m = new HashMap<>();
+		String pfx = new String(prefix);
+		ReadOptions ro = new ReadOptions();
+		RocksIterator iter = rocksDB.newIterator(ro);
+		// notorious issue in rocksdb
+		for (iter.seek(prefix.getBytes()); iter.isValid() && new String(iter.key()).startsWith(pfx); iter.next()) {
+			m.put(new String(iter.key()), new String(iter.value()));
+		}
+
+		return m;
+	}
+
 	// decide whether there is a string starting with {@code prefix}
 	public boolean isPrefixKeyExisted(byte[] prefix) {
 //		ReadOptions ro = new ReadOptions();
