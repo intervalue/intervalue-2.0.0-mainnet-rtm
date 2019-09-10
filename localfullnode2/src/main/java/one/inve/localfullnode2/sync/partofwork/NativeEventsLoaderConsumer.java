@@ -1,5 +1,8 @@
 package one.inve.localfullnode2.sync.partofwork;
 
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -9,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.core.EventBody;
+import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.DepItemsManagerial;
 import one.inve.localfullnode2.dep.items.AllQueues;
@@ -40,6 +44,7 @@ public class NativeEventsLoaderConsumer extends NativeEventsLoader {
 
 	public void consumeEvents(ISyncContext context, BlockingQueue<EventBody> queue) {
 		loadDeps();
+		initValues(context);
 
 		try {
 			EventBody eb = null;
@@ -85,6 +90,21 @@ public class NativeEventsLoaderConsumer extends NativeEventsLoader {
 		depItemsManager.attachCreatorId(null).set(profile.getCreatorId());
 		depItemsManager.attachDBId(null).set(profile.getDBId());
 		depItemsManager.attachShardCount(null).set(profile.getShardCount());
+		depItemsManager.attachStat(null).addConsMessageMaxId(0);
+		depItemsManager.attachStat(null).addSystemAutoTxMaxId(0);
+		depItemsManager.attachStat(null).addTotalConsEventCount(0);
+		depItemsManager.attachStat(null).addTotalEventCount(0);
+		// depItemsManager.attachSS(null).
+
+		DepItemsManager.getInstance().attachSS(null).setContributions(new HashSet<>());
+		DepItemsManager.getInstance().attachSS(null).setTreeRootMap(new HashMap<>());
+		DepItemsManager.getInstance().attachSS(null).setSnapshotPointMap(new HashMap<>());
+		DepItemsManager.getInstance().attachSS(null).setMsgHashTreeRoot(null);
+		DepItemsManager.getInstance().attachSS(null).setTotalFeeBetween2Snapshots(BigInteger.ZERO);
+		DepItemsManager.getInstance().attachSS(null).setSnapshotMessage(null);
+
+		Config.ENABLE_SNAPSHOT = false;// disable snapshot
+
 	}
 
 	protected void loadDeps() {
