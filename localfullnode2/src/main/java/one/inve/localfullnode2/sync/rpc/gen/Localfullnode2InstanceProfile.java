@@ -31,17 +31,20 @@ public class Localfullnode2InstanceProfile implements java.lang.Cloneable,
 
     public String dbId;
 
+    public int shardCount;
+
     public Localfullnode2InstanceProfile()
     {
         this.dbId = "";
     }
 
-    public Localfullnode2InstanceProfile(int shardId, int creatorId, int nValue, String dbId)
+    public Localfullnode2InstanceProfile(int shardId, int creatorId, int nValue, String dbId, int shardCount)
     {
         this.shardId = shardId;
         this.creatorId = creatorId;
         this.nValue = nValue;
         this.dbId = dbId;
+        this.shardCount = shardCount;
     }
 
     public boolean equals(java.lang.Object rhs)
@@ -77,6 +80,10 @@ public class Localfullnode2InstanceProfile implements java.lang.Cloneable,
                     return false;
                 }
             }
+            if(this.shardCount != r.shardCount)
+            {
+                return false;
+            }
 
             return true;
         }
@@ -92,6 +99,7 @@ public class Localfullnode2InstanceProfile implements java.lang.Cloneable,
         h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, creatorId);
         h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, nValue);
         h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, dbId);
+        h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, shardCount);
         return h_;
     }
 
@@ -115,6 +123,7 @@ public class Localfullnode2InstanceProfile implements java.lang.Cloneable,
         ostr.writeInt(this.creatorId);
         ostr.writeInt(this.nValue);
         ostr.writeString(this.dbId);
+        ostr.writeInt(this.shardCount);
     }
 
     public void ice_readMembers(com.zeroc.Ice.InputStream istr)
@@ -123,6 +132,7 @@ public class Localfullnode2InstanceProfile implements java.lang.Cloneable,
         this.creatorId = istr.readInt();
         this.nValue = istr.readInt();
         this.dbId = istr.readString();
+        this.shardCount = istr.readInt();
     }
 
     static public void ice_write(com.zeroc.Ice.OutputStream ostr, Localfullnode2InstanceProfile v)
@@ -177,5 +187,5 @@ public class Localfullnode2InstanceProfile implements java.lang.Cloneable,
 
     private static final Localfullnode2InstanceProfile _nullMarshalValue = new Localfullnode2InstanceProfile();
 
-    public static final long serialVersionUID = 2042084301L;
+    public static final long serialVersionUID = 1226669189L;
 }
