@@ -9,4 +9,6 @@ public interface ILFN2Profile {
 
 	int getNValue();
 
+	int getShardCount();
+
 }

@@ -85,6 +85,12 @@ public class ProxiedSyncSource implements ISyncSource {
 					// TODO Auto-generated method stub
 					return profile.nValue;
 				}
+
+				@Override
+				public int getShardCount() {
+					// TODO Auto-generated method stub
+					return profile.shardCount;
+				}
 			};
 
 			context.setProfile(nILFN2Profile);
