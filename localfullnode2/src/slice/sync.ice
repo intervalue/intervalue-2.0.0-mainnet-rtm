@@ -80,7 +80,8 @@ module one{
 							int shardId;
 							int creatorId;
 							int nValue;	
-							string dbId;					
+							string dbId;
+							int shardCount;					
 						};
 
 						interface DataSynchronization {
