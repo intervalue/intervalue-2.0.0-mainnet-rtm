@@ -3,8 +3,16 @@ package one.inve.localfullnode2.sync;
 import org.junit.Test;
 
 public class SyncWorksAssemblerTest {
+	// @Test
+	public void testCallRemoteService() {
+		SyncConfiguration conf = new SyncConfiguration();
+		SyncWorksAssembler assembler = new SyncWorksAssembler();
+		ISyncContext context = conf.getDefaultContext();
+		assembler.run(context);
+	}
+
 	@Test
-	public void testRun() {
+	public void testRunNativeRunner() {
 		SyncConfiguration conf = new SyncConfiguration();
 		SyncWorksAssembler assembler = new SyncWorksAssembler();
 		ISyncContext context = conf.getDefaultContext();
@@ -23,7 +31,7 @@ public class SyncWorksAssemblerTest {
 		public String[] getSynchronizationWorkClassNames() {
 			// return new String[] {
 			// "one.inve.localfullnode2.sync.partofwork.EventIterativePart" };
-			return new String[] { "one.inve.localfullnode2.sync.partofwork.SystemMessageIterativePart" };
+			return new String[] { "one.inve.localfullnode2.sync.partofwork.EventIterativePart" };
 		}
 
 	}
