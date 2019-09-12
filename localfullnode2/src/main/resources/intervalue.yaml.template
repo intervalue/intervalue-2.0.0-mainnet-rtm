@@ -1,0 +1,21 @@
+
+zeroc: | 
+    Ice.ThreadPool.Client.SizeMax = 10                              
+    Ice.ThreadPool.Server.SizeMax = 10                              
+    Ice.MessageSizeMax = 1000000   
+ 
+localfullnode2: 
+    pubIP: 192.168.207.129
+    gossipPort: 35791
+    rpcPort: 35792
+    httpPort: 35793
+    prefix: 3
+    whitelist: 
+        - 192.168.207.129
+        - 172.17.2.118
+p2pcluster: 
+    icport: 43013    
+env: 
+    p2pcluster.icport: 43013 
+    database.reset: false
+    test.prefix: 3     
