@@ -1,0 +1,123 @@
+package one.inve.localfullnode2.conf;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.util.Random;
+
+import one.inve.bean.node.GossipAddress;
+
+/**
+ * 
+ * 
+ * Copyright © INVE FOUNDATION. All rights reserved.
+ * 
+ * @Description: call {@code init} at first and later call implant** method.
+ * @author: Francis.Deng [francis_xiiiv@163.com]
+ * @date: Sep 12, 2019 12:33:14 AM
+ * @version: V1.0
+ */
+public class InterValueConfImplant implements IConfImplant {
+	private IInterValueConf conf;
+
+	@Override
+	public void init(String[] args) {
+		IInterValueConfigurationReader configurationReader = IInterValueConfigurationReader.getDefaultImpl();
+		conf = configurationReader.read(args);
+
+	}
+
+	@Override
+	public String[] implantZerocConf() {
+		Random r = new Random();
+//		int rand = r.nextInt(1000);
+//		String zccFileName = "zcc" + rand;
+		String zccFileName = "zcc";
+		File cur = new File(".");
+		String canonicalPath = null;
+		try {
+			File zerocConfigFile = File.createTempFile(zccFileName, null, cur);
+			zerocConfigFile.deleteOnExit();
+			canonicalPath = zerocConfigFile.getCanonicalPath();
+			writeToFileNIOWay(zerocConfigFile, conf.getZerocContent());
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		return new String[] { "--Ice.Config=" + canonicalPath };
+	}
+
+	@Override
+	public NodeParameters implantNodeParameters() {
+		NodeParameters np = new NodeParameters();
+
+		np.seedGossipAddress = new GossipAddress();
+		np.selfGossipAddress = new GossipAddress();
+
+		np.seedGossipAddress.pubIP = Config.DEFAULT_SEED_PUBIP;
+		np.seedGossipAddress.gossipPort = Integer.parseInt(Config.DEFAULT_SEED_GOSSIP_PORT);
+		np.seedGossipAddress.rpcPort = Integer.parseInt(Config.DEFAULT_SEED_RPC_PORT);
+		np.seedGossipAddress.httpPort = Integer.parseInt(Config.DEFAULT_SEED_HTTP_PORT);
+
+		np.selfGossipAddress.pubIP = Config.DEFAULT_SEED_PUBIP;
+		np.selfGossipAddress.gossipPort = Integer.parseInt(conf.getLocalfullnode2Conf().getGossipPort());
+		np.selfGossipAddress.rpcPort = Integer.parseInt(conf.getLocalfullnode2Conf().getRpcPort());
+		np.selfGossipAddress.httpPort = Integer.parseInt(conf.getLocalfullnode2Conf().getHttpPort());
+
+		np.clearDb = 0;
+		np.multiple = 1;
+		np.prefix = conf.getLocalfullnode2Conf().getPrefix();
+
+		return np;
+	}
+
+	@Override
+	public void implantStaticConfig() {
+		try {
+			setStaticField(Config.class, "WHITE_LIST", conf.getLocalfullnode2Conf().getWhitelist());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	// Changing static final fields via reflection
+	private void setStaticField(Class clazz, String fieldName, Object value)
+			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		Field field = clazz.getDeclaredField(fieldName);
+
+		Field modifiersField = Field.class.getDeclaredField("modifiers");
+		boolean isModifierAccessible = modifiersField.isAccessible();
+		modifiersField.setAccessible(true);
+		modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+		boolean isAccessible = field.isAccessible();
+		field.setAccessible(true);
+
+		field.set(null, value);
+
+		field.setAccessible(isAccessible);
+		modifiersField.setAccessible(isModifierAccessible); // Might not be very useful resetting the value, really. The
+															// harm is already done.
+	}
+
+	private void writeToFileNIOWay(File file, String messageToWrite) throws IOException {
+		FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+		FileChannel fileChannel = fileOutputStream.getChannel();
+		ByteBuffer byteBuffer = null;
+
+		byteBuffer = ByteBuffer.wrap(messageToWrite.getBytes(Charset.forName("UTF-8")));
+		fileChannel.write(byteBuffer);
+
+		fileChannel.close();
+		fileOutputStream.close();
+
+	}
+
+}
