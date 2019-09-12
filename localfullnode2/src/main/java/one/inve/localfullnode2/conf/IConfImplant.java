@@ -20,4 +20,6 @@ public interface IConfImplant {
 
 	void implantStaticConfig();
 
+	void implantEnv();
+
 }

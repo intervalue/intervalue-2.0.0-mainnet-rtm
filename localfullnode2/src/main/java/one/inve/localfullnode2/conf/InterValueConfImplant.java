@@ -8,6 +8,7 @@ import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.util.Map;
 import java.util.Random;
 
 import one.inve.bean.node.GossipAddress;
@@ -85,6 +86,15 @@ public class InterValueConfImplant implements IConfImplant {
 			throw new RuntimeException(e);
 		}
 
+	}
+
+	// register system properties from configuration
+	@Override
+	public void implantEnv() {
+		Map<String, String> kvPair = conf.getEnv();
+		for (Map.Entry<String, String> entry : kvPair.entrySet()) {
+			System.setProperty(entry.getKey(), entry.getValue());
+		}
 	}
 
 	// Changing static final fields via reflection
