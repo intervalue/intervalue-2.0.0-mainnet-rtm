@@ -16,7 +16,7 @@ localfullnode2:
         - 172.17.2.118
 ## anything in regard to p2p        
 p2pcluster:                 
-    icport: 43013            ## "-Dp2pcluster.icport" in the command line
+    icport: 43013            ## "-Dp2pcluster.icport=43013" in the command line
 ## using System.setProperty(key,value)    
 env: 
     p2pcluster.icport: 43013                    ## "-Dp2pcluster.icport=43013" in the command line 
