@@ -16,7 +16,7 @@ import one.inve.localfullnode2.sync.msg.MsgIntrospectorDependent;
  * @date: Sep 4, 2019 1:39:18 AM
  * @version: V1.0
  */
-public abstract class Indexer extends HashneterInitializer {
+public abstract class Indexer extends Configurator {
 
 	@Override
 	protected void buildMessagesAndSysMessagesIndexOnce() {
