@@ -81,6 +81,8 @@ public class InterValueConfImplant implements IConfImplant {
 	public void implantStaticConfig() {
 		try {
 			setStaticField(Config.class, "WHITE_LIST", conf.getLocalfullnode2Conf().getWhitelist());
+			// setStaticField(Config.class, "ENABLE_SNAPSHOT", false);// disable snapshot or
+			// not
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
