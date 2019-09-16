@@ -11,7 +11,9 @@ import org.rocksdb.ColumnFamilyHandle;
 import org.rocksdb.ColumnFamilyOptions;
 import org.rocksdb.DBOptions;
 import org.rocksdb.Options;
+import org.rocksdb.ReadOptions;
 import org.rocksdb.RocksDB;
+import org.rocksdb.RocksIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +85,15 @@ public class RocksJavaUtil implements INosql {
 		}
 	}
 
+	public void put(byte[] key, byte[] value) {
+		try {
+			rocksDB.put(key, value);
+
+		} catch (Exception ex) {
+			logger.error("rocksDB.put异常", ex);
+		}
+	}
+
 	public void put(String key, byte[] value) {
 		try {
 			rocksDB.put(key.getBytes(), value);
@@ -90,6 +101,17 @@ public class RocksJavaUtil implements INosql {
 		} catch (Exception ex) {
 			logger.error("rocksDB.put异常", ex);
 		}
+	}
+
+	// force rocksdb invoker to deal with key char set
+	public byte[] get(byte[] key) {
+		try {
+
+			return rocksDB.get(key);
+		} catch (Exception ex) {
+			logger.error("rocksDB.get异常", ex);
+		}
+		return null;
 	}
 
 	public byte[] get(String key) {
@@ -108,6 +130,92 @@ public class RocksJavaUtil implements INosql {
 		} catch (Exception ex) {
 			logger.error("rocksDB.delete异常", ex);
 		}
+	}
+
+	// scan for prefix key - {@code prefix}
+	public Map<byte[], byte[]> startWith(byte[] prefix) {
+		Map<byte[], byte[]> m = new HashMap<>();
+		String pfx = new String(prefix);
+		ReadOptions ro = new ReadOptions();
+//		ro.setPrefixSameAsStart(true);
+		RocksIterator iter = rocksDB.newIterator(ro);
+//		iter.seek(prefix);
+//
+//		while (iter.isValid()) {
+//			String k = new String(iter.key());
+//			if (k != null && k.startsWith(pfx)) {
+//				m.put(iter.key(), iter.value());
+//			}
+//			iter.next();
+//		}		
+		// notorious issue in rocksdb
+		for (iter.seek(prefix); iter.isValid() && new String(iter.key()).startsWith(pfx); iter.next()) {
+			m.put(iter.key(), iter.value());
+		}
+
+		return m;
+	}
+
+	public Map<String, String> startWith(String prefix) {
+		Map<String, String> m = new HashMap<>();
+		String pfx = new String(prefix);
+		ReadOptions ro = new ReadOptions();
+		RocksIterator iter = rocksDB.newIterator(ro);
+		// notorious issue in rocksdb
+		for (iter.seek(prefix.getBytes()); iter.isValid() && new String(iter.key()).startsWith(pfx); iter.next()) {
+			m.put(new String(iter.key()), new String(iter.value()));
+		}
+
+		return m;
+	}
+
+	// decide whether there is a string starting with {@code prefix}
+	public boolean isPrefixKeyExisted(byte[] prefix) {
+//		ReadOptions ro = new ReadOptions();
+//		ro.setPrefixSameAsStart(true);
+//		RocksIterator iter = rocksDB.newIterator(ro);
+//		String pfx = new String(prefix);
+////		iter.seek(prefix);
+////
+////		iter.next();
+////
+////		boolean b = iter.isValid();
+////		iter.close();
+////
+////		return b;
+//
+//		for (iter.seek(prefix); iter.isValid(); iter.next()) {
+//			String key = new String(iter.key());
+//			if (key.startsWith(pfx))
+//				return true;
+//		}
+//
+//		return false;
+		return isPrefixKeyMoreThan(prefix, 1);
+	}
+
+	public boolean isPrefixKeyMoreThan(byte[] prefix, int isMoreThan) {
+
+		ReadOptions ro = new ReadOptions();
+		ro.setPrefixSameAsStart(true);
+		RocksIterator iter = rocksDB.newIterator(ro);
+		String pfx = new String(prefix);
+		int mis = 0;
+
+		for (iter.seek(prefix); iter.isValid() && new String(iter.key()).startsWith(pfx); iter.next()) {
+			String key = new String(iter.key());
+
+			// if (key.startsWith(pfx)) {
+			mis++;
+			if (isMoreThan <= 1 || mis >= isMoreThan) {
+				return true;
+			}
+
+			// }
+
+		}
+
+		return false;
 	}
 
 	public static void main(String[] args) {

@@ -103,4 +103,13 @@ public interface SnapshotDbService {
      * @return 消息（以Message对象形式返回）
      */
     public Message getMessageById(String dbId, BigInteger id);
+
+    /**
+     * 获取每根柱子存在的第一个event
+     *
+     * @param dbId   数据库ID
+     * @param nValue 分片总节点数
+     * @return 每根柱子上第一个存在的event
+     */
+    public Map<Long, EventKeyPair> getFirstExistEventKeyPairsForEachNode(String dbId, int nValue);
 }

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.zeroc.Ice.Communicator;
 
 import one.inve.cluster.Member;
+import one.inve.localfullnode2.sync.rpc.gen.DataSynchronizationPrx;
 
 public class RpcConnectionService {
 	private static final Logger logger = LoggerFactory.getLogger(RpcConnectionService.class);
@@ -80,5 +81,22 @@ public class RpcConnectionService {
 			throw new Error("Invalid Full node Connnection Object.");
 		}
 		return registerPrx;
+	}
+
+	// data synchronization zeroc helper
+	public static DataSynchronizationPrx buildDataSynchronizationProxy(Communicator communicator, String ip, int port) {
+		logger.info("buildDataSynchronizationPrx...");
+		DataSynchronizationPrx proxy = null;
+		try {
+			proxy = DataSynchronizationPrx.checkedCast(
+					communicator.stringToProxy("DataSynchronizationZeroc:default -h " + ip + " -p " + port));
+		} catch (Exception e) {
+			logger.error("", e);
+		}
+		if (null == proxy) {
+			logger.error(">>>>>> Can not build connnection to local full node {}:{}", ip, port);
+			throw new Error("Can not build connnection to local full node.");
+		}
+		return proxy;
 	}
 }

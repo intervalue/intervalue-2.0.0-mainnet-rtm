@@ -16,8 +16,6 @@ import com.alibaba.fastjson.JSONObject;
 
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.dep.DepItemsManager;
-import one.inve.localfullnode2.dep.items.LastSeqs;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
 /**
@@ -26,7 +24,7 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
  * 
  * @Description: {@code lastSeq} is a key to record lastSeqs changes.
  * @author: Francis.Deng
- * @date: May 14, 2019 11:59:44 PM
+ * @date: May 14, 2018 11:59:44 PM
  * @version: V1.0
  */
 public class EventStoreImpl implements IEventStore {
@@ -43,34 +41,34 @@ public class EventStoreImpl implements IEventStore {
 	// private final ConcurrentHashMap<Integer, AtomicLongArray> lastSeq = new
 	// ConcurrentHashMap<>();
 
-	private final LastSeqHolder lastSeq = new LastSeqHolder();
+	private final SeqsHolder lastSeq = new SeqsHolder();
 
-	private final class LastSeqHolder implements AtomicLongArrayWrapper.WriteNotifiable {
-		private final ConcurrentHashMap<Integer, AtomicLongArrayWrapper> lastSeq = new ConcurrentHashMap<>();
-
-		public void put(int shardId, AtomicLongArray lastSeqs) {
-			AtomicLongArrayWrapper atomicLongArrayWrapper = AtomicLongArrayWrapper.of(lastSeqs);
-			atomicLongArrayWrapper.setNotifier(this);
-			lastSeq.put(shardId, AtomicLongArrayWrapper.of(lastSeqs));
-
-			notifyDeps(lastSeq);
-		}
-
-		public AtomicLongArrayWrapper get(int shardId) {
-			return lastSeq.get(shardId);
-		}
-
-		@Override
-		public void notify(AtomicLongArrayWrapper atomicLongArrayWrapper) {
-			notifyDeps(lastSeq);
-		}
-
-		private void notifyDeps(ConcurrentHashMap<Integer, AtomicLongArrayWrapper> lastSeq) {
-			LastSeqs lastSeqs = DepItemsManager.getInstance().attachLastSeqs(null);
-			lastSeqs.set(lastSeq);
-		}
-
-	}
+//	private final class LastSeqHolder implements AtomicLongArrayWrapper.WriteNotifiable {
+//		private final ConcurrentHashMap<Integer, AtomicLongArrayWrapper> lastSeq = new ConcurrentHashMap<>();
+//
+//		public void put(int shardId, AtomicLongArray lastSeqs) {
+//			AtomicLongArrayWrapper atomicLongArrayWrapper = AtomicLongArrayWrapper.of(lastSeqs);
+//			atomicLongArrayWrapper.setNotifier(this);
+//			lastSeq.put(shardId, AtomicLongArrayWrapper.of(lastSeqs));
+//
+//			notifyDeps(lastSeq);
+//		}
+//
+//		public AtomicLongArrayWrapper get(int shardId) {
+//			return lastSeq.get(shardId);
+//		}
+//
+//		@Override
+//		public void notify(AtomicLongArrayWrapper atomicLongArrayWrapper) {
+//			notifyDeps(lastSeq);
+//		}
+//
+//		private void notifyDeps(ConcurrentHashMap<Integer, AtomicLongArrayWrapper> lastSeq) {
+//			LastSeqs lastSeqs = DepItemsManager.getInstance().attachLastSeqs(null);
+//			lastSeqs.set(lastSeq);
+//		}
+//
+//	}
 
 	public EventStoreImpl(EventStoreDependent dep) {
 		this.dep = dep;
@@ -474,8 +472,9 @@ public class EventStoreImpl implements IEventStore {
 			this.n = n;
 			this.dbId = dbId;
 			this.firstSeq = firstSeq;
-			if(page == 0) {
-				this.page = firstSeq.divide(new BigInteger("3000")).compareTo(BigInteger.ONE) <= 0 ? 0 : firstSeq.divide(new BigInteger("3000")).intValue();
+			if (page == 0) {
+				this.page = firstSeq.divide(new BigInteger("3000")).compareTo(BigInteger.ONE) <= 0 ? 0
+						: firstSeq.divide(new BigInteger("3000")).intValue();
 			}
 			// 获取和计算lastSeq
 			this.getlastSeqs();

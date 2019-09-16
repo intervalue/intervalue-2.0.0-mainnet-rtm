@@ -14,7 +14,7 @@ public class Config {
 	public static final String WALLET_FILE = "local.wallet.json";
 	public static final String GOSSIP_SIGNATURE_DATA = "data4TheInterface2CreatedSignature";
 
-	public static final String DEFAULT_SEED_PUBIP = "34.220.63.1";
+	public static final String DEFAULT_SEED_PUBIP = "192.168.207.129";
 //    public static final String DEFAULT_SEED_PUBIP = "35.170.77.230";
 //    public static final String DEFAULT_SEED_PUBIP = "172.17.2.125";
 //	public static final String DEFAULT_SEED_PUBIP = "192.168.207.129";
@@ -152,13 +152,14 @@ public class Config {
 	public static final List<String> WHITE_LIST = Arrays.asList("192.168.207.129", "172.17.2.118", "172.17.2.119",
 			"172.17.2.117", "172.17.2.120", "172.17.2.123", "172.17.2.126", "172.17.2.127", "172.17.2.46",
 			"172.17.2.128", "172.17.2.117", "172.17.2.120", "172.17.2.123", "172.17.2.126", "172.17.2.127",
-			"172.17.2.128");
+			"172.17.2.128", "192.168.207.130");
 
 	public static final List<String> BLACK_LIST = Arrays.asList("192.168.0.1");
 
 	// rpc服务
 	public static final String[] SERVICE_ARRAY = { "one.inve.localfullnode2.rpc.impl.Light2localImpl",
-			"one.inve.localfullnode2.rpc.impl.Local2localImpl" };
+			"one.inve.localfullnode2.rpc.impl.Local2localImpl",
+			"one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocImpl" };
 
 	/**
 	 * coin round发生间隔

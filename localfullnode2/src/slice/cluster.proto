@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+//protoc --go_out=. cluster.proto
+
+package cluster;
+option java_package = "one.inve.localfullnode2.rpc";
+option java_outer_classname = "Cluster";
+
+message RequestInit{
+	string seed_ip = 1;
+	uint32 seed_port = 2;
+	string my_ip = 3;
+	uint32 my_port = 4;
+}
+
+message ResponseInit{
+}
+
+message RequestUpdateMeta{
+	repeated MetaData meta = 1;
+}
+
+message ResponseUpdateMeta{
+}
+
+message RequestFindMembers{
+	uint32 shard_id = 1;
+}
+
+message ResponseFindMembers{
+}
+
+message MetaData{
+	string key = 1;
+	string value = 2;
+}
+
+message Member{
+	string id = 1;
+	string address = 2;
+	repeated MetaData meta = 3;
+}
+
+service Cluster{
+	rpc Init(RequestInit) returns (ResponseInit);
+	rpc UpdateMeta(RequestUpdateMeta) returns (ResponseUpdateMeta);
+	rpc FindMembers(RequestFindMembers) returns (ResponseFindMembers);
+}

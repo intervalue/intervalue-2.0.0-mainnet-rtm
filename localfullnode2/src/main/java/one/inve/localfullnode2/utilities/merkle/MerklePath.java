@@ -31,6 +31,14 @@ public class MerklePath {
 		this.index = index;
 	}
 
+	public MerklePath(byte[][] path, String[] index) {
+		super();
+		this.path = new GenericArray<byte[]>();
+		this.path.append(path);
+		this.index = new GenericArray<String>();
+		this.index.append(index);
+	}
+
 	// core method to validate block which implements {@code INodeContent}
 	public boolean validate(INodeContent content, byte[] expectedRootHash) {
 		byte[] blockHash = content.hash();
@@ -39,7 +47,7 @@ public class MerklePath {
 		return Arrays.equals(calculatedRootHash, expectedRootHash);
 	}
 
-	protected byte[][] path() {
+	public byte[][] path() {
 		byte[][] result = new byte[path.length()][];
 		int i = 0;
 
@@ -51,7 +59,7 @@ public class MerklePath {
 		return result;
 	}
 
-	protected String[] index() {
+	public String[] index() {
 		String[] result = new String[index.length()];
 		int i = 0;
 

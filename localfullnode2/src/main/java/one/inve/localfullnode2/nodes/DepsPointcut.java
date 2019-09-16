@@ -18,6 +18,7 @@ import one.inve.core.EventBody;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.DepItemsManagerial;
 import one.inve.localfullnode2.dep.items.AllQueues;
+import one.inve.localfullnode2.firstseq.FirstSeqsDependency;
 import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.persistence.NewGossipEventsPersistenceDependency;
 import one.inve.localfullnode2.hashnet.HashneterDependency;
@@ -37,6 +38,7 @@ import one.inve.localfullnode2.snapshot.SnapshotSyncConsumer;
 import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependency;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.EventStoreDependency;
+import one.inve.localfullnode2.sync.msg.MsgIntrospectorDependency;
 
 /**
  * event listener registration.
@@ -108,10 +110,20 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 		SnapshotSynchronizerDependency snapshotSynchronizerDependency = new SnapshotSynchronizerDependency();
 		of(snapshotSynchronizerDependency);
 
+		FirstSeqsDependency firstSeqsDependency = new FirstSeqsDependency();
+		of(firstSeqsDependency);
+
 		SnapshotSyncConsumer snapshotSyncConsumer = new SnapshotSyncConsumer();
 		of(snapshotSyncConsumer);
 
+		MsgIntrospectorDependency msgIntrospectorDependency = new MsgIntrospectorDependency();
+		of(msgIntrospectorDependency);
+
 		buildStagingArea();
+	}
+
+	private void of(MsgIntrospectorDependency msgIntrospectorDependency) {
+		DepItemsManager.getInstance().attachDBId(msgIntrospectorDependency);
 	}
 
 	/**
@@ -119,6 +131,16 @@ public abstract class DepsPointcut extends LocalFullNode1GeneralNode {
 	 */
 	private void of(SnapshotSyncConsumer snapshotSyncConsumer) {
 		DepItemsManager.getInstance().attachDirectCommunicator(snapshotSyncConsumer);
+	}
+
+	/**
+	 * {@code FirstSeqsbility(FirstSeqsDependency dep)}
+	 */
+	protected void of(FirstSeqsDependency firstSeqsDependency) {
+		DepItemsManager.getInstance().attachShardCount(firstSeqsDependency);
+		DepItemsManager.getInstance().attachNValue(firstSeqsDependency);
+		DepItemsManager.getInstance().attachLastSeqs(firstSeqsDependency);
+		DepItemsManager.getInstance().attachDBId(firstSeqsDependency);
 	}
 
 	/**
