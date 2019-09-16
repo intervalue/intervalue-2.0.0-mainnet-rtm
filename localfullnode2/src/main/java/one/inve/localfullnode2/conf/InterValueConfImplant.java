@@ -22,7 +22,7 @@ import one.inve.localfullnode2.utilities.ReflectionUtils;
  * @author: Francis.Deng [francis_xiiiv@163.com]
  * @date: Sep 12, 2019 12:33:14 AM
  * @version: V1.0
- * @version: V1.1 automatically append my public addrees
+ * @version: V1.1 automatically append my public address in white list
  */
 public class InterValueConfImplant implements IConfImplant {
 	private IInterValueConf conf;
