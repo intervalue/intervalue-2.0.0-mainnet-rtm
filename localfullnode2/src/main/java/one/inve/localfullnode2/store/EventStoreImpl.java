@@ -409,8 +409,10 @@ public class EventStoreImpl implements IEventStore {
 			ArrayList<EventBody> list = new ArrayList<>();
 			int n = 0;
 			for (int creatorId = 0; creatorId < this.n; creatorId++) {
-				BigInteger startSeq = BigInteger.valueOf(page).multiply(BigInteger.valueOf(this.sizePerHashnetNode));
-				BigInteger endSeq = BigInteger.valueOf(page + 1).multiply(BigInteger.valueOf(this.sizePerHashnetNode));
+//				BigInteger startSeq = BigInteger.valueOf(page).multiply(BigInteger.valueOf(this.sizePerHashnetNode));
+//				BigInteger endSeq = BigInteger.valueOf(page + 1).multiply(BigInteger.valueOf(this.sizePerHashnetNode));
+				BigInteger startSeq = BigInteger.valueOf(page).multiply(BigInteger.valueOf(this.sizePerHashnetNode)).add(lastSeqs[creatorId]).subtract(new BigInteger("10000"));
+				BigInteger endSeq = BigInteger.valueOf(page + 1).multiply(BigInteger.valueOf(this.sizePerHashnetNode)).add(startSeq);
 				if (endSeq.compareTo(lastSeqs[creatorId]) >= 0) {
 					n++;
 					endSeq = lastSeqs[creatorId].add(BigInteger.ONE);
