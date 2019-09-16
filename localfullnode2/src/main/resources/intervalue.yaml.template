@@ -12,11 +12,11 @@ zeroc: |
 ##
 
 localfullnode2: 
-    pubIP: 192.168.207.129                      ## "myself.pubIP"
-    gossipPort: 35791                           ## "myself.gossipPort"
-    rpcPort: 35792                              ## "myself.rpcPort"
-    httpPort: 35793                             ## "myself.httpPort"
-    prefix: 3                                   ## "-Dtest.prefix" in the command line
+    pubIP: 192.168.207.129                      ## "myself.pubIP=192.168.207.129"
+    gossipPort: 35791                           ## "myself.gossipPort=35791"
+    rpcPort: 35792                              ## "myself.rpcPort=35792"
+    httpPort: 35793                             ## "myself.httpPort=35793"
+    prefix: 3                                   ## "-Dtest.prefix=3" in the command line
     whitelist:                                  ## "Config" class's "WHITE_LIST"
         - 192.168.207.129
         - 172.17.2.118
