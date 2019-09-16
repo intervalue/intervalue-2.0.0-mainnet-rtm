@@ -3,8 +3,6 @@ package one.inve.localfullnode2.conf;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -12,6 +10,7 @@ import java.util.Map;
 import java.util.Random;
 
 import one.inve.bean.node.GossipAddress;
+import one.inve.localfullnode2.utilities.ReflectionUtils;
 
 /**
  * 
@@ -80,7 +79,7 @@ public class InterValueConfImplant implements IConfImplant {
 	@Override
 	public void implantStaticConfig() {
 		try {
-			setStaticField(Config.class, "WHITE_LIST", conf.getLocalfullnode2Conf().getWhitelist());
+			ReflectionUtils.setStaticField(Config.class, "WHITE_LIST", conf.getLocalfullnode2Conf().getWhitelist());
 			// setStaticField(Config.class, "ENABLE_SNAPSHOT", false);// disable snapshot or
 			// not
 		} catch (Exception e) {
@@ -100,24 +99,24 @@ public class InterValueConfImplant implements IConfImplant {
 	}
 
 	// Changing static final fields via reflection
-	private void setStaticField(Class clazz, String fieldName, Object value)
-			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		Field field = clazz.getDeclaredField(fieldName);
-
-		Field modifiersField = Field.class.getDeclaredField("modifiers");
-		boolean isModifierAccessible = modifiersField.isAccessible();
-		modifiersField.setAccessible(true);
-		modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-		boolean isAccessible = field.isAccessible();
-		field.setAccessible(true);
-
-		field.set(null, value);
-
-		field.setAccessible(isAccessible);
-		modifiersField.setAccessible(isModifierAccessible); // Might not be very useful resetting the value, really. The
-															// harm is already done.
-	}
+//	private void setStaticField(Class clazz, String fieldName, Object value)
+//			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+//		Field field = clazz.getDeclaredField(fieldName);
+//
+//		Field modifiersField = Field.class.getDeclaredField("modifiers");
+//		boolean isModifierAccessible = modifiersField.isAccessible();
+//		modifiersField.setAccessible(true);
+//		modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+//
+//		boolean isAccessible = field.isAccessible();
+//		field.setAccessible(true);
+//
+//		field.set(null, value);
+//
+//		field.setAccessible(isAccessible);
+//		modifiersField.setAccessible(isModifierAccessible); // Might not be very useful resetting the value, really. The
+//															// harm is already done.
+//	}
 
 	private void writeToFileNIOWay(File file, String messageToWrite) throws IOException {
 		FileOutputStream fileOutputStream = new FileOutputStream(file, true);
