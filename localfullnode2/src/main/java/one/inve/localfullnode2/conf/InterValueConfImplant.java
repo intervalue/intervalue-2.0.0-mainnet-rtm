@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -21,6 +22,7 @@ import one.inve.localfullnode2.utilities.ReflectionUtils;
  * @author: Francis.Deng [francis_xiiiv@163.com]
  * @date: Sep 12, 2019 12:33:14 AM
  * @version: V1.0
+ * @version: V1.1 automatically append my public addrees
  */
 public class InterValueConfImplant implements IConfImplant {
 	private IInterValueConf conf;
@@ -79,14 +81,45 @@ public class InterValueConfImplant implements IConfImplant {
 	@Override
 	public void implantStaticConfig() {
 		try {
-			ReflectionUtils.setStaticField(Config.class, "WHITE_LIST", conf.getLocalfullnode2Conf().getWhitelist());
+			String myPublicAddr = null;
+
+			List<String> whiteList = conf.getLocalfullnode2Conf().getWhitelist();
+			if ((myPublicAddr = getPublicAddr()) != null) {
+				whiteList.add(myPublicAddr);
+			}
+			ReflectionUtils.setStaticField(Config.class, "WHITE_LIST", whiteList);
 			// setStaticField(Config.class, "ENABLE_SNAPSHOT", false);// disable snapshot or
 			// not
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 
+	}
+
+	// get public ip address from https://api.ipify.org or http://seedip:30911
+	@SuppressWarnings("resource")
+	protected String getPublicAddr() {
+		try (java.util.Scanner s = new java.util.Scanner(new java.net.URL("https://api.ipify.org").openStream(),
+				"UTF-8").useDelimiter("\\A")) {
+			// System.out.println("My current IP address is " + s.next());
+			return s.next();
+		} catch (java.io.IOException e) {
+			e.printStackTrace();
+		}
+
+		// start ips in the command line,which listening to 30911
+		try (java.util.Scanner s = new java.util.Scanner(
+				new java.net.URL(String.format("http://%s:30911", Config.DEFAULT_SEED_PUBIP)).openStream(), "UTF-8")
+						.useDelimiter("\\A")) {
+			// System.out.println("My current IP address is " + s.next());
+			return s.next();
+		} catch (java.io.IOException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	// register system properties from configuration
