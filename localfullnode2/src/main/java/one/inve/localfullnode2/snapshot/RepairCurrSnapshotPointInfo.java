@@ -138,7 +138,7 @@ public class RepairCurrSnapshotPointInfo {
                                     .build();
                             dep.addContribution(c);
                             // 修复msgHashTreeRoot
-                            calculateMsgHashTreeRoot(temp);
+//                            calculateMsgHashTreeRoot(temp);
 
                             // 没来的及更新入库的共识Event及时入库
                             consEventCount = consEventCount.add(BigInteger.ONE);
