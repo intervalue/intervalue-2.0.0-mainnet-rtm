@@ -57,7 +57,18 @@ public class FirstSeqsbility {
 				firstSeqs.put(i, firstSeqsInShard);
 			}
 		} catch (Throwable e) {
-			// allow some friendly reaction
+			// allow some friendly reaction towards initialized state
+			for (int i = 0; i < shardCount; i++) {
+				AtomicLongArray firstSeqsInShard = new AtomicLongArray(nValue);
+
+				for (int j = 0; j < nValue; j++) {
+					firstSeqsInShard.set(j, -1);
+
+					eventStore.put(new FirstSeqKey(i, j), BigInteger.valueOf(-1));
+				}
+
+				firstSeqs.put(i, firstSeqsInShard);
+			}
 		}
 	}
 
