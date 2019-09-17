@@ -43,17 +43,21 @@ public class FirstSeqsbility {
 		int shardCount = dep.getShardCount();
 		int nValue = dep.getnValue();
 
-		for (int i = 0; i < shardCount; i++) {
-			AtomicLongArray firstSeqsInShard = new AtomicLongArray(nValue);
+		try {
+			for (int i = 0; i < shardCount; i++) {
+				AtomicLongArray firstSeqsInShard = new AtomicLongArray(nValue);
 
-			for (int j = 0; j < nValue; j++) {
-				BigInteger seq = binarySearch(i, j, BigInteger.ZERO, eventStore.getLastSeq(i, j), eventStore);
-				firstSeqsInShard.set(j, seq.longValue());
+				for (int j = 0; j < nValue; j++) {
+					BigInteger seq = binarySearch(i, j, BigInteger.ZERO, eventStore.getLastSeq(i, j), eventStore);
+					firstSeqsInShard.set(j, seq.longValue());
 
-				eventStore.put(new FirstSeqKey(i, j), seq);
+					eventStore.put(new FirstSeqKey(i, j), seq);
+				}
+
+				firstSeqs.put(i, firstSeqsInShard);
 			}
-
-			firstSeqs.put(i, firstSeqsInShard);
+		} catch (Exception e) {
+			// allow some friendly reaction
 		}
 	}
 
@@ -63,6 +67,11 @@ public class FirstSeqsbility {
 		// cause stackOverflowError
 		// logger.info("binary search first seq: [{},{}]", fromSeq.longValue(),
 		// toSeq.longValue());
+
+		if (toSeq.longValue() < 0) {
+			throw new RuntimeException("ignore the search for first seq");// terminate the search for first seq because
+																			// of blank localfullnode2
+		}
 
 		if (isFirstSeq(shardId, idInShard, toSeq, eventStore))
 			return toSeq;
