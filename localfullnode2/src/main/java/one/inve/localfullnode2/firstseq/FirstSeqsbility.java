@@ -56,7 +56,7 @@ public class FirstSeqsbility {
 
 				firstSeqs.put(i, firstSeqsInShard);
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			// allow some friendly reaction
 		}
 	}
