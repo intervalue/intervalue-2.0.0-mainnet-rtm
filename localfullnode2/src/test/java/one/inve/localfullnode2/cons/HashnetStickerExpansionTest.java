@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory;
  * 
  * @Description: Test case list:
  * 
- *               a.4 sticker only
+ *               a.4 stickers only
  *               <p>
- *               b.4 sticker expands to 5 stickers
+ *               b.4 stickers expands to 5 stickers
  *               <p>
- *               c.4 sticker shrinks into 3 stickers
+ *               c.4 stickers shrinks into 3 stickers
  *               <p>
- *               d.10 sticker expands to 12 stickers
+ *               d.10 stickers expands to 12 stickers
  * 
  *               We proved that hashnet model provided spaces for the expansion
  *               of nodes.
