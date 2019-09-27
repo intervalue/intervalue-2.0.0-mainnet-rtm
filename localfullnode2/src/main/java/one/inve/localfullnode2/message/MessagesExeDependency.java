@@ -16,7 +16,7 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: {@setTotalFeeBetween2Snapshots},{@getTotalFeeBetween2Snapshots} is
  *               unknown
@@ -85,9 +85,6 @@ public class MessagesExeDependency implements MessagesExeDependent, DependentIte
 
 	@Override
 	public void setTotalFeeBetween2Snapshots(BigInteger totalFeeBetween2Snapshots) {
-		if(ss == null){
-			ss = new SS();
-		}
 		ss.setTotalFeeBetween2Snapshots(totalFeeBetween2Snapshots);
 	}
 

@@ -8,7 +8,9 @@ import one.inve.bean.node.LocalFullNode;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.EventKeyPair;
+import one.inve.localfullnode2.store.SnapshotDbService;
 import one.inve.localfullnode2.store.rocks.INosql;
+import one.inve.localfullnode2.store.rocks.Message;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.utilities.Hash;
 import one.inve.localfullnode2.utilities.StringUtils;
@@ -25,10 +27,12 @@ public class RepairCurrSnapshotPointInfo {
     private static final Logger logger = LoggerFactory.getLogger(RepairCurrSnapshotPointInfo.class);
 
     private RepairCurrSnapshotPointInfoDependent dep;
+    private SnapshotDbService store;
 
-    public void repairCurrSnapshotPointInfo(RepairCurrSnapshotPointInfoDependent dep) throws InterruptedException {
+    public void repairCurrSnapshotPointInfo(RepairCurrSnapshotPointInfoDependent dep, SnapshotDbService store) throws InterruptedException {
         logger.info(">>>>>START<<<<<repairCurrSnapshotPointInfo");
         this.dep = dep;
+        this.store = store;
 
         SnapshotPoint latestSnapshotPoint = calculateLatestSnapshotPoint();
         EventBody latestSnapshotPointEb = null;
@@ -62,8 +66,8 @@ public class RepairCurrSnapshotPointInfo {
             for (int i = 0; i < dep.getShardCount(); i++) {
                 if (null == events[i]) {
                     events[i] = dep.getShardSortQueue(i).poll();
-                    logger.info(">>>>>INFO<<<<<repairCurrSnapshotPointInfo:\n eventBody[{}]: {}",i,
-                            JSON.toJSONString(events[i]));
+//                    logger.info(">>>>>INFO<<<<<repairCurrSnapshotPointInfo:\n eventBody[{}]: {}",i,
+//                            JSON.toJSONString(events[i]));
                     l++;
                 }
 
@@ -81,6 +85,7 @@ public class RepairCurrSnapshotPointInfo {
 //                                    node.getShardId(), node.getCreatorId(), consEventCount);
 //                            logger.info("node-({}, {}): repaired transCount = {}",
 //                                    node.getShardId(), node.getCreatorId(), transCount);
+                            repairMsgHashTreeRoot();
                             return;
                         } else if (events[j].getConsTimestamp().isBefore(temp.getConsTimestamp())) {
                             // 共识时间戳小的event排在前面
@@ -133,7 +138,7 @@ public class RepairCurrSnapshotPointInfo {
                                     .build();
                             dep.addContribution(c);
                             // 修复msgHashTreeRoot
-                            calculateMsgHashTreeRoot(temp);
+//                            calculateMsgHashTreeRoot(temp);
 
                             // 没来的及更新入库的共识Event及时入库
                             consEventCount = consEventCount.add(BigInteger.ONE);
@@ -287,7 +292,7 @@ public class RepairCurrSnapshotPointInfo {
     }
 
     private void calculateMsgHashTreeRoot(EventBody event) {
-        logger.info(">>>>>START<<<<<calculateMsgHashTreeRoot:\n eventBody: {}", JSON.toJSONString(event));
+//        logger.info(">>>>>START<<<<<calculateMsgHashTreeRoot:\n eventBody: {}", JSON.toJSONString(event));
         long eventMsgCount = (null!=event.getTrans() && event.getTrans().length > 0)
                 ? event.getTrans().length : 0;
         // 共识消息放入消息签名验证队列
@@ -301,10 +306,33 @@ public class RepairCurrSnapshotPointInfo {
                     } else {
                         dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(dep.getMsgHashTreeRoot(), msgObj.getString("signature"))));
                     }
-
+                logger.info(">>>>>INFO<<<<<calculateMsgHashTreeRoot:\n msgHashTreeRoot: {}",dep.getMsgHashTreeRoot());
             }
         }
-        logger.info(">>>>>END<<<<<calculateMsgHashTreeRoot:\n msgHashTreeRoot: {}",dep.getMsgHashTreeRoot());
+    }
+
+    private void repairMsgHashTreeRoot() {
+        SnapshotPoint latestSnapshotPoint = calculateLatestSnapshotPoint();
+        EventBody latestSnapshotPointEb = null;
+        BigInteger startId;
+        if (latestSnapshotPoint != null) {
+            latestSnapshotPointEb = latestSnapshotPoint.getEventBody();
+            startId = latestSnapshotPointEb.getTransCount();
+        } else {
+            startId = BigInteger.valueOf(Config.CREATION_TX_LIST.size());
+        }
+        for (BigInteger i = startId.add(BigInteger.ONE); i.compareTo(dep.getConsMessageMaxId()) <= 0; i = i.add(BigInteger.ONE)) {
+            Message message = store.getMessageById(dep.getDbId(), i);
+            if (message != null) {
+                logger.info(">>>>>INFO<<<<<repairMsgHashTreeRoot:\n msg: {}", JSONObject.toJSON(message));
+                if (StringUtils.isEmpty(dep.getMsgHashTreeRoot())) {
+                    dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(message.getHash())));
+                } else {
+                    dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(dep.getMsgHashTreeRoot(), message.getHash())));
+                }
+                logger.info(">>>>>INFO<<<<<repairMsgHashTreeRoot:\n msgHashTreeRoot: {}", dep.getMsgHashTreeRoot());
+            }
+        }
     }
 
 }

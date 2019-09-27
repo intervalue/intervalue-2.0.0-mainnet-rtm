@@ -11,7 +11,7 @@ import one.inve.localfullnode2.dep.DependentItem;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: That is Snapshot(SS)
  * @author: Francis.Deng

@@ -1,5 +1,6 @@
 package one.inve.localfullnode2.store;
 
+import java.math.BigInteger;
 import java.util.Iterator;
 import one.inve.core.EventBody;
 
@@ -59,4 +60,10 @@ public interface IEventStore {
   public void initCache();
 
     public void  delEventInCache(int shardId, long creatorId, long creatorSeq);
+
+  /**
+   * 返回按照generation排序的EventBody迭代器，用于重启恢复时使用，遍历startSeq之后的Event
+   * @return eb迭代器
+   */
+  Iterator<EventBody> genOrderedIterator(int shardId, int n, BigInteger firstSeq);
 }

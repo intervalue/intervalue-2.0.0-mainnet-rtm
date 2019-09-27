@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: Abstract base class for {@link ParadigmLoop}'s that execute all
  *               its submitted tasks in a single thread.

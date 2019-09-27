@@ -62,6 +62,7 @@ public class CreateSnapshotPoint {
             }
 
             // 生成快照点
+            logger.info(">>>>>INFO<<<<<createSnapshotPoint:\n msgHashTreeRoot: {}", dep.getMsgHashTreeRoot());
             final String eHash = DSA.encryptBASE64(event.getHash());
             if (StringUtils.isEmpty(dep.getMsgHashTreeRoot())) {
 //                msgHashTreeRoot = eHash;

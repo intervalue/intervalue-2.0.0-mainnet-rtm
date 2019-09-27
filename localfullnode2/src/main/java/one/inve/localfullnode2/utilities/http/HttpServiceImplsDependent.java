@@ -3,7 +3,7 @@ package one.inve.localfullnode2.utilities.http;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: you are able to pass whatever implements
  *               {@link HttpServiceImplsDependent}.It's your service to

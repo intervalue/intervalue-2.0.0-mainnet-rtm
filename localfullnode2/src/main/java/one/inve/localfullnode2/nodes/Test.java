@@ -18,7 +18,7 @@ public class Test {
         final int size = 1;
         int i = 1;
 //        for (int i=0; i<size; i++) {
-            String[] args1 = new String[11];
+            String[] args1 = new String[12];
 
             args1[0] = "--Ice.Config=src" + File.separator + "main"+File.separator+"config"+File.separator+"default.config";
             args1[1] = "-Dtest.clearDb=0";
@@ -30,11 +30,12 @@ public class Test {
             args1[7] = "-Dmapping.buf.dir=" + PathUtils.getDataFileDir() + "/contract/buf" + i;
             args1[8] = "-Dtest.multiple=1";
             args1[9] = "-Dtest.prefix=" + i;
+            args1[10] = "-Dp2pcluster.icport=33011";
 
             if (i==0) {
-                args1[10] = "-Dmnemonic='" + Config.FOUNDATION_MNEMONIC + "'";
+                args1[11] = "-Dmnemonic='" + Config.FOUNDATION_MNEMONIC + "'";
             } else {
-                args1[10] = "";
+                args1[11] = "";
             }
 
             TestThread testThread = new TestThread(args1);

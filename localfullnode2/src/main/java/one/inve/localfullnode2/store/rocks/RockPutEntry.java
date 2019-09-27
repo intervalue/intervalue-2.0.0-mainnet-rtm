@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The class was designed to replace old-rusty one with new one if
  *               they has the same key.

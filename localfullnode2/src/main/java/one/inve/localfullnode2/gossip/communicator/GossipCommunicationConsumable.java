@@ -11,7 +11,7 @@ import one.inve.localfullnode2.gossip.vo.GossipObj;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: consume gossipy communication results.
  * @author: Francis.Deng

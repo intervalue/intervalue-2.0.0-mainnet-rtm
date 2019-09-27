@@ -17,7 +17,7 @@ import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: Missing snapshot-related thing.
  * @author: Francis.Deng
@@ -95,6 +95,11 @@ public class EventsExeDependency implements EventsExeDependent, DependentItemCon
 	@Override
 	public BlockingQueue<JSONObject> getConsMessageVerifyQueue() {
 		return allQueues.get().getQueue(JSONObject.class, StagingArea.ConsMessageVerifyQueueName);
+	}
+
+	@Override
+	public void addContribution(Contribution contribution) {
+		ss.addContribution(contribution);
 	}
 
 }

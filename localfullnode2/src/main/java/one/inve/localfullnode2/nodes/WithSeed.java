@@ -15,8 +15,8 @@ import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.lc.FormalEventMessageLoop;
 import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
+import one.inve.localfullnode2.lc.P2PClusterClientThread;
 import one.inve.localfullnode2.lc.WriteEventExclusiveEventMessageLoop;
-import one.inve.localfullnode2.membership.GossipNodeThread;
 import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.rpc.RegisterPrx;
 import one.inve.localfullnode2.rpc.RpcConnectionService;
@@ -26,7 +26,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The class is able to communicate with seed node to complete the
  *               tasks like registering,retrieving sharding,maintaining
@@ -36,8 +36,9 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * @author: Francis.Deng
  * @date: May 14, 2019 11:34:32 PM
  * @version: V1.0
+ * @version: V2.0 replace inve-cluster with p2p-cluster
  */
-public class WithSeed extends HashneterInitializer {
+public class WithSeed extends Indexer {
 	private static final Logger logger = LoggerFactory.getLogger(WithSeed.class);
 
 	@Override
@@ -160,11 +161,11 @@ public class WithSeed extends HashneterInitializer {
 
 	@Override
 	protected ILifecycle performCoreTasks(Hashneter hashneter) {
-        // disable gossip write-read lock due to more time to complete message.
-        // 2019.2.20 by Francis.Deng
+		// disable gossip write-read lock due to more time to complete message.
+		// 2019.2.20 by Francis.Deng
 		ILifecycle lc = new FormalEventMessageLoop();
-        // ILifecycle lc = new
-        // WriteEventExclusiveEventMessageLoop(this.gossipAndRPCExclusiveLock().writeLock());
+		// ILifecycle lc = new
+		// WriteEventExclusiveEventMessageLoop(this.gossipAndRPCExclusiveLock().writeLock());
 		lc.start();
 
 		return lc;
@@ -174,11 +175,14 @@ public class WithSeed extends HashneterInitializer {
 	/**
 	 * block system execution until there is enough sharding's members on board,we
 	 * deny the thread solution because of some factors.
+	 * 
+	 * replace {@code GossipNodeThread} with {@code P2PClusterClientThread}
 	 */
 	@Override
 	protected ILifecycle startMembership(LocalFullNode1GeneralNode node) {
 		LazyLifecycle llc = new LazyLifecycle() {
-			private GossipNodeThread gossipTh;
+			// private GossipNodeThread gossipTh;
+			private P2PClusterClientThread gossipTh;
 
 			@Override
 			public boolean isRunning() {
@@ -191,7 +195,9 @@ public class WithSeed extends HashneterInitializer {
 				super.start();
 
 				// 加入gossip网络
-				gossipTh = new GossipNodeThread(node, HnKeyUtils.getString4PublicKey(publicKey()));
+				// gossipTh = new GossipNodeThread(node,
+				// HnKeyUtils.getString4PublicKey(publicKey()));
+				gossipTh = new P2PClusterClientThread(node, HnKeyUtils.getString4PublicKey(publicKey()));
 				gossipTh.start();
 			}
 

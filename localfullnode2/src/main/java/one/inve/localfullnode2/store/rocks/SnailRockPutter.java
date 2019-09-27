@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: An phenomenon was found that a half of invoking methods access
  *               to rocksdb was writing-type,which is possible to cost a lot.In
@@ -42,7 +42,7 @@ public abstract class SnailRockPutter extends RocksJavaUtil {
 		this._intervalInMilli = intervalInMilli;
 	}
 
-	protected void put(final byte[] k, final byte[] v) {
+	public void put(final byte[] k, final byte[] v) {
 		RockPutEntry putEntry = new RockPutEntry(k, v);
 
 		if (noDuplicateElementsContainer.isEmpty())

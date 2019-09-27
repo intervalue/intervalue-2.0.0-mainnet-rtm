@@ -19,7 +19,7 @@ import one.inve.utils.SignUtil;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: verify messages from queue.
  * @author: Francis.Deng

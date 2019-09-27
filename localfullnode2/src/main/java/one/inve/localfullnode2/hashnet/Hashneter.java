@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import one.inve.bean.message.SnapshotPoint;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DepItemsManager;
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 
 /**
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: From getAllQueuedEvents to getShardSortQueue,the class execute
  *               hashnet sorting algorithm,the templates comprise
@@ -91,6 +92,7 @@ public class Hashneter implements IHashneter {
 				// 读取所有Event
 				ArrayList<EventBody> events = new ArrayList<>();
 				Iterator iter = eventStore.genOrderedIterator(i, dep.getNValue());
+//				Iterator iter = eventStore.genOrderedIterator(i, dep.getNValue(),new BigInteger(String.valueOf(getLatestSnapshotPointEventSeq())));
 				while (iter.hasNext()) {
 					EventBody eb = (EventBody) iter.next();
 					events.add(eb);
@@ -130,7 +132,8 @@ public class Hashneter implements IHashneter {
 		if (Config.ENABLE_SNAPSHOT) {
 			RepairCurrSnapshotPointInfoDependent repairCurrSnapshotPointInfoDep =
 					DepItemsManager.getInstance().getItemConcerned(RepairCurrSnapshotPointInfoDependency.class);
-			new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(repairCurrSnapshotPointInfoDep);
+			SnapshotDbService store = new SnapshotDbServiceImpl();
+			new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(repairCurrSnapshotPointInfoDep, store);
 		}
 		// repairCurrSnapshotPointInfo(node);
 
@@ -205,6 +208,21 @@ public class Hashneter implements IHashneter {
 	@Override
 	public Event[] getAllConsEvents(int shardId) {
 		return hashnet.getAllConsEvents(shardId);
+	}
+
+	private long getLatestSnapshotPointEventSeq() {
+		HashMap<BigInteger, SnapshotPoint> snapshotPointMap = DepItemsManager.getInstance().attachSS(null).getSnapshotPointMap();
+		BigInteger currSnapshotVersion = DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion();
+		if (null != snapshotPointMap && null != snapshotPointMap.get(currSnapshotVersion.subtract(BigInteger.TEN))) {
+			SnapshotPoint latestSnapshotPoint = snapshotPointMap.get(currSnapshotVersion.subtract(BigInteger.TEN));
+			if (latestSnapshotPoint != null) {
+				EventBody latestSnapshotPointEb = latestSnapshotPoint.getEventBody();
+				if (latestSnapshotPointEb != null) {
+					return latestSnapshotPointEb.getCreatorSeq();
+				}
+			}
+		}
+		return 0L;
 	}
 
 }

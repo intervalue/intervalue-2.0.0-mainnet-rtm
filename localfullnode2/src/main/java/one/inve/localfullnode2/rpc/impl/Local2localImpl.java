@@ -185,6 +185,7 @@ public class Local2localImpl implements Local2local {
 	@Override
 	public synchronized GossipObj gossipMyMaxSeqList4Consensus(String pubkey, String sig, String snapVersion,
 			String snapHash, long[] seqs, Current current) {
+		logger.info("gossipMyMaxSeqList4Consensus Current:{}", JSON.toJSONString(current));
 		GossipObj gossipObj = null;
 		BigInteger vers = DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion();
 		if (gossipFlag) {
@@ -315,10 +316,12 @@ public class Local2localImpl implements Local2local {
 		int selfId = (int) node.getCreatorId();
 		logger.warn("hash:{}", hash);
 		String snapshotStr = snapshotDbService.querySnapshotMessageFormatStringByHash(node.nodeParameters().dbId, hash);
-		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
-		// 获取交易信息
-		List<JSONObject> trans = transactionDbService.queryMissingTransactionsBeforeSnapshotPoint(originalSnapshotStr,
-				new BigInteger(transCount), node.nodeParameters().dbId);
+        //2019.05.30 暂停快照同步message
+        List<JSONObject> trans = null;
+//		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
+//		// 获取交易信息
+//		List<JSONObject> trans = transactionDbService.queryMissingTransactionsBeforeSnapshotPoint(originalSnapshotStr,
+//				new BigInteger(transCount), node.nodeParameters().dbId);
 
 		// 构建结果结构
 		SnapObj snapObj = new SnapObj(snapshotStr, (null == trans) ? null : JSONArray.toJSONString(trans));

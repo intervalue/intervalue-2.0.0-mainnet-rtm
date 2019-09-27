@@ -1,7 +1,11 @@
 package one.inve.localfullnode2.store;
 
 
+import com.alibaba.fastjson.JSONObject;
 import one.inve.bean.message.SnapshotMessage;
+import one.inve.localfullnode2.store.rocks.Message;
+
+import java.math.BigInteger;
 import java.util.Map;
 
 public interface SnapshotDbService {
@@ -90,4 +94,22 @@ public interface SnapshotDbService {
                                                                    one.inve.core.EventBody eb,
                                                                    Map<Long, EventKeyPair> map,
                                                                    int nValue);
+
+    /**
+     * 根据消息id值，查询对应的消息，并以Message对象形式返回
+     *
+     * @param dbId 数据库ID
+     * @param id 消息id值
+     * @return 消息（以Message对象形式返回）
+     */
+    public Message getMessageById(String dbId, BigInteger id);
+
+    /**
+     * 获取每根柱子存在的第一个event
+     *
+     * @param dbId   数据库ID
+     * @param nValue 分片总节点数
+     * @return 每根柱子上第一个存在的event
+     */
+    public Map<Long, EventKeyPair> getFirstExistEventKeyPairsForEachNode(String dbId, int nValue);
 }

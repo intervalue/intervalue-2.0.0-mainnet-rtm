@@ -1,6 +1,5 @@
 package one.inve.localfullnode2.http;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.concurrent.BlockingQueue;
 
 import com.alibaba.fastjson.JSONObject;
 import one.inve.localfullnode2.store.rocks.*;
+import one.inve.localfullnode2.utilities.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ import one.inve.localfullnode2.store.mysql.QueryTableSplit;
 import one.inve.localfullnode2.utilities.TxVerifyUtils;
 
 /**
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  *
  * @Description: TODO
  * @author: Francis.Deng
@@ -57,7 +57,7 @@ public class CommonApiService {
                             StagingArea.MessageQueueName);
                     messageQueue.add(message.getBytes());
                     allQueues.set(stagingArea);
-                    mlogger.info(node.nodeParameters().dbId + "|" + message);
+//                    mlogger.info(node.nodeParameters().dbId + "|" + message);
                     // Francis.Deng 04/26/2019
                     // back up messages from wallet client intentionally
                     // ValuableDataOutputters.getInstance().outputVerifiedMessage(message);
@@ -119,6 +119,19 @@ public class CommonApiService {
         return queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId);
     }
 
+    /**
+     * 用于交易地址 获取SystemAuto表信息
+     *
+     * @param tableIndex 表ID
+     * @param offset     表中偏移量
+     * @param node       主对象
+     * @return 交易列表
+     */
+    public synchronized static SystemAutoArray querySystemAuto(BigInteger tableIndex, long offset,String address, String type, LocalFullNode1GeneralNode node) {
+        QueryTableSplit queryTableSplit = new QueryTableSplit();
+        return queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId,address, type);
+    }
+
     public synchronized static MsgArray querySystemAutoToMessageList(BigInteger tableIndex, long offset, LocalFullNode1GeneralNode node, String address) {
         QueryTableSplit queryTableSplit = new QueryTableSplit();
         SystemAutoArray systemAutoArray = queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId,address,"contract_fee_tx");
@@ -131,6 +144,9 @@ public class CommonApiService {
         List<Message> list = new ArrayList<Message>();
         for (int i = 0; i < systemAutoArray.getList().size(); i++) {
             JSONObject feeTx = systemAutoArray.getList().get(i);
+            if (StringUtils.isEmpty(feeTx.getString("mHash"))){
+                continue;
+            }
             String txHash = feeTx.getString("mHash").split("_")[0] + "_1";
             JSONObject tx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, txHash);
             Message msg = new Message();
@@ -139,7 +155,53 @@ public class CommonApiService {
                 message.put("nrgPrice", "1000000000");
                 message.put("amount", tx.getBigDecimal("amount").stripTrailingZeros().toPlainString());
                 message.put("signature", tx.getString("mHash"));
-                message.put("fee", (feeTx.getBigDecimal("amount").divide(new BigDecimal("1000000000"))).stripTrailingZeros().toPlainString());
+                message.put("fee", "0");
+                message.put("vers", "2.0");
+                message.put("fromAddress", tx.getString("fromAddress"));
+                message.put("remark", "");
+                message.put("type", 2);
+                message.put("toAddress", tx.getString("toAddress"));
+                message.put("timestamp", tx.getLong("updateTime"));
+                message.put("pubkey", "");
+                msg.seteHash("");
+                msg.setHash(tx.getString("mHash"));
+                msg.setId(tx.getBigDecimal("id").toString());
+                msg.setStable(true);
+                msg.setValid(true);
+                msg.setLastIdx(false);
+                msg.setUpdateTime(tx.getLong("updateTime"));
+                msg.setMessage(message.toString());
+                list.add(msg);
+            }
+        }
+        msgArray.setList(list);
+        return msgArray;
+    }
+
+    public synchronized static MsgArray querySystemAutoToMessageList(BigInteger tableIndex, long offset, LocalFullNode1GeneralNode node) {
+        QueryTableSplit queryTableSplit = new QueryTableSplit();
+        SystemAutoArray systemAutoArray = queryTableSplit.querySystemAuto(tableIndex, offset, node.nodeParameters().dbId,"contract_fee_tx");
+        if (systemAutoArray == null || systemAutoArray.getList() == null || systemAutoArray.getList().size() == 0) {
+            return null;
+        }
+        MsgArray msgArray = new MsgArray();
+        msgArray.setSysTableIndex(systemAutoArray.getTableIndex());
+        msgArray.setSysOffset(systemAutoArray.getOffset());
+        List<Message> list = new ArrayList<Message>();
+        for (int i = 0; i < systemAutoArray.getList().size(); i++) {
+            JSONObject feeTx = systemAutoArray.getList().get(i);
+            if (StringUtils.isEmpty(feeTx.getString("mHash"))){
+                continue;
+            }
+            String txHash = feeTx.getString("mHash").split("_")[0] + "_1";
+            JSONObject tx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, txHash);
+            Message msg = new Message();
+            if (tx != null) {
+                JSONObject message = new JSONObject();
+                message.put("nrgPrice", "1000000000");
+                message.put("amount", tx.getBigDecimal("amount").stripTrailingZeros().toPlainString());
+                message.put("signature", tx.getString("mHash"));
+                message.put("fee", "0");
                 message.put("vers", "2.0");
                 message.put("fromAddress", tx.getString("fromAddress"));
                 message.put("remark", "");
@@ -163,12 +225,7 @@ public class CommonApiService {
     }
 
     public synchronized static Message querySystemAutoToMessage(LocalFullNode1GeneralNode node, String hash) {
-        String feeHash = hash.split("_")[0]+"_fee0";
         QueryTableSplit queryTableSplit = new QueryTableSplit();
-        JSONObject feeTx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, feeHash);
-        if (feeTx == null) {
-            return null;
-        }
         JSONObject tx = queryTableSplit.querySystemAuto(null, node.nodeParameters().dbId, hash);
         Message msg = new Message();
         if (tx != null) {
@@ -176,7 +233,7 @@ public class CommonApiService {
             message.put("nrgPrice", "1000000000");
             message.put("amount", tx.getBigDecimal("amount").stripTrailingZeros().toPlainString());
             message.put("signature", tx.getString("mHash"));
-            message.put("fee", (feeTx.getBigDecimal("amount").divide(new BigDecimal("1000000000"))).stripTrailingZeros().toPlainString());
+            message.put("fee", "0");
             message.put("vers", "2.0");
             message.put("fromAddress", tx.getString("fromAddress"));
             message.put("remark", "");

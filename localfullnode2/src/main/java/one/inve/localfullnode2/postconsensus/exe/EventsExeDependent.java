@@ -36,4 +36,6 @@ public interface EventsExeDependent {
 	// the destination
 	BlockingQueue<JSONObject> getConsMessageVerifyQueue();
 
+	void addContribution(Contribution contribution);
+
 }

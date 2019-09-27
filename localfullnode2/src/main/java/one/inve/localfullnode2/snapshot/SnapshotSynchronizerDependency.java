@@ -22,7 +22,7 @@ import one.inve.localfullnode2.store.SnapshotDbService;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description:cover all dependency coming to {@code SnapshotSynchronizer}
  *                    Note:pay more attention on TBD items.

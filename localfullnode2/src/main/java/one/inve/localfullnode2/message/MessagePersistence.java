@@ -20,11 +20,12 @@ import one.inve.localfullnode2.store.mysql.NewTableCreate;
 import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.localfullnode2.store.rocks.TransactionMsg;
 import one.inve.localfullnode2.store.rocks.TransactionSplit;
+import one.inve.localfullnode2.store.rocks.key.MessageIndexes;
 import one.inve.localfullnode2.utilities.QueuePoller;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: persist messages or system messages(transaction fee)
  * @author: Francis.Deng
@@ -220,6 +221,10 @@ public class MessagePersistence {
 				// 添加如rocksDB中
 				rocksJavaUtil.put(type + id, JSONArray.toJSONString(sysAutoTx));
 				rocksJavaUtil.put(Config.SYS_TX_COUNT_KEY, id);
+
+				// system messages introspection via rocksdb
+				// by Francis.Deng Sep,4th,2019
+				rocksJavaUtil.put(MessageIndexes.getSysMessageTypeIdKey(type + id), new byte[0]);
 			} catch (Exception ex) {
 				logger.error(">>>>>>>saveSystemAutoTx error: {}", ex);
 			}

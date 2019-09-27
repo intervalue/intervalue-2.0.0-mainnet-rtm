@@ -10,7 +10,7 @@ import java.util.Queue;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: The class provides very convenient way to fetch elements from
  *               queue.

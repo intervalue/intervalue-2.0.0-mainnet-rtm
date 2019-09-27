@@ -142,7 +142,7 @@ public class HandleConsensusSnapshotMessage {
             BigDecimal totalContribution = BigDecimal.ZERO;
             for (Long v : cValues) {
                 if (null != v) {
-                    totalContribution.add(BigDecimal.valueOf(v));
+                    totalContribution = totalContribution.add(BigDecimal.valueOf(v));
                 }
             }
             if (totalContribution.equals(BigDecimal.ZERO)) {

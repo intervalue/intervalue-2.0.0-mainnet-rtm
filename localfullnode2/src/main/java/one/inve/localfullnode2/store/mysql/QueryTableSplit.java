@@ -279,6 +279,37 @@ public class QueryTableSplit {
         return array;
     }
 
+    public SystemAutoArray querySystemAuto(BigInteger tableIndex, Long offset, String dbId, String type) {
+        SystemAutoArray array = new SystemAutoArray();
+        MysqlHelper h = null;
+        try {
+            if (null != tableIndex && tableIndex.compareTo(BigInteger.ZERO) >= 0) {
+                if (offset < 0) {
+                    offset = 0L;
+                }
+//                if (StringUtils.isBlank(address)) {
+//                    return array;
+//                }
+                h = new MysqlHelper(dbId);
+                array = querySystemAuto(array,h,tableIndex,offset,offset,dbId,type);
+                List<JSONObject> list = array.getList();
+                // 查询不到，看是否有下一个表，如果有，继续查询
+                if (list == null || list.size() < 1) {
+                    tableIndex = tableIndex.add(BigInteger.ONE);
+                    // tableIndex跳到下一张表后,offset从零开始
+                    array = querySystemAuto(array, h, tableIndex, 0L, offset, dbId,type);
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("error: {}", ex);
+        } finally {
+            if (h != null) {
+                h.destroyed();
+            }
+        }
+        return array;
+    }
+
     /**
      * 查询表是否存在
      *
@@ -529,6 +560,9 @@ public class QueryTableSplit {
         array.setOffset(offset);
         array.setTableIndex(tableIndex);
         TransactionSplit split = tableSystemAutoExist(dbId);
+        if (split == null){
+            return array;
+        }
         BigInteger splitIndex = split.getTableIndex();
         logger.info("tableIndex: {}, splitIndex: {}", tableIndex, splitIndex);
         if (tableIndex != null && tableIndex.compareTo(splitIndex) > 0) {
@@ -547,10 +581,10 @@ public class QueryTableSplit {
             sql.append(" or toAddress=? )");
         }
         List<JSONObject> entityArrayList = array.getList();
-        int pageSize = PAGE_SIZE_BROWSER;
+        int pageSize = PAGE_SIZE;
         // 如果已经查询一次了，则查询减去上次的
         if (entityArrayList != null && entityArrayList.size() > 0) {
-            pageSize = PAGE_SIZE_BROWSER - entityArrayList.size();
+            pageSize = PAGE_SIZE - entityArrayList.size();
         }
 
         sql.append(" order by id asc limit ").append(pageSize).append(" offset ").append(offset);
@@ -564,6 +598,80 @@ public class QueryTableSplit {
             if (StringUtils.isNotBlank(address)) {
                 preparedStatement.setString(2, address.trim());
                 preparedStatement.setString(3, address.trim());
+            }
+            ResultSet rs = preparedStatement.executeQuery();
+            List<JSONObject> list = new ArrayList<JSONObject>();
+            while (rs.next()){
+                byte[] transationByte = new RocksJavaUtil(dbId).get(rs.getString("type") + rs.getString("id"));
+                if (transationByte != null) {
+                    String tx = new String(transationByte);
+                    try {
+                        list.add(JSONArray.parseObject(transationByte, JSONObject.class));
+                    }catch (Exception e){
+                        logger.error("systemauto object format is illegal:({})", tx);
+                        list.add(new JSONObject());
+                    }
+                } else {
+                    logger.error("this hash rocksDB not exist");
+                    return array;
+                }
+
+            }
+            rs.close();
+            preparedStatement.close();
+            List<JSONObject> entityList = array.getList();
+            if (entityList == null) {
+                entityList = new ArrayList<JSONObject>();
+            }
+            array.setTableIndex(tableIndex);
+            if (list != null) {
+                entityList.addAll(list);
+                array.setOffset(offset + list.size());
+            } else {
+                array.setOffset(offset);
+            }
+            array.setList(entityList);
+        } catch (Exception e) {
+            logger.error("error: {}", e);
+        }
+        return array;
+    }
+
+    private SystemAutoArray querySystemAuto(SystemAutoArray array, MysqlHelper h, BigInteger tableIndex, long offset,
+                                            long oldOffset, String dbId, String type) {
+        array.setOffset(offset);
+        array.setTableIndex(tableIndex);
+        TransactionSplit split = tableSystemAutoExist(dbId);
+        if (split == null){
+            return array;
+        }
+        BigInteger splitIndex = split.getTableIndex();
+        logger.info("tableIndex: {}, splitIndex: {}", tableIndex, splitIndex);
+        if (tableIndex != null && tableIndex.compareTo(splitIndex) > 0) {
+            array.setOffset(oldOffset);
+            array.setTableIndex(splitIndex);
+            return array;
+        }
+        String tableName = Config.SYSTEMAUTOTX + Config.SPLIT + tableIndex;
+        StringBuilder sql = new StringBuilder("select id,type from ");
+        sql.append(tableName).append(" where 1=1");
+        if (StringUtils.isNotBlank(type)) {
+            sql.append(" and type =?");
+        }
+        List<JSONObject> entityArrayList = array.getList();
+        int pageSize = PAGE_SIZE_BROWSER;
+        // 如果已经查询一次了，则查询减去上次的
+        if (entityArrayList != null && entityArrayList.size() > 0) {
+            pageSize = PAGE_SIZE_BROWSER - entityArrayList.size();
+        }
+
+        sql.append(" order by id asc limit ").append(pageSize).append(" offset ").append(offset);
+        // logger.info("Blockchain Browser sql==========================" +
+        // sql.toString());
+        try {
+            PreparedStatement preparedStatement = h.getPreparedStatement(sql.toString());
+            if (StringUtils.isNotBlank(type)) {
+                preparedStatement.setString(1, type.trim());
             }
             ResultSet rs = preparedStatement.executeQuery();
             List<JSONObject> list = new ArrayList<JSONObject>();

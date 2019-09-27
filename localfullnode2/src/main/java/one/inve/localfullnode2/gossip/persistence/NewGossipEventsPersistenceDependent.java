@@ -7,7 +7,7 @@ import one.inve.core.EventBody;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: a dependence description of gossip new events
  * @author: Francis.Deng

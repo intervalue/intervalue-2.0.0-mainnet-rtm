@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-
+import one.inve.contract.ContractTransactionData;
 import one.inve.contract.ethplugin.core.Repository;
 import one.inve.contract.inve.INVERepositoryRoot;
 import one.inve.contract.inve.INVETransactionReceipt;
@@ -31,11 +31,11 @@ import one.inve.localfullnode2.utilities.TxVerifyUtils;
 
 /**
  *
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  *
  * @Description: execute messages that has own type-handler
  * @author: Francis.Deng
- * @see ConsensusMessageHandleThread
+ * @see
  * @see WorldStateService
  * @date: Oct 7, 2018 2:47:59 AM
  * @version: V1.0
@@ -501,6 +501,13 @@ public class MessagesExe {
 //		}
 		ContractMessage cm = JSON.parseObject(message, ContractMessage.class);
 		String fromAddress = cm.getFromAddress();
+
+		ContractTransactionData ct = JSON.parseObject(cm.getData(), ContractTransactionData.class);
+		BigInteger value = new BigInteger(ct.getValue());
+		BigInteger gasPrice = new BigInteger(ct.getGasPrice());
+		BigInteger gasLimit = new BigInteger(ct.getGasLimit());
+		BigInteger fee = gasPrice.multiply(gasLimit);
+
 		boolean valid = msgObject.getBoolean("isValid");
 		List<InternalTransferData> list = null;
 		if (valid) {
@@ -524,15 +531,23 @@ public class MessagesExe {
 			if (!valid) {
 //				logger.error("node-({}, {}): Contract Message verify failed. msgObj: {}", node.getShardId(),
 //						node.getCreatorId(), msgObject.toJSONString());
+			} else if (verifyIllegalCreationMessage(fromAddress, null)) {
+				valid = false;
+//				logger.error("node-({}, {}): Transaction message illegal. msgObj: {}",
+//						node.getShardId(), node.getCreatorId(), msgObject.toJSONString());
 			} else {
+				valid = verifyDoubleCost(fromAddress, null, fee, value);
+				if (!valid) {
+//					logger.error("node-({}, {}): Transaction message double cost. msgObj: {}",
+//							node.getShardId(), node.getCreatorId(), msgObject.toJSONString());
+				}
+			}
+			if(valid){
 				// 执行智能合约
 				list = WorldStateService.executeContractMessage(dep.getDbId(), cm);
 				valid = null != list && list.size() > 0;
 			}
 		}
-		Repository track = RepositoryProvider.getTrack(dep.getDbId());
-		byte[] receiptB = ((INVERepositoryRoot) track).getReceipt(cm.getSignature().getBytes());
-		INVETransactionReceipt receipt = new INVETransactionReceipt(receiptB);
 
 		// 保存智能合约消息
 		if (StringUtils.isNotEmpty(fromAddress)) {
@@ -551,16 +566,24 @@ public class MessagesExe {
 					if (data.getFee().compareTo(BigInteger.ZERO) > 0) {
 						// 扣除和收集手续费
 						// key condition
-						// node.setTotalFeeBetween2Snapshots(node.getTotalFeeBetween2Snapshots().add(data.getFee()));
+						dep.setTotalFeeBetween2Snapshots(dep.getTotalFeeBetween2Snapshots().add(data.getFee()));
 						addContractFeeTx2SaveQueue(cm.getSignature()+"_fee"+i, data);
 					}
 					needRecordFee = false;
 				}
 				// 合约执行产生的交易入库
 				addContractTx2SaveQueue(cm.getSignature() + "_" + i, data);
+
+				Repository track = RepositoryProvider.getTrack(dep.getDbId());
+				byte[] receiptB = ((INVERepositoryRoot) track).getReceipt(cm.getSignature().getBytes());
+				INVETransactionReceipt receipt = new INVETransactionReceipt(receiptB);
 				if (!receipt.isTxStatusOK()) {
-					InternalTransferData backData = new InternalTransferData(data.getToAddress(), data.getFromAddress(), BigInteger.ZERO, data.getValue().subtract(data.getFee()));
-					addContractTx2SaveQueue(cm.getSignature() + "_" + (i+1), backData);
+					try {
+						InternalTransferData backData = new InternalTransferData(data.getToAddress(), data.getFromAddress(), BigInteger.ZERO, value);
+						addContractTx2SaveQueue(cm.getSignature() + "_" + (i + 1), backData);
+					}catch (Exception e){
+						logger.error("handle error: {}",e);
+					}
 				}
 			}
 		}

@@ -23,7 +23,6 @@ public class MessagePersistenceDependency implements MessagePersistenceDependent
 	@Override
 	public void update(DependentItem item) {
 		set(this, item);
-
 	}
 
 	@Override

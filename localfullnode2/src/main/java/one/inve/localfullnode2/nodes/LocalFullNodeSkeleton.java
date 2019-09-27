@@ -21,9 +21,11 @@ import com.zeroc.Ice.Util;
 
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.conf.NodeParameters;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.AllQueues;
+import one.inve.localfullnode2.firstseq.EventStoreBility;
+import one.inve.localfullnode2.firstseq.FirstSeqsDependency;
+import one.inve.localfullnode2.firstseq.FirstSeqsbility;
 import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.http.HttpServiceDependency;
 import one.inve.localfullnode2.lc.ILifecycle;
@@ -36,12 +38,14 @@ import one.inve.localfullnode2.utilities.PathUtils;
 import one.inve.localfullnode2.utilities.http.NettyHttpServer;
 
 /**
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: Core startup class
  * @author: Francis.Deng
  * @date: May 31, 2018 3:06:25 AM
  * @version: V1.0
+ * @version: V1.1 add a function to calculate first seqs(bottom event height)
+ * @version V1.5 replace command line parameter with a yaml configuration
  */
 public abstract class LocalFullNodeSkeleton extends DepsPointcut implements NodeEnrolled {
 	private static final Logger logger = LoggerFactory.getLogger(LocalFullNodeSkeleton.class);
@@ -79,6 +83,13 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		}
 	}
 
+//	protected IConfImplant loadConf(String[] args) {
+//		InterValueConfImplant implant = new InterValueConfImplant();
+//		implant.init(args);
+//
+//		return implant;
+//	}
+
 	/**
 	 * 初始化
 	 * 
@@ -90,13 +101,24 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		GracefulShutdown gs = GracefulShutdown.with("TERM");// kill -15 process-id
 
 		try {
-			setCommunicator(Util.initialize(args));
-			NodeParameters np = nodeParameters();
-			if (null == np) {
-				np = new NodeParameters();
-			}
-			np.init(getCommunicator(), args);
-			nodeParameters(np);
+//			setCommunicator(Util.initialize(args));
+//			NodeParameters np = nodeParameters();
+//			if (null == np) {
+//				np = new NodeParameters();
+//			}
+//			np.init(getCommunicator(), args);
+//			nodeParameters(np);
+
+//			IConfImplant implant = loadConf(args);
+//			implant.implantStaticConfig();
+//			implant.implantEnv();
+//			setCommunicator(Util.initialize(implant.implantZerocConf()));
+//			nodeParameters(implant.implantNodeParameters());
+
+			// command line - intervalue_conf_file=your configuration file
+			// directory - ./intervalue_conf_file.yaml
+			// environment - intervalue_conf_file=your configuration file
+			loadConf(args);
 
 			logger.info("passed args in command line: {}", JSONArray.toJSONString(args));
 
@@ -159,12 +181,20 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 			buildShardSortQueue();
 
+			// build indexes for old,rusty messages and system messages in mysql.see {@
+			// Indexer}
+			buildMessagesAndSysMessagesIndexOnce();
+
 			initSnapshotData();
 			// 初始化hashnet数据结构
 			// initHashnet(this);
 			Hashneter hashneter = initHashneter();
 			if (hashneter == null)
 				System.exit(-1);
+
+			// for the sake of system stabilization,the first seqs initialization is put
+			// here.
+			probeFirstSeqs();
 
 			ILifecycle membersTask = startMembership(this);
 			// membersTask.start();
@@ -386,11 +416,23 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		return llc;
 	}
 
+	protected void probeFirstSeqs() {
+		FirstSeqsDependency newFirstSeqsDep = DepItemsManager.getInstance().getItemConcerned(FirstSeqsDependency.class);
+		FirstSeqsbility firstSeqsbility = new FirstSeqsbility();
+
+		firstSeqsbility.probe(newFirstSeqsDep,
+				new EventStoreBility(newFirstSeqsDep.getDbId(), newFirstSeqsDep.getLastSeqs()));
+	}
+
 	abstract protected Hashneter initHashneter();
 
 	abstract protected ILifecycle startMembership(LocalFullNode1GeneralNode node);
 
 	abstract protected ILifecycle performCoreTasks(Hashneter hashneter);
+
+	abstract protected void buildMessagesAndSysMessagesIndexOnce();
+
+	abstract void loadConf(String[] args);
 
 	protected void initSnapshotData() {
 		DepItemsManager.getInstance().attachSS(null).setContributions(new HashSet<>());

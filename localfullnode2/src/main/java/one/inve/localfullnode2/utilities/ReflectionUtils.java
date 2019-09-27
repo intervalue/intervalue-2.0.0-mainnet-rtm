@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -283,6 +284,26 @@ public class ReflectionUtils {
 		} catch (Exception e) {
 			throw new RuntimeException("Unable to get instance for " + clazzName, e);
 		}
+	}
+
+	// Changing static final fields via reflection
+	public static void setStaticField(Class<?> clazz, String fieldName, Object value)
+			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		Field field = clazz.getDeclaredField(fieldName);
+
+		Field modifiersField = Field.class.getDeclaredField("modifiers");
+		boolean isModifierAccessible = modifiersField.isAccessible();
+		modifiersField.setAccessible(true);
+		modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+		boolean isAccessible = field.isAccessible();
+		field.setAccessible(true);
+
+		field.set(null, value);
+
+		field.setAccessible(isAccessible);
+		modifiersField.setAccessible(isModifierAccessible); // Might not be very useful resetting the value, really. The
+															// harm is already done.
 	}
 
 }

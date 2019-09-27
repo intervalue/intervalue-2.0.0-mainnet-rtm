@@ -27,7 +27,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: maintain membership of peers instead of
  *               {@link GossipNodeThread},once for forever

@@ -2,7 +2,7 @@ package one.inve.localfullnode2.hashnet;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: push all sharding's Event into hashnet model
  * @author: Francis.Deng

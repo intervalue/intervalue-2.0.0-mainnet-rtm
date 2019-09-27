@@ -9,7 +9,7 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * The class specifies inner netty's decoders and encoders which
  *               handle the input and output information

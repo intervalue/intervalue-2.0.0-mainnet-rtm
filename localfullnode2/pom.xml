@@ -303,10 +303,10 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-		    <groupId>one.inve</groupId>
-		    <artifactId>vm</artifactId>
-		    <version>1.0-SNAPSHOT</version>
-		</dependency>		
+			<groupId>one.inve</groupId>
+			<artifactId>vm</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 
 		<!-- for junit test -->
 		<dependency>
@@ -315,12 +315,26 @@
 			<version>2.1</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
-		  <groupId>com.moandjiezana.toml</groupId>
-		  <artifactId>toml4j</artifactId>
-		  <version>0.7.2</version>
-		</dependency>		
+			<groupId>com.moandjiezana.toml</groupId>
+			<artifactId>toml4j</artifactId>
+			<version>0.7.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/io.grpc/grpc-all -->
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-all</artifactId>
+			<version>1.9.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.17</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -345,7 +359,7 @@
 					<archive>
 						<manifest>
 							<mainClass>one.inve.localfullnode2.nodes.Localfullnode2</mainClass>
-							打包时 MANIFEST.MF文件不记录的时间戳版本 
+							打包时 MANIFEST.MF文件不记录的时间戳版本
 							<useUniqueVersions>false</useUniqueVersions>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
@@ -362,7 +376,11 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			<!-- <plugin> <groupId>org.xolstice.maven.plugins</groupId> <artifactId>protobuf-maven-plugin</artifactId> 
+				<version>0.5.0</version> <configuration> <protocArtifact>com.google.protobuf:protoc:3.3.0:exe:${os.detected.classifier}</protocArtifact> 
+				<pluginId>grpc-java</pluginId> <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.4.0:exe:${os.detected.classifier}</pluginArtifact> 
+				</configuration> <executions> <execution> <goals> <goal>compile</goal> <goal>compile-custom</goal> 
+				</goals> </execution> </executions> </plugin> -->
 			<!--<plugin>&lt;!&ndash;用混淆插件混淆代码&ndash;&gt; <groupId>com.github.wvengen</groupId> 
 				<artifactId>proguard-maven-plugin</artifactId> <version>2.0.14</version> 
 				<executions> <execution> &lt;!&ndash; 混淆时刻，这里是打包的时候混淆&ndash;&gt; <phase>package</phase> 

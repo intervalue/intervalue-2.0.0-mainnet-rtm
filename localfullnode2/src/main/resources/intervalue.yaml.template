@@ -1,0 +1,39 @@
+##
+## zeroc's configuration which is used to generate individual zeroc file format
+##
+
+zeroc: | 
+    Ice.ThreadPool.Client.SizeMax = 10                              
+    Ice.ThreadPool.Server.SizeMax = 10                              
+    Ice.MessageSizeMax = 1000000   
+
+##
+## anything in regard to localfullnode2 
+##
+
+localfullnode2: 
+    pubIP: 192.168.207.129                      ## "myself.pubIP=192.168.207.129"
+    gossipPort: 35791                           ## "myself.gossipPort=35791"
+    rpcPort: 35792                              ## "myself.rpcPort=35792"
+    httpPort: 35793                             ## "myself.httpPort=35793"
+    prefix: 3                                   ## "-Dtest.prefix=3" in the command line
+    whitelist:                                  ## "Config" class's "WHITE_LIST"
+        - 192.168.207.129
+        - 172.17.2.118
+
+##        
+## anything in regard to p2p  
+##
+      
+p2pcluster:                 
+    icport: 43013                               ## "-Dp2pcluster.icport=43013" in the command line
+
+##    
+## using System.setProperty(key,value)  
+##
+  
+env: 
+    p2pcluster.icport: 43013                    ## "-Dp2pcluster.icport=43013" in the command line 
+    database.reset: false                       ## "-Ddatabase.reset=false" in the command line
+    test.prefix: 3                              ## "-Dtest.prefix=3" in the command line
+    io.netty.leakDetectiontionLevel: advanced   ## "-Dio.netty.leakDetectiontionLevel=advanced" in the command line

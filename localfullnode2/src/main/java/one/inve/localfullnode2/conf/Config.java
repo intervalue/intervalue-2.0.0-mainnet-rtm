@@ -14,11 +14,11 @@ public class Config {
 	public static final String WALLET_FILE = "local.wallet.json";
 	public static final String GOSSIP_SIGNATURE_DATA = "data4TheInterface2CreatedSignature";
 
-//    public static final String DEFAULT_SEED_PUBIP       = "34.220.63.1";
+	public static final String DEFAULT_SEED_PUBIP = "192.168.207.129";
 //    public static final String DEFAULT_SEED_PUBIP = "35.170.77.230";
 //    public static final String DEFAULT_SEED_PUBIP = "172.17.2.125";
 //	public static final String DEFAULT_SEED_PUBIP = "192.168.207.129";
-	public static final String DEFAULT_SEED_PUBIP = "172.17.2.117";
+//	public static final String DEFAULT_SEED_PUBIP = "172.17.2.117";
 	public static final String DEFAULT_SEED_GOSSIP_PORT = "25005";
 	public static final String DEFAULT_SEED_RPC_PORT = "25004";
 	public static final String DEFAULT_SEED_HTTP_PORT = "25003";
@@ -71,7 +71,7 @@ public class Config {
 	public static String SPLIT = "_";
 
 	// 快照点选取：每多少个Event做一次快照
-	public static final int EVENT_NUM_PER_SNAPSHOT = 1000;
+	public static final int EVENT_NUM_PER_SNAPSHOT = 300000;
 	// 删除第几代祖先快照之前的Event
 	public static final int DEFAULT_SNAPSHOT_CLEAR_GENERATION = 10;
 	// 默认最大交易留言字节数
@@ -152,13 +152,14 @@ public class Config {
 	public static final List<String> WHITE_LIST = Arrays.asList("192.168.207.129", "172.17.2.118", "172.17.2.119",
 			"172.17.2.117", "172.17.2.120", "172.17.2.123", "172.17.2.126", "172.17.2.127", "172.17.2.46",
 			"172.17.2.128", "172.17.2.117", "172.17.2.120", "172.17.2.123", "172.17.2.126", "172.17.2.127",
-			"172.17.2.128");
+			"172.17.2.128", "192.168.207.130");
 
 	public static final List<String> BLACK_LIST = Arrays.asList("192.168.0.1");
 
 	// rpc服务
 	public static final String[] SERVICE_ARRAY = { "one.inve.localfullnode2.rpc.impl.Light2localImpl",
-			"one.inve.localfullnode2.rpc.impl.Local2localImpl" };
+			"one.inve.localfullnode2.rpc.impl.Local2localImpl",
+			"one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocImpl" };
 
 	/**
 	 * coin round发生间隔

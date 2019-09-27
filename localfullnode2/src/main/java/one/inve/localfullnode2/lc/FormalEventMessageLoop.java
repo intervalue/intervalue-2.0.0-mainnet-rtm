@@ -29,7 +29,7 @@ import one.inve.localfullnode2.postconsensus.sorting.EventsSortingDependency;
 /**
  * 
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: build a loop to execute(nine steps together) over and over
  *               again and take a sleep every round.

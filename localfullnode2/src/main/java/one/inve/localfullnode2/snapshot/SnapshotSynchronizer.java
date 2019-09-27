@@ -27,7 +27,7 @@ import one.inve.localfullnode2.utilities.StringUtils;
 
 /**
  * 
- * Copyright © CHXX Co.,Ltd. All rights reserved.
+ * Copyright © INVE FOUNDATION. All rights reserved.
  * 
  * @Description: If there is snapshot version gap which is behind (n/3)+1 at
  *               least 2,the class is ready to run.
