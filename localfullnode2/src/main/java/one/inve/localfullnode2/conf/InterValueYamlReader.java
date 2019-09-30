@@ -76,6 +76,7 @@ public class InterValueYamlReader implements IInterValueConfigurationReader {
 						return m0.get("httpPort").toString();
 					}
 
+					@SuppressWarnings("unchecked")
 					@Override
 					public List<String> getWhitelist() {
 						Map m0 = (Map) m.get("localfullnode2");
@@ -86,6 +87,47 @@ public class InterValueYamlReader implements IInterValueConfigurationReader {
 					public String getPrefix() {
 						Map m0 = (Map) m.get("localfullnode2");
 						return m0.get("prefix").toString();
+					}
+
+					@Override
+					public String getSeedPubIP() {
+						Map m0 = (Map) m.get("localfullnode2");
+						return m0.get("seedPubIP").toString();
+					}
+
+					@Override
+					public String getSeedGossipPort() {
+						Map m0 = (Map) m.get("localfullnode2");
+						return m0.get("seedGossipPort").toString();
+					}
+
+					@Override
+					public String getSeedRpcPort() {
+						Map m0 = (Map) m.get("localfullnode2");
+						return m0.get("seedRpcPort").toString();
+					}
+
+					@Override
+					public String getSeedHttpPort() {
+						Map m0 = (Map) m.get("localfullnode2");
+						return m0.get("seedHttpPort").toString();
+					}
+
+					@Override
+					@SuppressWarnings("unchecked")
+					public DBConnectionDescriptorsConf getDbConnection() {
+						DBConnectionDescriptorsConf desConf = new DBConnectionDescriptorsConf(30);
+						Map m0 = (Map) m.get("localfullnode2");
+						List dbConnectionDescriptors = (List) m0.get("dbConnectionDescriptors");
+
+						dbConnectionDescriptors.stream().forEach((t) -> {
+							Map m = (Map) t;
+							desConf.put(m.get("url"));
+							desConf.put(m.get("un"));
+							desConf.put(m.get("pw"));
+						});
+
+						return desConf;
 					}
 
 				};

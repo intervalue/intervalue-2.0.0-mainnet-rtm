@@ -22,4 +22,6 @@ public interface IConfImplant {
 
 	void implantEnv();
 
+	DBConnectionDescriptorsConf getDbConnection();
+
 }

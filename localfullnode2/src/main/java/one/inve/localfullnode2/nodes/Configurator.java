@@ -2,6 +2,7 @@ package one.inve.localfullnode2.nodes;
 
 import com.zeroc.Ice.Util;
 
+import one.inve.localfullnode2.conf.DBConnectionDescriptorsConf;
 import one.inve.localfullnode2.conf.IConfImplant;
 import one.inve.localfullnode2.conf.InterValueConfImplant;
 
@@ -23,11 +24,13 @@ public abstract class Configurator extends HashneterInitializer {
 		return implant;
 	}
 
-	protected void loadConf(String[] args) {
+	protected DBConnectionDescriptorsConf loadConf(String[] args) {
 		IConfImplant implant = loadConfObject(args);
 		implant.implantStaticConfig();
 		implant.implantEnv();
 		setCommunicator(Util.initialize(implant.implantZerocConf()));
 		nodeParameters(implant.implantNodeParameters());
+
+		return implant.getDbConnection();
 	}
 }

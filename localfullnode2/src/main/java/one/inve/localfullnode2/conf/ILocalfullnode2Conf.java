@@ -24,4 +24,15 @@ public interface ILocalfullnode2Conf {
 	List<String> getWhitelist();
 
 	String getPrefix();
+
+	// seed configuration
+	String getSeedPubIP();
+
+	String getSeedGossipPort();
+
+	String getSeedRpcPort();
+
+	String getSeedHttpPort();
+
+	DBConnectionDescriptorsConf getDbConnection();
 }

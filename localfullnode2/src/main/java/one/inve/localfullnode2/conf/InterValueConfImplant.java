@@ -23,9 +23,10 @@ import one.inve.localfullnode2.utilities.ReflectionUtils;
  * @date: Sep 12, 2019 12:33:14 AM
  * @version: V1.0
  * @version: V1.1 automatically append my public address in white list
+ * @version: V1.2 replace seed info
  */
 public class InterValueConfImplant implements IConfImplant {
-	private IInterValueConf conf;
+	IInterValueConf conf;
 
 	@Override
 	public void init(String[] args) {
@@ -82,14 +83,26 @@ public class InterValueConfImplant implements IConfImplant {
 	public void implantStaticConfig() {
 		try {
 			String myPublicAddr = null;
+			ILocalfullnode2Conf localfullnode2Conf = conf.getLocalfullnode2Conf();
+			String seedPubIP, seedGossipPort, seedRpcPort, seedHttpPort;
 
-			List<String> whiteList = conf.getLocalfullnode2Conf().getWhitelist();
+			List<String> whiteList = localfullnode2Conf.getWhitelist();
 			if ((myPublicAddr = getPublicAddr()) != null) {
 				whiteList.add(myPublicAddr);
 			}
+
+			seedPubIP = localfullnode2Conf.getSeedPubIP();
+			seedGossipPort = localfullnode2Conf.getSeedGossipPort();
+			seedRpcPort = localfullnode2Conf.getSeedRpcPort();
+			seedHttpPort = localfullnode2Conf.getSeedHttpPort();
+
 			ReflectionUtils.setStaticField(Config.class, "WHITE_LIST", whiteList);
 			// setStaticField(Config.class, "ENABLE_SNAPSHOT", false);// disable snapshot or
 			// not
+			ReflectionUtils.setStaticField(Config.class, "DEFAULT_SEED_PUBIP", seedPubIP);
+			ReflectionUtils.setStaticField(Config.class, "DEFAULT_SEED_GOSSIP_PORT", seedGossipPort);
+			ReflectionUtils.setStaticField(Config.class, "DEFAULT_SEED_RPC_PORT", seedRpcPort);
+			ReflectionUtils.setStaticField(Config.class, "DEFAULT_SEED_HTTP_PORT", seedHttpPort);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -162,6 +175,11 @@ public class InterValueConfImplant implements IConfImplant {
 		fileChannel.close();
 		fileOutputStream.close();
 
+	}
+
+	@Override
+	public DBConnectionDescriptorsConf getDbConnection() {
+		return conf.getLocalfullnode2Conf().getDbConnection();
 	}
 
 }

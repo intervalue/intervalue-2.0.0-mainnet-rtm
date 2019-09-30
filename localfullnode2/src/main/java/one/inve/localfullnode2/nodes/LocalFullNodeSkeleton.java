@@ -21,6 +21,7 @@ import com.zeroc.Ice.Util;
 
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.conf.DBConnectionDescriptorsConf;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.firstseq.EventStoreBility;
@@ -118,7 +119,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			// command line - intervalue_conf_file=your configuration file
 			// directory - ./intervalue_conf_file.yaml
 			// environment - intervalue_conf_file=your configuration file
-			loadConf(args);
+			DBConnectionDescriptorsConf dbConnectionDescriptorsConf = loadConf(args);
 
 			logger.info("passed args in command line: {}", JSONArray.toJSONString(args));
 
@@ -167,7 +168,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 //			// 设置全局变量，初始化世界状态
 //			RepositoryProvider.getTrack(nodeParameters.dbId);
 			// 初始化数据库： MySQL、RocksDB，创世交易记录
-			DbUtils.initDataBase(this);
+			DbUtils.initDataBase(this, dbConnectionDescriptorsConf);
 
 			// call seed node to get local full node list
 			// setLocalFullNodes
@@ -432,7 +433,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 
 	abstract protected void buildMessagesAndSysMessagesIndexOnce();
 
-	abstract void loadConf(String[] args);
+	abstract DBConnectionDescriptorsConf loadConf(String[] args);
 
 	protected void initSnapshotData() {
 		DepItemsManager.getInstance().attachSS(null).setContributions(new HashSet<>());
