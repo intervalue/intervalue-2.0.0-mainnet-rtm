@@ -303,6 +303,40 @@ public class WorldStateService {
 	}
 
 	/**
+	 * 執行無手續費查詢世界狀態
+	 * @param dbId 指定的节点 ID
+	 * @param address 合約地址
+	 * @param callData 要执行的合约函数以及参数
+	 * @return 查詢結果
+	 */
+	public static byte[] executeViewTransaction(String dbId, String address, String callData) {
+		Transaction tx = new Transaction(
+				ByteBuffer.allocate(4).putInt(0).array(),   // nonce
+				ByteBuffer.allocate(4).putInt(10).array(),   // gas price
+				ByteBuffer.allocate(4).putInt(2000000).array(),   // gas limit
+				address.getBytes(),                         // to address
+				ByteBuffer.allocate(4).putInt(0).array(),   // value
+				Hex.decode(callData)
+		);
+
+		tx.setSender("TGAX77OVU3AGOYGKUF5IFGZVRQJ23ZFB".getBytes());
+
+		Repository track = getTrack(dbId);
+		INVETransactionExecutor executor = new INVETransactionExecutor(
+				tx, track,
+				new BlockStoreDummy(),
+				new INVEProgramInvokeFactoryImpl(),
+				SystemProperties.getDefault().getGenesis()
+		).setLocalCall(true);
+
+		executor.init();
+		executor.execute();
+		executor.go();
+
+		return executor.getResult().getHReturn();
+	}
+
+	/**
      * 執行無手續費查詢世界狀態
      * @param dbId 指定的节点 ID
 	 * @param fromAddr 调用者地址
