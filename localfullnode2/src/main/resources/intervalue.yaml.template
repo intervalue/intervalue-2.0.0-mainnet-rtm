@@ -56,7 +56,7 @@ localfullnode2:
     seedRpcPort: *seedRpcPort                   ## a reference to seed's rpcPort
     seedHttpPort: *seedHttpPort                 ## a reference to seed's httpPort    
                                                 ## multiple mysql connection(located in db.properties)
-    dbConnection :   
+    dbConnectionDescriptors:    
         -
             url: "spring.datasource.url0_0=jdbc:mysql://localhost:3306/main0_0?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8"
             un: "spring.datasource.username0_0=root"
