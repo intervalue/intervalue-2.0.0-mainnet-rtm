@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import one.inve.contract.MVM.WorldStateService;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.conf.DBConnectionDescriptorsConf;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;
@@ -292,8 +293,10 @@ public class DbUtils {
 	/**
 	 * 初始化mysql
 	 */
-	public static void initDataBase(LocalFullNode1GeneralNode node) {
-		MysqlHelper mysqlHelper = new MysqlHelper(node.nodeParameters().dbId, node.nodeParameters().clearDb == 1);
+	public static void initDataBase(LocalFullNode1GeneralNode node,
+			DBConnectionDescriptorsConf dbConnectionDescriptorsConf) {
+		MysqlHelper mysqlHelper = new MysqlHelper(node.nodeParameters().dbId, dbConnectionDescriptorsConf,
+				node.nodeParameters().clearDb == 1);
 		try {
 			// 建消息表
 			NewTableCreate.createMessagesTable(mysqlHelper, Config.MESSAGES + "_0");
