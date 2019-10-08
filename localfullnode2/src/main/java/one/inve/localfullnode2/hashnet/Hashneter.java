@@ -10,15 +10,25 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import one.inve.bean.message.SnapshotPoint;
-import one.inve.core.EventBody;
-import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.dep.DepItemsManager;
-import one.inve.localfullnode2.snapshot.*;
-import one.inve.localfullnode2.store.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import one.inve.bean.message.SnapshotPoint;
+import one.inve.cfg.localfullnode.Config;
+import one.inve.core.EventBody;
+import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.snapshot.DetectAndRepairSnapshotData;
+import one.inve.localfullnode2.snapshot.DetectAndRepairSnapshotDataDependency;
+import one.inve.localfullnode2.snapshot.DetectAndRepairSnapshotDataDependent;
+import one.inve.localfullnode2.snapshot.RepairCurrSnapshotPointInfo;
+import one.inve.localfullnode2.snapshot.RepairCurrSnapshotPointInfoDependency;
+import one.inve.localfullnode2.snapshot.RepairCurrSnapshotPointInfoDependent;
+import one.inve.localfullnode2.store.EventFlow;
+import one.inve.localfullnode2.store.EventStoreImpl;
+import one.inve.localfullnode2.store.IEventFlow;
+import one.inve.localfullnode2.store.IEventStore;
+import one.inve.localfullnode2.store.SnapshotDbService;
+import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 
 /**
@@ -46,10 +56,10 @@ public class Hashneter implements IHashneter {
 			// key condition - repair snapshot if possible
 			// 根据最新快照，恢复相关快照参数： treeRootMap、snapshotPointMap等
 			if (Config.ENABLE_SNAPSHOT) {
-				DetectAndRepairSnapshotDataDependent detectAndRepairSnapshotDataDep =
-						DepItemsManager.getInstance().getItemConcerned(DetectAndRepairSnapshotDataDependency.class);
+				DetectAndRepairSnapshotDataDependent detectAndRepairSnapshotDataDep = DepItemsManager.getInstance()
+						.getItemConcerned(DetectAndRepairSnapshotDataDependency.class);
 				SnapshotDbService store = new SnapshotDbServiceImpl();
-				new DetectAndRepairSnapshotData().detectAndRepairSnapshotData(detectAndRepairSnapshotDataDep,store);
+				new DetectAndRepairSnapshotData().detectAndRepairSnapshotData(detectAndRepairSnapshotDataDep, store);
 			}
 			// DbUtils.detectAndRepairSnapshotData(node);
 			// 重载hashnet
@@ -130,8 +140,8 @@ public class Hashneter implements IHashneter {
 		 */
 		// key condition
 		if (Config.ENABLE_SNAPSHOT) {
-			RepairCurrSnapshotPointInfoDependent repairCurrSnapshotPointInfoDep =
-					DepItemsManager.getInstance().getItemConcerned(RepairCurrSnapshotPointInfoDependency.class);
+			RepairCurrSnapshotPointInfoDependent repairCurrSnapshotPointInfoDep = DepItemsManager.getInstance()
+					.getItemConcerned(RepairCurrSnapshotPointInfoDependency.class);
 			SnapshotDbService store = new SnapshotDbServiceImpl();
 			new RepairCurrSnapshotPointInfo().repairCurrSnapshotPointInfo(repairCurrSnapshotPointInfoDep, store);
 		}
@@ -211,7 +221,8 @@ public class Hashneter implements IHashneter {
 	}
 
 	private long getLatestSnapshotPointEventSeq() {
-		HashMap<BigInteger, SnapshotPoint> snapshotPointMap = DepItemsManager.getInstance().attachSS(null).getSnapshotPointMap();
+		HashMap<BigInteger, SnapshotPoint> snapshotPointMap = DepItemsManager.getInstance().attachSS(null)
+				.getSnapshotPointMap();
 		BigInteger currSnapshotVersion = DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion();
 		if (null != snapshotPointMap && null != snapshotPointMap.get(currSnapshotVersion.subtract(BigInteger.TEN))) {
 			SnapshotPoint latestSnapshotPoint = snapshotPointMap.get(currSnapshotVersion.subtract(BigInteger.TEN));

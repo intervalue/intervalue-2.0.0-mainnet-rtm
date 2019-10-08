@@ -3,7 +3,7 @@ package one.inve.localfullnode2.lc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import one.inve.localfullnode2.conf.Config;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.GossipDependency;
 import one.inve.localfullnode2.gossip.GossipDependent;

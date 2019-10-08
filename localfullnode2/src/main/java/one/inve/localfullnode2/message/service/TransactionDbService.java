@@ -8,17 +8,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.bean.node.LocalFullNode;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.core.EventBody;
-import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;
 import one.inve.localfullnode2.store.mysql.QueryTableSplit;
@@ -280,7 +280,7 @@ public class TransactionDbService implements ITransactionDbService {
 	public List<JSONObject> queryMissingTransactionsBeforeSnapshotPoint(String message,
 			BigInteger requestConsMessageMaxId, String dbId) {
 		BigInteger selfTranId = BigInteger.ZERO;
-		//2019.5.29 判断条件错误
+		// 2019.5.29 判断条件错误
 //		if (StringUtils.isEmpty(message)) {
 		if (StringUtils.isNotEmpty(message)) {
 			SnapshotMessage sm = JSONObject.parseObject(message, SnapshotMessage.class);

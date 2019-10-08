@@ -2,7 +2,7 @@ package one.inve.localfullnode2.utilities;
 
 import java.util.Arrays;
 
-import one.inve.localfullnode2.conf.Config;
+import one.inve.cfg.localfullnode.Config;
 
 public class Utilities {
 

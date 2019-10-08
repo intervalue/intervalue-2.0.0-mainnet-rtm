@@ -1,6 +1,6 @@
 package one.inve.localfullnode2.sync.partofwork;
 
-import one.inve.localfullnode2.conf.Config;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;
 import one.inve.localfullnode2.store.mysql.NewTableCreate;
 import one.inve.localfullnode2.sync.ISyncContext;

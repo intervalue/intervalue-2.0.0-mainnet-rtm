@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 
-import one.inve.localfullnode2.conf.Config;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.localfullnode2.utilities.QueuePoller;
 import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.utils.SignUtil;

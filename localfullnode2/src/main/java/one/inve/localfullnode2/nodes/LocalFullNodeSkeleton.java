@@ -19,9 +19,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.zeroc.Ice.Object;
 import com.zeroc.Ice.Util;
 
+import one.inve.cfg.core.DBConnectionDescriptorsConf;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.core.EventBody;
-import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.conf.DBConnectionDescriptorsConf;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.firstseq.EventStoreBility;
@@ -154,6 +154,7 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			shardInfo(seedPubIP, seedRpcPort);
 
 			int selfId = (int) this.getCreatorId();
+
 			while (-1 == selfId) {
 				logger.warn("fall into a loop of asking for shard info from ({}:{})", seedPubIP, seedRpcPort);
 

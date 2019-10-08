@@ -15,10 +15,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import one.inve.cfg.core.DBConnectionDescriptorsConf;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.contract.MVM.WorldStateService;
 import one.inve.core.EventBody;
-import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.conf.DBConnectionDescriptorsConf;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.mysql.MysqlHelper;

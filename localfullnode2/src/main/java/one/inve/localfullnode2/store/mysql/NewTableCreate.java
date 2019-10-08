@@ -15,7 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import one.inve.localfullnode2.conf.Config;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.localfullnode2.store.rocks.Message;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.localfullnode2.store.rocks.TableInfo;

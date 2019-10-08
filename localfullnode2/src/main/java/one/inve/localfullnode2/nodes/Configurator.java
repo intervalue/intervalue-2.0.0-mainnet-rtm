@@ -2,9 +2,9 @@ package one.inve.localfullnode2.nodes;
 
 import com.zeroc.Ice.Util;
 
-import one.inve.localfullnode2.conf.DBConnectionDescriptorsConf;
-import one.inve.localfullnode2.conf.IConfImplant;
-import one.inve.localfullnode2.conf.InterValueConfImplant;
+import one.inve.cfg.core.DBConnectionDescriptorsConf;
+import one.inve.cfg.core.IConfImplant;
+import one.inve.cfg.core.InterValueConfImplant;
 
 /**
  * 

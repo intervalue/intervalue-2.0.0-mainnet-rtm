@@ -15,7 +15,7 @@ public class ArraysUtil {
 	/**
 	 * a array helper works likes golang append function
 	 * 
-	 * @param <T>
+	 * @param       <T>
 	 * @param array
 	 * @param ts
 	 * @return

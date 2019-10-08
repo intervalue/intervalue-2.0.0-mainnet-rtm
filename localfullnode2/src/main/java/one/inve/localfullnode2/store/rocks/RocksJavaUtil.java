@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
 
-import one.inve.localfullnode2.conf.Config;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.localfullnode2.utilities.PathUtils;
 
 public class RocksJavaUtil implements INosql {

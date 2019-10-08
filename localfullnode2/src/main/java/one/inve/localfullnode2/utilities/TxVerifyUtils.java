@@ -12,8 +12,8 @@ import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.MessageType;
 import one.inve.bean.message.MessageVersion;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.core.Constant;
-import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.utils.DSA;

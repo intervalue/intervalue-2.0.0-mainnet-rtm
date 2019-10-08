@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import one.inve.localfullnode2.conf.Config;
+import one.inve.cfg.localfullnode.Config;
 
 public class Cryptos {
 	private static final Logger logger = LoggerFactory.getLogger(Cryptos.class);

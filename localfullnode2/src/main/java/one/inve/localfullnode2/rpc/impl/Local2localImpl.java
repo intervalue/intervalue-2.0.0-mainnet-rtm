@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import one.inve.localfullnode2.dep.DepItemsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +25,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Current;
 
 import one.inve.bean.node.NodeStatus;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.core.EventBody;
-import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.HandleSplitReportThread;
 import one.inve.localfullnode2.gossip.l2l.L2LCore;
 import one.inve.localfullnode2.gossip.vo.AppointEvent;
@@ -197,9 +197,8 @@ public class Local2localImpl implements Local2local {
 			logger.info("gossipMyMaxSeqList4Consensus is running(answering the gossip)");
 
 			L2LCore l2l = new L2LCore();
-			gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs,
-					vers, node.getLocalFullNodes(), node.getEventStore(), node.getShardId(),
-					node.nodeParameters().dbId);
+			gossipObj = l2l.gossipMyMaxSeqList4Consensus(pubkey, sig, snapVersion, snapHash, seqs, vers,
+					node.getLocalFullNodes(), node.getEventStore(), node.getShardId(), node.nodeParameters().dbId);
 //			} finally {
 //				readLock.unlock();
 //			}
@@ -316,8 +315,8 @@ public class Local2localImpl implements Local2local {
 		int selfId = (int) node.getCreatorId();
 		logger.warn("hash:{}", hash);
 		String snapshotStr = snapshotDbService.querySnapshotMessageFormatStringByHash(node.nodeParameters().dbId, hash);
-        //2019.05.30 暂停快照同步message
-        List<JSONObject> trans = null;
+		// 2019.05.30 暂停快照同步message
+		List<JSONObject> trans = null;
 //		String originalSnapshotStr = JSON.parseObject(snapshotStr).getString("message");
 //		// 获取交易信息
 //		List<JSONObject> trans = transactionDbService.queryMissingTransactionsBeforeSnapshotPoint(originalSnapshotStr,

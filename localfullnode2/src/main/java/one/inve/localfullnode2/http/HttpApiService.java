@@ -2,10 +2,7 @@ package one.inve.localfullnode2.http;
 
 import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.List;
 
-import one.inve.localfullnode2.dep.DepItemsManager;
-import one.inve.localfullnode2.store.rocks.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.util.BigIntegers;
@@ -14,13 +11,20 @@ import org.spongycastle.util.encoders.Hex;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import one.inve.cfg.localfullnode.Config;
 import one.inve.contract.MVM.WorldStateService;
 import one.inve.contract.ethplugin.core.Repository;
 import one.inve.contract.inve.INVERepositoryRoot;
 import one.inve.contract.inve.INVETransactionReceipt;
 import one.inve.contract.provider.RepositoryProvider;
-import one.inve.localfullnode2.conf.Config;
+import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
+import one.inve.localfullnode2.store.rocks.BlockBrowserInfo;
+import one.inve.localfullnode2.store.rocks.Message;
+import one.inve.localfullnode2.store.rocks.MsgArray;
+import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
+import one.inve.localfullnode2.store.rocks.SystemAutoArray;
+import one.inve.localfullnode2.store.rocks.TransactionArray;
 import one.inve.localfullnode2.utilities.HttpUtils;
 import one.inve.localfullnode2.utilities.ResponseUtils;
 import one.inve.localfullnode2.utilities.StringUtils;
@@ -165,15 +169,16 @@ public class HttpApiService {
 			msgArray.setSysOffset(sysOffset);
 			TransactionArray trans = CommonApiService.queryTransaction(tableIndex, offset, address, type.toString(),
 					node);
-			if(trans != null && trans.getList() != null) {
+			if (trans != null && trans.getList() != null) {
 				msgArray.setList(trans.getList());
 				msgArray.setTableIndex(trans.getTableIndex());
 				msgArray.setOffset(trans.getOffset());
-				MsgArray contractTx = CommonApiService.querySystemAutoToMessageList(sysTableIndex, sysOffset, node, address);
+				MsgArray contractTx = CommonApiService.querySystemAutoToMessageList(sysTableIndex, sysOffset, node,
+						address);
 				if (contractTx != null) {
 					msgArray.setSysTableIndex(contractTx.getSysTableIndex());
 					msgArray.setSysOffset(contractTx.getSysOffset());
-					if(contractTx.getList() !=null && !contractTx.getList().isEmpty()){
+					if (contractTx.getList() != null && !contractTx.getList().isEmpty()) {
 						msgArray.getList().addAll(contractTx.getList());
 					}
 				}
@@ -212,8 +217,8 @@ public class HttpApiService {
 				if (new String(transationByte).contains("isStable")) {
 					message = JSON.parseObject(transationByte, Message.class);
 				}
-			}else {
-				message = CommonApiService.querySystemAutoToMessage(node,hash);
+			} else {
+				message = CommonApiService.querySystemAutoToMessage(node, hash);
 			}
 			return ResponseUtils.normalResponse((null == message) ? "" : JSON.toJSONString(message));
 		} catch (Exception e) {
@@ -387,7 +392,7 @@ public class HttpApiService {
 			msgArray.setSysTableIndex(sysTableIndex);
 			msgArray.setSysOffset(sysOffset);
 			TransactionArray trans = CommonApiService.queryTransaction(tableIndex, offset, type, node);
-			if(trans != null && trans.getList() != null){
+			if (trans != null && trans.getList() != null) {
 				msgArray.setList(trans.getList());
 				msgArray.setTableIndex(trans.getTableIndex());
 				msgArray.setOffset(trans.getOffset());
@@ -396,7 +401,7 @@ public class HttpApiService {
 					if (contractTx != null) {
 						msgArray.setSysTableIndex(contractTx.getSysTableIndex());
 						msgArray.setSysOffset(contractTx.getSysOffset());
-						if(contractTx.getList() !=null && !contractTx.getList().isEmpty()){
+						if (contractTx.getList() != null && !contractTx.getList().isEmpty()) {
 							msgArray.getList().addAll(contractTx.getList());
 						}
 					}
@@ -604,8 +609,7 @@ public class HttpApiService {
 	/**
 	 * 根据key获取快照相关
 	 *
-	 * @param data 键 例：
-	 *             {"key":"snapshotVersion"}
+	 * @param data 键 例： {"key":"snapshotVersion"}
 	 * @return 值
 	 */
 	@RequestMapper(value = "/v1/getss", method = MethodEnum.POST)
@@ -622,20 +626,22 @@ public class HttpApiService {
 		}
 		try {
 			if ("snapshotVersion".equals(key.trim())) {
-				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion());
-			}else if ("msgHashTreeRoot".equals(key.trim())){
+				return ResponseUtils
+						.normalResponse(DepItemsManager.getInstance().attachSS(null).getCurrSnapshotVersion());
+			} else if ("msgHashTreeRoot".equals(key.trim())) {
 				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getMsgHashTreeRoot());
-			}else if ("treeRootMap".equals(key.trim())){
+			} else if ("treeRootMap".equals(key.trim())) {
 				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getTreeRootMap());
-			}else if ("snapshotPointMap".equals(key.trim())){
+			} else if ("snapshotPointMap".equals(key.trim())) {
 				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getSnapshotPointMap());
-			}else if ("snapshotMessage".equals(key.trim())){
+			} else if ("snapshotMessage".equals(key.trim())) {
 				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getSnapshotMessage());
-			}else if ("totalFee".equals(key.trim())){
-				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getTotalFeeBetween2Snapshots());
-			}else if ("contributions".equals(key.trim())){
+			} else if ("totalFee".equals(key.trim())) {
+				return ResponseUtils
+						.normalResponse(DepItemsManager.getInstance().attachSS(null).getTotalFeeBetween2Snapshots());
+			} else if ("contributions".equals(key.trim())) {
 				return ResponseUtils.normalResponse(DepItemsManager.getInstance().attachSS(null).getContributions());
-			}else {
+			} else {
 				return ResponseUtils.normalResponse();
 			}
 		} catch (Exception e) {

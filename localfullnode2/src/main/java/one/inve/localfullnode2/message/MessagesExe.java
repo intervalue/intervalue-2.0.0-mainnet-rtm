@@ -4,15 +4,7 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import one.inve.contract.ContractTransactionData;
-import one.inve.contract.ethplugin.core.Repository;
-import one.inve.contract.inve.INVERepositoryRoot;
-import one.inve.contract.inve.INVETransactionReceipt;
-import one.inve.contract.provider.RepositoryProvider;
-import one.inve.localfullnode2.dep.DepItemsManager;
-import one.inve.localfullnode2.snapshot.*;
-import one.inve.localfullnode2.store.SnapshotDbService;
-import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +15,23 @@ import one.inve.bean.message.ContractMessage;
 import one.inve.bean.message.MessageType;
 import one.inve.bean.message.TextMessage;
 import one.inve.bean.message.TransactionMessage;
+import one.inve.cfg.localfullnode.Config;
+import one.inve.contract.ContractTransactionData;
 import one.inve.contract.MVM.WorldStateService;
+import one.inve.contract.ethplugin.core.Repository;
+import one.inve.contract.inve.INVERepositoryRoot;
+import one.inve.contract.inve.INVETransactionReceipt;
 import one.inve.contract.inve.InternalTransferData;
-import one.inve.localfullnode2.conf.Config;
+import one.inve.contract.provider.RepositoryProvider;
+import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.snapshot.HandleConsensusSnapshotMessage;
+import one.inve.localfullnode2.snapshot.HandleConsensusSnapshotMessageDependency;
+import one.inve.localfullnode2.snapshot.HandleConsensusSnapshotMessageDependent;
+import one.inve.localfullnode2.snapshot.HandleSnapshotPoint;
+import one.inve.localfullnode2.snapshot.HandleSnapshotPointDependency;
+import one.inve.localfullnode2.snapshot.HandleSnapshotPointDependent;
+import one.inve.localfullnode2.store.SnapshotDbService;
+import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
 import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.localfullnode2.utilities.TxVerifyUtils;
 
@@ -99,10 +105,11 @@ public class MessagesExe {
 						// key condition
 						// 快照消息处理
 						if (Config.ENABLE_SNAPSHOT) {
-							handleConsensusSnapshotMessageDep =
-									DepItemsManager.getInstance().getItemConcerned(HandleConsensusSnapshotMessageDependency.class);
+							handleConsensusSnapshotMessageDep = DepItemsManager.getInstance()
+									.getItemConcerned(HandleConsensusSnapshotMessageDependency.class);
 							SnapshotDbService store = new SnapshotDbServiceImpl();
-							handleConsensusSnapshotMessage.handleConsensusSnapshotMessage(handleConsensusSnapshotMessageDep, store, msgObject);
+							handleConsensusSnapshotMessage.handleConsensusSnapshotMessage(
+									handleConsensusSnapshotMessageDep, store, msgObject);
 						}
 						// handleConsensusSnapshotMessage(msgObject);
 					} else if (tm.getInteger("type") == MessageType.TEXT.getIndex()) {
@@ -113,10 +120,10 @@ public class MessagesExe {
 					}
 				} else {
 					// key condition - if empty,the following is executing snapshot message
-					if(Config.ENABLE_SNAPSHOT){
-						handleSnapshotPointDep =
-								DepItemsManager.getInstance().getItemConcerned(HandleSnapshotPointDependency.class);
-						handleSnapshotPoint.handleSnapshotPointMessage(handleSnapshotPointDep,msgObject);
+					if (Config.ENABLE_SNAPSHOT) {
+						handleSnapshotPointDep = DepItemsManager.getInstance()
+								.getItemConcerned(HandleSnapshotPointDependency.class);
+						handleSnapshotPoint.handleSnapshotPointMessage(handleSnapshotPointDep, msgObject);
 					}
 //                        SnapshotPoint sp = node.getSnapshotPointMap().get(vers);
 //                        logger.warn("\nspecif msg: {}, \nvers-{} sp: {}",
@@ -542,7 +549,7 @@ public class MessagesExe {
 //							node.getShardId(), node.getCreatorId(), msgObject.toJSONString());
 				}
 			}
-			if(valid){
+			if (valid) {
 				// 执行智能合约
 				list = WorldStateService.executeContractMessage(dep.getDbId(), cm);
 				valid = null != list && list.size() > 0;
@@ -567,7 +574,7 @@ public class MessagesExe {
 						// 扣除和收集手续费
 						// key condition
 						dep.setTotalFeeBetween2Snapshots(dep.getTotalFeeBetween2Snapshots().add(data.getFee()));
-						addContractFeeTx2SaveQueue(cm.getSignature()+"_fee"+i, data);
+						addContractFeeTx2SaveQueue(cm.getSignature() + "_fee" + i, data);
 					}
 					needRecordFee = false;
 				}
@@ -579,10 +586,11 @@ public class MessagesExe {
 				INVETransactionReceipt receipt = new INVETransactionReceipt(receiptB);
 				if (!receipt.isTxStatusOK()) {
 					try {
-						InternalTransferData backData = new InternalTransferData(data.getToAddress(), data.getFromAddress(), BigInteger.ZERO, value);
+						InternalTransferData backData = new InternalTransferData(data.getToAddress(),
+								data.getFromAddress(), BigInteger.ZERO, value);
 						addContractTx2SaveQueue(cm.getSignature() + "_" + (i + 1), backData);
-					}catch (Exception e){
-						logger.error("handle error: {}",e);
+					} catch (Exception e) {
+						logger.error("handle error: {}", e);
 					}
 				}
 			}

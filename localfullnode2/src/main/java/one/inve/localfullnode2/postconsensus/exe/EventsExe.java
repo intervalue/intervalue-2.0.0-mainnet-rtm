@@ -3,20 +3,23 @@ package one.inve.localfullnode2.postconsensus.exe;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSONObject;
+
 import one.inve.bean.message.Contribution;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.snapshot.CreateSnapshotPoint;
 import one.inve.localfullnode2.snapshot.CreateSnapshotPointDependency;
 import one.inve.localfullnode2.snapshot.CreateSnapshotPointDependent;
-import one.inve.localfullnode2.utilities.Hash;
-import one.inve.localfullnode2.utilities.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.alibaba.fastjson.JSONObject;
-import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.rocks.INosql;
+import one.inve.localfullnode2.utilities.Hash;
+import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.utils.DSA;
 
 /**
@@ -93,7 +96,9 @@ public class EventsExe {
 				dep.addTotalConsEventCount(1);
 				// key condition
 				// 累计各分片各节点event数
-				dep.addContribution(new Contribution.Builder().shardId(event.getShardId()).creatorId(event.getCreatorId()).otherId(event.getOtherId()).otherSeq(event.getOtherSeq()).build());
+				dep.addContribution(
+						new Contribution.Builder().shardId(event.getShardId()).creatorId(event.getCreatorId())
+								.otherId(event.getOtherId()).otherSeq(event.getOtherSeq()).build());
 
 				// 保存共识Event
 				saveConsEvent(event);
@@ -103,8 +108,8 @@ public class EventsExe {
 
 				// key condition - 达到生成快照点条件，则生成快照点
 				if (Config.ENABLE_SNAPSHOT) {
-					createSnapshotPointDep =
-							DepItemsManager.getInstance().getItemConcerned(CreateSnapshotPointDependency.class);
+					createSnapshotPointDep = DepItemsManager.getInstance()
+							.getItemConcerned(CreateSnapshotPointDependency.class);
 					createSnapshotPoint.createSnapshotPoint(createSnapshotPointDep, event);
 				}
 				// createSnapshotPoint(event);
@@ -198,10 +203,11 @@ public class EventsExe {
 				JSONObject msgObj = JSONObject.parseObject(new String(msg));
 				if (StringUtils.isEmpty(dep.msgHashTreeRoot())) {
 //					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgObj.getString("signature")));
-                    dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(msgObj.getString("signature"))));
+					dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(msgObj.getString("signature"))));
 				} else {
 //					msgHashTreeRoot = DSA.encryptBASE64(Hash.hash(msgHashTreeRoot, msgObj.getString("signature")));
-                    dep.setMsgHashTreeRoot(DSA.encryptBASE64(Hash.hash(dep.msgHashTreeRoot(), msgObj.getString("signature"))));
+					dep.setMsgHashTreeRoot(
+							DSA.encryptBASE64(Hash.hash(dep.msgHashTreeRoot(), msgObj.getString("signature"))));
 				}
 
 				try {

@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import one.inve.cfg.localfullnode.Config;
 import one.inve.core.EventBody;
-import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 
 /**
@@ -409,8 +409,10 @@ public class EventStoreImpl implements IEventStore {
 			for (int creatorId = 0; creatorId < this.n; creatorId++) {
 //				BigInteger startSeq = BigInteger.valueOf(page).multiply(BigInteger.valueOf(this.sizePerHashnetNode));
 //				BigInteger endSeq = BigInteger.valueOf(page + 1).multiply(BigInteger.valueOf(this.sizePerHashnetNode));
-				BigInteger startSeq = BigInteger.valueOf(page).multiply(BigInteger.valueOf(this.sizePerHashnetNode)).add(lastSeqs[creatorId]).subtract(new BigInteger("10000"));
-				BigInteger endSeq = BigInteger.valueOf(page + 1).multiply(BigInteger.valueOf(this.sizePerHashnetNode)).add(startSeq);
+				BigInteger startSeq = BigInteger.valueOf(page).multiply(BigInteger.valueOf(this.sizePerHashnetNode))
+						.add(lastSeqs[creatorId]).subtract(new BigInteger("10000"));
+				BigInteger endSeq = BigInteger.valueOf(page + 1).multiply(BigInteger.valueOf(this.sizePerHashnetNode))
+						.add(startSeq);
 				if (endSeq.compareTo(lastSeqs[creatorId]) >= 0) {
 					n++;
 					endSeq = lastSeqs[creatorId].add(BigInteger.ONE);

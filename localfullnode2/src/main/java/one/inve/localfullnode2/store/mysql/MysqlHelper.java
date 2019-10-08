@@ -16,12 +16,14 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.druid.pool.DruidDataSource;
 
+import one.inve.cfg.core.DBConnectionDescriptorsConf;
+
 /**
  * Mysql帮助类，直接创建该类示例，并调用相应的借口即可对Mysql数据库进行操作
  *
  * 本类基于 Mysql jdbc v56
  *
- *
+ * read db configuration from specified universal conf yaml.
  */
 public class MysqlHelper {
 	private static final Logger logger = LoggerFactory.getLogger(MysqlHelper.class);
@@ -37,11 +39,24 @@ public class MysqlHelper {
 	 * 
 	 * @throws SQLException
 	 */
+	@Deprecated
 	public MysqlHelper(String dbId, Boolean isDrop) {
 		if (dbId != null) {
 			dataSource = dataSourceMap.get(dbId);
 			if (dataSource == null) {
 				dataSource = getDataSource(dbId, isDrop);
+				dataSourceMap.put(dbId, dataSource);
+			}
+		}
+	}
+
+	// read db configuration from specified universal conf yaml.
+	public MysqlHelper(String dbId, DBConnectionDescriptorsConf dbConnectionDescriptorsConf, Boolean isDrop) {
+		if (dbId != null) {
+			dataSource = dataSourceMap.get(dbId);
+			if (dataSource == null) {
+				dataSource = DataSourceConfig.getDataSource(dbId, dbConnectionDescriptorsConf, isDrop);
+
 				dataSourceMap.put(dbId, dataSource);
 			}
 		}
