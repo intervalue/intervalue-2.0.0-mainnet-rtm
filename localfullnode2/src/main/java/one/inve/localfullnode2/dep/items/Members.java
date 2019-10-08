@@ -3,8 +3,8 @@ package one.inve.localfullnode2.dep.items;
 import java.util.Collections;
 import java.util.List;
 
+import one.inve.cfg.localfullnode.Config;
 import one.inve.cluster.Member;
-import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DependentItem;
 
 public class Members extends DependentItem {

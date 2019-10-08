@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import one.inve.bean.node.LocalFullNode;
 import one.inve.bean.node.NodeStatus;
-import one.inve.localfullnode2.conf.Config;
-import one.inve.localfullnode2.gossip.vo.GossipObj;
+import one.inve.cfg.localfullnode.Config;
 import one.inve.core.EventBody;
+import one.inve.localfullnode2.gossip.vo.GossipObj;
 import one.inve.localfullnode2.store.IEventStore;
 import one.inve.localfullnode2.store.SnapshotDbService;
 import one.inve.localfullnode2.store.SnapshotDbServiceImpl;

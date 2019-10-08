@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.zeroc.Ice.Communicator;
 
+import one.inve.cfg.localfullnode.Config;
 import one.inve.cluster.Member;
-import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DependentItem;
 import one.inve.localfullnode2.dep.DependentItemConcerned;
 import one.inve.localfullnode2.dep.items.AllQueues;

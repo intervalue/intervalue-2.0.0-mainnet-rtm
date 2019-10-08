@@ -22,9 +22,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Communicator;
 
+import one.inve.cfg.localfullnode.Config;
 import one.inve.cluster.Member;
 import one.inve.core.EventBody;
-import one.inve.localfullnode2.conf.Config;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
 import one.inve.localfullnode2.gossip.vo.AppointEvent;
