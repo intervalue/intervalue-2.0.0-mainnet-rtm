@@ -10,6 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSONArray;
+
 import one.inve.bean.node.GossipAddress;
 import one.inve.cfg.fullnode.Parameters;
 import one.inve.cfg.localfullnode.Config;
@@ -28,6 +33,8 @@ import one.inve.cfg.localfullnode.NodeParameters;
  * @version: V1.2 replace seed info
  */
 public class InterValueConfImplant implements IConfImplant {
+	private static final Logger logger = LoggerFactory.getLogger(InterValueConfImplant.class);
+
 	IInterValueConf conf;
 
 	@Override
@@ -61,6 +68,9 @@ public class InterValueConfImplant implements IConfImplant {
 	public Parameters implantParameters(boolean isSeed) {
 		Parameters p = new Parameters();
 
+//		GossipAddress seedGA = new GossipAddress();
+//		GossipAddress selfGA = new GossipAddress();
+
 		p.seedGossipAddress = new GossipAddress();
 		p.selfGossipAddress = new GossipAddress();
 
@@ -69,13 +79,21 @@ public class InterValueConfImplant implements IConfImplant {
 		p.seedGossipAddress.rpcPort = one.inve.cfg.fullnode.Config.DEFAULT_SEED_RPC_PORT;
 		p.seedGossipAddress.httpPort = one.inve.cfg.fullnode.Config.DEFAULT_SEED_HTTP_PORT;
 
+//		seedGA.pubIP = one.inve.cfg.fullnode.Config.DEFAULT_SEED_PUBIP;
+//		seedGA.gossipPort = one.inve.cfg.fullnode.Config.DEFAULT_SEED_GOSSIP_PORT;
+//		seedGA.rpcPort = one.inve.cfg.fullnode.Config.DEFAULT_SEED_RPC_PORT;
+//		seedGA.httpPort = one.inve.cfg.fullnode.Config.DEFAULT_SEED_HTTP_PORT;
+//		p.seedGossipAddress = seedGA;
+
 		// p.selfGossipAddress.pubIP = one.inve.cfg.fullnode.Config.DEFAULT_SEED_PUBIP;
 
 		if (isSeed) {
+			p.selfGossipAddress.pubIP = conf.getSeedConf().getPubIP();
 			p.selfGossipAddress.gossipPort = Integer.parseInt(conf.getSeedConf().getGossipPort());
 			p.selfGossipAddress.rpcPort = Integer.parseInt(conf.getSeedConf().getRpcPort());
 			p.selfGossipAddress.httpPort = Integer.parseInt(conf.getSeedConf().getHttpPort());
 		} else {
+			p.selfGossipAddress.pubIP = conf.getFullNodeConf().getPubIP();
 			p.selfGossipAddress.gossipPort = Integer.parseInt(conf.getFullNodeConf().getGossipPort());
 			p.selfGossipAddress.rpcPort = Integer.parseInt(conf.getFullNodeConf().getRpcPort());
 			p.selfGossipAddress.httpPort = Integer.parseInt(conf.getFullNodeConf().getHttpPort());
@@ -107,6 +125,15 @@ public class InterValueConfImplant implements IConfImplant {
 		p.whiteList = one.inve.cfg.fullnode.Config.DEFAULT_WHITE_LIST;
 		p.blackList = one.inve.cfg.fullnode.Config.DEFAULT_BLACK_LIST;
 
+		logger.info("node ip        : {}", p.selfGossipAddress.pubIP);
+		logger.info("node gossipPort: {}", p.selfGossipAddress.gossipPort);
+		logger.info("node rpcPort   : {}", p.selfGossipAddress.rpcPort);
+		logger.info("node httpPort  : {}", p.selfGossipAddress.httpPort);
+		logger.info("test.clearDb   : {}", p.clearDb);
+		logger.info("test.env       : {}", p.env);
+		logger.info("test.prefix    : {}", p.prefix);
+		logger.info("test.whiteList : {}", JSONArray.toJSONString(p.whiteList));
+
 		return p;
 	}
 
@@ -122,7 +149,7 @@ public class InterValueConfImplant implements IConfImplant {
 		np.seedGossipAddress.rpcPort = Integer.parseInt(Config.DEFAULT_SEED_RPC_PORT);
 		np.seedGossipAddress.httpPort = Integer.parseInt(Config.DEFAULT_SEED_HTTP_PORT);
 
-		np.selfGossipAddress.pubIP = Config.DEFAULT_SEED_PUBIP;
+		np.selfGossipAddress.pubIP = conf.getLocalfullnode2Conf().getPubIP();
 		np.selfGossipAddress.gossipPort = Integer.parseInt(conf.getLocalfullnode2Conf().getGossipPort());
 		np.selfGossipAddress.rpcPort = Integer.parseInt(conf.getLocalfullnode2Conf().getRpcPort());
 		np.selfGossipAddress.httpPort = Integer.parseInt(conf.getLocalfullnode2Conf().getHttpPort());

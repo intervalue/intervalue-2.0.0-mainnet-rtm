@@ -22,13 +22,13 @@ public class Config {
 	/**
 	 * seed全节点地址信息
 	 */
-	public static final String DEFAULT_SEED_PUBIP = "34.220.63.1";
+	public static String DEFAULT_SEED_PUBIP = "11.11.11.11";
 //    public static final String DEFAULT_SEED_PUBIP = "35.170.77.230";
 //    public static final String DEFAULT_SEED_PUBIP = "172.17.2.125";
 //    public static final String DEFAULT_SEED_PUBIP = "172.17.2.118";
-	public static final int DEFAULT_SEED_GOSSIP_PORT = 25005;
-	public static final int DEFAULT_SEED_RPC_PORT = 25004;
-	public static final int DEFAULT_SEED_HTTP_PORT = 25003;
+	public static int DEFAULT_SEED_GOSSIP_PORT = 50000;
+	public static int DEFAULT_SEED_RPC_PORT = 50001;
+	public static int DEFAULT_SEED_HTTP_PORT = 50003;
 
 	/**
 	 * 可以进行pbft共识的最小（全节点）数量

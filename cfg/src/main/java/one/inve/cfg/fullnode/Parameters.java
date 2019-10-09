@@ -109,7 +109,7 @@ public class Parameters {
 		}
 	}
 
-	public void init(Communicator communicator, String[] args) {
+	public void init0(Communicator communicator, String[] args) {
 		if (null == seedGossipAddress) {
 			seedGossipAddress = new GossipAddress();
 		}
