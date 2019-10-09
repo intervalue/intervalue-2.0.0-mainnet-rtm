@@ -1,5 +1,6 @@
 package one.inve.cfg.core;
 
+import one.inve.cfg.fullnode.Parameters;
 import one.inve.cfg.localfullnode.NodeParameters;
 
 /**
@@ -18,7 +19,11 @@ public interface IConfImplant {
 
 	String[] implantZerocConf();
 
+	Parameters implantParameters(boolean isSeed);// full node only
+
 	NodeParameters implantNodeParameters();
+
+	void implantStaticConfig(boolean isSeed);// full node only
 
 	void implantStaticConfig();
 

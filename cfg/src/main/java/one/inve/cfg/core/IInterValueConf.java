@@ -20,4 +20,8 @@ public interface IInterValueConf {
 	IP2PClusterConf getP2PClusterConf();
 
 	Map<String, String> getEnv();
+
+	IFullnodeConf getSeedConf();
+
+	IFullnodeConf getFullNodeConf();
 }

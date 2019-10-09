@@ -134,6 +134,130 @@ public class InterValueYamlReader implements IInterValueConfigurationReader {
 			}
 
 			@Override
+			public IFullnodeConf getSeedConf() {
+				return new IFullnodeConf() {
+
+					@Override
+					public String getPubIP() {
+						Map m0 = (Map) m.get("seed");
+						return m0.get("pubIP").toString();
+					}
+
+					@Override
+					public String getGossipPort() {
+						Map m0 = (Map) m.get("seed");
+						return m0.get("gossipPort").toString();
+					}
+
+					@Override
+					public String getRpcPort() {
+						Map m0 = (Map) m.get("seed");
+						return m0.get("rpcPort").toString();
+					}
+
+					@Override
+					public String getHttpPort() {
+						Map m0 = (Map) m.get("seed");
+						return m0.get("httpPort").toString();
+					}
+
+					@Override
+					public String getPrefix() {
+						Map m0 = (Map) m.get("seed");
+						return m0.get("prefix").toString();
+					}
+
+					@Override
+					public String getShardSize() {
+						Map m0 = (Map) m.get("seed");
+						return m0.get("shardSize").toString();
+					}
+
+					@Override
+					public String getShardNodeSize() {
+						Map m0 = (Map) m.get("seed");
+						return m0.get("shardNodeSize").toString();
+					}
+
+					@Override
+					public String getStatic() {
+						Map m0 = (Map) m.get("seed");
+						return m0.get("static").toString();
+					}
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public List<String> getWhitelist() {
+						Map m0 = (Map) m.get("seed");
+						return (List<String>) m0.get("whitelist");
+					}
+
+				};
+			}
+
+			@Override
+			public IFullnodeConf getFullNodeConf() {
+				return new IFullnodeConf() {
+
+					@Override
+					public String getPubIP() {
+						Map m0 = (Map) m.get("fullnode");
+						return m0.get("pubIP").toString();
+					}
+
+					@Override
+					public String getGossipPort() {
+						Map m0 = (Map) m.get("fullnode");
+						return m0.get("gossipPort").toString();
+					}
+
+					@Override
+					public String getRpcPort() {
+						Map m0 = (Map) m.get("fullnode");
+						return m0.get("rpcPort").toString();
+					}
+
+					@Override
+					public String getHttpPort() {
+						Map m0 = (Map) m.get("fullnode");
+						return m0.get("httpPort").toString();
+					}
+
+					@Override
+					public String getPrefix() {
+						Map m0 = (Map) m.get("fullnode");
+						return m0.get("prefix").toString();
+					}
+
+					@Override
+					public String getShardSize() {
+						Map m0 = (Map) m.get("fullnode");
+						return m0.get("shardSize").toString();
+					}
+
+					@Override
+					public String getShardNodeSize() {
+						Map m0 = (Map) m.get("fullnode");
+						return m0.get("shardNodeSize").toString();
+					}
+
+					@Override
+					public String getStatic() {
+						Map m0 = (Map) m.get("fullnode");
+						return m0.get("static").toString();
+					}
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public List<String> getWhitelist() {
+						Map m0 = (Map) m.get("fullnode");
+						return (List<String>) m0.get("whitelist");
+					}
+
+				};
+			}
+
+			@Override
 			public IP2PClusterConf getP2PClusterConf() {
 				return new IP2PClusterConf() {
 					@Override
@@ -149,6 +273,9 @@ public class InterValueYamlReader implements IInterValueConfigurationReader {
 			public Map<String, String> getEnv() {
 				Map<String, String> result = new HashMap<>();
 				Map m0 = (Map) m.get("env");
+				if (m0 == null)
+					return result;
+
 				Iterator iterator = m0.entrySet().iterator();
 				while (iterator.hasNext()) {
 					Map.Entry entry = (Map.Entry) iterator.next();

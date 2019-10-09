@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 
 import one.inve.bean.node.GossipAddress;
+import one.inve.cfg.fullnode.Parameters;
 import one.inve.cfg.localfullnode.Config;
 import one.inve.cfg.localfullnode.NodeParameters;
 
@@ -54,6 +55,59 @@ public class InterValueConfImplant implements IConfImplant {
 			throw new RuntimeException(e);
 		}
 		return new String[] { "--Ice.Config=" + canonicalPath };
+	}
+
+	@Override
+	public Parameters implantParameters(boolean isSeed) {
+		Parameters p = new Parameters();
+
+		p.seedGossipAddress = new GossipAddress();
+		p.selfGossipAddress = new GossipAddress();
+
+		p.seedGossipAddress.pubIP = one.inve.cfg.fullnode.Config.DEFAULT_SEED_PUBIP;
+		p.seedGossipAddress.gossipPort = one.inve.cfg.fullnode.Config.DEFAULT_SEED_GOSSIP_PORT;
+		p.seedGossipAddress.rpcPort = one.inve.cfg.fullnode.Config.DEFAULT_SEED_RPC_PORT;
+		p.seedGossipAddress.httpPort = one.inve.cfg.fullnode.Config.DEFAULT_SEED_HTTP_PORT;
+
+		// p.selfGossipAddress.pubIP = one.inve.cfg.fullnode.Config.DEFAULT_SEED_PUBIP;
+
+		if (isSeed) {
+			p.selfGossipAddress.gossipPort = Integer.parseInt(conf.getSeedConf().getGossipPort());
+			p.selfGossipAddress.rpcPort = Integer.parseInt(conf.getSeedConf().getRpcPort());
+			p.selfGossipAddress.httpPort = Integer.parseInt(conf.getSeedConf().getHttpPort());
+		} else {
+			p.selfGossipAddress.gossipPort = Integer.parseInt(conf.getFullNodeConf().getGossipPort());
+			p.selfGossipAddress.rpcPort = Integer.parseInt(conf.getFullNodeConf().getRpcPort());
+			p.selfGossipAddress.httpPort = Integer.parseInt(conf.getFullNodeConf().getHttpPort());
+		}
+
+		if (!isSeed) {
+			p.prefix = conf.getFullNodeConf().getPrefix();
+		} else {
+			p.prefix = "";
+		}
+		p.clearDb = false;
+		// p.multiple = 1;
+
+		p.staticSharding = true;
+
+		p.dbFile = p.prefix + one.inve.cfg.fullnode.Config.DEFAULT_REAL_SQLITE_FILE;
+		p.keysFile = p.prefix + one.inve.cfg.fullnode.Config.DEFAULT_KEYS_FILE;
+		p.walletFile = p.prefix + one.inve.cfg.fullnode.Config.DEFAULT_WALLET_FILE;
+		p.shardSize = one.inve.cfg.fullnode.Config.DEFAULT_SHARD_SIZE;
+		p.shardNodeSize = one.inve.cfg.fullnode.Config.DEFAULT_SHARD_NODE_SIZE;
+		p.neighborMaxSize = one.inve.cfg.fullnode.Config.DEFAULT_NEIGHBOR_SIZE;
+		p.pbftNodeMinSize = one.inve.cfg.fullnode.Config.DEFAULT_PBFT_NODE_MIN_SIZE;
+		p.gossipInterval = one.inve.cfg.fullnode.Config.DEFAULT_NODE_GOSSIP_INTERVAL;
+		p.relayAliveTimeout = one.inve.cfg.fullnode.Config.DEFAULT_RELAY_ALIVE_TIME_OUT;
+		p.nodeUpdateMinInterval = one.inve.cfg.fullnode.Config.DEFAULT_NODE_UPDATE_MIN_INTERVAL;
+		p.ratioUpdateMinInterval = one.inve.cfg.fullnode.Config.DEFAULT_RATIO_UPDATE_MIN_INTERVAL;
+		p.exchangeFeeRatio = one.inve.cfg.fullnode.Config.DEFAULT_EXCHANGE_FEE_RATIO;
+
+		p.whiteList = one.inve.cfg.fullnode.Config.DEFAULT_WHITE_LIST;
+		p.blackList = one.inve.cfg.fullnode.Config.DEFAULT_BLACK_LIST;
+
+		return p;
 	}
 
 	@Override
@@ -104,6 +158,95 @@ public class InterValueConfImplant implements IConfImplant {
 			ReflectionUtils.setStaticField(Config.class, "DEFAULT_SEED_GOSSIP_PORT", seedGossipPort);
 			ReflectionUtils.setStaticField(Config.class, "DEFAULT_SEED_RPC_PORT", seedRpcPort);
 			ReflectionUtils.setStaticField(Config.class, "DEFAULT_SEED_HTTP_PORT", seedHttpPort);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	// inject seed information into one.inve.cfg.fullnode.Config object
+	@Override
+	public void implantStaticConfig(boolean isSeed) {// implant seed or fullnode configuration
+		try {
+			String myPublicAddr = null;
+
+//			if (isSeed) {
+//				IFullnodeConf sFullnodeConf = conf.getSeedConf();
+//				String sPubIP, sGossipPort, sRpcPort, sHttpPort;
+//
+//				List<String> sWhiteList = sFullnodeConf.getWhitelist();
+//				if ((myPublicAddr = getPublicAddr()) != null) {
+//					sWhiteList.add(myPublicAddr);
+//				}
+//
+//				sPubIP = sFullnodeConf.getPubIP();
+//				sGossipPort = sFullnodeConf.getGossipPort();
+//				sRpcPort = sFullnodeConf.getRpcPort();
+//				sHttpPort = sFullnodeConf.getHttpPort();
+//
+//				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "WHITE_LIST", sWhiteList);
+//				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_PUBIP", sPubIP);
+//				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_GOSSIP_PORT",
+//						sGossipPort);
+//				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_RPC_PORT", sRpcPort);
+//				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_HTTP_PORT", sHttpPort);
+//			} else {
+//				IFullnodeConf fullnodeConf = conf.getFullNodeConf();
+//				String pubIP, gossipPort, rpcPort, httpPort;
+//
+//				List<String> whiteList = fullnodeConf.getWhitelist();
+//				if ((myPublicAddr = getPublicAddr()) != null) {
+//					whiteList.add(myPublicAddr);
+//				}
+//
+//				pubIP = fullnodeConf.getPubIP();
+//				gossipPort = fullnodeConf.getGossipPort();
+//				rpcPort = fullnodeConf.getRpcPort();
+//				httpPort = fullnodeConf.getHttpPort();
+//
+//				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "WHITE_LIST", whiteList);
+//				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_PUBIP", pubIP);
+//				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_GOSSIP_PORT",
+//						gossipPort);
+//				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_RPC_PORT", rpcPort);
+//				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_HTTP_PORT", httpPort);
+//			}
+			IFullnodeConf sFullnodeConf = conf.getSeedConf();
+			String sPubIP, sGossipPort, sRpcPort, sHttpPort;
+
+			List<String> sWhiteList = sFullnodeConf.getWhitelist();
+			if ((myPublicAddr = getPublicAddr()) != null) {
+				sWhiteList.add(myPublicAddr);
+			}
+
+			sPubIP = sFullnodeConf.getPubIP();
+			sGossipPort = sFullnodeConf.getGossipPort();
+			sRpcPort = sFullnodeConf.getRpcPort();
+			sHttpPort = sFullnodeConf.getHttpPort();
+
+			ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_WHITE_LIST", sWhiteList);
+			ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_PUBIP", sPubIP);
+			ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_GOSSIP_PORT",
+					Integer.parseInt(sGossipPort));
+			ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_RPC_PORT",
+					Integer.parseInt(sRpcPort));
+			ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_SEED_HTTP_PORT",
+					Integer.parseInt(sHttpPort));
+
+			if (!isSeed) {
+				IFullnodeConf fullnodeConf = conf.getFullNodeConf();
+
+				List<String> whiteList = fullnodeConf.getWhitelist();
+				if ((myPublicAddr = getPublicAddr()) != null) {
+					whiteList.add(myPublicAddr);
+				}
+
+				// ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class,
+				// "WHITE_LIST", whiteList);
+				ReflectionUtils.setStaticField(one.inve.cfg.fullnode.Config.class, "DEFAULT_WHITE_LIST", whiteList);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
