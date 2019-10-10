@@ -14,14 +14,14 @@ public class Config {
 	public static final String WALLET_FILE = "local.wallet.json";
 	public static final String GOSSIP_SIGNATURE_DATA = "data4TheInterface2CreatedSignature";
 
-	public static final String DEFAULT_SEED_PUBIP = "22.22.22.22";
+	public static String DEFAULT_SEED_PUBIP = "22.22.22.22";
 //    public static final String DEFAULT_SEED_PUBIP = "35.170.77.230";
 //    public static final String DEFAULT_SEED_PUBIP = "172.17.2.125";
 //	public static final String DEFAULT_SEED_PUBIP = "192.168.207.129";
 //	public static final String DEFAULT_SEED_PUBIP = "172.17.2.117";
-	public static final String DEFAULT_SEED_GOSSIP_PORT = "60000";
-	public static final String DEFAULT_SEED_RPC_PORT = "60001";
-	public static final String DEFAULT_SEED_HTTP_PORT = "60002";
+	public static String DEFAULT_SEED_GOSSIP_PORT = "60000";
+	public static String DEFAULT_SEED_RPC_PORT = "60001";
+	public static String DEFAULT_SEED_HTTP_PORT = "60002";
 	// 网络节点gossip间隔(ms)
 	public static final int DEFAULT_GOSSIP_NODE_INTERVAL = 1000 * 60 * 1;
 	// gossip Event 线程类型
