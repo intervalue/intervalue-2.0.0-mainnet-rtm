@@ -218,6 +218,9 @@ public class MessagesExe {
 			} else {
 				valid = verifyDoubleCost(fromAddress, toAddress, fee, tm.getAmount());
 				if (!valid) {
+					// Francis.Deng with the result of "not enough balance"
+					msgObject.put("error", "not enough balance");
+
 //					logger.error("node-({}, {}): Transaction message double cost. msgObj: {}", node.getShardId(),
 //							node.getCreatorId(), msgObject.toJSONString());
 				}
