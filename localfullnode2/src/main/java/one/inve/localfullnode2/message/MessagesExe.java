@@ -204,15 +204,19 @@ public class MessagesExe {
 			} else if (validState == 2) {
 //				logger.error("node-({}, {}): Transaction message exist, throw away!!! msgObj: {}", node.getShardId(),
 //						node.getCreatorId(), msgObject.toJSONString());
+				msgObject.put("error", "tx existed");
+				valid = false;
 				return;
 			} else {
 				valid = false;
+				msgObject.put("error", "unidentified error");
 			}
 			if (!valid) {
 //				logger.error("node-({}, {}): Transaction message verify failed. msgObj: {}", node.getShardId(),
 //						node.getCreatorId(), msgObject.toJSONString());
 			} else if (verifyIllegalCreationMessage(fromAddress, toAddress)) {
 				valid = false;
+				msgObject.put("error", "illegal tx");
 //				logger.error("node-({}, {}): Transaction message illegal. msgObj: {}", node.getShardId(),
 //						node.getCreatorId(), msgObject.toJSONString());
 			} else {
