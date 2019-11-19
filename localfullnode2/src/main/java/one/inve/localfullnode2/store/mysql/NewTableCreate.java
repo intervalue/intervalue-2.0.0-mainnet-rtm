@@ -292,6 +292,10 @@ public class NewTableCreate {
 					logger.error("batchInsert方法中isValid为空放弃保存");
 					return BigInteger.ZERO;
 				}
+				if (json.containsKey("error")) {// which is to provide verbose error reason
+					message.setError(json.getString("error"));
+				}
+
 				Long updateTime = null;
 				if (json.containsKey("updateTime")) {
 					updateTime = json.getLong("updateTime");

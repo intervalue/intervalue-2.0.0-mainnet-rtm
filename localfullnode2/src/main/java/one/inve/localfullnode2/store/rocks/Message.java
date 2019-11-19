@@ -1,179 +1,184 @@
 package one.inve.localfullnode2.store.rocks;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import one.inve.bean.message.TransactionMessage;
-
 import java.io.Serializable;
-import java.math.BigInteger;
 
-public class Message  implements Serializable {
-    private String eHash;
-    private String hash;
-    private String id;
-    private boolean lastIdx;
-    private boolean isValid;
-    private boolean isStable;
-    private long updateTime;
-    private String snapVersion;
-    private String message;
+import com.alibaba.fastjson.annotation.JSONField;
 
-    public String geteHash() {
-        return eHash;
-    }
+public class Message implements Serializable {
+	private String eHash;
+	private String hash;
+	private String id;
+	private boolean lastIdx;
+	private boolean isValid;
+	private boolean isStable;
+	private long updateTime;
+	private String snapVersion;
+	private String message;
+	private String error;
 
-    public void seteHash(String eHash) {
-        this.eHash = eHash;
-    }
+	public String geteHash() {
+		return eHash;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public void seteHash(String eHash) {
+		this.eHash = eHash;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public Message(){
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    }
+	public Message() {
 
-    public String getHash() {
-        return hash;
-    }
+	}
 
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
+	public String getHash() {
+		return hash;
+	}
 
-    private Message(Builder builder) {
+	public void setHash(String hash) {
+		this.hash = hash;
+	}
 
-        setId(builder.id+"");
-        setLastIdx(builder.lastIdx);
-        setValid(builder.isValid);
-        setUpdateTime(builder.updateTime);
-        setStable(builder.isStable);
-        setSnapVersion(builder.snapVersion);
-        setMessage(builder.message);
-        seteHash(builder.eHash);
-        setHash(builder.hash);
-    }
+	private Message(Builder builder) {
 
-    public boolean isLastIdx() {
-        return lastIdx;
-    }
+		setId(builder.id + "");
+		setLastIdx(builder.lastIdx);
+		setValid(builder.isValid);
+		setUpdateTime(builder.updateTime);
+		setStable(builder.isStable);
+		setSnapVersion(builder.snapVersion);
+		setMessage(builder.message);
+		seteHash(builder.eHash);
+		setHash(builder.hash);
+	}
 
-    public void setLastIdx(boolean lastIdx) {
-        this.lastIdx = lastIdx;
-    }
+	public boolean isLastIdx() {
+		return lastIdx;
+	}
 
-    @JSONField(name="isValid")
-    public boolean isValid() {
-        return isValid;
-    }
+	public void setLastIdx(boolean lastIdx) {
+		this.lastIdx = lastIdx;
+	}
 
-    @JSONField(name="isValid")
-    public void setValid(boolean isValid) {
-        this.isValid = isValid;
-    }
+	@JSONField(name = "isValid")
+	public boolean isValid() {
+		return isValid;
+	}
 
-    @JSONField(name="isStable")
-    public boolean isStable() {
-        return isStable;
-    }
+	@JSONField(name = "isValid")
+	public void setValid(boolean isValid) {
+		this.isValid = isValid;
+	}
 
-    @JSONField(name="isStable")
-    public void setStable(boolean isStable) {
-        this.isStable = isStable;
-    }
+	@JSONField(name = "isStable")
+	public boolean isStable() {
+		return isStable;
+	}
 
-    public long getUpdateTime() {
-        return updateTime;
-    }
+	@JSONField(name = "isStable")
+	public void setStable(boolean isStable) {
+		this.isStable = isStable;
+	}
 
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
-    }
+	public long getUpdateTime() {
+		return updateTime;
+	}
 
-    public String getSnapVersion() {
-        return snapVersion;
-    }
+	public void setUpdateTime(long updateTime) {
+		this.updateTime = updateTime;
+	}
 
-    public void setSnapVersion(String snapVersion) {
-        this.snapVersion = snapVersion;
-    }
+	public String getSnapVersion() {
+		return snapVersion;
+	}
 
+	public void setSnapVersion(String snapVersion) {
+		this.snapVersion = snapVersion;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
+	public String getError() {
+		return error;
+	}
 
-    public static final class Builder {
+	public void setError(String error) {
+		this.error = error;
+	}
 
-        private String id;
-        private boolean lastIdx;
-        private boolean isValid;
-        private long updateTime;
-        private boolean isStable;
-        private String snapVersion;
-        private String message;
-        private String eHash;
-        private String hash;
+	public static final class Builder {
 
-        public Builder() {
-        }
+		private String id;
+		private boolean lastIdx;
+		private boolean isValid;
+		private long updateTime;
+		private boolean isStable;
+		private String snapVersion;
+		private String message;
+		private String eHash;
+		private String hash;
 
+		public Builder() {
+		}
 
+		public Builder id(String val) {
+			id = val;
+			return this;
+		}
 
-        public Builder id(String val) {
-            id = val;
-            return this;
-        }
+		public Builder lastIdx(boolean val) {
+			lastIdx = val;
+			return this;
+		}
 
-        public Builder lastIdx(boolean val) {
-            lastIdx = val;
-            return this;
-        }
+		public Builder isValid(boolean val) {
+			isValid = val;
+			return this;
+		}
 
-        public Builder isValid(boolean val) {
-            isValid = val;
-            return this;
-        }
+		public Builder updateTime(long val) {
+			updateTime = val;
+			return this;
+		}
 
-        public Builder updateTime(long val) {
-            updateTime = val;
-            return this;
-        }
+		public Builder isStable(boolean val) {
+			isStable = val;
+			return this;
+		}
 
-        public Builder isStable(boolean val) {
-            isStable = val;
-            return this;
-        }
+		public Builder snapVersion(String val) {
+			snapVersion = val;
+			return this;
+		}
 
-        public Builder snapVersion(String val) {
-            snapVersion = val;
-            return this;
-        }
-        public Builder hash(String val) {
-            hash = val;
-            return this;
-        }
-        public Builder message(String val) {
-            message = val;
-            return this;
-        }
+		public Builder hash(String val) {
+			hash = val;
+			return this;
+		}
 
-        public Builder eHash(String val) {
-            eHash = val;
-            return this;
-        }
+		public Builder message(String val) {
+			message = val;
+			return this;
+		}
 
-        public Message build() {
-            return new Message(this);
-        }
-    }
+		public Builder eHash(String val) {
+			eHash = val;
+			return this;
+		}
+
+		public Message build() {
+			return new Message(this);
+		}
+	}
 }
