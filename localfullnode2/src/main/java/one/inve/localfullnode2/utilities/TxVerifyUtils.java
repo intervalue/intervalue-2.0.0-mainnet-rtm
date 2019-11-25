@@ -12,7 +12,9 @@ import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.MessageType;
 import one.inve.bean.message.MessageVersion;
+import one.inve.bean.message.TransactionMessage;
 import one.inve.cfg.localfullnode.Config;
+import one.inve.contract.MVM.WorldStateService;
 import one.inve.core.Constant;
 import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
@@ -21,6 +23,29 @@ import one.inve.utils.SignUtil;
 
 public class TxVerifyUtils {
 	private static final Logger logger = LoggerFactory.getLogger(TxVerifyUtils.class);
+
+	public static boolean hasAccountSufficientFunds(String message, String dbId) {
+		TransactionMessage m0 = JSONObject.parseObject(message, TransactionMessage.class);
+		String fromAddress = m0.getFromAddress();
+		// String toAddress = m0.getToAddress();
+		BigInteger fee = m0.getNrgPrice().multiply(m0.getFee());
+		BigInteger amount = m0.getAmount();
+//		JSONObject m0 = JSONObject.parseObject(message);
+//		// JSONObject m1 = m0.getJSONObject("message");
+//		String fromAddress = m0.getString("fromAddress");
+//		BigDecimal amount = m0.getBigDecimal("amount");
+
+		BigInteger fromAddressAvailAtoms = WorldStateService.getBalanceByAddr(dbId, fromAddress);
+
+		return fee.equals(BigInteger.ZERO) ? fromAddressAvailAtoms.compareTo(amount) >= 0
+				: fromAddressAvailAtoms.compareTo(fee.add(amount)) >= 0;
+	}
+
+//	private boolean verifyDoubleCost(String fromAddress, String toAddress, BigInteger fee, BigInteger amount) {
+//		BigInteger fromAddressAvailAtoms = dep.getWorldStateService().getBalanceByAddr(dep.getDbId(), fromAddress);
+//		return fee.equals(BigInteger.ZERO) ? fromAddressAvailAtoms.compareTo(amount) >= 0
+//				: fromAddressAvailAtoms.compareTo(fee.add(amount)) >= 0;
+//	}
 
 	/**
 	 * 消息验证
