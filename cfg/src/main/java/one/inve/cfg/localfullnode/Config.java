@@ -1,7 +1,9 @@
 package one.inve.cfg.localfullnode;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 参数配置类
@@ -157,9 +159,21 @@ public class Config {
 	public static final List<String> BLACK_LIST = Arrays.asList("192.168.0.1");
 
 	// rpc服务
+	@Deprecated
 	public static final String[] SERVICE_ARRAY = { "one.inve.localfullnode2.rpc.impl.Light2localImpl",
 			"one.inve.localfullnode2.rpc.impl.Local2localImpl",
 			"one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocImpl" };
+
+	// RPC services mapping list
+	public static Map<String, String> RPC_SERVICES_MAPPING_LIST = new HashMap<String, String>() {
+		{
+			put("Light2local", "one.inve.localfullnode2.rpc.impl.Light2localImpl");
+			put("Local2local", "one.inve.localfullnode2.rpc.impl.Local2localImpl");
+			put("DataSynchronizationZeroc", "one.inve.localfullnode2.sync.rpc.DataSynchronizationZerocImpl");
+			put("PhantomRPCResponder", "one.inve.localfullnode2.rpc.impl.PhantomRPCResponder");// buit-in fake rpc
+																								// responsder
+		}
+	};
 
 	/**
 	 * coin round发生间隔
@@ -175,7 +189,7 @@ public class Config {
 	public static boolean logStack = true;
 
 	// enable or disable snapshot
-	public static boolean ENABLE_SNAPSHOT = true;
+	public static boolean ENABLE_SNAPSHOT = false;
 	// power function's exponent in lost motion model
 	public static double LostMotionModel_EXPONENT = 0.5;
 }
