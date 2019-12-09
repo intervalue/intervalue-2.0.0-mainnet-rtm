@@ -20,6 +20,7 @@ import one.inve.localfullnode2.store.rocks.INosql;
 import one.inve.localfullnode2.store.rocks.RocksJavaUtil;
 import one.inve.utils.DSA;
 import one.inve.utils.SignUtil;
+import one.inve.wallet.walletImp.InveWallet;
 
 public class TxVerifyUtils {
 	private static final Logger logger = LoggerFactory.getLogger(TxVerifyUtils.class);
@@ -257,6 +258,13 @@ public class TxVerifyUtils {
 		if (StringUtils.isEmpty(fromAddress)) {
 			throw new RuntimeException("fromAddress is illegal.");
 		}
+
+		// ensure toAddress and fromAddress are qualified format.
+		String toAddress = o.getString("toAddress");
+		if (!InveWallet.isValidAddress(fromAddress) || !InveWallet.isValidAddress(toAddress)) {
+			throw new RuntimeException("ftoAddress or fromAddress is unqualified format.");
+		}
+
 		// amount
 		BigInteger amount = o.getBigInteger("amount");
 		if (null != amount && amount.compareTo(BigInteger.ZERO) < 0) {
