@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.security.KeyPair;
@@ -27,9 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zeroc.Ice.Communicator;
-import com.zeroc.Ice.Object;
 import com.zeroc.Ice.ObjectAdapter;
-import com.zeroc.Ice.Util;
 
 import one.inve.bean.message.SnapshotMessage;
 import one.inve.bean.node.LocalFullNode;
@@ -171,13 +168,15 @@ public class LocalFullNode1GeneralNode {
 		return wallet;
 	}
 
-	public void setAdapter(ObjectAdapter adapter) {
-		this.adapter = adapter;
-	}
-
-	public ObjectAdapter getAdapter() {
-		return adapter;
-	}
+	// 694020aee76b4e4a955dd5e899c69874
+	// enable ice rpc driver module to keep a close eye on rpc
+//	public void setAdapter(ObjectAdapter adapter) {
+//		this.adapter = adapter;
+//	}
+//
+//	public ObjectAdapter getAdapter() {
+//		return adapter;
+//	}
 
 	public int getShardId() {
 		return shardId;
@@ -702,32 +701,34 @@ public class LocalFullNode1GeneralNode {
 		return adapter;
 	}
 
+	// 694020aee76b4e4a955dd5e899c69874
+	// enable ice rpc driver module to keep a close eye on rpc
 	/**
 	 *
 	 * load rpc from default.config
 	 * 
 	 * @param node node object
 	 */
-	public void loadRPC(LocalFullNode1GeneralNode node) {
-		logger.info("start rpc service...");
-		try {
-			// add rpc
-			for (int i = 0; i < Config.SERVICE_ARRAY.length; i++) {
-				Class<?> t = Class.forName(Config.SERVICE_ARRAY[i]);
-				Constructor<Object> cons = (Constructor<Object>) t.getConstructor(LocalFullNode1GeneralNode.class);
-				Object object = cons.newInstance(node);
-
-				String identity = Config.SERVICE_ARRAY[i].substring(Config.SERVICE_ARRAY[i].lastIndexOf('.') + 1);
-				if (identity.toLowerCase().endsWith("impl")) {
-					identity = identity.substring(0, identity.length() - 4);
-				}
-				getAdapter().add(object, Util.stringToIdentity(identity));
-			}
-			getAdapter().activate();
-		} catch (Exception e) {
-			logger.error("load rpc error: {}", e);
-		}
-	}
+//	public void loadRPC(LocalFullNode1GeneralNode node) {
+//		logger.info("start rpc service...");
+//		try {
+//			// add rpc
+//			for (int i = 0; i < Config.SERVICE_ARRAY.length; i++) {
+//				Class<?> t = Class.forName(Config.SERVICE_ARRAY[i]);
+//				Constructor<Object> cons = (Constructor<Object>) t.getConstructor(LocalFullNode1GeneralNode.class);
+//				Object object = cons.newInstance(node);
+//
+//				String identity = Config.SERVICE_ARRAY[i].substring(Config.SERVICE_ARRAY[i].lastIndexOf('.') + 1);
+//				if (identity.toLowerCase().endsWith("impl")) {
+//					identity = identity.substring(0, identity.length() - 4);
+//				}
+//				getAdapter().add(object, Util.stringToIdentity(identity));
+//			}
+//			getAdapter().activate();
+//		} catch (Exception e) {
+//			logger.error("load rpc error: {}", e);
+//		}
+//	}
 
 	public ReentrantReadWriteLock gossipAndRPCExclusiveLock() {
 		return gossipAndRPCExclusiveLock;

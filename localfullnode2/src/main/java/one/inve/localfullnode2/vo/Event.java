@@ -20,6 +20,7 @@
 
 package one.inve.localfullnode2.vo;
 
+@Deprecated
 public class Event implements java.lang.Cloneable, java.io.Serializable {
 	public int shardId;
 

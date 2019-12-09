@@ -5,10 +5,11 @@ import java.util.concurrent.CompletableFuture;
 import com.zeroc.Ice.Communicator;
 
 import one.inve.cluster.Member;
-import one.inve.localfullnode2.gossip.vo.AppointEvent;
-import one.inve.localfullnode2.gossip.vo.GossipObj;
+import one.inve.localfullnode2.rpc.AppointEvent;
+import one.inve.localfullnode2.rpc.GossipObj;
 import one.inve.localfullnode2.rpc.Local2localPrx;
 import one.inve.localfullnode2.rpc.RpcConnectionService;
+import one.inve.localfullnode2.rpc.mgmt.LocalFullNode2RPCInvocationDriver;
 
 /**
  * 
@@ -25,7 +26,12 @@ public class DefaultRpcCommunicator implements GossipCommunicationConsumable {
 	@Override
 	public CompletableFuture<GossipObj> gossipMyMaxSeqList4ConsensusAsync(Communicator communicator, Member neighbor,
 			String pubkey, String sig, String snapVersion, String snapHash, long[] seqs) {
-		Local2localPrx nprx = RpcConnectionService.buildConnection2localFullNode(communicator, neighbor);
+		// 694020aee76b4e4a955dd5e899c69874
+		// enable ice rpc driver module to keep a close eye on rpc
+		// Local2localPrx nprx =
+		// RpcConnectionService.buildConnection2localFullNode(communicator, neighbor);
+		LocalFullNode2RPCInvocationDriver rpcInvocationDriver = new LocalFullNode2RPCInvocationDriver(communicator);
+		Local2localPrx nprx = rpcInvocationDriver.getRemoteLocal2localPrx(neighbor);
 
 		return nprx.gossipMyMaxSeqList4ConsensusAsync(pubkey, sig, snapVersion, snapHash, seqs);
 	}
@@ -33,7 +39,12 @@ public class DefaultRpcCommunicator implements GossipCommunicationConsumable {
 	@Override
 	public CompletableFuture<GossipObj> gossipMyMaxSeqList4SyncAsync(Communicator communicator, Member neighbor,
 			String pubkey, String sig, int otherShardId, String snapVersion, String snapHash, long[] seqs) {
-		Local2localPrx nprx = RpcConnectionService.buildConnection2localFullNode(communicator, neighbor);
+		// 694020aee76b4e4a955dd5e899c69874
+		// enable ice rpc driver module to keep a close eye on rpc
+		// Local2localPrx nprx =
+		// RpcConnectionService.buildConnection2localFullNode(communicator, neighbor);
+		LocalFullNode2RPCInvocationDriver rpcInvocationDriver = new LocalFullNode2RPCInvocationDriver(communicator);
+		Local2localPrx nprx = rpcInvocationDriver.getRemoteLocal2localPrx(neighbor);
 
 		return nprx.gossipMyMaxSeqList4SyncAsync(pubkey, sig, otherShardId, snapVersion, snapHash, seqs);
 	}

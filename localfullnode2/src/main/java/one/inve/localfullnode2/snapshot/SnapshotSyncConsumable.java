@@ -3,7 +3,7 @@ package one.inve.localfullnode2.snapshot;
 import java.util.concurrent.CompletableFuture;
 
 import one.inve.cluster.Member;
-import one.inve.localfullnode2.snapshot.vo.SnapObj;
+import one.inve.localfullnode2.rpc.SnapObj;
 
 /**
  * 

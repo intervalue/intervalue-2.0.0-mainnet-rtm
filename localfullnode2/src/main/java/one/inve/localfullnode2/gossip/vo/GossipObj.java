@@ -23,6 +23,7 @@ package one.inve.localfullnode2.gossip.vo;
 import one.inve.localfullnode2.vo.Event;
 import one.inve.localfullnode2.vo.EventListHelper;
 
+@Deprecated
 public class GossipObj implements java.lang.Cloneable, java.io.Serializable {
 	public String snapVersion;
 

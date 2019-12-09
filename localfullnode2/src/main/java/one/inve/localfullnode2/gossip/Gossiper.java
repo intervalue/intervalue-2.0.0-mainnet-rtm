@@ -27,15 +27,15 @@ import one.inve.cluster.Member;
 import one.inve.core.EventBody;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.communicator.GossipCommunicationConsumable;
-import one.inve.localfullnode2.gossip.vo.AppointEvent;
-import one.inve.localfullnode2.gossip.vo.GossipObj;
+import one.inve.localfullnode2.rpc.AppointEvent;
+import one.inve.localfullnode2.rpc.Event;
+import one.inve.localfullnode2.rpc.GossipObj;
 import one.inve.localfullnode2.snapshot.SnapshotSynchronizer;
 import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependency;
 import one.inve.localfullnode2.snapshot.SnapshotSynchronizerDependent;
 import one.inve.localfullnode2.store.IEventFlow;
 import one.inve.localfullnode2.utilities.Cryptos;
 import one.inve.localfullnode2.utilities.StringUtils;
-import one.inve.localfullnode2.vo.Event;
 import one.inve.utils.DSA;
 
 /**
@@ -330,7 +330,8 @@ public class Gossiper {
 				connflag[ni] = true;
 			} catch (Exception e) {
 //				logger.error("{}gossipMyMaxSeqList ConnectionRefusedException: {}", pre, neighbor.address().host());
-				logger.error("gossipMyMaxSeqList ConnectionRefusedException: {}", neighbor.address());
+				logger.error("gossipMyMaxSeqList ConnectionRefusedException: {} - {}", neighbor.address(),
+						neighbor.metadata());
 //				logger.warn("remove gossipAddress: {}", JSON.toJSONString(neighbor.address()));
 //				prxMap.remove(neighbor.address());
 

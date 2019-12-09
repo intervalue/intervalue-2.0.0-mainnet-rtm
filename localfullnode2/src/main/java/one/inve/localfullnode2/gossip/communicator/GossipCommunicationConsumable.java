@@ -5,8 +5,8 @@ import java.util.concurrent.CompletableFuture;
 import com.zeroc.Ice.Communicator;
 
 import one.inve.cluster.Member;
-import one.inve.localfullnode2.gossip.vo.AppointEvent;
-import one.inve.localfullnode2.gossip.vo.GossipObj;
+import one.inve.localfullnode2.rpc.AppointEvent;
+import one.inve.localfullnode2.rpc.GossipObj;
 
 /**
  * 

@@ -30,14 +30,15 @@ import one.inve.core.EventBody;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.gossip.HandleSplitReportThread;
 import one.inve.localfullnode2.gossip.l2l.L2LCore;
-import one.inve.localfullnode2.gossip.vo.AppointEvent;
-import one.inve.localfullnode2.gossip.vo.GossipObj;
 import one.inve.localfullnode2.gossip.vo.SplitResult;
 import one.inve.localfullnode2.message.service.ITransactionDbService;
 import one.inve.localfullnode2.message.service.TransactionDbService;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
+import one.inve.localfullnode2.rpc.AppointEvent;
+import one.inve.localfullnode2.rpc.Event;
+import one.inve.localfullnode2.rpc.GossipObj;
 import one.inve.localfullnode2.rpc.Local2local;
-import one.inve.localfullnode2.snapshot.vo.SnapObj;
+import one.inve.localfullnode2.rpc.SnapObj;
 import one.inve.localfullnode2.store.DbUtils;
 import one.inve.localfullnode2.store.EventKeyPair;
 import one.inve.localfullnode2.store.IEventStore;
@@ -46,7 +47,6 @@ import one.inve.localfullnode2.store.SnapshotDbServiceImpl;
 import one.inve.localfullnode2.utilities.Cryptos;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 import one.inve.localfullnode2.utilities.StringUtils;
-import one.inve.localfullnode2.vo.Event;
 import one.inve.utils.DSA;
 
 /**

@@ -22,6 +22,7 @@ package one.inve.localfullnode2.gossip.vo;
 
 import one.inve.localfullnode2.vo.Event;
 
+@Deprecated
 public class AppointEvent implements java.lang.Cloneable, java.io.Serializable {
 	public String snapVersion;
 

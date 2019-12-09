@@ -20,7 +20,6 @@
 
 package one.inve.localfullnode2.rpc;
 
-public class _Light2localPrxI extends com.zeroc.Ice._ObjectPrxI implements Light2localPrx
+interface _Marker
 {
-    public static final long serialVersionUID = 0L;
 }

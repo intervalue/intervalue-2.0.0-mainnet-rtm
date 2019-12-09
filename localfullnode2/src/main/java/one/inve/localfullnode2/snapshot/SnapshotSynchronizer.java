@@ -1,16 +1,13 @@
 package one.inve.localfullnode2.snapshot;
 
 import java.math.BigInteger;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import one.inve.bean.message.SnapshotMessage;
-import one.inve.localfullnode2.utilities.Hash;
-import one.inve.utils.DSA;
-import one.inve.utils.SignUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,12 +15,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import one.inve.bean.node.NodeStatus;
+import one.inve.bean.message.SnapshotMessage;
 import one.inve.cluster.Member;
-import one.inve.localfullnode2.gossip.vo.GossipObj;
+import one.inve.localfullnode2.rpc.GossipObj;
 import one.inve.localfullnode2.snapshot.vo.SnapObj;
 import one.inve.localfullnode2.utilities.HnKeyUtils;
 import one.inve.localfullnode2.utilities.StringUtils;
+import one.inve.utils.SignUtil;
 
 /**
  * 
@@ -44,7 +42,7 @@ public class SnapshotSynchronizer {
 	private SnapshotSynchronizerDependent dep;
 	private volatile Map<String, HashSet<String>> snapVersionMap = new HashMap<>();
 
-	public boolean synchronizeHigher(SnapshotSynchronizerDependent dep,Member neighbor,GossipObj gossipObj) {
+	public boolean synchronizeHigher(SnapshotSynchronizerDependent dep, Member neighbor, GossipObj gossipObj) {
 		this.dep = dep;
 
 		BigInteger snapVers = new BigInteger(gossipObj.snapVersion);
@@ -68,7 +66,7 @@ public class SnapshotSynchronizer {
 				pubKeySet.add(neighbor.metadata().get("pubkey"));
 				snapVersionMap.put(new String(gossipObj.snapHash), pubKeySet);
 			}
-			logger.info(">>>>>INFO<<<<<synchronizeHigher:\n snapVersionMap: {}",JSON.toJSONString(snapVersionMap));
+			logger.info(">>>>>INFO<<<<<synchronizeHigher:\n snapVersionMap: {}", JSON.toJSONString(snapVersionMap));
 			// 当收集到超过f+1个节点的快照版本比我高过1个时,直接同步快照
 //			logger.warn("1:{}", new String(gossipObj.snapHash));
 //			logger.warn("2:{}", JSONObject.toJSONString(snapVersionMap.get(new String(gossipObj.snapHash))));
@@ -76,7 +74,7 @@ public class SnapshotSynchronizer {
 			if (snapVersionMap.get(new String(gossipObj.snapHash)) != null && snapVersionMap
 					.get(new String(gossipObj.snapHash)).size() > (dep.getShardCount() * dep.getnValue()) / 3 + 1) {
 				logger.info(">>>>>START<<<<<synchronizeHigher:\n neighbor: {},\n gossipObj:{}",
-						JSON.toJSONString(neighbor),JSON.toJSONString(gossipObj));
+						JSON.toJSONString(neighbor), JSON.toJSONString(gossipObj));
 //				logger.warn("node-({}, {}): more than f+1 neighbor node's snapshot version bigger than mine, "
 //						+ "neighbor synchronize snapshot...", node.getShardId(), node.getCreatorId());
 //				logger.warn("node-({}, {}): new String(gossipObj.snapHash):{}", node.getShardId(), node.getCreatorId(),
@@ -97,7 +95,7 @@ public class SnapshotSynchronizer {
 				SnapObj snapObj = null;
 				try {
 					snapObj = (SnapObj) snapResult.get(30000, TimeUnit.MILLISECONDS);
-					logger.info(">>>>>INFO<<<<<synchronizeHigher:\n snapObj: {}",JSON.toJSONString(snapObj));
+					logger.info(">>>>>INFO<<<<<synchronizeHigher:\n snapObj: {}", JSON.toJSONString(snapObj));
 //					snapVersionMap.clear();
 //					return dep.execute(snapObj);
 				} catch (Exception e) {
@@ -108,7 +106,7 @@ public class SnapshotSynchronizer {
 //							pre, neighbor.address().host(), neighbor.metadata().get("rpcPort"), e);
 //
 //					return eventSize + "_" + eventSpaces;
-					logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
+					logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}", e);
 					return false;
 				}
 				if (snapObj != null) {
@@ -127,7 +125,7 @@ public class SnapshotSynchronizer {
 					List<JSONObject> messages = null;
 					if (!StringUtils.isEmpty(snapObj.messages)) {
 						messages = JSONArray.parseArray(snapObj.messages, JSONObject.class);
-						logger.info(">>>>>INFO<<<<<synchronizeHigher:\n messages: {}",messages.toString());
+						logger.info(">>>>>INFO<<<<<synchronizeHigher:\n messages: {}", messages.toString());
 					}
 
 					// 正在快照后
@@ -137,12 +135,12 @@ public class SnapshotSynchronizer {
 							for (JSONObject msg : messages) {
 								try {
 //									logger.error(">>>>>each of messages in GossipEventThread= " + msg);
-									//2019.5.30 修复数据结构不对应，ConsensusMessageVerifyThread解析错误
-									msg.put("msg",msg.get("message"));
-									msg.put("eShardId",snapshotMessage.getSnapshotPoint().getEventBody().getShardId());
+									// 2019.5.30 修复数据结构不对应，ConsensusMessageVerifyThread解析错误
+									msg.put("msg", msg.get("message"));
+									msg.put("eShardId", snapshotMessage.getSnapshotPoint().getEventBody().getShardId());
 									dep.getConsMessageVerifyQueue().put(msg);
 								} catch (InterruptedException e) {
-									logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
+									logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}", e);
 									e.printStackTrace();
 								}
 							}
@@ -151,13 +149,13 @@ public class SnapshotSynchronizer {
 //							logger.error(
 //									"node.getConsMessageVerifyQueue().put(JSONObject.parseObject(snapMessageStr))"
 //											+ snapMessageStr);
-                            //2019.5.21 数据结构不对应，ConsensusMessageHandleThread无法解析
-                            JSONObject snapMessage = JSONObject.parseObject(snapMessageStr);
-                            snapMessage.put("msg",originalSnapshotStr);
-                            snapMessage.put("eShardId",snapshotMessage.getSnapshotPoint().getEventBody().getShardId());
-                            dep.getConsMessageVerifyQueue().put(snapMessage);
+							// 2019.5.21 数据结构不对应，ConsensusMessageHandleThread无法解析
+							JSONObject snapMessage = JSONObject.parseObject(snapMessageStr);
+							snapMessage.put("msg", originalSnapshotStr);
+							snapMessage.put("eShardId", snapshotMessage.getSnapshotPoint().getEventBody().getShardId());
+							dep.getConsMessageVerifyQueue().put(snapMessage);
 						} catch (InterruptedException e) {
-							logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}",e);
+							logger.error(">>>>>ERROR<<<<<synchronizeHigher:\n error: {}", e);
 							e.printStackTrace();
 						}
 						// 更新本节点当前快照信息
@@ -169,8 +167,7 @@ public class SnapshotSynchronizer {
 //									snapshotMessage.getSignature())));
 //						}
 						dep.setSnapshotMessage(snapshotMessage);
-						dep.putSnapshotPointMap(snapshotMessage.getSnapVersion(),
-								snapshotMessage.getSnapshotPoint());
+						dep.putSnapshotPointMap(snapshotMessage.getSnapVersion(), snapshotMessage.getSnapshotPoint());
 						dep.putTreeRootMap(snapshotMessage.getSnapVersion(),
 								snapshotMessage.getSnapshotPoint().getMsgHashTreeRoot());
 						snapVersionMap.clear();

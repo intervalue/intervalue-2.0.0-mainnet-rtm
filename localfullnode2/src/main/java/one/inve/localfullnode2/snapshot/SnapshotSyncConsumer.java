@@ -2,8 +2,10 @@ package one.inve.localfullnode2.snapshot;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSON;
-import com.zeroc.Ice.Communicator;
 
 import one.inve.cluster.Member;
 import one.inve.localfullnode2.dep.DepItemsManager;
@@ -12,9 +14,7 @@ import one.inve.localfullnode2.dep.DependentItemConcerned;
 import one.inve.localfullnode2.dep.items.DirectCommunicator;
 import one.inve.localfullnode2.rpc.Local2localPrx;
 import one.inve.localfullnode2.rpc.RpcConnectionService;
-import one.inve.localfullnode2.snapshot.vo.SnapObj;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import one.inve.localfullnode2.rpc.SnapObj;
 
 /**
  * 
@@ -46,6 +46,6 @@ public class SnapshotSyncConsumer implements SnapshotSyncConsumable, DependentIt
 
 	@Override
 	public void update(DependentItem item) {
-		set(this,item);
+		set(this, item);
 	}
 }

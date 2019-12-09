@@ -2,7 +2,6 @@ package one.inve.localfullnode2.nodes;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
-import com.zeroc.Ice.Object;
-import com.zeroc.Ice.Util;
 
 import one.inve.cfg.core.DBConnectionDescriptorsConf;
 import one.inve.cfg.localfullnode.Config;
@@ -31,6 +28,7 @@ import one.inve.localfullnode2.hashnet.Hashneter;
 import one.inve.localfullnode2.http.HttpServiceDependency;
 import one.inve.localfullnode2.lc.ILifecycle;
 import one.inve.localfullnode2.lc.LazyLifecycle;
+import one.inve.localfullnode2.rpc.mgmt.LocalFullNode2RPCInvocationDriver;
 import one.inve.localfullnode2.staging.StagingArea;
 import one.inve.localfullnode2.store.DbUtils;
 import one.inve.localfullnode2.utilities.FileLockUtils;
@@ -47,6 +45,7 @@ import one.inve.localfullnode2.utilities.http.NettyHttpServer;
  * @version: V1.0
  * @version: V1.1 add a function to calculate first seqs(bottom event height)
  * @version V1.5 replace command line parameter with a yaml configuration
+ * @version v1.6 enable ice rpc driver module to keep a close eye on rpc
  */
 public abstract class LocalFullNodeSkeleton extends DepsPointcut implements NodeEnrolled {
 	private static final Logger logger = LoggerFactory.getLogger(LocalFullNodeSkeleton.class);
@@ -141,8 +140,14 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			initOlympus();
 
 			// 初始化节点信息
-			setAdapter(this.generateAdapter(getCommunicator(), "LocalFullNodeAdapter",
-					this.nodeParameters().selfGossipAddress.rpcPort));
+//			setAdapter(this.generateAdapter(getCommunicator(), "LocalFullNodeAdapter",
+//					this.nodeParameters().selfGossipAddress.rpcPort));
+
+			// 694020aee76b4e4a955dd5e899c69874
+			// enable ice rpc driver module to keep a close eye on rpc
+			LocalFullNode2RPCInvocationDriver rpcInvocationDriver = new LocalFullNode2RPCInvocationDriver(
+					getCommunicator(), this.nodeParameters().selfGossipAddress.rpcPort, this);
+
 			String seedPubIP = this.nodeParameters().seedGossipAddress.pubIP;
 			String seedRpcPort = "" + this.nodeParameters().seedGossipAddress.rpcPort;
 
@@ -220,8 +225,10 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 			gs.addLcs(httpServer);
 
 			// start up rpc server
-			// loadRPC(this);
-			ILifecycle rpcServer = startRPCServer(this);
+			// 694020aee76b4e4a955dd5e899c69874
+			// enable ice rpc driver module to keep a close eye on rpc
+			// ILifecycle rpcServer = startRPCServer(this);
+			ILifecycle rpcServer = startRPCServer(rpcInvocationDriver, this);
 			gs.addLcs(rpcServer);
 
 			TimeUnit.SECONDS.sleep(5);
@@ -369,7 +376,11 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		return llc;
 	}
 
-	protected ILifecycle startRPCServer(LocalFullNode1GeneralNode node) {
+	// 694020aee76b4e4a955dd5e899c69874
+	// enable ice rpc driver module to keep a close eye on rpc
+	// protected ILifecycle startRPCServer(LocalFullNode1GeneralNode node) {
+	protected ILifecycle startRPCServer(LocalFullNode2RPCInvocationDriver rpcInvocationDriver,
+			LocalFullNode1GeneralNode node) {
 		LazyLifecycle llc = new LazyLifecycle() {
 
 			@Override
@@ -377,25 +388,27 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 				super.start();
 
 				logger.info("start rpc service...");
-				try {
-					// add rpc
-					for (int i = 0; i < Config.SERVICE_ARRAY.length; i++) {
-						Class<?> t = Class.forName(Config.SERVICE_ARRAY[i]);
-						Constructor<Object> cons = (Constructor<Object>) t
-								.getConstructor(LocalFullNode1GeneralNode.class);
-						Object object = cons.newInstance(node);
-
-						String identity = Config.SERVICE_ARRAY[i]
-								.substring(Config.SERVICE_ARRAY[i].lastIndexOf('.') + 1);
-						if (identity.toLowerCase().endsWith("impl")) {
-							identity = identity.substring(0, identity.length() - 4);
-						}
-						getAdapter().add(object, Util.stringToIdentity(identity));
-					}
-					getAdapter().activate();
-				} catch (Exception e) {
-					logger.error("load rpc error: {}", e);
-				}
+//				try {
+//					// add rpc
+//					for (int i = 0; i < Config.SERVICE_ARRAY.length; i++) {
+//						Class<?> t = Class.forName(Config.SERVICE_ARRAY[i]);
+//						Constructor<Object> cons = (Constructor<Object>) t
+//								.getConstructor(LocalFullNode1GeneralNode.class);
+//						Object object = cons.newInstance(node);
+//
+//						String identity = Config.SERVICE_ARRAY[i]
+//								.substring(Config.SERVICE_ARRAY[i].lastIndexOf('.') + 1);
+//						if (identity.toLowerCase().endsWith("impl")) {
+//							identity = identity.substring(0, identity.length() - 4);
+//						}
+//						getAdapter().add(object, Util.stringToIdentity(identity));
+//					}
+//					getAdapter().activate();
+//				} catch (Exception e) {
+//					logger.error("load rpc error: {}", e);
+//				}
+				rpcInvocationDriver.registerServices();
+				rpcInvocationDriver.activateServices();
 			}
 
 			@Override
@@ -403,10 +416,12 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 				// getAdapter().deactivate();
 				// getAdapter().destroy();
 				// getCommunicator().shutdown();
-				getCommunicator().destroy();
+				// getCommunicator().destroy();
 //				while (!getCommunicator().isShutdown()) {
 //					logger.info("communicator shutdown is going on");
 //				}
+				rpcInvocationDriver.getCommunicator().shutdown();
+
 				super.stop();
 
 				logger.info("<<rpc server>> is stopped......");
