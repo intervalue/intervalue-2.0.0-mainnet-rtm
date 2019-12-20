@@ -261,8 +261,9 @@ public class TxVerifyUtils {
 
 		// ensure toAddress and fromAddress are qualified format.
 		String toAddress = o.getString("toAddress");
-		if (!InveWallet.isValidAddress(fromAddress) || !InveWallet.isValidAddress(toAddress)) {
-			throw new RuntimeException("ftoAddress or fromAddress is unqualified format.");
+		if (!InveWallet.isValidAddress(fromAddress)
+				|| (!StringUtils.isEmpty(toAddress) && !InveWallet.isValidAddress(toAddress))) {
+			throw new RuntimeException("fromAddress or toAddress is unqualified format.");
 		}
 
 		// amount
