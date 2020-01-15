@@ -1,0 +1,42 @@
+
+/**
+ *
+ * Copyright © INVE FOUNDATION. All rights reserved.
+ *
+ * @author: Francis.Deng[francis_xiiiv@163.com]
+ * @version: V1.0
+ * @Date: 1/2/20 7:22 PM
+ * @Build: protoc --go_out=plugins=grpc:. chronicle.proto
+ * @Build: protoc --plugin=protoc-gen-grpc-java=/usr/local/bin/protoc-gen-grpc-java-1.26.0 --grpc-java_out=. chronicle.proto
+ */
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "one.inve.localfullnode2.chronicle.rpc";
+
+import "common.proto";
+import "google/protobuf/empty.proto";
+
+package rpc;
+
+
+service ChronicleDumperRestorerRPC{
+	rpc GetMessageHashes(google.protobuf.Empty) returns (StringArray);
+	rpc GetSysMessageHashes(google.protobuf.Empty) returns (StringArray);
+	rpc GetMessageStreamBy(StringArray) returns (ByteStream);
+
+	rpc Persist(ByteStream) returns (google.protobuf.Empty);
+	rpc PersistSys(ByteStream) returns (google.protobuf.Empty);
+}
+
+//support steaming communication
+//
+service ChronicleDumperRestorerStreamRPC{
+	rpc GetMessageHashes(google.protobuf.Empty) returns (stream StringArray);
+	rpc GetSysMessageHashes(google.protobuf.Empty) returns (stream StringArray);
+	rpc GetMessageStreamBy(stream StringArray) returns (stream ByteStream);
+
+    rpc Persist(stream ByteStream) returns (google.protobuf.Empty);
+    rpc PersistSys(stream ByteStream) returns (google.protobuf.Empty);
+}

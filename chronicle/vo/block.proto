@@ -1,0 +1,28 @@
+
+
+syntax = "proto3";
+
+//option go_package = "github.com/intervalue/intervalue-2.0.0-mainnet-rtm/chronicle/blockstorage/fblockstorage";
+
+package vo;
+
+message BlockHeader{
+    uint64 Number = 1;
+    bytes PreviousHash = 2;
+    bytes DataHash = 3;
+}
+
+message BlockData{
+    repeated bytes data = 1;
+}
+
+message BlockMetadata {
+    repeated bytes metadata = 1;
+}
+
+message Block {
+    BlockHeader header = 1;
+    BlockData data = 2;
+    BlockMetadata metadata = 3;
+}
+

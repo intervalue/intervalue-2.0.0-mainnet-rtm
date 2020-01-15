@@ -1,0 +1,13 @@
+
+syntax = "proto3";
+
+//option go_package = "github.com/intervalue/intervalue-2.0.0-mainnet-rtm/chronicle/blockstorage/fblockstorage";
+
+package vo;
+
+
+message BlockchainInfo {
+    uint64 Height = 1;
+    bytes CurrentBlockHash = 2;
+    bytes PreviousBlockHash =3;
+}
