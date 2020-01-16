@@ -18,6 +18,7 @@ import one.inve.localfullnode2.store.rocks.key.MessageIndexes;
  * @version: V1.0
  * @version: V1.1 get all messages hash and system message type id via
  *           {@code MsgIntrospector}
+ * @version: V1.2 get message body by key
  */
 public class MsgIntrospector {
 
@@ -54,7 +55,7 @@ public class MsgIntrospector {
 	}
 
 	/**
-	 * get all message hashes [message hash]
+	 * Get all message hashes [message hash]
 	 */
 	public String[] getMsgHashes() {
 		Map<byte[], byte[]> allMessageHashesBytes = dep.getNosql()
@@ -73,7 +74,7 @@ public class MsgIntrospector {
 	}
 
 	/**
-	 * get all system message hashes [type id]
+	 * Get all system message hashes [type id]
 	 */
 	public String[] getSysMsgHashes() {
 		Map<byte[], byte[]> allSysMessageHashesBytes = dep.getNosql()
@@ -89,5 +90,12 @@ public class MsgIntrospector {
 		}
 
 		return finalVal;
+	}
+
+	/**
+	 * Get message body whether message or system message
+	 */
+	public byte[] getMessageBytes(String key) {
+		return dep.getNosql().get(key);
 	}
 }
