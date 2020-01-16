@@ -1,0 +1,25 @@
+
+/**
+ *
+ * Copyright © INVE FOUNDATION. All rights reserved.
+ *
+ * @author: Francis.Deng[francis_xiiiv@163.com]
+ * @version: V1.0
+ * @Date: 1/2/20 7:22 PM
+ * @Build: protoc --java_out=. misc.proto
+ */
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "one.inve.localfullnode2.chronicle.rpc";
+
+//import "common.proto";
+
+package rpc;
+
+//TODO: attach signature to WrappedMessage
+message WrappedMessage{
+    int32 messageType = 1;
+    bytes messageBody = 2;
+}

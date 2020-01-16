@@ -16,8 +16,10 @@ import (
  */
 
 var (
-	messagesHashes    []string
-	sysMessagesHashes []string
+	//messagesHashes    []string
+	//sysMessagesHashes []string
+
+	hashes []string
 )
 
 type lazyMessageHashesHandler struct {
@@ -26,7 +28,8 @@ type lazyMessageHashesHandler struct {
 func (h lazyMessageHashesHandler) OnMessages(mHashes *rpc.StringArray) {
 	for _, mHash := range mHashes.Data {
 		log.Debug().Msgf("message hash: %s", mHash)
-		messagesHashes = append(messagesHashes, mHash)
+		//messagesHashes = append(messagesHashes, mHash)
+		hashes = append(hashes, mHash)
 
 	}
 }
@@ -45,7 +48,8 @@ type lazySysMessageHashesHandler struct {
 func (h lazySysMessageHashesHandler) OnMessages(mHashes *rpc.StringArray) {
 	for _, mHash := range mHashes.Data {
 		log.Debug().Msgf("system message hash: %s", mHash)
-		sysMessagesHashes = append(sysMessagesHashes, mHash)
+		//sysMessagesHashes = append(sysMessagesHashes, mHash)
+		hashes = append(hashes, mHash)
 
 	}
 }
@@ -62,22 +66,22 @@ func (h lazySysMessageHashesHandler) OnFinished() {
 //retrieve wrapped message list by hashes
 //meanwhile,dump list into chronicle
 func (localfullnode2Chronicle *Localfullnode2Chronicle) HashesInMemoryDump() {
-	defer localfullnode2Chronicle.IBlockMgr.Close()
-	defer localfullnode2Chronicle.IChronicleDumperRestorerRPC.Close()
+	//defer localfullnode2Chronicle.IBlockMgr.Close()
+	//defer localfullnode2Chronicle.IChronicleDumperRestorerRPC.Close()
 
-	const _accumulate int = 5
+	const _accumulateThreshold int = 5
 
 	localfullnode2Chronicle.GetStreamMessageHashes(lazyMessageHashesHandler{})
 	localfullnode2Chronicle.GetStreamSysMessageHashes(lazySysMessageHashesHandler{})
 
-	//after {@var messagesHashes} and {@var sysMessagesHashes} were filled with hashes
+	//after {@var hashes} was filled with hashes
 
-	if len(messagesHashes) > 0 {
-		_lastOneIndex := len(messagesHashes) - 1
+	if len(hashes) > 0 {
+		_lastOneIndex := len(hashes) - 1
 		hashesArray := []string{}
 
-		for index, messageHash := range messagesHashes {
-			if (index+1)%_accumulate == 0 || index == _lastOneIndex {
+		for index, messageHash := range hashes {
+			if (index+1)%_accumulateThreshold == 0 || index == _lastOneIndex {
 				hashesArray = append(hashesArray, messageHash)
 
 				messages, err := localfullnode2Chronicle.GetMessageStreamBy(hashesArray)
@@ -95,28 +99,28 @@ func (localfullnode2Chronicle *Localfullnode2Chronicle) HashesInMemoryDump() {
 		}
 	}
 
-	if len(sysMessagesHashes) > 0 {
-		_lastOneIndex := len(sysMessagesHashes) - 1
-		hashesArray := []string{}
-
-		for index, messageHash := range sysMessagesHashes {
-			if (index+1)%_accumulate == 0 || index == _lastOneIndex {
-				hashesArray = append(hashesArray, messageHash)
-
-				messages, err := localfullnode2Chronicle.GetMessageStreamBy(hashesArray)
-				if err != nil {
-					log.Error().Msgf("localfullnode2Chronicle.GetMessageStreamBy error:%s", err)
-					return
-				}
-
-				localfullnode2Chronicle.AddBlockByTransactions(messages)
-				hashesArray = hashesArray[0:0]
-			} else {
-				hashesArray = append(hashesArray, messageHash)
-			}
-
-		}
-	}
+	//if len(sysMessagesHashes) > 0 {
+	//	_lastOneIndex := len(sysMessagesHashes) - 1
+	//	hashesArray := []string{}
+	//
+	//	for index, messageHash := range sysMessagesHashes {
+	//		if (index+1)%_accumulate == 0 || index == _lastOneIndex {
+	//			hashesArray = append(hashesArray, messageHash)
+	//
+	//			messages, err := localfullnode2Chronicle.GetMessageStreamBy(hashesArray)
+	//			if err != nil {
+	//				log.Error().Msgf("localfullnode2Chronicle.GetMessageStreamBy error:%s", err)
+	//				return
+	//			}
+	//
+	//			localfullnode2Chronicle.AddBlockByTransactions(messages)
+	//			hashesArray = hashesArray[0:0]
+	//		} else {
+	//			hashesArray = append(hashesArray, messageHash)
+	//		}
+	//
+	//	}
+	//}
 
 	localfullnode2Chronicle.done()
 

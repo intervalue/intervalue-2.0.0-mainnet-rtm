@@ -22,7 +22,7 @@ type Localfullnode2Chronicle struct {
 	rpc.IChronicleDumperRestorerRPC
 }
 
-func NewPlugins(dir, rAddr string, rPort int) *Localfullnode2Chronicle {
+func NewLocalfullnode2Chronicle(dir, rAddr string, rPort int) *Localfullnode2Chronicle {
 	rpcClient, err := rpc.NewDumperRPCClient(rAddr, rPort)
 	if err != nil {
 		log.Err(errors.Wrapf(err, "error in create NewDumperRPCClient,%s", err))
@@ -39,4 +39,9 @@ func (localfullnode2Chronicle *Localfullnode2Chronicle) done() {
 	log.Info().Msg(">=>    >=> >=>    >=>  >=>  >=> >>===>>=>")
 	log.Info().Msg(">=>   >=>   >=>  >=>   >=>  >=> >>       ")
 	log.Info().Msg(">====>        >=>     >==>  >=>  >====>  ")
+}
+
+func (localfullnode2Chronicle *Localfullnode2Chronicle) Shutdown() {
+	localfullnode2Chronicle.IBlockMgr.Close()
+	localfullnode2Chronicle.IChronicleDumperRestorerRPC.Close()
 }

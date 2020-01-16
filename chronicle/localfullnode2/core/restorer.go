@@ -14,20 +14,25 @@ import "github.com/intervalue/intervalue-2.0.0-mainnet-rtm/chronicle/log"
          which means the [][]byte is wrapped message
 */
 
-func (localfullnode2Chronicle *Localfullnode2Chronicle) restore() {
+func (localfullnode2Chronicle *Localfullnode2Chronicle) Restore() {
+	//defer localfullnode2Chronicle.IBlockMgr.Close()
+	//defer localfullnode2Chronicle.IChronicleDumperRestorerRPC.Close()
+
 	var blockNum uint64 = 0
 
 	for {
 		block, err := localfullnode2Chronicle.RetrieveBlockByNumber(blockNum)
 		if err != nil {
-			log.Fatal().Msgf("error in localfullnode2Chronicle.RetrieveBlockByNumber(%s)", blockNum)
+			//log.Fatal().Msgf("error in localfullnode2Chronicle.RetrieveBlockByNumber(%d)", blockNum)
 			return
+			log.Info().Msgf("reach the end of block[%d]", blockNum)
+			break
 		}
 
-		if block == nil {
-			log.Info().Msgf("reach the end of block[%s]", blockNum)
-			return
-		}
+		//if block == nil {
+		//	log.Info().Msgf("reach the end of block[%d]", blockNum)
+		//	return
+		//}
 
 		blockData := block.Data.Data
 
