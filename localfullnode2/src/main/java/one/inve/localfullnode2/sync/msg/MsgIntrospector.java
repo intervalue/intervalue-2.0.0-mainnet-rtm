@@ -57,7 +57,7 @@ public class MsgIntrospector {
 	/**
 	 * Get all message hashes [message hash]
 	 */
-	public String[] getMsgHashes() {
+	public String[] getMsgHashes(IHashConverter hashConverter) {
 		Map<byte[], byte[]> allMessageHashesBytes = dep.getNosql()
 				.startWith(MessageIndexes.getMessageHashPrefix().getBytes());
 		String[] finalVal = new String[allMessageHashesBytes.size()];
@@ -65,7 +65,11 @@ public class MsgIntrospector {
 
 		Iterator<byte[]> keys = allMessageHashesBytes.keySet().iterator();
 		while (keys.hasNext()) {
-			finalVal[index] = MessageIndexes.getMessageHashKey(new String(keys.next()));
+			if (hashConverter != null) {
+				finalVal[index] = hashConverter.convert(MessageIndexes.getMessageHashKey(new String(keys.next())));
+			} else {
+				finalVal[index] = MessageIndexes.getMessageHashKey(new String(keys.next()));
+			}
 
 			index++;
 		}
@@ -76,7 +80,7 @@ public class MsgIntrospector {
 	/**
 	 * Get all system message hashes [type id]
 	 */
-	public String[] getSysMsgHashes() {
+	public String[] getSysMsgHashes(IHashConverter hashConverter) {
 		Map<byte[], byte[]> allSysMessageHashesBytes = dep.getNosql()
 				.startWith(MessageIndexes.getSysMessageTypeIdPrefix().getBytes());
 		String[] finalVal = new String[allSysMessageHashesBytes.size()];
@@ -84,7 +88,11 @@ public class MsgIntrospector {
 
 		Iterator<byte[]> keys = allSysMessageHashesBytes.keySet().iterator();
 		while (keys.hasNext()) {
-			finalVal[index] = MessageIndexes.getSysMessageTypeIdKey(new String(keys.next()));
+			if (hashConverter != null) {
+				finalVal[index] = hashConverter.convert(MessageIndexes.getSysMessageTypeIdKey(new String(keys.next())));
+			} else {
+				finalVal[index] = MessageIndexes.getSysMessageTypeIdKey(new String(keys.next()));
+			}
 
 			index++;
 		}
@@ -97,5 +105,10 @@ public class MsgIntrospector {
 	 */
 	public byte[] getMessageBytes(String key) {
 		return dep.getNosql().get(key);
+	}
+
+	@FunctionalInterface
+	public static interface IHashConverter {
+		String convert(String hash);
 	}
 }
