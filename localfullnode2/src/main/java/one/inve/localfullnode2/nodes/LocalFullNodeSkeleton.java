@@ -1,6 +1,5 @@
 package one.inve.localfullnode2.nodes;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -10,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -309,34 +307,34 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 	// divide the default log4j output by some command line arguments for
 	// troubleshooting
 	// ensure there is a CONF variable reference inside log4j.properties.
-	public static class Log4jSystem {
-		public void overDefault(String[] args) {
-			String confValue = "nodefault";
-			final String customLog4jConfFileName = "./log4j.properties";
-
-			for (String arg : args) {
-				if (arg.startsWith("--Ice.Config=")) {
-					String iceConfigValue = arg.substring("--Ice.Config=".length());
-
-					String splitted[] = iceConfigValue.split("\\.");
-
-					confValue = splitted[0];
-					break;
-				}
-			}
-
-			System.setProperty("CONF", confValue);
-			// URL url = this.getClass().getResource("/log4j.properties");
-			// String path = url.toString();
-			// path = path.substring(path.indexOf(":") + 1, path.length());
-
-			File file = new File(customLog4jConfFileName);
-			if (file.exists() && !file.isDirectory()) {
-				PropertyConfigurator.configure("./log4j.properties");
-			}
-
-		}
-	}
+//	public static class Log4jSystem {
+//		public void overDefault(String[] args) {
+//			String confValue = "nodefault";
+//			final String customLog4jConfFileName = "./log4j.properties";
+//
+//			for (String arg : args) {
+//				if (arg.startsWith("--Ice.Config=")) {
+//					String iceConfigValue = arg.substring("--Ice.Config=".length());
+//
+//					String splitted[] = iceConfigValue.split("\\.");
+//
+//					confValue = splitted[0];
+//					break;
+//				}
+//			}
+//
+//			System.setProperty("CONF", confValue);
+//			// URL url = this.getClass().getResource("/log4j.properties");
+//			// String path = url.toString();
+//			// path = path.substring(path.indexOf(":") + 1, path.length());
+//
+//			File file = new File(customLog4jConfFileName);
+//			if (file.exists() && !file.isDirectory()) {
+//				PropertyConfigurator.configure("./log4j.properties");
+//			}
+//
+//		}
+//	}
 
 	protected void initOlympus() {
 		// contract module should have awareness of of them

@@ -14,6 +14,44 @@ public class PhantomRPCResponder extends DefLocal2localImpl {
 
 	private static final Logger logger = LoggerFactory.getLogger(PhantomRPCResponder.class);
 
+	private ChunkSize csize;
+
+	public enum ChunkSize {
+		K(1024l), M(1024l * 1024l), M10(10 * 1024l * 1024l), M100(100 * 1024l * 1024l);
+
+		private long sz;
+
+		private ChunkSize(long sz) {
+			this.sz = sz;
+		}
+
+		public long sz() {
+			return this.sz;
+		}
+	}
+
+	public PhantomRPCResponder() {
+		this.csize = ChunkSize.M;
+	}
+
+	public PhantomRPCResponder(ChunkSize csize) {
+		this.csize = csize;
+	}
+
+	private byte[] inflate(byte[] bytes) {
+		int initBytesSize = bytes.length;
+		int bytesLen = initBytesSize;
+		byte[] bt3 = null;
+
+		while (bytesLen < csize.sz()) {
+			bytesLen += initBytesSize;
+			bt3 = new byte[bytesLen];
+			System.arraycopy(bytes, 0, bt3, 0, bytes.length);
+		}
+
+		return bt3;
+	}
+
 	@Override
 	public GossipObj gossipMyMaxSeqList4Consensus(String pubkey, String sig, String snapVersion, String snapHash,
 			long[] seqs, Current current) {
@@ -25,7 +63,8 @@ public class PhantomRPCResponder extends DefLocal2localImpl {
 
 		GossipObj gossipObj = new GossipObj();
 		gossipObj.snapVersion = String.valueOf(next);
-		gossipObj.snapHash = pubkey.getBytes();
+		// gossipObj.snapHash = pubkey.getBytes();
+		gossipObj.snapHash = inflate(pubkey.getBytes());
 
 		// attempt to delay the process
 		try {
