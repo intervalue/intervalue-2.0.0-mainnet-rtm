@@ -1,6 +1,7 @@
 package one.inve.localfullnode2.nodes;
 
 import java.io.IOException;
+import java.lang.Thread.State;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,8 @@ import one.inve.cfg.core.IConfImplant;
 import one.inve.cfg.core.InterValueConfImplant;
 import one.inve.cfg.localfullnode.Config;
 import one.inve.core.EventBody;
+import one.inve.localfullnode2.chronicle.rpc.service.ChronicleServicesRuntime;
+import one.inve.localfullnode2.chronicle.rpc.service.ChronicleServicesServer;
 import one.inve.localfullnode2.dep.DepItemsManager;
 import one.inve.localfullnode2.dep.items.AllQueues;
 import one.inve.localfullnode2.firstseq.EventStoreBility;
@@ -57,14 +60,14 @@ public abstract class ChronicleSkeleton extends DepsPointcut implements NodeEnro
 		return accounts;
 	}
 
-	private void validateNode(String ip) {
-		if (!Config.WHITE_LIST.contains(ip)) {
-			logger.error("Invalid node: {}", ip);
-			throw new Error("Invalid node");
-		} else {
-			logger.info("valid node: {}", ip);
-		}
-	}
+//	private void validateNode(String ip) {
+//		if (!Config.WHITE_LIST.contains(ip)) {
+//			logger.error("Invalid node: {}", ip);
+//			throw new Error("Invalid node");
+//		} else {
+//			logger.info("valid node: {}", ip);
+//		}
+//	}
 
 	/**
 	 * 判断是否已有运行进程
@@ -157,6 +160,10 @@ public abstract class ChronicleSkeleton extends DepsPointcut implements NodeEnro
 			DbUtils.initStatistics(this);
 
 			buildShardSortQueue();
+
+			ILifecycle chronicleServer = startChronicleServer();
+			chronicleServer.start();
+			gs.addLcs(chronicleServer);
 
 			// build indexes for old,rusty messages and system messages in mysql.see {@
 			// Indexer}
@@ -368,5 +375,56 @@ public abstract class ChronicleSkeleton extends DepsPointcut implements NodeEnro
 //		DepItemsManager.getInstance().attachSS(null).setTotalFeeBetween2Snapshots(BigInteger.ZERO);
 //		DepItemsManager.getInstance().attachSS(null).setSnapshotMessage(null);
 //	}
+
+	protected ILifecycle startChronicleServer() {
+		LazyLifecycle llc = new LazyLifecycle() {
+			private Thread chronicleTh;
+			private ChronicleServicesServer chronicleServicesServer;
+
+			@Override
+			public boolean isRunning() {
+				return super.isRunning() || !chronicleTh.getState().equals(State.TERMINATED);
+			}
+
+			@Override
+			public void start() {
+				super.start();
+				try {
+					chronicleServicesServer = new ChronicleServicesServer(8980, new ChronicleServicesRuntime(), true);
+				} catch (IOException e) {
+					logger.error(e.toString());
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				}
+
+				chronicleTh = new Thread() {
+					@Override
+					public void run() {
+						try {
+							chronicleServicesServer.startUntilShutdown();
+						} catch (IOException e) {
+							e.printStackTrace();
+							throw new RuntimeException(e);
+						}
+					}
+				};
+				chronicleTh.start();
+			}
+
+			@Override
+			public void stop() {
+				try {
+					chronicleServicesServer.shutdown();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				}
+				super.stop();
+			}
+		};
+		llc.start();
+
+		return llc;
+	}
 
 }

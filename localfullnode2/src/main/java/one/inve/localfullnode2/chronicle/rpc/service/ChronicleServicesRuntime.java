@@ -37,6 +37,10 @@ public class ChronicleServicesRuntime implements IServicesRuntime {
 		introspector = new MsgIntrospector(dep);
 	}
 
+	public ChronicleServicesRuntime() {
+		initInternalReference();
+	}
+
 	/**
 	 * Note:hash(returned) is a processed hash with {@code MsgTag}
 	 */
