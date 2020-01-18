@@ -35,4 +35,6 @@ public interface ILocalfullnode2Conf {
 	String getSeedHttpPort();
 
 	DBConnectionDescriptorsConf getDbConnection();
+
+	int getChroniclePort();
 }
