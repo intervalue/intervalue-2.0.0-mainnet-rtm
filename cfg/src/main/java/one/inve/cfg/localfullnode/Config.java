@@ -192,4 +192,7 @@ public class Config {
 	public static boolean ENABLE_SNAPSHOT = false;
 	// power function's exponent in lost motion model
 	public static double LostMotionModel_EXPONENT = 0.5;
+
+	// the port which chronicle server is listening to;zero leads to zero-work.
+	public static int chroniclePort = 0;
 }
