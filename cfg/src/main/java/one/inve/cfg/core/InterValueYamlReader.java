@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -26,6 +28,7 @@ import org.yaml.snakeyaml.Yaml;
  * @see intervalue.yaml.template
  */
 public class InterValueYamlReader implements IInterValueConfigurationReader {
+	private static final Logger logger = LoggerFactory.getLogger(InterValueYamlReader.class);
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -128,6 +131,24 @@ public class InterValueYamlReader implements IInterValueConfigurationReader {
 						});
 
 						return desConf;
+					}
+
+					@Override
+					public int getChroniclePort() {
+						int chroniclePort = 0;
+						Map m0 = (Map) m.get("localfullnode2");
+						Object oChroniclePort = m0.get("chroniclePort");
+						if (oChroniclePort != null) {
+							try {
+								chroniclePort = Integer.parseInt(oChroniclePort.toString());
+							} catch (Exception e) {
+								logger.error("Integer.parseInt('{}') error,which is not critical", oChroniclePort);
+							}
+
+						}
+						logger.info("chronicle service port is [{}]", chroniclePort);
+
+						return chroniclePort;
 					}
 
 				};
