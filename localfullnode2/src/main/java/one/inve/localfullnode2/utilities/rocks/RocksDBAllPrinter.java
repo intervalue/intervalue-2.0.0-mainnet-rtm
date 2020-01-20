@@ -26,7 +26,7 @@ import one.inve.localfullnode2.utilities.PathUtils;
  * 
  * Copyright © INVE FOUNDATION. All rights reserved.
  * 
- * @ClassName: RocksDBPrinter
+ * @ClassName: RocksDBAllPrinter
  * @Description: troubleshooting class which provides a approach to printing all
  *               records in rocksdb
  *               <p>
