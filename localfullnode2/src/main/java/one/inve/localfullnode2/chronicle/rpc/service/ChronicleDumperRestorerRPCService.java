@@ -77,7 +77,10 @@ public class ChronicleDumperRestorerRPCService extends ChronicleDumperRestorerRP
 			}
 		}
 		byteStream = b.build();
-		responseObserver.onNext(byteStream);
+
+		if (byteStream != null) {
+			responseObserver.onNext(byteStream);
+		}
 
 		responseObserver.onCompleted();
 	}

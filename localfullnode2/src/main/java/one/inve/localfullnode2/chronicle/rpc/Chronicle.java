@@ -32,17 +32,17 @@ public final class Chronicle {
       "eamBy\022\020.rpc.StringArray\032\017.rpc.ByteStream" +
       "\0222\n\007Persist\022\017.rpc.ByteStream\032\026.google.pr" +
       "otobuf.Empty\0225\n\nPersistSys\022\017.rpc.ByteStr" +
-      "eam\032\026.google.protobuf.Empty2\320\002\n\037Chronicl" +
-      "eDumperRestorerSteamRPC\022>\n\020GetMessageHas" +
-      "hes\022\026.google.protobuf.Empty\032\020.rpc.String" +
-      "Array0\001\022A\n\023GetSysMessageHashes\022\026.google." +
-      "protobuf.Empty\032\020.rpc.StringArray0\001\022;\n\022Ge" +
-      "tMessageStreamBy\022\020.rpc.StringArray\032\017.rpc" +
-      ".ByteStream(\0010\001\0224\n\007Persist\022\017.rpc.ByteStr" +
-      "eam\032\026.google.protobuf.Empty(\001\0227\n\nPersist" +
-      "Sys\022\017.rpc.ByteStream\032\026.google.protobuf.E" +
-      "mpty(\001B)\n%one.inve.localfullnode2.chroni" +
-      "cle.rpcP\001b\006proto3"
+      "eam\032\026.google.protobuf.Empty2\321\002\n Chronicl" +
+      "eDumperRestorerStreamRPC\022>\n\020GetMessageHa" +
+      "shes\022\026.google.protobuf.Empty\032\020.rpc.Strin" +
+      "gArray0\001\022A\n\023GetSysMessageHashes\022\026.google" +
+      ".protobuf.Empty\032\020.rpc.StringArray0\001\022;\n\022G" +
+      "etMessageStreamBy\022\020.rpc.StringArray\032\017.rp" +
+      "c.ByteStream(\0010\001\0224\n\007Persist\022\017.rpc.ByteSt" +
+      "ream\032\026.google.protobuf.Empty(\001\0227\n\nPersis" +
+      "tSys\022\017.rpc.ByteStream\032\026.google.protobuf." +
+      "Empty(\001B)\n%one.inve.localfullnode2.chron" +
+      "icle.rpcP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

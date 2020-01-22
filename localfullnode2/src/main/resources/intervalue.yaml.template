@@ -47,6 +47,7 @@ localfullnode2:
     rpcPort: 35792                              ## "myself.rpcPort=35792"
     httpPort: 35793                             ## "myself.httpPort=35793"
     prefix: 3                                   ## "-Dtest.prefix=3" in the command line
+    chroniclePort: 36791                        ## specify chronicle service port
     whitelist:                                  ## "Config" class's "WHITE_LIST"
         - 192.168.207.129
         - 172.17.2.118

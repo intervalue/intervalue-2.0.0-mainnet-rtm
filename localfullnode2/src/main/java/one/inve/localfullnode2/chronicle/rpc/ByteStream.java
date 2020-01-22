@@ -6,575 +6,546 @@ package one.inve.localfullnode2.chronicle.rpc;
 /**
  * Protobuf type {@code rpc.ByteStream}
  */
-public  final class ByteStream extends
-    com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:rpc.ByteStream)
-    ByteStreamOrBuilder {
-private static final long serialVersionUID = 0L;
-  // Use ByteStream.newBuilder() to construct.
-  private ByteStream(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-    super(builder);
-  }
-  private ByteStream() {
-    data_ = java.util.Collections.emptyList();
-  }
+public final class ByteStream extends com.google.protobuf.GeneratedMessageV3 implements
+		// @@protoc_insertion_point(message_implements:rpc.ByteStream)
+		ByteStreamOrBuilder {
+	private static final long serialVersionUID = 0L;
 
-  @java.lang.Override
-  @SuppressWarnings({"unused"})
-  protected java.lang.Object newInstance(
-      UnusedPrivateParameter unused) {
-    return new ByteStream();
-  }
+	// Use ByteStream.newBuilder() to construct.
+	private ByteStream(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+		super(builder);
+	}
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet
-  getUnknownFields() {
-    return this.unknownFields;
-  }
-  private ByteStream(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    int mutable_bitField0_ = 0;
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 10: {
-            if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-              data_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
-              mutable_bitField0_ |= 0x00000001;
-            }
-            data_.add(input.readBytes());
-            break;
-          }
-          default: {
-            if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-    } finally {
-      if (((mutable_bitField0_ & 0x00000001) != 0)) {
-        data_ = java.util.Collections.unmodifiableList(data_); // C
-      }
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
-  public static final com.google.protobuf.Descriptors.Descriptor
-      getDescriptor() {
-    return one.inve.localfullnode2.chronicle.rpc.Common.internal_static_rpc_ByteStream_descriptor;
-  }
+	private ByteStream() {
+		data_ = java.util.Collections.emptyList();
+	}
 
-  @java.lang.Override
-  protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internalGetFieldAccessorTable() {
-    return one.inve.localfullnode2.chronicle.rpc.Common.internal_static_rpc_ByteStream_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-            one.inve.localfullnode2.chronicle.rpc.ByteStream.class, one.inve.localfullnode2.chronicle.rpc.ByteStream.Builder.class);
-  }
+	@SuppressWarnings({ "unused" })
+	protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+		return new ByteStream();
+	}
 
-  public static final int DATA_FIELD_NUMBER = 1;
-  private java.util.List<com.google.protobuf.ByteString> data_;
-  /**
-   * <code>repeated bytes data = 1;</code>
-   * @return A list containing the data.
-   */
-  public java.util.List<com.google.protobuf.ByteString>
-      getDataList() {
-    return data_;
-  }
-  /**
-   * <code>repeated bytes data = 1;</code>
-   * @return The count of data.
-   */
-  public int getDataCount() {
-    return data_.size();
-  }
-  /**
-   * <code>repeated bytes data = 1;</code>
-   * @param index The index of the element to return.
-   * @return The data at the given index.
-   */
-  public com.google.protobuf.ByteString getData(int index) {
-    return data_.get(index);
-  }
+	public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+		return this.unknownFields;
+	}
 
-  private byte memoizedIsInitialized = -1;
-  @java.lang.Override
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
+	private ByteStream(com.google.protobuf.CodedInputStream input,
+			com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+			throws com.google.protobuf.InvalidProtocolBufferException {
+		this();
+		if (extensionRegistry == null) {
+			throw new java.lang.NullPointerException();
+		}
+		int mutable_bitField0_ = 0;
+		com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet.newBuilder();
+		try {
+			boolean done = false;
+			while (!done) {
+				int tag = input.readTag();
+				switch (tag) {
+				case 0:
+					done = true;
+					break;
+				case 10: {
+					if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+						data_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
+						mutable_bitField0_ |= 0x00000001;
+					}
+					data_.add(input.readBytes());
+					break;
+				}
+				default: {
+					if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+						done = true;
+					}
+					break;
+				}
+				}
+			}
+		} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+			throw e.setUnfinishedMessage(this);
+		} catch (java.io.IOException e) {
+			throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+		} finally {
+			if (((mutable_bitField0_ & 0x00000001) != 0)) {
+				data_ = java.util.Collections.unmodifiableList(data_); // C
+			}
+			this.unknownFields = unknownFields.build();
+			makeExtensionsImmutable();
+		}
+	}
 
-    memoizedIsInitialized = 1;
-    return true;
-  }
+	public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+		return one.inve.localfullnode2.chronicle.rpc.Common.internal_static_rpc_ByteStream_descriptor;
+	}
 
-  @java.lang.Override
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-                      throws java.io.IOException {
-    for (int i = 0; i < data_.size(); i++) {
-      output.writeBytes(1, data_.get(i));
-    }
-    unknownFields.writeTo(output);
-  }
+	protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+		return one.inve.localfullnode2.chronicle.rpc.Common.internal_static_rpc_ByteStream_fieldAccessorTable
+				.ensureFieldAccessorsInitialized(one.inve.localfullnode2.chronicle.rpc.ByteStream.class,
+						one.inve.localfullnode2.chronicle.rpc.ByteStream.Builder.class);
+	}
 
-  @java.lang.Override
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
+	public static final int DATA_FIELD_NUMBER = 1;
+	private java.util.List<com.google.protobuf.ByteString> data_;
 
-    size = 0;
-    {
-      int dataSize = 0;
-      for (int i = 0; i < data_.size(); i++) {
-        dataSize += com.google.protobuf.CodedOutputStream
-          .computeBytesSizeNoTag(data_.get(i));
-      }
-      size += dataSize;
-      size += 1 * getDataList().size();
-    }
-    size += unknownFields.getSerializedSize();
-    memoizedSize = size;
-    return size;
-  }
+	/**
+	 * <code>repeated bytes data = 1;</code>
+	 * 
+	 * @return A list containing the data.
+	 */
+	public java.util.List<com.google.protobuf.ByteString> getDataList() {
+		return data_;
+	}
 
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-     return true;
-    }
-    if (!(obj instanceof one.inve.localfullnode2.chronicle.rpc.ByteStream)) {
-      return super.equals(obj);
-    }
-    one.inve.localfullnode2.chronicle.rpc.ByteStream other = (one.inve.localfullnode2.chronicle.rpc.ByteStream) obj;
+	/**
+	 * <code>repeated bytes data = 1;</code>
+	 * 
+	 * @return The count of data.
+	 */
+	public int getDataCount() {
+		return data_.size();
+	}
 
-    if (!getDataList()
-        .equals(other.getDataList())) return false;
-    if (!unknownFields.equals(other.unknownFields)) return false;
-    return true;
-  }
+	/**
+	 * <code>repeated bytes data = 1;</code>
+	 * 
+	 * @param index The index of the element to return.
+	 * @return The data at the given index.
+	 */
+	public com.google.protobuf.ByteString getData(int index) {
+		return data_.get(index);
+	}
 
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    if (getDataCount() > 0) {
-      hash = (37 * hash) + DATA_FIELD_NUMBER;
-      hash = (53 * hash) + getDataList().hashCode();
-    }
-    hash = (29 * hash) + unknownFields.hashCode();
-    memoizedHashCode = hash;
-    return hash;
-  }
+	private byte memoizedIsInitialized = -1;
 
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(
-      java.nio.ByteBuffer data)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(
-      java.nio.ByteBuffer data,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(
-      com.google.protobuf.ByteString data)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(
-      com.google.protobuf.ByteString data,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(byte[] data)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(
-      byte[] data,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(java.io.InputStream input)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseWithIOException(PARSER, input);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(
-      java.io.InputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseWithIOException(PARSER, input, extensionRegistry);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseDelimitedFrom(java.io.InputStream input)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseDelimitedWithIOException(PARSER, input);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseDelimitedFrom(
-      java.io.InputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(
-      com.google.protobuf.CodedInputStream input)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseWithIOException(PARSER, input);
-  }
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseWithIOException(PARSER, input, extensionRegistry);
-  }
+	public final boolean isInitialized() {
+		byte isInitialized = memoizedIsInitialized;
+		if (isInitialized == 1)
+			return true;
+		if (isInitialized == 0)
+			return false;
 
-  @java.lang.Override
-  public Builder newBuilderForType() { return newBuilder(); }
-  public static Builder newBuilder() {
-    return DEFAULT_INSTANCE.toBuilder();
-  }
-  public static Builder newBuilder(one.inve.localfullnode2.chronicle.rpc.ByteStream prototype) {
-    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-  }
-  @java.lang.Override
-  public Builder toBuilder() {
-    return this == DEFAULT_INSTANCE
-        ? new Builder() : new Builder().mergeFrom(this);
-  }
+		memoizedIsInitialized = 1;
+		return true;
+	}
 
-  @java.lang.Override
-  protected Builder newBuilderForType(
-      com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-    Builder builder = new Builder(parent);
-    return builder;
-  }
-  /**
-   * Protobuf type {@code rpc.ByteStream}
-   */
-  public static final class Builder extends
-      com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:rpc.ByteStream)
-      one.inve.localfullnode2.chronicle.rpc.ByteStreamOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return one.inve.localfullnode2.chronicle.rpc.Common.internal_static_rpc_ByteStream_descriptor;
-    }
+	public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+		for (int i = 0; i < data_.size(); i++) {
+			output.writeBytes(1, data_.get(i));
+		}
+		unknownFields.writeTo(output);
+	}
 
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return one.inve.localfullnode2.chronicle.rpc.Common.internal_static_rpc_ByteStream_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              one.inve.localfullnode2.chronicle.rpc.ByteStream.class, one.inve.localfullnode2.chronicle.rpc.ByteStream.Builder.class);
-    }
+	public int getSerializedSize() {
+		int size = memoizedSize;
+		if (size != -1)
+			return size;
 
-    // Construct using one.inve.localfullnode2.chronicle.rpc.ByteStream.newBuilder()
-    private Builder() {
-      maybeForceBuilderInitialization();
-    }
+		size = 0;
+		{
+			int dataSize = 0;
+			for (int i = 0; i < data_.size(); i++) {
+				dataSize += com.google.protobuf.CodedOutputStream.computeBytesSizeNoTag(data_.get(i));
+			}
+			size += dataSize;
+			size += 1 * getDataList().size();
+		}
+		size += unknownFields.getSerializedSize();
+		memoizedSize = size;
+		return size;
+	}
 
-    private Builder(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
-              .alwaysUseFieldBuilders) {
-      }
-    }
-    @java.lang.Override
-    public Builder clear() {
-      super.clear();
-      data_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000001);
-      return this;
-    }
+	public boolean equals(final java.lang.Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof one.inve.localfullnode2.chronicle.rpc.ByteStream)) {
+			return super.equals(obj);
+		}
+		one.inve.localfullnode2.chronicle.rpc.ByteStream other = (one.inve.localfullnode2.chronicle.rpc.ByteStream) obj;
 
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.Descriptor
-        getDescriptorForType() {
-      return one.inve.localfullnode2.chronicle.rpc.Common.internal_static_rpc_ByteStream_descriptor;
-    }
+		if (!getDataList().equals(other.getDataList()))
+			return false;
+		if (!unknownFields.equals(other.unknownFields))
+			return false;
+		return true;
+	}
 
-    @java.lang.Override
-    public one.inve.localfullnode2.chronicle.rpc.ByteStream getDefaultInstanceForType() {
-      return one.inve.localfullnode2.chronicle.rpc.ByteStream.getDefaultInstance();
-    }
+	public int hashCode() {
+		if (memoizedHashCode != 0) {
+			return memoizedHashCode;
+		}
+		int hash = 41;
+		hash = (19 * hash) + getDescriptor().hashCode();
+		if (getDataCount() > 0) {
+			hash = (37 * hash) + DATA_FIELD_NUMBER;
+			hash = (53 * hash) + getDataList().hashCode();
+		}
+		hash = (29 * hash) + unknownFields.hashCode();
+		memoizedHashCode = hash;
+		return hash;
+	}
 
-    @java.lang.Override
-    public one.inve.localfullnode2.chronicle.rpc.ByteStream build() {
-      one.inve.localfullnode2.chronicle.rpc.ByteStream result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(java.nio.ByteBuffer data)
+			throws com.google.protobuf.InvalidProtocolBufferException {
+		return PARSER.parseFrom(data);
+	}
 
-    @java.lang.Override
-    public one.inve.localfullnode2.chronicle.rpc.ByteStream buildPartial() {
-      one.inve.localfullnode2.chronicle.rpc.ByteStream result = new one.inve.localfullnode2.chronicle.rpc.ByteStream(this);
-      int from_bitField0_ = bitField0_;
-      if (((bitField0_ & 0x00000001) != 0)) {
-        data_ = java.util.Collections.unmodifiableList(data_);
-        bitField0_ = (bitField0_ & ~0x00000001);
-      }
-      result.data_ = data_;
-      onBuilt();
-      return result;
-    }
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(java.nio.ByteBuffer data,
+			com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+			throws com.google.protobuf.InvalidProtocolBufferException {
+		return PARSER.parseFrom(data, extensionRegistry);
+	}
 
-    @java.lang.Override
-    public Builder clone() {
-      return super.clone();
-    }
-    @java.lang.Override
-    public Builder setField(
-        com.google.protobuf.Descriptors.FieldDescriptor field,
-        java.lang.Object value) {
-      return super.setField(field, value);
-    }
-    @java.lang.Override
-    public Builder clearField(
-        com.google.protobuf.Descriptors.FieldDescriptor field) {
-      return super.clearField(field);
-    }
-    @java.lang.Override
-    public Builder clearOneof(
-        com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-      return super.clearOneof(oneof);
-    }
-    @java.lang.Override
-    public Builder setRepeatedField(
-        com.google.protobuf.Descriptors.FieldDescriptor field,
-        int index, java.lang.Object value) {
-      return super.setRepeatedField(field, index, value);
-    }
-    @java.lang.Override
-    public Builder addRepeatedField(
-        com.google.protobuf.Descriptors.FieldDescriptor field,
-        java.lang.Object value) {
-      return super.addRepeatedField(field, value);
-    }
-    @java.lang.Override
-    public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof one.inve.localfullnode2.chronicle.rpc.ByteStream) {
-        return mergeFrom((one.inve.localfullnode2.chronicle.rpc.ByteStream)other);
-      } else {
-        super.mergeFrom(other);
-        return this;
-      }
-    }
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(com.google.protobuf.ByteString data)
+			throws com.google.protobuf.InvalidProtocolBufferException {
+		return PARSER.parseFrom(data);
+	}
 
-    public Builder mergeFrom(one.inve.localfullnode2.chronicle.rpc.ByteStream other) {
-      if (other == one.inve.localfullnode2.chronicle.rpc.ByteStream.getDefaultInstance()) return this;
-      if (!other.data_.isEmpty()) {
-        if (data_.isEmpty()) {
-          data_ = other.data_;
-          bitField0_ = (bitField0_ & ~0x00000001);
-        } else {
-          ensureDataIsMutable();
-          data_.addAll(other.data_);
-        }
-        onChanged();
-      }
-      this.mergeUnknownFields(other.unknownFields);
-      onChanged();
-      return this;
-    }
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(com.google.protobuf.ByteString data,
+			com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+			throws com.google.protobuf.InvalidProtocolBufferException {
+		return PARSER.parseFrom(data, extensionRegistry);
+	}
 
-    @java.lang.Override
-    public final boolean isInitialized() {
-      return true;
-    }
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(byte[] data)
+			throws com.google.protobuf.InvalidProtocolBufferException {
+		return PARSER.parseFrom(data);
+	}
 
-    @java.lang.Override
-    public Builder mergeFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      one.inve.localfullnode2.chronicle.rpc.ByteStream parsedMessage = null;
-      try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (one.inve.localfullnode2.chronicle.rpc.ByteStream) e.getUnfinishedMessage();
-        throw e.unwrapIOException();
-      } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
-      return this;
-    }
-    private int bitField0_;
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(byte[] data,
+			com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+			throws com.google.protobuf.InvalidProtocolBufferException {
+		return PARSER.parseFrom(data, extensionRegistry);
+	}
 
-    private java.util.List<com.google.protobuf.ByteString> data_ = java.util.Collections.emptyList();
-    private void ensureDataIsMutable() {
-      if (!((bitField0_ & 0x00000001) != 0)) {
-        data_ = new java.util.ArrayList<com.google.protobuf.ByteString>(data_);
-        bitField0_ |= 0x00000001;
-       }
-    }
-    /**
-     * <code>repeated bytes data = 1;</code>
-     * @return A list containing the data.
-     */
-    public java.util.List<com.google.protobuf.ByteString>
-        getDataList() {
-      return ((bitField0_ & 0x00000001) != 0) ?
-               java.util.Collections.unmodifiableList(data_) : data_;
-    }
-    /**
-     * <code>repeated bytes data = 1;</code>
-     * @return The count of data.
-     */
-    public int getDataCount() {
-      return data_.size();
-    }
-    /**
-     * <code>repeated bytes data = 1;</code>
-     * @param index The index of the element to return.
-     * @return The data at the given index.
-     */
-    public com.google.protobuf.ByteString getData(int index) {
-      return data_.get(index);
-    }
-    /**
-     * <code>repeated bytes data = 1;</code>
-     * @param index The index to set the value at.
-     * @param value The data to set.
-     * @return This builder for chaining.
-     */
-    public Builder setData(
-        int index, com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureDataIsMutable();
-      data_.set(index, value);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>repeated bytes data = 1;</code>
-     * @param value The data to add.
-     * @return This builder for chaining.
-     */
-    public Builder addData(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureDataIsMutable();
-      data_.add(value);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>repeated bytes data = 1;</code>
-     * @param values The data to add.
-     * @return This builder for chaining.
-     */
-    public Builder addAllData(
-        java.lang.Iterable<? extends com.google.protobuf.ByteString> values) {
-      ensureDataIsMutable();
-      com.google.protobuf.AbstractMessageLite.Builder.addAll(
-          values, data_);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>repeated bytes data = 1;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearData() {
-      data_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000001);
-      onChanged();
-      return this;
-    }
-    @java.lang.Override
-    public final Builder setUnknownFields(
-        final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return super.setUnknownFields(unknownFields);
-    }
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(java.io.InputStream input)
+			throws java.io.IOException {
+		return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+	}
 
-    @java.lang.Override
-    public final Builder mergeUnknownFields(
-        final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return super.mergeUnknownFields(unknownFields);
-    }
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(java.io.InputStream input,
+			com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+		return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+	}
 
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseDelimitedFrom(java.io.InputStream input)
+			throws java.io.IOException {
+		return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+	}
 
-    // @@protoc_insertion_point(builder_scope:rpc.ByteStream)
-  }
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseDelimitedFrom(java.io.InputStream input,
+			com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+		return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+	}
 
-  // @@protoc_insertion_point(class_scope:rpc.ByteStream)
-  private static final one.inve.localfullnode2.chronicle.rpc.ByteStream DEFAULT_INSTANCE;
-  static {
-    DEFAULT_INSTANCE = new one.inve.localfullnode2.chronicle.rpc.ByteStream();
-  }
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(com.google.protobuf.CodedInputStream input)
+			throws java.io.IOException {
+		return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+	}
 
-  public static one.inve.localfullnode2.chronicle.rpc.ByteStream getDefaultInstance() {
-    return DEFAULT_INSTANCE;
-  }
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream parseFrom(com.google.protobuf.CodedInputStream input,
+			com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+		return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+	}
 
-  private static final com.google.protobuf.Parser<ByteStream>
-      PARSER = new com.google.protobuf.AbstractParser<ByteStream>() {
-    @java.lang.Override
-    public ByteStream parsePartialFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return new ByteStream(input, extensionRegistry);
-    }
-  };
+	public Builder newBuilderForType() {
+		return newBuilder();
+	}
 
-  public static com.google.protobuf.Parser<ByteStream> parser() {
-    return PARSER;
-  }
+	public static Builder newBuilder() {
+		return DEFAULT_INSTANCE.toBuilder();
+	}
 
-  @java.lang.Override
-  public com.google.protobuf.Parser<ByteStream> getParserForType() {
-    return PARSER;
-  }
+	public static Builder newBuilder(one.inve.localfullnode2.chronicle.rpc.ByteStream prototype) {
+		return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+	}
 
-  @java.lang.Override
-  public one.inve.localfullnode2.chronicle.rpc.ByteStream getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
-  }
+	public Builder toBuilder() {
+		return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+	}
+
+	protected Builder newBuilderForType(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+		Builder builder = new Builder(parent);
+		return builder;
+	}
+
+	/**
+	 * Protobuf type {@code rpc.ByteStream}
+	 */
+	public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+			// @@protoc_insertion_point(builder_implements:rpc.ByteStream)
+			one.inve.localfullnode2.chronicle.rpc.ByteStreamOrBuilder {
+		public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+			return one.inve.localfullnode2.chronicle.rpc.Common.internal_static_rpc_ByteStream_descriptor;
+		}
+
+		protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+			return one.inve.localfullnode2.chronicle.rpc.Common.internal_static_rpc_ByteStream_fieldAccessorTable
+					.ensureFieldAccessorsInitialized(one.inve.localfullnode2.chronicle.rpc.ByteStream.class,
+							one.inve.localfullnode2.chronicle.rpc.ByteStream.Builder.class);
+		}
+
+		// Construct using one.inve.localfullnode2.chronicle.rpc.ByteStream.newBuilder()
+		private Builder() {
+			maybeForceBuilderInitialization();
+		}
+
+		private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+			super(parent);
+			maybeForceBuilderInitialization();
+		}
+
+		private void maybeForceBuilderInitialization() {
+			if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+			}
+		}
+
+		public Builder clear() {
+			super.clear();
+			data_ = java.util.Collections.emptyList();
+			bitField0_ = (bitField0_ & ~0x00000001);
+			return this;
+		}
+
+		public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+			return one.inve.localfullnode2.chronicle.rpc.Common.internal_static_rpc_ByteStream_descriptor;
+		}
+
+		public one.inve.localfullnode2.chronicle.rpc.ByteStream getDefaultInstanceForType() {
+			return one.inve.localfullnode2.chronicle.rpc.ByteStream.getDefaultInstance();
+		}
+
+		public one.inve.localfullnode2.chronicle.rpc.ByteStream build() {
+			one.inve.localfullnode2.chronicle.rpc.ByteStream result = buildPartial();
+			if (!result.isInitialized()) {
+				throw newUninitializedMessageException(result);
+			}
+			return result;
+		}
+
+		public one.inve.localfullnode2.chronicle.rpc.ByteStream buildPartial() {
+			one.inve.localfullnode2.chronicle.rpc.ByteStream result = new one.inve.localfullnode2.chronicle.rpc.ByteStream(
+					this);
+			int from_bitField0_ = bitField0_;
+			if (((bitField0_ & 0x00000001) != 0)) {
+				data_ = java.util.Collections.unmodifiableList(data_);
+				bitField0_ = (bitField0_ & ~0x00000001);
+			}
+			result.data_ = data_;
+			onBuilt();
+			return result;
+		}
+
+		public Builder clone() {
+			return super.clone();
+		}
+
+		public Builder setField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+			return super.setField(field, value);
+		}
+
+		public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+			return super.clearField(field);
+		}
+
+		public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+			return super.clearOneof(oneof);
+		}
+
+		public Builder setRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, int index,
+				java.lang.Object value) {
+			return super.setRepeatedField(field, index, value);
+		}
+
+		public Builder addRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+			return super.addRepeatedField(field, value);
+		}
+
+		public Builder mergeFrom(com.google.protobuf.Message other) {
+			if (other instanceof one.inve.localfullnode2.chronicle.rpc.ByteStream) {
+				return mergeFrom((one.inve.localfullnode2.chronicle.rpc.ByteStream) other);
+			} else {
+				super.mergeFrom(other);
+				return this;
+			}
+		}
+
+		public Builder mergeFrom(one.inve.localfullnode2.chronicle.rpc.ByteStream other) {
+			if (other == one.inve.localfullnode2.chronicle.rpc.ByteStream.getDefaultInstance())
+				return this;
+			if (!other.data_.isEmpty()) {
+				if (data_.isEmpty()) {
+					data_ = other.data_;
+					bitField0_ = (bitField0_ & ~0x00000001);
+				} else {
+					ensureDataIsMutable();
+					data_.addAll(other.data_);
+				}
+				onChanged();
+			}
+			this.mergeUnknownFields(other.unknownFields);
+			onChanged();
+			return this;
+		}
+
+		public final boolean isInitialized() {
+			return true;
+		}
+
+		public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+			one.inve.localfullnode2.chronicle.rpc.ByteStream parsedMessage = null;
+			try {
+				parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+			} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+				parsedMessage = (one.inve.localfullnode2.chronicle.rpc.ByteStream) e.getUnfinishedMessage();
+				throw e.unwrapIOException();
+			} finally {
+				if (parsedMessage != null) {
+					mergeFrom(parsedMessage);
+				}
+			}
+			return this;
+		}
+
+		private int bitField0_;
+
+		private java.util.List<com.google.protobuf.ByteString> data_ = java.util.Collections.emptyList();
+
+		private void ensureDataIsMutable() {
+			if (!((bitField0_ & 0x00000001) != 0)) {
+				data_ = new java.util.ArrayList<com.google.protobuf.ByteString>(data_);
+				bitField0_ |= 0x00000001;
+			}
+		}
+
+		/**
+		 * <code>repeated bytes data = 1;</code>
+		 * 
+		 * @return A list containing the data.
+		 */
+		public java.util.List<com.google.protobuf.ByteString> getDataList() {
+			return ((bitField0_ & 0x00000001) != 0) ? java.util.Collections.unmodifiableList(data_) : data_;
+		}
+
+		/**
+		 * <code>repeated bytes data = 1;</code>
+		 * 
+		 * @return The count of data.
+		 */
+		public int getDataCount() {
+			return data_.size();
+		}
+
+		/**
+		 * <code>repeated bytes data = 1;</code>
+		 * 
+		 * @param index The index of the element to return.
+		 * @return The data at the given index.
+		 */
+		public com.google.protobuf.ByteString getData(int index) {
+			return data_.get(index);
+		}
+
+		/**
+		 * <code>repeated bytes data = 1;</code>
+		 * 
+		 * @param index The index to set the value at.
+		 * @param value The data to set.
+		 * @return This builder for chaining.
+		 */
+		public Builder setData(int index, com.google.protobuf.ByteString value) {
+			if (value == null) {
+				throw new NullPointerException();
+			}
+			ensureDataIsMutable();
+			data_.set(index, value);
+			onChanged();
+			return this;
+		}
+
+		/**
+		 * <code>repeated bytes data = 1;</code>
+		 * 
+		 * @param value The data to add.
+		 * @return This builder for chaining.
+		 */
+		public Builder addData(com.google.protobuf.ByteString value) {
+			if (value == null) {
+				throw new NullPointerException();
+			}
+			ensureDataIsMutable();
+			data_.add(value);
+			onChanged();
+			return this;
+		}
+
+		/**
+		 * <code>repeated bytes data = 1;</code>
+		 * 
+		 * @param values The data to add.
+		 * @return This builder for chaining.
+		 */
+		public Builder addAllData(java.lang.Iterable<? extends com.google.protobuf.ByteString> values) {
+			ensureDataIsMutable();
+			com.google.protobuf.AbstractMessageLite.Builder.addAll(values, data_);
+			onChanged();
+			return this;
+		}
+
+		/**
+		 * <code>repeated bytes data = 1;</code>
+		 * 
+		 * @return This builder for chaining.
+		 */
+		public Builder clearData() {
+			data_ = java.util.Collections.emptyList();
+			bitField0_ = (bitField0_ & ~0x00000001);
+			onChanged();
+			return this;
+		}
+
+		public final Builder setUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+			return super.setUnknownFields(unknownFields);
+		}
+
+		public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+			return super.mergeUnknownFields(unknownFields);
+		}
+
+		// @@protoc_insertion_point(builder_scope:rpc.ByteStream)
+	}
+
+	// @@protoc_insertion_point(class_scope:rpc.ByteStream)
+	private static final one.inve.localfullnode2.chronicle.rpc.ByteStream DEFAULT_INSTANCE;
+	static {
+		DEFAULT_INSTANCE = new one.inve.localfullnode2.chronicle.rpc.ByteStream();
+	}
+
+	public static one.inve.localfullnode2.chronicle.rpc.ByteStream getDefaultInstance() {
+		return DEFAULT_INSTANCE;
+	}
+
+	private static final com.google.protobuf.Parser<ByteStream> PARSER = new com.google.protobuf.AbstractParser<ByteStream>() {
+
+		public ByteStream parsePartialFrom(com.google.protobuf.CodedInputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return new ByteStream(input, extensionRegistry);
+		}
+	};
+
+	public static com.google.protobuf.Parser<ByteStream> parser() {
+		return PARSER;
+	}
+
+	public com.google.protobuf.Parser<ByteStream> getParserForType() {
+		return PARSER;
+	}
+
+	public one.inve.localfullnode2.chronicle.rpc.ByteStream getDefaultInstanceForType() {
+		return DEFAULT_INSTANCE;
+	}
 
 }
-

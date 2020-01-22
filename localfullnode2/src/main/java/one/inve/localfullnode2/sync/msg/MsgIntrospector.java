@@ -66,9 +66,10 @@ public class MsgIntrospector {
 		Iterator<byte[]> keys = allMessageHashesBytes.keySet().iterator();
 		while (keys.hasNext()) {
 			if (hashConverter != null) {
-				finalVal[index] = hashConverter.convert(MessageIndexes.getMessageHashKey(new String(keys.next())));
+				String rawMessageHash = MessageIndexes.getMessageHash(new String(keys.next()));
+				finalVal[index] = hashConverter.convert(rawMessageHash);
 			} else {
-				finalVal[index] = MessageIndexes.getMessageHashKey(new String(keys.next()));
+				finalVal[index] = MessageIndexes.getMessageHash(new String(keys.next()));
 			}
 
 			index++;

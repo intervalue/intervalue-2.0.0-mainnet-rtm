@@ -18,8 +18,7 @@ public class Chronicle {
 		Log4jSystem log4jSystem = new Log4jSystem();
 		log4jSystem.overDefault(args);
 
-		ChronicleWithSeed chronicle = new ChronicleWithSeed(new WithSeed());
+		ChronicleWithSeed chronicle = new ChronicleWithSeed();
 		chronicle.start(args);
-
 	}
 }

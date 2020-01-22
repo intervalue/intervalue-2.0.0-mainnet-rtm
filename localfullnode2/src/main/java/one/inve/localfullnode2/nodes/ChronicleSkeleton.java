@@ -154,15 +154,15 @@ public abstract class ChronicleSkeleton extends DepsPointcut implements NodeEnro
 			allLocalFullNodeList(seedPubIP, seedRpcPort);
 
 			// 初始化黑白名单
-			DbUtils.initBlackList(this);
+			// DbUtils.initBlackList(this);
 
 			// 初始化统计信息
-			DbUtils.initStatistics(this);
+			// DbUtils.initStatistics(this);
 
 			buildShardSortQueue();
 
 			ILifecycle chronicleServer = startChronicleServer();
-			chronicleServer.start();
+			// chronicleServer.start();
 			gs.addLcs(chronicleServer);
 
 			// build indexes for old,rusty messages and system messages in mysql.see {@
@@ -390,7 +390,14 @@ public abstract class ChronicleSkeleton extends DepsPointcut implements NodeEnro
 			public void start() {
 				super.start();
 				try {
-					chronicleServicesServer = new ChronicleServicesServer(8980, new ChronicleServicesRuntime(), true);
+					if (Config.chroniclePort > 0) {
+						chronicleServicesServer = new ChronicleServicesServer(Config.chroniclePort,
+								new ChronicleServicesRuntime(), false);
+					} else {
+						throw new RuntimeException(
+								"Chronicle server failed to start because port is not specified correctly");
+					}
+
 				} catch (IOException e) {
 					logger.error(e.toString());
 					e.printStackTrace();

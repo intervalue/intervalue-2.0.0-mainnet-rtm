@@ -9,8 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.grpc.Channel;
-import io.grpc.netty.NegotiationType;
-import io.grpc.netty.NettyChannelBuilder;
+import io.grpc.ManagedChannelBuilder;
 import one.inve.cluster.Member;
 import one.inve.localfullnode2.p2pcluster.ic.P2PClusterClient.MetaData;
 import one.inve.localfullnode2.p2pcluster.ic.P2PClusterClient.MetaData.Builder;
@@ -45,9 +44,12 @@ public class P2PClusterClientBridge {
 	}
 
 	public void setMeta(Map<String, String> metaMap) {
-		Channel channel = NettyChannelBuilder.forAddress(host, port).negotiationType(NegotiationType.PLAINTEXT).build();
-		RequestUpdateMeta requestUpdateMeta = P2PClusterClient.RequestUpdateMeta.newBuilder()
-				.addAllMeta(localMetaToStream(metaMap)).build();
+		// Channel channel =
+		// NettyChannelBuilder.forAddress(host,port).negotiationType(NegotiationType.PLAINTEXT).build();
+		Channel channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+
+		Iterable ite = localMetaToStream(metaMap);
+		RequestUpdateMeta requestUpdateMeta = P2PClusterClient.RequestUpdateMeta.newBuilder().addAllMeta(ite).build();
 
 		ClusterGrpc.newBlockingStub(channel).updateMeta(requestUpdateMeta);
 	}
@@ -98,7 +100,7 @@ public class P2PClusterClientBridge {
 	}
 
 	public P2PClusterClientBridge getMembers() {
-		Channel channel = NettyChannelBuilder.forAddress(host, port).negotiationType(NegotiationType.PLAINTEXT).build();
+		Channel channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
 		RequestFindMembers requestFindMembers = P2PClusterClient.RequestFindMembers.newBuilder().build();
 
 		ResponseFindMembers responseFindAliveMembers = ClusterGrpc.newBlockingStub(channel)

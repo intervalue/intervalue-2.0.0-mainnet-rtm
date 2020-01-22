@@ -64,6 +64,12 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysqlconnectorjava.version}</version>
+			<exclusions>
+				<exclusion> <!-- introduce conflict with grpc protobuf -->
+					<groupId>com.google.protobuf</groupId>
+					<artifactId>protobuf-java</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 		<!-- druid -->
 		<dependency>
@@ -115,11 +121,31 @@
 			<groupId>one.inve</groupId>
 			<artifactId>inve-cluster</artifactId>
 			<version>${inve-cluster.version}</version>
+			<exclusions>
+				<exclusion> <!-- introduce conflict with grpc protobuf -->
+					<groupId>com.google.protobuf</groupId>
+					<artifactId>protobuf-java</artifactId>
+				</exclusion>
+				<exclusion> <!-- introduce conflict with grpc protobuf -->
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>				
+			</exclusions>			
 		</dependency>
 		<dependency>
 			<groupId>one.inve</groupId>
 			<artifactId>inve-transport</artifactId>
 			<version>${inve-transport.version}</version>
+			<exclusions>
+				<exclusion> <!-- introduce conflict with grpc protobuf -->
+					<groupId>com.google.protobuf</groupId>
+					<artifactId>protobuf-java</artifactId>
+				</exclusion>
+				<exclusion> <!-- introduce conflict with grpc protobuf -->
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>				
+			</exclusions>			
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/args4j/args4j -->
@@ -171,7 +197,6 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.7</version>
-
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.concurrent-locks</groupId>
@@ -188,6 +213,12 @@
 			<groupId>org.iq80.leveldb</groupId>
 			<artifactId>leveldb</artifactId>
 			<version>0.7</version>
+			<exclusions>
+				<exclusion>  <!-- declare the exclusion here -->
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 		<dependency>
 			<groupId>com.madgag.spongycastle</groupId>
@@ -304,17 +335,33 @@
 					<groupId>com.sun.jna</groupId>
 					<artifactId>jna</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>				
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>one.inve</groupId>
 			<artifactId>vm</artifactId>
 			<version>1.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>  <!-- declare the exclusion here -->
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>				
 		</dependency>
 		<dependency>
 			<groupId>one.inve</groupId>
 			<artifactId>cfg</artifactId>
 			<version>1.0.0</version>
+			<exclusions>
+				<exclusion>  <!-- declare the exclusion here -->
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 		<!-- for junit test -->
 		<dependency>
@@ -329,46 +376,57 @@
 			<artifactId>toml4j</artifactId>
 			<version>0.7.2</version>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/io.grpc/grpc-all -->
+<!--  
+		<dependency>
+		    <groupId>com.google.protobuf</groupId>
+		    <artifactId>protobuf-java</artifactId>
+		    <version>3.11.0</version>
+		</dependency>
+			
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-all</artifactId>
 			<version>1.26.0</version>
 		</dependency>
-		
+-->
+
+		<dependency>
+		  <groupId>io.grpc</groupId>
+		  <artifactId>grpc-netty-shaded</artifactId>
+		  <version>1.26.0</version>
+		</dependency>
+		<dependency>
+		  <groupId>io.grpc</groupId>
+		  <artifactId>grpc-protobuf</artifactId>
+		  <version>1.26.0</version>
+		</dependency>
+		<dependency>
+		  <groupId>io.grpc</groupId>
+		  <artifactId>grpc-stub</artifactId>
+		  <version>1.26.0</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
 		<dependency>
 		    <groupId>com.google.protobuf</groupId>
 		    <artifactId>protobuf-java</artifactId>
-		    <version>3.11.1</version>
-		</dependency>
-
+		    <version>3.11.0</version>
+		</dependency>				
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
 			<version>4.1.0</version>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.nativelibs4java/jnaerator-runtime -->
 		<dependency>
 			<groupId>com.nativelibs4java</groupId>
 			<artifactId>jnaerator-runtime</artifactId>
 			<version>0.12</version>
 		</dependency>
+
 	</dependencies>
 
-	<build>
-	<!-- 
-		<extensions>
-			<extension>
-				<groupId>kr.motd.maven</groupId>
-				<artifactId>os-maven-plugin</artifactId>
-				<version>1.6.2</version>
-			</extension>			
-		</extensions>
- -->		
+	<build>	
 		<plugins>
+		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -378,7 +436,35 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
-
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>one.inve.localfullnode2.nodes.Localfullnode2</mainClass>
+						</manifest>
+					</archive>
+			
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>	
+		
+ <!--  
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -406,6 +492,7 @@
 					</execution>
 				</executions>
 			</plugin>
+-->			
 			<!-- 
 			<plugin>
 				<groupId>org.xolstice.maven.plugins</groupId>
@@ -472,7 +559,7 @@
 				</dependency> </dependencies> </plugin> -->
 		</plugins>
 	</build>
-
+ 
 	<repositories>
 		<repository>
 			<id>mvnrepository</id>
@@ -487,4 +574,5 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
 </project>

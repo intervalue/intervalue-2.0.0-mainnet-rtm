@@ -6,11 +6,12 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
 import one.inve.localfullnode2.p2pcluster.ic.P2PClusterClientBridge.Peer;
-
 
 /**
  * 
@@ -29,7 +30,7 @@ import one.inve.localfullnode2.p2pcluster.ic.P2PClusterClientBridge.Peer;
  * @version: V1.0
  */
 public class P2PClusterClientBridgeTest {
-
+	private static final Logger logger = LoggerFactory.getLogger(P2PClusterClientBridgeTest.class);
 	private final int port = 43010;
 	private P2PClusterClientBridge target;
 
@@ -47,6 +48,8 @@ public class P2PClusterClientBridgeTest {
 		meta.put("queen", "yan");
 
 		target.setMeta(meta);
+
+		logger.info("Done");
 	}
 
 	@Test

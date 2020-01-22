@@ -1,6 +1,8 @@
 package one.inve.localfullnode2.chronicle.rpc.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +56,8 @@ public class ChronicleServicesRuntime implements IServicesRuntime {
 		});
 
 		return () -> {
-			ArrayList<String> al = new ArrayList<>(msgHashes.length);
-			return al.iterator();
+			List<String> list = Arrays.asList(msgHashes);
+			return list.iterator();
 		};
 	}
 
@@ -87,6 +89,10 @@ public class ChronicleServicesRuntime implements IServicesRuntime {
 			MessageResolver mResolver = MessageResolver.parse(hash);
 			byte[] oBodyBytes = introspector.getMessageBytes(mResolver.hash());
 
+			if (oBodyBytes == null || oBodyBytes.length <= 0) {
+				logger.error("cannot find message body by hash[{}]", hash);
+				return null;
+			}
 			WrappedMessage wrappedMessage = WrappedMessage.newBuilder().setMessageType(mResolver.type())
 					.setMessageBody(ByteString.copyFrom(oBodyBytes)).build();
 
