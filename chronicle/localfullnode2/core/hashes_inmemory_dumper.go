@@ -3,6 +3,7 @@ package core
 import (
 	"github.com/intervalue/intervalue-2.0.0-mainnet-rtm/chronicle/localfullnode2/rpc"
 	"github.com/intervalue/intervalue-2.0.0-mainnet-rtm/chronicle/log"
+	"strings"
 )
 
 /**
@@ -66,13 +67,12 @@ func (h lazySysMessageHashesHandler) OnFinished() {
 //retrieve wrapped message list by hashes
 //meanwhile,dump list into chronicle
 func (localfullnode2Chronicle *Localfullnode2Chronicle) HashesInMemoryDump() {
-	//defer localfullnode2Chronicle.IBlockMgr.Close()
-	//defer localfullnode2Chronicle.IChronicleDumperRestorerRPC.Close()
+	messagesHashes := lazyMessageHashesHandler{}
 
 	const _accumulateThreshold int = 5
 
-	localfullnode2Chronicle.GetStreamMessageHashes(lazyMessageHashesHandler{})
-	localfullnode2Chronicle.GetStreamSysMessageHashes(lazySysMessageHashesHandler{})
+	localfullnode2Chronicle.GetStreamMessageHashes(messagesHashes)
+	localfullnode2Chronicle.GetStreamSysMessageHashes(messagesHashes)
 
 	//after {@var hashes} was filled with hashes
 
@@ -90,13 +90,19 @@ func (localfullnode2Chronicle *Localfullnode2Chronicle) HashesInMemoryDump() {
 					return
 				}
 
-				localfullnode2Chronicle.AddBlockByTransactions(messages)
+				if messages == nil {
+					log.Error().Msgf("No any message body was found this time: [%s]", strings.Join(hashesArray, ","))
+				} else {
+					localfullnode2Chronicle.AddBlockByTransactions(messages)
+				}
 				hashesArray = hashesArray[0:0]
 			} else {
 				hashesArray = append(hashesArray, messageHash)
 			}
 
 		}
+
+		localfullnode2Chronicle.done()
 	}
 
 	//if len(sysMessagesHashes) > 0 {
@@ -121,7 +127,4 @@ func (localfullnode2Chronicle *Localfullnode2Chronicle) HashesInMemoryDump() {
 	//
 	//	}
 	//}
-
-	localfullnode2Chronicle.done()
-
 }
