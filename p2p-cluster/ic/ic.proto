@@ -4,6 +4,7 @@ syntax = "proto3";
 
 //protoc --java_out=./ ic.proto
 //protoc --plugin=protoc-gen-grpc-java=/opt/java/jdk/bin/protoc-gen-grpc-java-1.9.1 --grpc-java_out=. ic.proto
+//protoc --plugin=protoc-gen-grpc-java=/usr/local/bin/protoc-gen-grpc-java-1.26.0 --grpc-java_out=. ic.proto
 
 package ic;
 option java_package = "one.inve.localfullnode2.p2pcluster.ic";
