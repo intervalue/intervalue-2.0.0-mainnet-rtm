@@ -291,10 +291,10 @@ public class DbUtils {
 	}
 
 	/**
-	 * 初始化mysql
+	 * genesis:create sql tables,fill it with creation transaction,white list
 	 */
-	public static void initDataBase(LocalFullNode1GeneralNode node,
-			DBConnectionDescriptorsConf dbConnectionDescriptorsConf) {
+	public static void initializeGenesis(LocalFullNode1GeneralNode node,
+			DBConnectionDescriptorsConf dbConnectionDescriptorsConf, boolean isTankFullofWater) {
 		MysqlHelper mysqlHelper = new MysqlHelper(node.nodeParameters().dbId, dbConnectionDescriptorsConf,
 				node.nodeParameters().clearDb == 1);
 		try {
@@ -314,7 +314,7 @@ public class DbUtils {
 				}
 				return count1;
 			});
-			if (count < 1) {
+			if (count < 1 && isTankFullofWater) {
 				// 初始化十个水龙头
 				initCreationTx(node);
 
@@ -329,6 +329,50 @@ public class DbUtils {
 		} finally {
 			mysqlHelper.destroyedPreparedStatement();
 		}
+
+	}
+
+	/**
+	 * 初始化mysql,which is deprecated and replaced by {@code initializeGenesis}
+	 */
+	@Deprecated
+	public static void initDataBase(LocalFullNode1GeneralNode node,
+			DBConnectionDescriptorsConf dbConnectionDescriptorsConf) {
+		initializeGenesis(node, dbConnectionDescriptorsConf, true);
+//		MysqlHelper mysqlHelper = new MysqlHelper(node.nodeParameters().dbId, dbConnectionDescriptorsConf,
+//				node.nodeParameters().clearDb == 1);
+//		try {
+//			// 建消息表
+//			NewTableCreate.createMessagesTable(mysqlHelper, Config.MESSAGES + "_0");
+//			/* NewTableCreate.createTableSplit(sqliteHelper); */
+//			// 初始化水龙头
+//			// 如果已经初始化，就不需要再次初始化
+//			Long count = mysqlHelper.executeQuery("select count(id) as count from " + Config.MESSAGES + "_0 ", rs -> {
+//				Long count1 = 0L;
+//				try {
+//					if (rs.next()) {
+//						count1 = rs.getLong("count");
+//					}
+//				} catch (Exception ex) {
+//					logger.error("error: {}", ex);
+//				}
+//				return count1;
+//			});
+//			if (count < 1) {
+//				// 初始化十个水龙头
+//				initCreationTx(node);
+//
+//				printInfo();
+//			}
+//			// 建黑白名单表
+//			NewTableCreate.createTableBlackWhiteNameInfo(mysqlHelper);
+//			// 建系统消息表
+//			NewTableCreate.createTransactionsMsgTable(mysqlHelper, Config.SYSTEMAUTOTX + Config.SPLIT + "0");
+//		} catch (Exception ex) {
+//			logger.error("createTableSplit异常{}", ex);
+//		} finally {
+//			mysqlHelper.destroyedPreparedStatement();
+//		}
 
 	}
 
