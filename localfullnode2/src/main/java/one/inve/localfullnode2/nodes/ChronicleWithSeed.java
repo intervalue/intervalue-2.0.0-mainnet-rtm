@@ -21,8 +21,8 @@ import one.inve.localfullnode2.utilities.StringUtils;
  * 
  * Copyright © INVE FOUNDATION. All rights reserved.
  * 
- * @ClassName: exploit {@code WithSeed} boilerplate
- * @Description: TODO
+ * @ClassName: ChronicleWithSeed
+ * @Description: exploit {@code WithSeed} boilerplate
  * @author Francis.Deng [francis_xiiiv@163.com]
  * @date Jan 17, 2020
  *
