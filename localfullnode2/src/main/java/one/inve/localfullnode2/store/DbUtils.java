@@ -881,24 +881,48 @@ public class DbUtils {
 				}
 			}
 			// 初始化分表信息
+//			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters().dbId);
+//			TransactionSplit split = new TransactionSplit();
+//			split.setTableName(Config.MESSAGES + "_0");
+//			split.setTableIndex(BigInteger.ZERO);
+//			split.setTableNamePrefix(Config.MESSAGES);
+//			split.setTotal(createTxs.size());
+//
+//			rocksJavaUtil.put(Config.MESSAGES, JSONArray.toJSONString(split));
+//			byte[] value = new RocksJavaUtil(node.nodeParameters().dbId).get(Config.MESSAGES);
+//			while (null == value) {
+//				rocksJavaUtil.put(Config.MESSAGES, JSONArray.toJSONString(split));
+//				value = new RocksJavaUtil(node.nodeParameters().dbId).get(Config.MESSAGES);
+//			}
 			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters().dbId);
-			TransactionSplit split = new TransactionSplit();
-			split.setTableName(Config.MESSAGES + "_0");
-			split.setTableIndex(BigInteger.ZERO);
-			split.setTableNamePrefix(Config.MESSAGES);
-			split.setTotal(createTxs.size());
+			byte[] value = initializeOrRetrieveTableSplit(rocksJavaUtil, createTxs.size());
 
-			rocksJavaUtil.put(Config.MESSAGES, JSONArray.toJSONString(split));
-			byte[] value = new RocksJavaUtil(node.nodeParameters().dbId).get(Config.MESSAGES);
-			while (null == value) {
-				rocksJavaUtil.put(Config.MESSAGES, JSONArray.toJSONString(split));
-				value = new RocksJavaUtil(node.nodeParameters().dbId).get(Config.MESSAGES);
-			}
 			logger.warn("db main{} save split table info: {}", node.nodeParameters().dbId, new String(value));
 			rocksJavaUtil.put(Config.CREATION_TIME_KEY, "1550409802757");
 		} catch (Exception ex) {
 			logger.error("initTen error>>>>>>>>>>>", ex);
 		}
+	}
+
+	/**
+	 * strip initial tablesplit code snippet from {@code initCreationTx}
+	 */
+	public static byte[] initializeOrRetrieveTableSplit(RocksJavaUtil rocksJavaUtil, int genesisTxesSize) {
+		TransactionSplit firstSplit = new TransactionSplit();
+		firstSplit.setTableName(Config.MESSAGES + "_0");
+		firstSplit.setTableIndex(BigInteger.ZERO);
+		firstSplit.setTableNamePrefix(Config.MESSAGES);
+		firstSplit.setTotal(genesisTxesSize);
+
+		rocksJavaUtil.put(Config.MESSAGES, JSONArray.toJSONString(firstSplit));
+		byte[] retrievedSplitBytes = rocksJavaUtil.get(Config.MESSAGES);
+
+		while (retrievedSplitBytes == null) {
+			rocksJavaUtil.put(Config.MESSAGES, JSONArray.toJSONString(firstSplit));
+			retrievedSplitBytes = rocksJavaUtil.get(Config.MESSAGES);
+		}
+
+		return retrievedSplitBytes;
 	}
 
 	public static void main(String[] args) {
