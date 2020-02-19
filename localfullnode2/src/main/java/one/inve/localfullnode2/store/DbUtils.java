@@ -910,7 +910,7 @@ public class DbUtils {
 		RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
 		byte[] retrievedSplitBytes = initializeOrRetrieveTableSplit(rocksJavaUtil, genesisTxesSize);
 
-		logger.warn("db main{} save split table info: {}", dbId, new String(retrievedSplitBytes));
+		logger.info(" retrieved[from main{}] split table info: {}", dbId, new String(retrievedSplitBytes));
 		// rocksJavaUtil.put(Config.CREATION_TIME_KEY, "1550409802757");
 		rocksJavaUtil.put(Config.CREATION_TIME_KEY, String.valueOf(System.currentTimeMillis()));
 
