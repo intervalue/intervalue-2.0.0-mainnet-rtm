@@ -21,16 +21,14 @@ import (
 )
 
 var (
-	ctx=context.Background()
-	_ IChronicleDumperRestorerRPC=&ChronicleDumperRestorerRPC{}
+	ctx                             = context.Background()
+	_   IChronicleDumperRestorerRPC = &ChronicleDumperRestorerRPC{}
 )
-
-
 
 type IChronicleDumperRestorerRPC interface {
 	GetStreamMessageHashes(handler IAfterStreamRecvHandler) error
 	GetStreamSysMessageHashes(handler IAfterStreamRecvHandler) error
-	GetMessageStreamBy(messageHashes []string) ([][]byte,error)
+	GetMessageStreamBy(messageHashes []string) ([][]byte, error)
 
 	PersistStream([][]byte) error
 	PersistStreamSys([][]byte) error
@@ -38,54 +36,50 @@ type IChronicleDumperRestorerRPC interface {
 	Close()
 }
 
-
-
-
 type IAfterStreamRecvHandler interface {
 	OnMessages(messages *StringArray)
 	OnError(e error)
 	OnFinished()
 }
 
-
-//support both non-steam(client) and steam(steamClient) communication
+//support both non-stream(client) and stream(streamClient) communication
 type ChronicleDumperRestorerRPC struct {
-	steamClient ChronicleDumperRestorerStreamRPCClient
-	client      ChronicleDumperRestorerRPCClient
-	cc *grpc.ClientConn
+	streamClient ChronicleDumperRestorerStreamRPCClient // support streamed grpc client
+	client       ChronicleDumperRestorerRPCClient       // non-streamed grpc client
+	cc           *grpc.ClientConn
 }
 
 //attempt to connect addr:port via grpc
-func NewDumperRPCClient(addr string,port int) (*ChronicleDumperRestorerRPC,error){
-	cc, err := grpc.Dial(fmt.Sprintf("%s:%d",addr,port), grpc.WithInsecure())
-	if err!=nil{
-		return nil,errors.Wrapf(err,"fail in initialization")
+func NewDumperRPCClient(addr string, port int) (*ChronicleDumperRestorerRPC, error) {
+	cc, err := grpc.Dial(fmt.Sprintf("%s:%d", addr, port), grpc.WithInsecure())
+	if err != nil {
+		return nil, errors.Wrapf(err, "fail in initialization")
 	}
 	//defer cc.Close()
 
-	sc:=NewChronicleDumperRestorerStreamRPCClient(cc)
-	c:=NewChronicleDumperRestorerRPCClient(cc)
+	sc := NewChronicleDumperRestorerStreamRPCClient(cc)
+	c := NewChronicleDumperRestorerRPCClient(cc)
 
-	dumperRestorer:=&ChronicleDumperRestorerRPC{sc,c,cc}
+	dumperRestorer := &ChronicleDumperRestorerRPC{sc, c, cc}
 
-	return dumperRestorer,nil
+	return dumperRestorer, nil
 }
 
 //dumper function
 
-func (dumperRestorer *ChronicleDumperRestorerRPC) GetStreamMessageHashes(handler IAfterStreamRecvHandler) error{
-	stream,err:=dumperRestorer.steamClient.GetMessageHashes(ctx,new(empty.Empty))
-	if err!=nil{
-		return errors.Wrapf(err,"dumperRestorer.steamClient.GetStreamMessageHashes: %s",err)
+func (dumperRestorer *ChronicleDumperRestorerRPC) GetStreamMessageHashes(handler IAfterStreamRecvHandler) error {
+	stream, err := dumperRestorer.streamClient.GetMessageHashes(ctx, new(empty.Empty))
+	if err != nil {
+		return errors.Wrapf(err, "error in dumperRestorer.steamClient.GetStreamMessageHashes: %s", err)
 	}
 
-	for{
-		messageHashes,err:=stream.Recv()
-		if err==io.EOF{
+	for {
+		messageHashes, err := stream.Recv()
+		if err == io.EOF {
 			handler.OnFinished()
 			break
 		}
-		if err!=nil{
+		if err != nil {
 			handler.OnError(err)
 			continue
 		}
@@ -96,19 +90,19 @@ func (dumperRestorer *ChronicleDumperRestorerRPC) GetStreamMessageHashes(handler
 	return nil
 }
 
-func (dumperRestorer *ChronicleDumperRestorerRPC) GetStreamSysMessageHashes(handler IAfterStreamRecvHandler) error{
-	stream,err:=dumperRestorer.steamClient.GetSysMessageHashes(ctx,new(empty.Empty))
-	if err!=nil{
-		return errors.Wrapf(err,"dumperRestorer.steamClient.GetMessageHashes: %s",err)
+func (dumperRestorer *ChronicleDumperRestorerRPC) GetStreamSysMessageHashes(handler IAfterStreamRecvHandler) error {
+	stream, err := dumperRestorer.streamClient.GetSysMessageHashes(ctx, new(empty.Empty))
+	if err != nil {
+		return errors.Wrapf(err, "error in dumperRestorer.steamClient.GetMessageHashes: %s", err)
 	}
 
-	for{
-		messageHashes,err:=stream.Recv()
-		if err==io.EOF{
+	for {
+		messageHashes, err := stream.Recv()
+		if err == io.EOF {
 			handler.OnFinished()
-			break;
+			break
 		}
-		if err!=nil{
+		if err != nil {
 			handler.OnError(err)
 			continue
 		}
@@ -119,68 +113,68 @@ func (dumperRestorer *ChronicleDumperRestorerRPC) GetStreamSysMessageHashes(hand
 	return nil
 }
 
-func (dumperRestorer *ChronicleDumperRestorerRPC) GetMessageStreamBy(messageHashes []string) ([][]byte,error){
-	messagesHashesArray:=StringArray{
-		Data:messageHashes,
+func (dumperRestorer *ChronicleDumperRestorerRPC) GetMessageStreamBy(messageHashes []string) ([][]byte, error) {
+	messagesHashesArray := StringArray{
+		Data: messageHashes,
 	}
 
-	byteStream,err:=dumperRestorer.client.GetMessageStreamBy(ctx,&messagesHashesArray)
-	if err!=nil{
-		return nil,errors.Wrapf(err,"dumperRestorer.client.GetMessageStreamBy: %s",err)
+	byteStream, err := dumperRestorer.client.GetMessageStreamBy(ctx, &messagesHashesArray)
+	if err != nil {
+		return nil, errors.Wrapf(err, "error in dumperRestorer.client.GetMessageStreamBy: %s", err)
 	}
 
-	return byteStream.Data,nil
+	return byteStream.Data, nil
 }
 
-func (dumperRestorer *ChronicleDumperRestorerRPC) Close(){
+func (dumperRestorer *ChronicleDumperRestorerRPC) Close() {
 	dumperRestorer.cc.Close()
 }
 
 //restorer function
 
-func (dumperRestorer *ChronicleDumperRestorerRPC) PersistStream(bytesBytes [][]byte) error{
-	stream,err:=dumperRestorer.steamClient.Persist(context.Background())
-	byteStream:=&ByteStream{}
-	if err!=nil{
-		return errors.Wrapf(err,"dumperRestorer.steamClient.PersistStream: %s",err)
+func (dumperRestorer *ChronicleDumperRestorerRPC) PersistStream(bytesBytes [][]byte) error {
+	stream, err := dumperRestorer.streamClient.Persist(context.Background())
+	byteStream := &ByteStream{}
+	if err != nil {
+		return errors.Wrapf(err, "error in dumperRestorer.steamClient.PersistStream: %s", err)
 	}
 
-	for _,bytes:=range bytesBytes{
-		byteStream.Data=append(byteStream.Data,bytes)
+	for _, bytes := range bytesBytes {
+		byteStream.Data = append(byteStream.Data, bytes)
 	}
 
-	if (len(bytesBytes)>0){
+	if len(bytesBytes) > 0 {
 		stream.Send(byteStream)
 	}
 
-	_,err=stream.CloseAndRecv()
-	if err!= nil{
-		log.Error().Msgf("error in stream.CloseSend: %s",err)
-		return errors.Wrapf(err,"error in stream.CloseSend: %s",err)
+	_, err = stream.CloseAndRecv()
+	if err != nil {
+		log.Error().Msgf("error in stream.CloseSend: %s", err)
+		return errors.Wrapf(err, "error in stream.CloseSend: %s", err)
 	}
 
 	return nil
 }
 
-func (dumperRestorer *ChronicleDumperRestorerRPC) PersistStreamSys(bytesBytes [][]byte) error{
-	stream,err:=dumperRestorer.steamClient.PersistSys(context.Background())
-	byteStream:=&ByteStream{}
-	if err!=nil{
-		return errors.Wrapf(err,"dumperRestorer.steamClient.PersistStreamSys: %s",err)
+func (dumperRestorer *ChronicleDumperRestorerRPC) PersistStreamSys(bytesBytes [][]byte) error {
+	stream, err := dumperRestorer.streamClient.PersistSys(context.Background())
+	byteStream := &ByteStream{}
+	if err != nil {
+		return errors.Wrapf(err, "error in dumperRestorer.steamClient.PersistStreamSys: %s", err)
 	}
 
-	for _,bytes:=range bytesBytes{
-		byteStream.Data=append(byteStream.Data,bytes)
+	for _, bytes := range bytesBytes {
+		byteStream.Data = append(byteStream.Data, bytes)
 	}
 
-	if (len(bytesBytes)>0){
+	if len(bytesBytes) > 0 {
 		stream.Send(byteStream)
 	}
 
-	_,err=stream.CloseAndRecv()
-	if err!= nil{
-		log.Error().Msgf("error in %v.CloseSend: %s",stream,err)
-		return errors.Wrapf(err,"error in %v.CloseSend: %s",stream,err)
+	_, err = stream.CloseAndRecv()
+	if err != nil {
+		log.Error().Msgf("error in %v.CloseSend: %s", stream, err)
+		return errors.Wrapf(err, "error in %v.CloseSend: %s", stream, err)
 	}
 
 	return nil

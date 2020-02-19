@@ -25,7 +25,7 @@ type Localfullnode2Chronicle struct {
 func NewLocalfullnode2Chronicle(dir, rAddr string, rPort int) *Localfullnode2Chronicle {
 	rpcClient, err := rpc.NewDumperRPCClient(rAddr, rPort)
 	if err != nil {
-		log.Err(errors.Wrapf(err, "error in create NewDumperRPCClient,%s", err))
+		log.Err(errors.Wrapf(err, "error in create NewDumperRPCClient:%s", err))
 		return nil
 	}
 	return &Localfullnode2Chronicle{blockstorage.NewBlockMgr(dir), rpcClient}

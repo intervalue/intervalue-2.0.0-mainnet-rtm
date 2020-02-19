@@ -71,9 +71,17 @@ func (localfullnode2Chronicle *Localfullnode2Chronicle) HashesInMemoryDump() {
 
 	const _accumulateThreshold int = 5
 
-	localfullnode2Chronicle.GetStreamMessageHashes(messagesHashes)
-	localfullnode2Chronicle.GetStreamSysMessageHashes(messagesHashes)
+	err := localfullnode2Chronicle.GetStreamMessageHashes(messagesHashes)
+	if err != nil {
+		log.Error().Msgf("GetStreamMessageHashe error:[%s]", err)
+		return
+	}
 
+	localfullnode2Chronicle.GetStreamSysMessageHashes(messagesHashes)
+	if err != nil {
+		log.Error().Msgf("GetStreamSysMessageHashes error:[%s]", err)
+		return
+	}
 	//after {@var hashes} was filled with hashes
 
 	if len(hashes) > 0 {
@@ -89,6 +97,9 @@ func (localfullnode2Chronicle *Localfullnode2Chronicle) HashesInMemoryDump() {
 					log.Error().Msgf("localfullnode2Chronicle.GetMessageStreamBy error:%s", err)
 					return
 				}
+
+				//attemptToPrintWrappedMessages(messages)
+				//attemptToPrintRawWrappedMessages(messages)
 
 				if messages == nil {
 					log.Error().Msgf("No any message body was found this time: [%s]", strings.Join(hashesArray, ","))
@@ -127,4 +138,28 @@ func (localfullnode2Chronicle *Localfullnode2Chronicle) HashesInMemoryDump() {
 	//
 	//	}
 	//}
+}
+
+func attemptToPrintWrappedMessages(messages [][]byte) {
+	for _, message := range messages {
+		wrappedMessage := &rpc.WrappedMessage{}
+		err := wrappedMessage.XXX_Unmarshal(message)
+
+		if err == nil {
+			log.Debug().Msgf("%d - %s", wrappedMessage.MessageType, string(wrappedMessage.MessageBody))
+		} else {
+			log.Error().Msgf("not a WrappedMessage obviously,quit the process")
+			break
+		}
+
+	}
+
+}
+
+func attemptToPrintRawWrappedMessages(messages [][]byte) {
+	for _, message := range messages {
+		log.Debug().Msgf("%s", string(message))
+
+	}
+
 }

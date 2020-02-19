@@ -24,8 +24,8 @@ func (localfullnode2Chronicle *Localfullnode2Chronicle) Restore() {
 		block, err := localfullnode2Chronicle.RetrieveBlockByNumber(blockNum)
 		if err != nil {
 			//log.Fatal().Msgf("error in localfullnode2Chronicle.RetrieveBlockByNumber(%d)", blockNum)
-			return
-			log.Info().Msgf("reach the end of block[%d]", blockNum)
+			//return
+			log.Info().Msgf("reach the end of block[%d] or error: %s", blockNum, err)
 			break
 		}
 
