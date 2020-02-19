@@ -894,19 +894,29 @@ public class DbUtils {
 //				rocksJavaUtil.put(Config.MESSAGES, JSONArray.toJSONString(split));
 //				value = new RocksJavaUtil(node.nodeParameters().dbId).get(Config.MESSAGES);
 //			}
-			RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(node.nodeParameters().dbId);
-			byte[] value = initializeOrRetrieveTableSplit(rocksJavaUtil, createTxs.size());
+			byte[] value = initializeOrRetrieveTableSplit(node.nodeParameters().dbId, createTxs.size());
 
-			logger.warn("db main{} save split table info: {}", node.nodeParameters().dbId, new String(value));
-			rocksJavaUtil.put(Config.CREATION_TIME_KEY, "1550409802757");
+//			logger.warn("db main{} save split table info: {}", node.nodeParameters().dbId, new String(value));
+//			rocksJavaUtil.put(Config.CREATION_TIME_KEY, "1550409802757");
 		} catch (Exception ex) {
 			logger.error("initTen error>>>>>>>>>>>", ex);
 		}
 	}
 
 	/**
-	 * strip initial tablesplit code snippet from {@code initCreationTx}
+	 * set up genesis UTC
 	 */
+	public static byte[] initializeOrRetrieveTableSplit(String dbId, int genesisTxesSize) {
+		RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dbId);
+		byte[] retrievedSplitBytes = initializeOrRetrieveTableSplit(rocksJavaUtil, genesisTxesSize);
+
+		logger.warn("db main{} save split table info: {}", dbId, new String(retrievedSplitBytes));
+		// rocksJavaUtil.put(Config.CREATION_TIME_KEY, "1550409802757");
+		rocksJavaUtil.put(Config.CREATION_TIME_KEY, String.valueOf(System.currentTimeMillis()));
+
+		return retrievedSplitBytes;
+	}
+
 	public static byte[] initializeOrRetrieveTableSplit(RocksJavaUtil rocksJavaUtil, int genesisTxesSize) {
 		TransactionSplit firstSplit = new TransactionSplit();
 		firstSplit.setTableName(Config.MESSAGES + "_0");
