@@ -1,6 +1,5 @@
 package one.inve.localfullnode2.chronicle.rpc.service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -74,8 +73,11 @@ public class ChronicleServicesRuntime implements IServicesRuntime {
 		});
 
 		return () -> {
-			ArrayList<String> al = new ArrayList<>(sysMsgHashes.length);
-			return al.iterator();
+//			ArrayList<String> al = new ArrayList<>(sysMsgHashes.length);
+//			return al.iterator();
+
+			List<String> list = Arrays.asList(sysMsgHashes);
+			return list.iterator();
 		};
 	}
 
@@ -155,11 +157,11 @@ public class ChronicleServicesRuntime implements IServicesRuntime {
 	/**
 	 * wrap message into a tagged message or resolve tagged into original message
 	 */
-	private static class MessageResolver {
-		private static String MsgTag = "msg";
-		private static String SysMsgTag = "smsg";
-		private static int MsgType = 1;
-		private static int SysMsgType = 2;
+	public static class MessageResolver {
+		public static String MsgTag = "msg";
+		public static String SysMsgTag = "smsg";
+		public static int MsgType = 1;
+		public static int SysMsgType = 2;
 
 		private String hash;
 		private int type;

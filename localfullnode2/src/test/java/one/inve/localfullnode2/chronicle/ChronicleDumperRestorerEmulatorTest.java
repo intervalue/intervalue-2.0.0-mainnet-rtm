@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import one.inve.localfullnode2.chronicle.rpc.RawWrappedMessage;
 import one.inve.localfullnode2.chronicle.rpc.WrappedMessage;
+import one.inve.localfullnode2.chronicle.rpc.service.ChronicleServicesRuntime.MessageResolver;
 import one.inve.localfullnode2.chronicle.rpc.service.ChronicleServicesServer;
 import one.inve.localfullnode2.chronicle.rpc.service.IServicesRuntime;
 
@@ -31,13 +33,14 @@ import one.inve.localfullnode2.chronicle.rpc.service.IServicesRuntime;
 public class ChronicleDumperRestorerEmulatorTest {
 	private static final Logger logger = LoggerFactory.getLogger("ChronicleDumperRestorerEmulatorTest");
 
-	@Test
-	public void testChronicleDumper() {
+	// @Test
+	public void testChronicleDumperAndRestorer0() {
 		IServicesRuntime serviceRuntime = new IServicesRuntime() {
 
 			@Override
 			public Iterable<String> messageHashesIter() {
-				List<String> jdks = Arrays.asList("msgJDK6", "msgJDK8", "msgJDK10", "msgJDK11");
+				List<String> jdks = Arrays.asList("msgJDK0", "msgJDK1", "msgJDK2", "msgJDK3", "msgJDK4", "msgJDK5",
+						"msgJDK6", "msgJDK8", "msgJDK10", "msgJDK11", "msgJDK12");
 				return new Iterable<String>() {
 					@Override
 					public Iterator<String> iterator() {
@@ -48,7 +51,7 @@ public class ChronicleDumperRestorerEmulatorTest {
 
 			@Override
 			public Iterable<String> sysMessageHashesIter() {
-				List<String> jets = Arrays.asList("smsgF15", "smsgF16", "smsgF22", "smsgF35");
+				List<String> jets = Arrays.asList("smsgF15");
 				return new Iterable<String>() {
 					@Override
 					public Iterator<String> iterator() {
@@ -100,6 +103,211 @@ public class ChronicleDumperRestorerEmulatorTest {
 							logger.error("error in WrappedMessage.parseFrom({%s})", wrappedMessageBytes);
 							e.printStackTrace();
 						}
+
+					}
+
+					@Override
+					public void persistSys(byte[] wrappedMessageBytes) {
+						throw new RuntimeException("Deprecated Method");
+					}
+
+				};
+			}
+
+		};
+
+		try {
+			ChronicleServicesServer chronicleServicesServer = new ChronicleServicesServer(8980, serviceRuntime, false);
+			chronicleServicesServer.startUntilShutdown();
+		} catch (IOException e) {
+			logger.error(e.toString());
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * use WrappedMessage
+	 */
+	@Test
+	public void testChronicleDumperAndRestorer1() {
+		IServicesRuntime serviceRuntime = new IServicesRuntime() {
+
+			@Override
+			public Iterable<String> messageHashesIter() {
+				List<String> jdks = Arrays.asList("JDK0",
+						"SUN-JDK1"/*
+									 * , "JDK2", "JDK3", "JDK4", "JDK5", "JDK6", "JDK8", "JDK10", "JDK11", "JDK12"
+									 */);
+
+				String[] msgHashes = new String[jdks.size()];
+				for (int index = 0; index < jdks.size(); index++) {
+					MessageResolver mResolver = new MessageResolver();
+					mResolver.setHash(jdks.get(index)).setType(MessageResolver.MsgType);
+
+					msgHashes[index] = mResolver.toTaggedHash();
+
+				}
+
+				return () -> {
+					List<String> list = Arrays.asList(msgHashes);
+					return list.iterator();
+				};
+			}
+
+			@Override
+			public Iterable<String> sysMessageHashesIter() {
+				List<String> jets = Arrays.asList("F15");
+
+				String[] sysMsgHashes = new String[jets.size()];
+				for (int index = 0; index < jets.size(); index++) {
+					MessageResolver mResolver = new MessageResolver();
+					mResolver.setHash(jets.get(index)).setType(MessageResolver.SysMsgType);
+
+					sysMsgHashes[index] = mResolver.toTaggedHash();
+
+				}
+
+				return () -> {
+					List<String> list = Arrays.asList(sysMsgHashes);
+					return list.iterator();
+				};
+			}
+
+			@Override
+			public IMessageQuery getMessageQuery() {
+				return (hash) -> {
+					MessageResolver mResolver = MessageResolver.parse(hash);
+					String s = null;
+
+					// simply process the message
+					if (mResolver.type() == MessageResolver.MsgType) {
+						s = String.format("%s,message body", mResolver.hash());
+					} else if (mResolver.type() == MessageResolver.SysMsgType) {
+						s = String.format("%s,system message body", mResolver.hash());
+					}
+
+					WrappedMessage wrappedMessage = WrappedMessage.newBuilder().setMessageType(mResolver.type())
+							.setMessageBody(ByteString.copyFrom(s.getBytes())).build();
+
+					return wrappedMessage.toByteArray();
+				};
+			}
+
+			@Override
+			public IMessagePersister getMessagePersister() {
+				// TODO Auto-generated method stub
+				return new IMessagePersister() {
+
+					@Override
+					public void persist(byte[] wrappedMessageBytes) {
+						WrappedMessage wrappedMessage;
+						try {
+							wrappedMessage = WrappedMessage.parseFrom(wrappedMessageBytes);
+							logger.info("check: ready to persist wrappedMessage body '<{}>'",
+									new String(wrappedMessage.getMessageBody().toByteArray()));
+						} catch (InvalidProtocolBufferException e) {
+							logger.error("error in WrappedMessage.parseFrom({%s})", wrappedMessageBytes);
+							e.printStackTrace();
+						}
+
+					}
+
+					@Override
+					public void persistSys(byte[] wrappedMessageBytes) {
+						throw new RuntimeException("Deprecated Method");
+					}
+
+				};
+			}
+
+		};
+
+		try {
+			ChronicleServicesServer chronicleServicesServer = new ChronicleServicesServer(8980, serviceRuntime, false);
+			chronicleServicesServer.startUntilShutdown();
+		} catch (IOException e) {
+			logger.error(e.toString());
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * use RawWrappedMessage
+	 */
+	// @Test
+	public void testChronicleDumperAndRestorer2() {
+		IServicesRuntime serviceRuntime = new IServicesRuntime() {
+
+			@Override
+			public Iterable<String> messageHashesIter() {
+				List<String> jdks = Arrays.asList("JDK0", "JDK2", "JDK3", "JDK4", "JDK5", "JDK6", "JDK8", "JDK10",
+						"JDK11", "JDK12");
+
+				String[] msgHashes = new String[jdks.size()];
+				for (int index = 0; index < jdks.size(); index++) {
+					MessageResolver mResolver = new MessageResolver();
+					mResolver.setHash(jdks.get(index)).setType(MessageResolver.MsgType);
+
+					msgHashes[index] = mResolver.toTaggedHash();
+
+				}
+
+				return () -> {
+					List<String> list = Arrays.asList(msgHashes);
+					return list.iterator();
+				};
+			}
+
+			@Override
+			public Iterable<String> sysMessageHashesIter() {
+				List<String> jets = Arrays.asList("F15");
+
+				String[] sysMsgHashes = new String[jets.size()];
+				for (int index = 0; index < jets.size(); index++) {
+					MessageResolver mResolver = new MessageResolver();
+					mResolver.setHash(jets.get(index)).setType(MessageResolver.SysMsgType);
+
+					sysMsgHashes[index] = mResolver.toTaggedHash();
+
+				}
+
+				return () -> {
+					List<String> list = Arrays.asList(sysMsgHashes);
+					return list.iterator();
+				};
+			}
+
+			@Override
+			public IMessageQuery getMessageQuery() {
+				return (hash) -> {
+					MessageResolver mResolver = MessageResolver.parse(hash);
+					String s = null;
+
+					// simply process the message
+					if (mResolver.type() == MessageResolver.MsgType) {
+						s = String.format("%s,message body", mResolver.hash());
+					} else if (mResolver.type() == MessageResolver.SysMsgType) {
+						s = String.format("%s,system message body", mResolver.hash());
+					}
+
+					RawWrappedMessage rawWrappedMessage = RawWrappedMessage.Builder.newBuilder()
+							.setMessageType(mResolver.type()).setMessageBody(s).build();
+
+					return rawWrappedMessage.serialize();
+				};
+			}
+
+			@Override
+			public IMessagePersister getMessagePersister() {
+				// TODO Auto-generated method stub
+				return new IMessagePersister() {
+
+					@Override
+					public void persist(byte[] rawWrappedMessageBytes) {
+						RawWrappedMessage rawWrappedMessage;
+						rawWrappedMessage = RawWrappedMessage.Builder.newBuilder().build(rawWrappedMessageBytes);
+						logger.info("check: ready to persist wrappedMessage body '<{}> <{}>'",
+								rawWrappedMessage.getMessageBody(), rawWrappedMessage.getMessageType());
 
 					}
 

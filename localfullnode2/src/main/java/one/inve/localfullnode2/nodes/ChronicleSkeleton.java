@@ -147,7 +147,7 @@ public abstract class ChronicleSkeleton extends DepsPointcut implements NodeEnro
 			nodeParameters().dbId = getShardId() + "_" + getCreatorId();
 			dbId(nodeParameters().dbId);
 
-			DbUtils.initDataBase(this, dbConnectionDescriptorsConf);
+			DbUtils.initializeGenesis(this, dbConnectionDescriptorsConf, false);
 
 			// call seed node to get local full node list
 			// setLocalFullNodes

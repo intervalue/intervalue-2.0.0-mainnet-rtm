@@ -66,10 +66,10 @@ public class ChronicleDumperRestorerRPCService extends ChronicleDumperRestorerRP
 		ByteStream byteStream = null;
 		for (int i = 0; i < request.getDataList().size(); i++) {
 
-			byte[] messageOrSystemMessageBytes = query.byHash(request.getData(i));
-			if (messageOrSystemMessageBytes != null && messageOrSystemMessageBytes.length != 0) {
+			byte[] messageOrSystemMessageBodyBytes = query.byHash(request.getData(i));
+			if (messageOrSystemMessageBodyBytes != null && messageOrSystemMessageBodyBytes.length != 0) {
 				try {
-					b.addData(ByteString.copyFrom(messageOrSystemMessageBytes));
+					b.addData(ByteString.copyFrom(messageOrSystemMessageBodyBytes));
 				} catch (Exception e) {
 					responseObserver.onError(e);
 					break;
