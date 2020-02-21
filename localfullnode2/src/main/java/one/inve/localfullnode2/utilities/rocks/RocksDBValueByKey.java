@@ -26,6 +26,12 @@ import one.inve.localfullnode2.utilities.PathUtils;
  *               java -classpath localfullnode2-2.0.0.jar
  *               one.inve.localfullnode2.utilities.rocks.RocksDBValueByKey 0_0
  *               33AOWttvUncH5ZtU3Jn/bbr4dte7j6BPq7hCxS2TMPIf4OSIJzWbN8UKDZPInQAID9m11XmVnHsmThhyUrpwwYuCc=
+ *               <p>
+ *               java -classpath localfullnode2-2.0.0.jar
+ *               one.inve.localfullnode2.utilities.rocks.RocksDBValueByKey 0_1
+ *               'smsgs$t$transaction_fee_tx1'
+ *               <p>
+ *               output:Result is byte[0]:smsgs$t$transaction_fee_tx1=
  * @author Francis.Deng [francis_xiiiv@163.com]
  * @date Jan 19, 2020
  *
@@ -39,13 +45,18 @@ public class RocksDBValueByKey {
 	public static void main(String[] args) {
 		if (args.length > 1 && startRocksDB(args[0])) {
 			try {
-				for (String arg : args) {
+				for (int index = 1; index < args.length; index++) {
+					String arg = args[index];
 					byte[] valueBytes = rocksDB.get(arg.getBytes());
 
 					if (valueBytes != null && valueBytes.length > 0) {
-						System.out.println(arg + "--" + new String(valueBytes));
+						System.out.println("Result is:" + arg + "=" + new String(valueBytes));
 					} else {
-						System.out.println(arg + "--");
+						if (valueBytes == null) {
+							System.out.println("Result is null:" + arg + "=");
+						} else if (valueBytes.length == 0) {
+							System.out.println("Result is byte[0]:" + arg + "=");
+						}
 					}
 				}
 
