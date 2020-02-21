@@ -43,7 +43,7 @@ public class InternalMessageAwareness {
 		if (message.getSnapVersion() != null) {
 			target.put("snapVersion", message.getSnapVersion());
 		}
-		target.put("validState", 2);
+		target.put("validState", 1);
 
 		return target;
 	}

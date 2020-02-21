@@ -93,6 +93,8 @@ public abstract class ChronicleSkeleton extends DepsPointcut implements NodeEnro
 	 */
 	protected void start(String[] args) {
 		loadDeps();
+		setInitialMetrics();
+
 		GracefulShutdown gs = GracefulShutdown.with("TERM");// kill -15 process-id
 
 		try {
@@ -148,6 +150,7 @@ public abstract class ChronicleSkeleton extends DepsPointcut implements NodeEnro
 			dbId(nodeParameters().dbId);
 
 			DbUtils.initializeGenesis(this, dbConnectionDescriptorsConf, false);
+			DbUtils.initializeOrRetrieveTableSplit(nodeParameters().dbId, 0);
 
 			// call seed node to get local full node list
 			// setLocalFullNodes
@@ -434,4 +437,10 @@ public abstract class ChronicleSkeleton extends DepsPointcut implements NodeEnro
 		return llc;
 	}
 
+	protected void setInitialMetrics() {
+		DepItemsManager.getInstance().attachStat(null).addConsMessageMaxId(0);
+		DepItemsManager.getInstance().attachStat(null).addSystemAutoTxMaxId(0);
+		DepItemsManager.getInstance().attachStat(null).addTotalConsEventCount(0);
+		DepItemsManager.getInstance().attachStat(null).addTotalEventCount(0);
+	}
 }

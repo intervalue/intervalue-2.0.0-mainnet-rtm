@@ -94,6 +94,11 @@ public class QueryTableSplit {
 			if (value != null) {
 				String json = new String(value);
 				split = JSONArray.parseObject(json, TransactionSplit.class);
+			} else {
+				String errorDescription = String.format(
+						"34875b71-090e-4de4-81d0-faa61f17c2e5 - found no [{}] value in rocksdb", Config.MESSAGES);
+				logger.error(errorDescription);
+				throw new RuntimeException(errorDescription);
 			}
 		} catch (Exception e) {
 			logger.error("error: {}", e);

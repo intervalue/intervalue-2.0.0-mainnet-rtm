@@ -90,9 +90,9 @@ public class MsgIntrospector {
 		Iterator<byte[]> keys = allSysMessageHashesBytes.keySet().iterator();
 		while (keys.hasNext()) {
 			if (hashConverter != null) {
-				finalVal[index] = hashConverter.convert(MessageIndexes.getSysMessageTypeIdKey(new String(keys.next())));
+				finalVal[index] = hashConverter.convert(MessageIndexes.getSysMessageTypeId(new String(keys.next())));
 			} else {
-				finalVal[index] = MessageIndexes.getSysMessageTypeIdKey(new String(keys.next()));
+				finalVal[index] = MessageIndexes.getSysMessageTypeId(new String(keys.next()));
 			}
 
 			index++;

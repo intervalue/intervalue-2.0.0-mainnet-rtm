@@ -92,7 +92,7 @@ public class ChronicleServicesRuntime implements IServicesRuntime {
 			byte[] oBodyBytes = introspector.getMessageBytes(mResolver.hash());
 
 			if (oBodyBytes == null || oBodyBytes.length <= 0) {
-				logger.error("cannot find message body by hash[{}]", hash);
+				logger.error("cannot find message body by hash[{}]", mResolver.hash());
 				return null;
 			}
 			WrappedMessage wrappedMessage = WrappedMessage.newBuilder().setMessageType(mResolver.type())

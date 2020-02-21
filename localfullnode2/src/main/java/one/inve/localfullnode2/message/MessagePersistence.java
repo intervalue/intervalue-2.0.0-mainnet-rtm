@@ -86,7 +86,11 @@ public class MessagePersistence {
 				dep.setConsMessageCount(maxMsgId);
 				// RocksJavaUtil rocksJavaUtil = new RocksJavaUtil(dep.getDbId());
 				INosql rocksJavaUtil = dep.getNosql();
-				rocksJavaUtil.put(Config.CONS_MSG_COUNT_KEY, dep.getConsMessageCount().toString());
+
+				// rocksJavaUtil.put(Config.CONS_MSG_COUNT_KEY,
+				// dep.getConsMessageCount().toString());
+				// only in the case of greater than consMessageCount in Rocksdb
+				setGreaterConsMessageCount(rocksJavaUtil, dep.getConsMessageCount());
 
 				// 打印日志
 				long interval = Duration.between(t0, t1).toMillis();
@@ -101,6 +105,18 @@ public class MessagePersistence {
 			}
 		}
 		// }
+	}
+
+	private void setGreaterConsMessageCount(INosql rocksJavaUtil, BigInteger newConsMessageCount) {
+		byte[] consMessageCountBytes = rocksJavaUtil.get(Config.CONS_MSG_COUNT_KEY);
+		if (consMessageCountBytes != null) {
+			BigInteger consMessageCount = new BigInteger(new String(consMessageCountBytes));
+			if (consMessageCount.compareTo(newConsMessageCount) == -1) {
+				rocksJavaUtil.put(Config.CONS_MSG_COUNT_KEY, newConsMessageCount.toString());
+			}
+		} else {
+			rocksJavaUtil.put(Config.CONS_MSG_COUNT_KEY, newConsMessageCount.toString());
+		}
 	}
 
 	public void persistSystemMessages() {
