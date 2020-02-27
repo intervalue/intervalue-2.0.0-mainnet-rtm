@@ -2,6 +2,8 @@ package one.inve.localfullnode2.http;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +13,16 @@ import org.spongycastle.util.encoders.Hex;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import one.inve.bean.node.NodeTypes;
 import one.inve.cfg.localfullnode.Config;
+import one.inve.cluster.Member;
 import one.inve.contract.MVM.WorldStateService;
 import one.inve.contract.ethplugin.core.Repository;
 import one.inve.contract.inve.INVERepositoryRoot;
 import one.inve.contract.inve.INVETransactionReceipt;
 import one.inve.contract.provider.RepositoryProvider;
 import one.inve.localfullnode2.dep.DepItemsManager;
+import one.inve.localfullnode2.http.representation.MembersRep;
 import one.inve.localfullnode2.nodes.LocalFullNode1GeneralNode;
 import one.inve.localfullnode2.store.rocks.BlockBrowserInfo;
 import one.inve.localfullnode2.store.rocks.Message;
@@ -43,6 +48,7 @@ import one.inve.localfullnode2.utilities.http.annotation.RequestMapper;
  * @author: Francis.Deng
  * @date: May 13, 2019 3:04:43 AM
  * @version: V1.0
+ * @version: V1.1 retrieve all neighbors information in one shard
  */
 public class HttpApiService {
 	private static final Logger logger = LoggerFactory.getLogger(HttpApiService.class);
@@ -53,6 +59,93 @@ public class HttpApiService {
 		if (dep instanceof HttpServiceDependency) {
 			this.node = ((HttpServiceDependency) dep).getNode();
 		}
+	}
+
+	/**
+	 * retrieve all neighbors information in one shard
+	 */
+	@RequestMapper(value = "/v1/getmembers", method = MethodEnum.GET)
+	public String getInshardMembers(DataMap<String, Object> data) {
+		List<Member> neighbors = this.node.inshardNeighborPools();
+		MembersRep inshardMembers = new MembersRep();
+		MembersRep.MemberRep me = new MembersRep.MemberRep();
+		me.setAddress("$localhost");
+		me.putMeta("level", "" + NodeTypes.LOCALFULLNODE);
+		me.putMeta("shard", node.getShardId() < 0 ? "" : "" + this.node.getShardId());
+		me.putMeta("index", node.getCreatorId() < 0 ? "" : "" + this.node.getCreatorId());
+		me.putMeta("rpcPort", "" + node.nodeParameters().selfGossipAddress.getRpcPort());
+		me.putMeta("httpPort", "" + node.nodeParameters().selfGossipAddress.getHttpPort());
+		me.putMeta("pubkey", node.publicKey().toString());
+		me.putMeta("address", node.getWallet().getAddress());
+
+		inshardMembers.addMember(me);
+
+		for (Member neighbor : neighbors) {
+			MembersRep.MemberRep m = new MembersRep.MemberRep();
+			m.setAddress(neighbor.address().host());
+			for (Map.Entry<String, String> e : neighbor.metadata().entrySet()) {
+				m.putMeta(e.getKey(), e.getValue());
+			}
+
+			inshardMembers.addMember(m);
+		}
+
+		return JSONObject.toJSONString(inshardMembers);
+
+		//@formatter:off
+		//Retrieval description:
+		//The following is my environment's output.There is one thing to mention that the first row element's address is a macro($Localhost)
+		
+		/**************
+		{
+			"members": [{
+				"address": "$localhost",
+				"meta": {
+					"address": "ZRA3VCTZ54T2S7EKDQ36WFHM24TNP36P",
+					"level": "2",
+					"httpPort": "35796",
+					"rpcPort": "35795",
+					"index": "0",
+					"shard": "0",
+					"pubkey": "Sun RSA public key, 1024 bits\n  modulus: 130193325978498433161113295242341314108056995208181191188138078866742870163199627539112908818524143889567874998085600303109004217164242304172319372637950736246813909124172492978971261668407318249038014729006183098273718683703280161925870160753720894309347898444932866610125998014793438082755471338510905436001\n  public exponent: 65537"
+				}
+			}, {
+				"address": "192.168.207.130",
+				"meta": {
+					"address": "GSJW3M4MZHPXUIJMBRQ7O6EZA2HXNVL6",
+					"level": "2",
+					"httpPort": "35793",
+					"rpcPort": "35792",
+					"index": "2",
+					"shard": "0",
+					"pubkey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDzUyXZy3tc4b6l94//woYc/H2IExQnyExrZ0jld+I8eEeNfpWV6lY38Q4Eyet5BEkuqdS0w+5YQ7KRgBVWhtM104zLFpLkEecSYYUt5S4Ni2RvNlpJF3vS0SqeFEQmsUtjucwkrTL7RJOCsMsxSCIcSOxwtpdTHirDLtmEm3WINwIDAQAB"
+				}
+			}, {
+				"address": "192.168.207.130",
+				"meta": {
+					"address": "YVBWZAVVNV7MURZ7EUUJ3MDWQIFPNJY2",
+					"level": "2",
+					"httpPort": "35799",
+					"rpcPort": "35798",
+					"index": "1",
+					"shard": "0",
+					"pubkey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCUDk/b6AxDY9Ns7G7d7IPI4+RphHv6N+LKJ46bdekWA62aNFuSFzbOLchH8hf6uYTzWT0JpQQbtOOvJrBZJvsauxAxsr5mIuDWvJxdur1bKrbGEwHTRsYdYBg9+DSfo5ST28KsBGtwuF3XwMPTC2f9oibizHc/G8AhEQETUu7+QIDAQAB"
+				}
+			}, {
+				"address": "192.168.207.130",
+				"meta": {
+					"address": "K56X2ANJXTI6ZE7KQAZOSUK6A4FN2UGC",
+					"level": "2",
+					"httpPort": "35802",
+					"rpcPort": "35801",
+					"index": "3",
+					"shard": "0",
+					"pubkey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJEXXcHZLywEjCDk5Kyl2E1rhvXOGcIsh+kkQX1T6Lnoy57gTOvHMZhigtrqZpiLmP3ebQu88z+L6cAzXo8S5U7HVFk8Av2T2r8jWn5e3/ptpzBFrmSkwy95nqZqSYBqTQ5Js3BB8ljeo1Pb7dAHJBJ/b8sIJqMMRVW8GjtpdIlQIDAQAB"
+				}
+			}]
+		}
+		***************/
+		//@formatter:on
 	}
 
 	/**
