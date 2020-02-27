@@ -50,7 +50,7 @@ public class SignerTest {
 		Signer signer = new Signer("A6Hlm/qtJ3tGXPMpsdfDnyr7Xijv3yPT7RwdtJovG0xl",
 				"8/reNSHrNkUqWlpqdDxPCdE/tzk4sItCHU5OZfJE0/A=");
 
-		String tx = signer.signTx("FZILFV3M4ONPGZYNN4Y6VMODIMBPNSCY", "AJXW6OZSFDM7IWZ2HAQM77ZFFC2N2EGO",
+		String tx = signer.signTx("FZILFV3M4ONPGZYNN4Y6VMODIMBPNSCY", "4NUALQ3KNOODUKU3XUUJ7KWD5H6WC7FQ",
 				BigInteger.valueOf(1000000), BigInteger.valueOf(500000), BigInteger.valueOf(1000000000));
 
 		return tx;
