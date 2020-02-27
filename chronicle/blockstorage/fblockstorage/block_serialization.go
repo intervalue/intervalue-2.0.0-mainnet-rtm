@@ -155,7 +155,7 @@ func addHeaderBytes(blockHeader *vo.BlockHeader, buf *proto.Buffer) error {
 		return errors.Wrapf(err, "error encoding the previous hash [%v]", blockHeader.PreviousHash)
 	}
 
-	log.Debug().Msgf("buffer size after new block header: %d", len(buf.Bytes()))
+	//log.Debug().Msgf("buffer size after new block header: %d", len(buf.Bytes()))
 
 	return nil
 }
@@ -178,7 +178,7 @@ func addDataBytesAndConstructTxIndexInfo(blockData *vo.BlockData, buf *proto.Buf
 		txOffsets = append(txOffsets, txIndex)
 	}
 
-	log.Debug().Msgf("buffer size after new block data: %d", len(buf.Bytes()))
+	//log.Debug().Msgf("buffer size after new block data: %d", len(buf.Bytes()))
 
 	return txOffsets, nil
 }
@@ -197,7 +197,7 @@ func addMetadataBytes(blockMetadata *vo.BlockMetadata, buf *proto.Buffer) error 
 		}
 	}
 
-	log.Debug().Msgf("buffer size after new block metadata: %d", len(buf.Bytes()))
+	//log.Debug().Msgf("buffer size after new block metadata: %d", len(buf.Bytes()))
 
 	return nil
 }

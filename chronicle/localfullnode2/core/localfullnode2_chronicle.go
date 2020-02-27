@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/intervalue/intervalue-2.0.0-mainnet-rtm/chronicle/blockstorage"
 	"github.com/intervalue/intervalue-2.0.0-mainnet-rtm/chronicle/localfullnode2/rpc"
@@ -32,13 +33,14 @@ func NewLocalfullnode2Chronicle(dir, rAddr string, rPort int) *Localfullnode2Chr
 }
 
 func (localfullnode2Chronicle *Localfullnode2Chronicle) done() {
-	log.Info().Msg(">====>                                   ")
-	log.Info().Msg(">=>   >=>                                ")
-	log.Info().Msg(">=>    >=>    >=>     >==>>==>    >==>   ")
-	log.Info().Msg(">=>    >=>  >=>  >=>   >=>  >=> >>   >=> ")
-	log.Info().Msg(">=>    >=> >=>    >=>  >=>  >=> >>===>>=>")
-	log.Info().Msg(">=>   >=>   >=>  >=>   >=>  >=> >>       ")
-	log.Info().Msg(">====>        >=>     >==>  >=>  >====>  ")
+	//log.Info().Msg(">====>                                   ")
+	//log.Info().Msg(">=>   >=>                                ")
+	//log.Info().Msg(">=>    >=>    >=>     >==>>==>    >==>   ")
+	//log.Info().Msg(">=>    >=>  >=>  >=>   >=>  >=> >>   >=> ")
+	//log.Info().Msg(">=>    >=> >=>    >=>  >=>  >=> >>===>>=>")
+	//log.Info().Msg(">=>   >=>   >=>  >=>   >=>  >=> >>       ")
+	//log.Info().Msg(">====>        >=>     >==>  >=>  >====>  ")
+	fmt.Println("Done.")
 }
 
 func (localfullnode2Chronicle *Localfullnode2Chronicle) Shutdown() {

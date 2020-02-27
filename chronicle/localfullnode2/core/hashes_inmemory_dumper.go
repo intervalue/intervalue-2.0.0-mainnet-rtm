@@ -40,7 +40,7 @@ func (h lazyMessageHashesHandler) OnError(e error) {
 }
 
 func (h lazyMessageHashesHandler) OnFinished() {
-	log.Info().Msgf("finished")
+	//log.Info().Msgf("finished")
 }
 
 type lazySysMessageHashesHandler struct {

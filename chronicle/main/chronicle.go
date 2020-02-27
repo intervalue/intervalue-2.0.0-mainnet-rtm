@@ -21,12 +21,20 @@ func main() {
 	var chronicleServerAddr string
 	var chronicleServerPort int
 	var as string
+	var verbose bool
 
 	flag.StringVar(&chronicleServerAddr, "cAddress", "127.0.0.1", "the address in which chronicle server is located")
 	flag.IntVar(&chronicleServerPort, "cPort", 36791, "the port which chronicle server is listening to")
 	flag.StringVar(&as, "as", "dumper", "take an alternative between 'dumper' and 'restorer'")
+	flag.BoolVar(&verbose, "o", false, "verbose execution output")
 
 	flag.Parse()
+
+	if verbose {
+		log.Enable()
+	} else {
+		log.Disable()
+	}
 
 	if as == "dumper" {
 		asDumper(chronicleServerAddr, chronicleServerPort)
