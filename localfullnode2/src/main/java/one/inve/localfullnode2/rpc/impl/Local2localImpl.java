@@ -55,7 +55,7 @@ import one.inve.utils.DSA;
  * @date 2018/6/5.
  */
 public class Local2localImpl implements Local2local {
-	private static final Logger logger = LoggerFactory.getLogger(Light2localImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(Local2localImpl.class);
 	private volatile LocalFullNode1GeneralNode node;
 	List<Map<EventKeyPair, Map<String, Set<String>>>> splitReportCache;
 
