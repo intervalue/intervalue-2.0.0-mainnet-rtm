@@ -3,6 +3,7 @@ package one.inve.localfullnode2.chronicle.rpc.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSONException;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
 
@@ -83,7 +84,15 @@ public class ChronicleDumperRestorerStreamRPCService extends ChronicleDumperRest
 				int count = value.getDataCount();
 				for (int index = 0; index < count; index++) {
 					ByteString byteString = value.getData(index);
-					runtime.getMessagePersister().persist(byteString.toByteArray());
+
+					// found JSONException(not close json text,token:error) here
+					try {
+						runtime.getMessagePersister().persist(byteString.toByteArray());
+					} catch (JSONException je) {
+						logger.error("47bdd35396aa41afafa887adb4ec1666:found unqualified json format - {}",
+								new String(byteString.toByteArray()));
+					}
+
 				}
 
 				responseObserver.onNext(Empty.getDefaultInstance());
