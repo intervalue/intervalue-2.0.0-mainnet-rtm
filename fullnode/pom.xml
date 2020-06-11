@@ -15,7 +15,7 @@
         <fastjson.version>1.2.7</fastjson.version>
         <springcore.version>5.0.7.RELEASE</springcore.version>
         <commons-collections.version>3.2.1</commons-collections.version>
-        <commons-beanutils.version>1.8.3</commons-beanutils.version>
+        <commons-beanutils.version>1.9.2</commons-beanutils.version>
         <commons-codec.version>1.10</commons-codec.version>
         <commons-lang3.version>3.3.2</commons-lang3.version>
         <commons-io.version>2.5</commons-io.version>
