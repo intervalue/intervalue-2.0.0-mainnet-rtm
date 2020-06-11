@@ -20,7 +20,7 @@
         <fastjson.version>1.2.7</fastjson.version>
         <springcore.version>5.0.7.RELEASE</springcore.version>
         <commons-collections.version>3.2.1</commons-collections.version>
-        <commons-beanutils.version>1.8.3</commons-beanutils.version>
+        <commons-beanutils.version>1.9.2</commons-beanutils.version>
         <commons-io.version>2.5</commons-io.version>
         <slf4j.version>1.7.20</slf4j.version>
         <poi.version>3.10-FINAL</poi.version>
