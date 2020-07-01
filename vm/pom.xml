@@ -30,7 +30,7 @@
         <inve-hashnet.version>1.0</inve-hashnet.version>
         <inve-mnemonic.version>1.1.0</inve-mnemonic.version>
         <druid.version>1.1.6</druid.version>
-        <mysqlconnectorjava.version>8.0.13</mysqlconnectorjava.version>
+        <mysqlconnectorjava.version>8.0.16</mysqlconnectorjava.version>
         <rocksdbjni.version>5.9.2</rocksdbjni.version>
         <netty.version>4.1.30.Final</netty.version>
         <!-- 以太坊 -->
