@@ -2,6 +2,7 @@ package one.inve.localfullnode2.nodes;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -341,6 +342,10 @@ public abstract class LocalFullNodeSkeleton extends DepsPointcut implements Node
 		one.inve.contract.conf.Config.setCreationAddress(Config.CREATION_ADDRESSES);
 		one.inve.contract.conf.Config.setGodAddress(Config.GOD_ADDRESS);
 		one.inve.contract.conf.Config.setFoundationAddress(Config.FOUNDATION_ADDRESS);
+
+		// verbose contract precondition.
+		logger.info("initOlympus - god:{} / foundation:{} / sons: {}", Config.GOD_ADDRESS, Config.FOUNDATION_ADDRESS,
+				Arrays.toString(Config.CREATION_ADDRESSES.toArray(new String[0])));
 	}
 
 	protected ILifecycle startHttpServer(LocalFullNode1GeneralNode node) {
