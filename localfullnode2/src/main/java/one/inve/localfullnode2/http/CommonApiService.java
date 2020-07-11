@@ -23,6 +23,7 @@ import one.inve.localfullnode2.store.rocks.SystemAutoArray;
 import one.inve.localfullnode2.store.rocks.TransactionArray;
 import one.inve.localfullnode2.utilities.StringUtils;
 import one.inve.localfullnode2.utilities.TxVerifyUtils;
+import one.inve.localfullnode2.utilities.TxVerifyUtils.Pair;
 
 /**
  * Copyright © INVE FOUNDATION. All rights reserved.
@@ -43,6 +44,8 @@ public class CommonApiService {
 	 * @return 成功则返回空串，否则返回错误信息
 	 */
 	public synchronized static String sendMessage(String message, LocalFullNode1GeneralNode node) {
+		logger.info("htpp message diagnosis:" + message);
+
 		try {
 			if (node.getShardId() == -1L || node.getShardCount() < 1) {
 				return "service is not available.";
@@ -54,8 +57,11 @@ public class CommonApiService {
 				return "not enough fund in sender address";
 			}
 
-			if (TxVerifyUtils.verifyMessage(message, node.getMessageHashCache(),
-					new RocksJavaUtil(node.nodeParameters().dbId), node.getShardId(), node.getShardCount())) {
+			Pair<Boolean, String> result = TxVerifyUtils.verifyMessageWithLog(message, node.getMessageHashCache(),
+					new RocksJavaUtil(node.nodeParameters().dbId), node.getShardId(), node.getShardCount());
+			if (result.getKey()) {
+//			if (TxVerifyUtils.verifyMessage(message, node.getMessageHashCache(),
+//					new RocksJavaUtil(node.nodeParameters().dbId), node.getShardId(), node.getShardCount())) {
 //            if(TxVerifyUtils.verifyMessage(message, node.nodeParameters.dbId, node.getShardId(), node.getShardCount())) {
 				logger.debug("receive a transaction, and verify success.");
 				int multiple = node.nodeParameters().multiple;
@@ -78,7 +84,7 @@ public class CommonApiService {
 				return "";
 			} else {
 				logger.error("--- sendMessage() verify failed. \nmsg: {}", message);
-				return "verify failed.";
+				return "The verification process failed due to " + result.getValue();
 			}
 		} catch (Exception e) {
 			logger.error("??? sendMessage() verify exception: {} \nmsg: {}", e.getMessage(), message);

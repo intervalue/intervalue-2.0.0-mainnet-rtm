@@ -224,6 +224,8 @@ public class MessagesExe {
 				if (!valid) {
 					// Francis.Deng with the result of "not enough balance in the address(??)"
 					msgObject.put("error", "not enough balance in the address(" + fromAddress + ")");
+					logger.error("double spend: fromAddress[{}] toAddress[{}] fee[{}] tm[{}]", fromAddress, toAddress,
+							fee, tm.getAmount());
 
 //					logger.error("node-({}, {}): Transaction message double cost. msgObj: {}", node.getShardId(),
 //							node.getCreatorId(), msgObject.toJSONString());
@@ -419,6 +421,7 @@ public class MessagesExe {
 		} else {
 			// 发送地址可用余额
 			BigInteger fromAddressAvailAtoms = dep.getWorldStateService().getBalanceByAddr(dep.getDbId(), fromAddress);
+			logger.info("atoms in vm: fromAddress {}" + fromAddress);
 //			if (logger.isDebugEnabled()) {
 //				logger.info("node-({}, {}): from address {} avail atoms: {}, need cost atoms: {}", node.getShardId(),
 //						node.getCreatorId(), fromAddress, fromAddressAvailAtoms, amount);

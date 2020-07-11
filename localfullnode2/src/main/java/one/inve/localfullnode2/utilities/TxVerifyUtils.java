@@ -1,13 +1,16 @@
 package one.inve.localfullnode2.utilities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bitcoinj.core.ECKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import one.inve.bean.message.MessageType;
@@ -117,6 +120,71 @@ public class TxVerifyUtils {
 			return isValid;
 		}
 		return isValid;
+	}
+
+	public static Pair<Boolean, String> verifyMessageWithLog(String message,
+			ConcurrentHashMap<String, Long> messageHashCache, INosql nosql, int shardId, int shardCount) {
+		JSONObject o = JSONObject.parseObject(message);
+
+		// 消息重复性验证
+		String hash = o.getString("signature");
+		boolean isValid = false;
+		// 判断在缓存中是否不存在
+		// if (node.getMessageHashCache().get(hash) == null ||
+		// node.getMessageHashCache().get(hash) <= 0) {
+		if (messageHashCache.get(hash) == null || messageHashCache.get(hash) <= 0) {
+			// 放入缓存
+			// node.getMessageHashCache().put(hash, Instant.now().toEpochMilli());
+			messageHashCache.put(hash, Instant.now().toEpochMilli());
+			// 判断在数据库中是否不存在
+			// byte[] existHashBytes = new
+			// RocksJavaUtil(node.nodeParameters.dbId).get(hash);
+			byte[] existHashBytes = nosql.get(hash);
+			if (null == existHashBytes || existHashBytes.length <= 0) {
+				// 写入数据库
+				JSONObject msgObj = new JSONObject();
+				msgObj.put("isStable", false);
+				msgObj.put("msg", message);
+				nosql.put(hash, msgObj.toJSONString());
+				isValid = true;
+			} else {
+//                logger.error("node-({}, {}): msg already exists in db: {}", node.getShardId(), node.getCreatorId(), hash);
+			}
+		} else {
+//            logger.error("node-({}, {}): msg already exists in MessageHashCache: {}", node.getShardId(), node.getCreatorId(), hash);
+		}
+
+		if (!isValid) {
+//            logger.error("node-({}, {}): message-{} exist.", node.getShardId(), node.getCreatorId(), hash);
+			throw new RuntimeException("message-" + hash + " exist");
+		}
+
+		// 参数合法性验证
+		isValid = verifyParameters(o);
+		if (!isValid) {
+			return new Pair(Boolean.FALSE, "[The verification of parameters failed]");
+		}
+		// 发送方合法性验证
+		String pubkey = o.getString("pubkey");
+		isValid = verifyLegalSender(pubkey, shardId, shardCount);
+		if (!isValid) {
+			return new Pair(Boolean.FALSE, "[The sender is illegal]");
+		}
+		// 签名验证
+		// isValid = verifySignature((JSONObject) o.clone());
+		isValid = verifyExoSignature((JSONObject) o.clone());
+		if (!isValid) {
+//            logger.error("node-({}, {}): verify signature faild.", node.getShardId(), node.getCreatorId());
+			return new Pair(Boolean.FALSE, "[The validation of signature failed]");
+		}
+		// 计算并验证手续费是否足够
+		calculateRealFeeAndVerify(o);
+		// 消息附带留言验证
+		isValid = verifyRemark(o);
+		if (!isValid) {
+			return new Pair(Boolean.FALSE, "[The validation of message attched failed]");
+		}
+		return new Pair(Boolean.TRUE, "");
 	}
 
 	/**
@@ -254,16 +322,18 @@ public class TxVerifyUtils {
 			throw new RuntimeException("signature is illegal.");
 		}
 		// fromAddress
-		String fromAddress = o.getString("fromAddress");
+		String fromAddress = stripExoFeature(o.getString("fromAddress"));
+		String toAddress = null;
 		if (StringUtils.isEmpty(fromAddress)) {
-			throw new RuntimeException("fromAddress is illegal.");
+			throw new RuntimeException("fromAddress is illegal." + verboseHandledAddress(fromAddress, toAddress));
 		}
 
 		// ensure toAddress and fromAddress are qualified format.
-		String toAddress = o.getString("toAddress");
+		toAddress = stripExoFeature(o.getString("toAddress"));
 		if (!InveWallet.isValidAddress(fromAddress)
 				|| (!StringUtils.isEmpty(toAddress) && !InveWallet.isValidAddress(toAddress))) {
-			throw new RuntimeException("fromAddress or toAddress is unqualified format.");
+			throw new RuntimeException(
+					"fromAddress or toAddress is unqualified format." + verboseHandledAddress(fromAddress, toAddress));
 		}
 
 		// amount
@@ -278,14 +348,15 @@ public class TxVerifyUtils {
 		}
 		if (type == MessageType.TRANSACTIONS.getIndex()) {
 			// toAddress
-			String toAdress = o.getString("toAddress");
-			if (StringUtils.isEmpty(toAdress)) {
-				throw new RuntimeException("toAdress is illegal.");
+			// String toAdress = stripExoFeature(o.getString("toAddress"));
+			if (StringUtils.isEmpty(toAddress)) {
+				throw new RuntimeException("toAdress is illegal." + verboseHandledAddress(fromAddress, toAddress));
 			}
 			// conform with the convention of "32 characters for address" in wallet by
 			// Francis.Deng
-			if (toAdress.length() != 32) {
-				throw new IllegalArgumentException("toAddress length is limited to 32");
+			if (toAddress.length() != 32) {
+				throw new IllegalArgumentException(
+						"toAddress length is limited to 32." + verboseHandledAddress(fromAddress, toAddress));
 			}
 			if (null == amount || amount.equals(BigInteger.ZERO)) {
 				throw new RuntimeException("amount is illegal.");
@@ -424,6 +495,53 @@ public class TxVerifyUtils {
 		return SignUtil.verify(o);
 	}
 
+	// <code>verifySignature</code>
+	protected static boolean verifyExoSignature(JSONObject o) {
+		// 对地址进行验证
+		String pubkey = o.getString("pubkey");
+		JSONArray definition = JSONObject.parseArray("[\"sig\", {\"pubkey\":\"" + pubkey + "\"}]");
+		String address = InveWallet.getInveAddressByDefinidion(definition);
+
+		String addressWithoutStartWithEXO = o.getString("fromAddress").startsWith("EXO")
+				? o.getString("fromAddress").substring("EXO".length())
+				: o.getString("fromAddress");
+
+		if (!addressWithoutStartWithEXO.equals(address)) {
+			return false;
+		}
+		String signature = o.getString("signature");
+		o.remove("eHash");
+		o.remove("hash");
+		o.remove("id");
+		o.remove("isStable");
+		o.remove("isValid");
+		o.remove("signature");
+		o.remove("updateTime");
+		String str = SignUtil.getSourceString(o);
+		return SignUtil.verifyStr(str, signature, ECKey.fromPublicOnly(DSA.decryptBASE64(pubkey)));
+	}
+
+	public static boolean verifyFromSignUtil(String message) {
+		JSONObject o = JSONObject.parseObject(message);
+		String pubkey = o.getString("pubkey");
+		// 对地址进行验证
+		JSONArray definition = JSONObject.parseArray("[\"sig\", {\"pubkey\":\"" + pubkey + "\"}]");
+		String address = InveWallet.getInveAddressByDefinidion(definition);
+
+		String addressWithoutStartWithEXO = o.getString("fromAddress").startsWith("EXO")
+				? o.getString("fromAddress").substring("EXO".length())
+				: o.getString("fromAddress");
+
+		if (!addressWithoutStartWithEXO.equals(address)) {
+			return false;
+		}
+		String signature = o.getString("signature");
+		o.remove("signature");
+		o.remove("hash");
+		String str = SignUtil.getSourceString(o);
+		return SignUtil.verifyStr(str, signature, ECKey.fromPublicOnly(DSA.decryptBASE64(pubkey)));
+	}
+
 	/**
 	 * 消息附带留言验证
 	 * 
@@ -489,5 +607,68 @@ public class TxVerifyUtils {
 
 		String msg = "{\"fromAddress\":\"4PS6MZX6T7ELDSD2RUOZRSYGCC5RHOS7\",\"toAddress\":\"CVTQZYB2224MK5XXZOXRK2YVLVEJVZ2F\",\"amount\":\"1000000000000000000000000\",\"timestamp\":1544508773665,\"pubkey\":\"A78IhF6zjQIGzuzKwrjG9HEISz7/oAoEhyr7AnBr3RWn\",\"fee\":\"200000000\",\"type\":1,\"remark\":\"\",\"signature\":\"33APDAlMvdnvWybQolUDeaRtns1EfXqdgIKKFTZc+oTOsPcbdXvXZahnnW9ssFoMuffDUnZ/l9Fxv1NqjfE7Ce6g0=\"}";
 //        System.out.println(verifyTransactionMessage(msg, "0", 1, 0));
+	}
+
+	// exoa feature:"EXO" + normal address
+	private static String stripExoFeature(String fromAddressOrToAddress) {
+		String finalAddress = fromAddressOrToAddress;
+		if (!StringUtils.isEmpty(fromAddressOrToAddress) && fromAddressOrToAddress.startsWith("EXO")) {
+			finalAddress = fromAddressOrToAddress.substring("EXO".length());
+		}
+
+		return finalAddress;
+	}
+
+	// for debugging purpose
+	private static String verboseHandledAddress(String fromAddress, String toAddress) {
+		// return "detailed information: fromAddress[" + fromAddress + "] or toAddress["
+		// + toAddress + "]";
+		return "";
+	}
+
+	public static class Pair<K, V> implements Serializable {
+
+		private static final long serialVersionUID = -76702881811738599L;
+
+		private K key;
+
+		private V value;
+
+		public Pair(K key, V value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public K getKey() {
+			return key;
+		}
+
+		public V getValue() {
+			return value;
+		}
+
+		@Override
+		public String toString() {
+			return key + "=" + value;
+		}
+
+		@Override
+		public int hashCode() {
+
+			return key.hashCode() * 13 + (value == null ? 0 : value.hashCode());
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o instanceof Pair) {
+				Pair pair = (Pair) o;
+				return !((key != null ? !key.equals(pair.key) : pair.key != null)
+						|| (value != null ? !value.equals(pair.value) : pair.value != null));
+			}
+			return false;
+		}
 	}
 }

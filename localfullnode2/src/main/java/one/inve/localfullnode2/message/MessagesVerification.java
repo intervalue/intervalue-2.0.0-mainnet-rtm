@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 import one.inve.cfg.localfullnode.Config;
 import one.inve.localfullnode2.utilities.QueuePoller;
 import one.inve.localfullnode2.utilities.StringUtils;
+import one.inve.localfullnode2.utilities.TxVerifyUtils;
 import one.inve.utils.SignUtil;
 
 /**
@@ -73,7 +74,10 @@ public class MessagesVerification {
 				// 签名验证和排序
 				messages = messages.parallelStream().peek(o -> {
 					if (StringUtils.isNotEmpty(o.getString("msg"))) {
-						o.put("isValid", SignUtil.verify(o.getString("msg")));
+						logger.info("isValid during verifyMessages: " + SignUtil.verify(o.getString("msg")));
+
+						// o.put("isValid", SignUtil.verify(o.getString("msg")));
+						o.put("isValid", TxVerifyUtils.verifyFromSignUtil(o.getString("msg")));
 					}
 				}).sorted(Comparator.comparing(n -> n.getBigInteger("id"))).collect(Collectors.toList());
 				// 共识消息放入消息处理执行队列
