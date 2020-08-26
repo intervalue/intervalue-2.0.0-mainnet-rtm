@@ -32,7 +32,7 @@
         <druid.version>1.1.6</druid.version>
         <mysqlconnectorjava.version>8.0.13</mysqlconnectorjava.version>
         <rocksdbjni.version>5.9.2</rocksdbjni.version>
-        <netty.version>4.1.30.Final</netty.version>
+        <netty.version>4.1.42.Final</netty.version>
         <!-- 以太坊 -->
         <commons-lang3.version>3.3.2</commons-lang3.version>
     </properties>
