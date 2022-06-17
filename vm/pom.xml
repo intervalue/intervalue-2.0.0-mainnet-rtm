@@ -17,7 +17,7 @@
         <ice.version>3.7.1</ice.version>
         <junit.version>4.11</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <fastjson.version>1.2.7</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <springcore.version>5.0.7.RELEASE</springcore.version>
         <commons-collections.version>3.2.1</commons-collections.version>
         <commons-beanutils.version>1.8.3</commons-beanutils.version>
